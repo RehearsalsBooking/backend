@@ -37,7 +37,7 @@ RUN pecl install xdebug \
     &&  docker-php-ext-enable xdebug
 
 # Config
-RUN echo "zend_extension=opcache.so \nopcache.memory_consumption=128M \nopcache.interned_strings_buffer=8 \nopcache.max_accelerated_files=4000 \nopcache.max_wasted_percentage=5 \nopcache.validate_timestamps=1 \nopcache.revalidate_freq=60 \nopcache.save_comments=0 \nopcache.enable_cli=1 \nopcache.enable_file_override=1 \nopcache.fast_shutdown=1 \nopcache.blacklist_filename=/etc/php.d/opcache*.blacklist" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
+RUN echo "zend_extension=opcache.so \nopcache.memory_consumption=128M \nopcache.interned_strings_buffer=8 \nopcache.max_accelerated_files=4000 \nopcache.max_wasted_percentage=5 \nopcache.validate_timestamps=1 \nopcache.revalidate_freq=60 \nopcache.enable_cli=1 \nopcache.enable_file_override=1 \nopcache.fast_shutdown=1 \nopcache.blacklist_filename=/etc/php.d/opcache*.blacklist" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
     && echo "error_log = /var/log/php7-fpm/php7-fpm.log \nlog_errors = On \nerror_reporting = E_ERROR | E_PARSE \ndisplay_errors = On" >> /usr/local/etc/php/conf.d/log.ini \
     && sed -i 's/;catch_workers_output.*/catch_workers_output = yes/g' /usr/local/etc/php-fpm.d/www.conf \
     && sed -i 's/;php_admin_value\[error_log\].*/php_admin_value\[error_log\] = \/var\/log\/php7-fpm\/php7-fpm.log/g' /usr/local/etc/php-fpm.d/www.conf \
@@ -57,18 +57,6 @@ ENV COMPOSER_HOME /root/.composer
 ENV PATH /root/.composer/vendor/bin:$PATH
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     /usr/local/bin/composer global require "fxp/composer-asset-plugin"
-
-# Install npm and node.js
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
-    && apt-get install -y nodejs build-essential
-
-# Install Yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt-get -y install yarn
-
-# Gulp alias
-RUN echo 'alias gulp="/app/html/node_modules/gulp/bin/gulp.js"' >> ~/.bashrc
 
 # Clear
 RUN apt-get purge -y g++ \

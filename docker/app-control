@@ -2,49 +2,36 @@
 
 function usage() {
     echo ""
-    echo "Usage: $0 COMMAND [ENVIRONMENT||key]"
+    echo "Usage: $0 COMMAND"
     echo ""
     echo "Commands:"
-    echo "  init [env]     Create some init directories and links and up your app"
-    echo "  up [env]       Up your app"
-    echo ""
-    echo "Environments:"
-    echo "  dev            Local machine"
+    echo "  init     Create some init directories and links and up your app"
+    echo "  up       Up your app"
     echo ""
     exit 1
 }
 
 function up() {
 
-    case "$1" in
-        "dev")
-            ;;
-        *)
-        usage
-        ;;
-    esac
-
     echo "=============================="
     echo "Stop and remove current images"
     echo "=============================="
-    sudo docker-compose -f docker-compose.yml -f docker-compose."$1".yml rm -s -f
+    docker-compose rm -s -f
 
     echo "========="
     echo "Up images"
     echo "========="
-    sudo docker-compose -f docker-compose.yml build
-    sudo docker-compose -f docker-compose.yml -f docker-compose."$1".yml build
-    sudo docker-compose -f docker-compose.yml -f docker-compose."$1".yml up -d
+    docker-compose up -d
 
     echo "==============="
     echo "Update composer"
     echo "==============="
-    sudo docker-compose run --rm fpm bash -c "composer update && chown -R www-data:1000 /app/vendor /app/composer.lock"
+    docker-compose run --rm fpm bash -c "composer update && chown -R www-data:1000 /app/vendor /app/composer.lock"
 
     echo "================="
     echo "Update migrations"
     echo "================="
-    sudo docker-compose run --rm fpm bash -c "php artisan key:generate && php artisan migrate:fresh && chown -R www-data:1000 /app/storage"
+    docker-compose run --rm fpm bash -c "php artisan key:generate && php artisan migrate && chown -R www-data:1000 /app/storage"
 }
 
 function init() {
@@ -56,33 +43,27 @@ function init() {
         chown 1000:1000 ../.env
     fi
 
-    up "$1"
+    up
 
     echo "======================================="
     echo "Create system app directories and links"
     echo "======================================="
-    sudo docker-compose run --rm fpm bash -c "mkdir -p /app/docker/data/{db,app,nginx,php,sendmail} && touch /app/docker/data/app/{application.log,cron.log,notify.log} && chown -R www-data:1000 /app/docker/data/{app,nginx,php,sendmail}"
-    sudo docker-compose run --rm fpm bash -c "php artisan storage:link -q && chown -R www-data:1000 /app/storage"
+    docker-compose run --rm fpm bash -c "mkdir -p /app/docker/data/{db,app,nginx,php,sendmail} && touch /app/docker/data/app/{application.log,cron.log,notify.log} && chown -R www-data:1000 /app/docker/data/{app,nginx,php,sendmail}"
+    docker-compose run --rm fpm bash -c "php artisan storage:link -q && chown -R www-data:1000 /app/storage"
 }
 
 function main() {
-    if [[ "$#" -ne 2 ]]; then
+    if [[ "$#" -ne 1 ]]; then
         usage
         exit 1
     fi
 
     case "$1" in
         "up")
-            up "$2"
+            up
             ;;
         "init")
-            init "$2"
-            ;;
-        "deploy")
-            deploy "$2"
-            ;;
-        "build")
-            build "$2"
+            init
             ;;
         *)
             usage
