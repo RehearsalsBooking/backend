@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
@@ -34,9 +36,14 @@ use Illuminate\Support\Carbon;
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereUpdatedAt($value)
  * @mixin Eloquent
+ * @property-read Collection|Organization[] $organizations
  */
 class User extends Authenticatable
 {
+    public const TYPE_USER = 1;
+    public const TYPE_OWNER = 2;
+    public const TYPE_ADMIN = 3;
+
     use Notifiable;
 
     /**
@@ -56,4 +63,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Returns collection of organizations owned by user
+     *
+     * @return HasMany
+     */
+    public function organizations(): HasMany
+    {
+        return $this->hasMany(Organization::class, 'owner_id');
+    }
 }

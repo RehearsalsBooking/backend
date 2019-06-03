@@ -17,3 +17,4 @@ yarn-error.log
 # Docker
 docker/data
 
+/.php_cs.cache

@@ -3,6 +3,7 @@
 /* @var $factory Factory */
 
 use App\Models\Organization;
+use App\Models\User;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
@@ -11,5 +12,8 @@ $factory->define(Organization::class, static function (Faker $faker) {
         'name' => $faker->word,
         'address' => $faker->address,
         'verified' => true,
+        'owner_id' => static function () {
+            return factory(User::class)->create()->id;
+        }
     ];
 });

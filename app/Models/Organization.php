@@ -5,6 +5,7 @@ namespace App\Models;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
@@ -29,11 +30,28 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Organization whereVerified($value)
  * @mixin Eloquent
  * @method static Builder|Organization verified()
+ * @property-read User $owner
  */
 class Organization extends Model
 {
+    /**
+     * Filters query by only verified organizations
+     *
+     * @param Builder $query
+     * @return Builder
+     */
     public function scopeVerified(Builder $query)
     {
         return $query->where('verified', true);
+    }
+
+    /**
+     * Returns owner of organization
+     *
+     * @return BelongsTo
+     */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 }

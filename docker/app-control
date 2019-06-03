@@ -7,6 +7,9 @@ function usage() {
     echo "Commands:"
     echo "  init     Create some init directories and links and up your app"
     echo "  up       Up your app"
+    echo "  up       Up your app"
+    echo "  bash     Enters php container"
+    echo "  docs     Generates phpdocs for models"
     echo ""
     exit 1
 }
@@ -21,6 +24,7 @@ function up() {
     echo "========="
     echo "Up images"
     echo "========="
+    docker-compose build
     docker-compose up -d
 
     echo "==============="
@@ -52,6 +56,21 @@ function init() {
     docker-compose run --rm fpm bash -c "php artisan storage:link -q && chown -R www-data:1000 /app/storage"
 }
 
+function bash() {
+    echo "=============================="
+    echo "Enter into php container using bash"
+    echo "=============================="
+    docker exec -it -u 1000 rehearsal-php bash
+}
+
+function docs() {
+    echo "=============================="
+    echo "Enter into php container using bash"
+    echo "=============================="
+    docker exec -u 1000 rehearsal-php php /app/artisan ide-helper:models -W
+}
+
+
 function main() {
     if [[ "$#" -ne 1 ]]; then
         usage
@@ -64,6 +83,12 @@ function main() {
             ;;
         "init")
             init
+            ;;
+        "docs")
+            docs
+            ;;
+        "bash")
+            bash
             ;;
         *)
             usage

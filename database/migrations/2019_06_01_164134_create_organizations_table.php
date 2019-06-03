@@ -11,14 +11,15 @@ class CreateOrganizationsTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('organizations', function (Blueprint $table) {
+        Schema::create('organizations', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('address');
             $table->string('coordinates')->nullable();
             $table->boolean('verified')->default(false);
+            $table->unsignedInteger('owner_id')->references('id')->on('users');
             $table->timestamps();
         });
     }
@@ -28,7 +29,7 @@ class CreateOrganizationsTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('organizations');
     }
