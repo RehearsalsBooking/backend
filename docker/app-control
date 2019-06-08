@@ -65,9 +65,10 @@ function bash() {
 
 function docs() {
     echo "=============================="
-    echo "Enter into php container using bash"
+    echo "Generate docs for models"
     echo "=============================="
-    docker exec -u 1000 rehearsal-php php /app/artisan ide-helper:models -W
+    docker-compose run --rm fpm bash -c "php artisan migrate"
+    docker-compose run --rm -u 1000 fpm bash -c "php /app/artisan ide-helper:models -W"
 }
 
 

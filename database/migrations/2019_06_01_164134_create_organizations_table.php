@@ -19,6 +19,8 @@ class CreateOrganizationsTable extends Migration
             $table->string('address');
             $table->string('coordinates')->nullable();
             $table->boolean('verified')->default(false);
+            $table->text('description')->nullable();
+
             $table->unsignedInteger('owner_id')->references('id')->on('users');
             $table->timestamps();
         });

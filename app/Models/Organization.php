@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -31,6 +33,7 @@ use Illuminate\Support\Carbon;
  * @mixin Eloquent
  * @method static Builder|Organization verified()
  * @property-read User $owner
+ * @property-read Collection|WorkingDay[] $workingDays
  */
 class Organization extends Model
 {
@@ -40,18 +43,28 @@ class Organization extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeVerified(Builder $query)
+    public function scopeVerified(Builder $query): Builder
     {
         return $query->where('verified', true);
     }
 
     /**
-     * Returns owner of organization
+     * Owner of organization
      *
      * @return BelongsTo
      */
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    /**
+     * Working days of organization
+     *
+     * @return HasMany
+     */
+    public function workingDays(): HasMany
+    {
+        return $this->hasMany(WorkingDay::class);
     }
 }
