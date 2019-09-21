@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Organization;
+use App\Models\Rehearsal;
 use App\Models\User;
 use App\Models\WorkingDay;
 use Illuminate\Support\Collection;
@@ -25,5 +26,17 @@ class OrganizationTest extends TestCase
         ]);
 
         $this->assertInstanceOf(User::class, $organization->owner);
+    }
+
+    /** @test */
+    public function organization_has_rehearsals(): void
+    {
+        $organization = factory(Organization::class)->create();
+
+        factory(Rehearsal::class, 5)->create(['organization_id' => $organization->id]);
+
+        $this->assertInstanceOf(Collection::class, $organization->rehearsals);
+        $this->assertEquals(5, $organization->rehearsals()->count());
+        $this->assertInstanceOf(Rehearsal::class, $organization->rehearsals->first());
     }
 }

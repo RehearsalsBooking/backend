@@ -57,4 +57,14 @@ class Organization extends Model
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
+
+    /**
+     * Rehearsals of organization
+     *
+     * @return HasMany
+     */
+    public function rehearsals(): HasMany
+    {
+        return $this->hasMany(Rehearsal::class);
+    }
 }
