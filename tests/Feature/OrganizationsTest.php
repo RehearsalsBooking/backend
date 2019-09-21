@@ -14,6 +14,7 @@ class OrganizationsTest extends TestCase
     /** @test */
     public function unsigned_users_can_view_organizations(): void
     {
+        $this->withoutExceptionHandling();
         $numberOfOrganizations = 5;
         factory(Organization::class, $numberOfOrganizations)->create([
             'verified' => true

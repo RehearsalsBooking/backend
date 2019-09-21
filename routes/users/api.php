@@ -1,3 +1,5 @@
 <?php
 
-Route::get('organizations', 'OrganizationsController@index');
+use App\Http\Controllers\Users\OrganizationsController;
+
+Route::get('organizations', [OrganizationsController::class, 'index']);
