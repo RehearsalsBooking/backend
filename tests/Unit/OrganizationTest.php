@@ -26,22 +26,4 @@ class OrganizationTest extends TestCase
 
         $this->assertInstanceOf(User::class, $organization->owner);
     }
-
-    /** @test */
-    public function an_organization_has_working_days(): void
-    {
-        /** @var Organization $organization */
-        $organization = factory(Organization::class)->create();
-
-        foreach (range(1, 7) as $day) {
-            factory(WorkingDay::class)->create([
-                'organization_id' => $organization->id,
-                'day' => $day
-            ]);
-        }
-
-        $this->assertInstanceOf(Collection::class, $organization->workingDays);
-        $this->assertCount(7, $organization->workingDays);
-        $this->assertInstanceOf(WorkingDay::class, $organization->workingDays->first());
-    }
 }

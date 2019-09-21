@@ -57,14 +57,4 @@ class Organization extends Model
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
-
-    /**
-     * Working days of organization
-     *
-     * @return HasMany
-     */
-    public function workingDays(): HasMany
-    {
-        return $this->hasMany(WorkingDay::class);
-    }
 }
