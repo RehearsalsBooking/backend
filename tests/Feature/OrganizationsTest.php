@@ -22,7 +22,7 @@ class OrganizationsTest extends TestCase
 
         $this->assertCount($numberOfOrganizations, Organization::all());
 
-        $response = $this->get('/organizations');
+        $response = $this->get(route('organizations.list'));
 
         $response->assertStatus(200);
 
@@ -50,7 +50,7 @@ class OrganizationsTest extends TestCase
 
         $this->assertCount(5, Organization::all());
 
-        $response = $this->get('/organizations');
+        $response = $this->get(route('organizations.list'));
 
         $response->assertStatus(200);
 

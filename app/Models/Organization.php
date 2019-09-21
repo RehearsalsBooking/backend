@@ -34,6 +34,12 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Organization verified()
  * @property-read User $owner
  * @property-read Collection|WorkingDay[] $workingDays
+ * @property string|null $description
+ * @property int $owner_id
+ * @property-read Collection|Rehearsal[] $rehearsals
+ * @property-read int|null $rehearsals_count
+ * @method static Builder|Organization whereDescription($value)
+ * @method static Builder|Organization whereOwnerId($value)
  */
 class Organization extends Model
 {

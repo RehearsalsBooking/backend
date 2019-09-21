@@ -38,6 +38,10 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @method static Builder|User whereUpdatedAt($value)
  * @mixin Eloquent
  * @property-read Collection|Organization[] $organizations
+ * @property int $type
+ * @property-read int|null $notifications_count
+ * @property-read int|null $organizations_count
+ * @method static Builder|User whereType($value)
  */
 class User extends Authenticatable implements JWTSubject
 {
