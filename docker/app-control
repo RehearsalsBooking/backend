@@ -7,7 +7,6 @@ function usage() {
     echo "Commands:"
     echo "  init     Create some init directories and links and up your app"
     echo "  up       Up your app"
-    echo "  up       Up your app"
     echo "  bash     Enters php container"
     echo "  docs     Generates phpdocs for models"
     echo ""
@@ -54,6 +53,7 @@ function init() {
     echo "======================================="
     docker-compose run --rm fpm bash -c "mkdir -p /app/docker/data/{db,app,nginx,php,sendmail} && touch /app/docker/data/app/{application.log,cron.log,notify.log} && chown -R www-data:1000 /app/docker/data/{app,nginx,php,sendmail}"
     docker-compose run --rm fpm bash -c "php artisan storage:link -q && chown -R www-data:1000 /app/storage"
+    docker-compose run --rm fpm bash -c "php artisan jwt:secret"
 }
 
 function bash() {

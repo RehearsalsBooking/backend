@@ -11,6 +11,7 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Carbon;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * App\Models\User
@@ -38,7 +39,7 @@ use Illuminate\Support\Carbon;
  * @mixin Eloquent
  * @property-read Collection|Organization[] $organizations
  */
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     public const TYPE_USER = 1;
     public const TYPE_OWNER = 2;
@@ -72,5 +73,25 @@ class User extends Authenticatable
     public function organizations(): HasMany
     {
         return $this->hasMany(Organization::class, 'owner_id');
+    }
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims(): array
+    {
+        return [];
     }
 }
