@@ -18,10 +18,9 @@ class OrganizationTest extends TestCase
     public function organization_has_one_owner(): void
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
-        /** @var Organization $organization */
-        $organization = factory(Organization::class)->create([
+        $organization = $this->createOrganization([
             'owner_id' => $user->id
         ]);
 
@@ -31,7 +30,7 @@ class OrganizationTest extends TestCase
     /** @test */
     public function organization_has_rehearsals(): void
     {
-        $organization = factory(Organization::class)->create();
+        $organization = $this->createOrganization();
 
         factory(Rehearsal::class, 5)->create(['organization_id' => $organization->id]);
 

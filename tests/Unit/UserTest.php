@@ -13,12 +13,11 @@ class UserTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function user_may_have_organizations()
+    public function user_may_have_organizations(): void
     {
-        /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
 
-        factory(Organization::class)->create([
+        $this->createOrganization([
             'owner_id' => $user->id
         ]);
 

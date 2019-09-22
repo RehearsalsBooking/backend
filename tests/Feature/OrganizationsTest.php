@@ -40,7 +40,7 @@ class OrganizationsTest extends TestCase
     /** @test */
     public function users_can_view_detailed_information_about_organization(): void
     {
-        $organization = factory(Organization::class)->create();
+        $organization = $this->createOrganization();
 
         $response = $this->get(route('organizations.show', $organization->id));
 

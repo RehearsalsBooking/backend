@@ -15,7 +15,7 @@ class RehearsalsTest extends TestCase
     /** @test */
     public function rehearsal_has_organization(): void
     {
-        $organization = factory(Organization::class)->create();
+        $organization = $this->createOrganization();
 
         $rehearsal = factory(Rehearsal::class)->create(['organization_id' => $organization->id]);
 
@@ -25,7 +25,7 @@ class RehearsalsTest extends TestCase
     /** @test */
     public function rehearsal_has_user(): void
     {
-        $user = factory(User::class)->create();
+        $user = $this->createUser();
         $rehearsal = factory(Rehearsal::class)->create(['user_id' => $user->id]);
 
         $this->assertInstanceOf(User::class, $rehearsal->user);

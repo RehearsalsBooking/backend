@@ -40,6 +40,10 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $rehearsals_count
  * @method static Builder|Organization whereDescription($value)
  * @method static Builder|Organization whereOwnerId($value)
+ * @property int|null $opens_at
+ * @property int|null $closes_at
+ * @method static Builder|Organization whereClosesAt($value)
+ * @method static Builder|Organization whereOpensAt($value)
  */
 class Organization extends Model
 {
@@ -72,5 +76,28 @@ class Organization extends Model
     public function rehearsals(): HasMany
     {
         return $this->hasMany(Rehearsal::class);
+    }
+
+    /**
+     * @param $startsAt
+     * @param $endsAt
+     * @return bool
+     */
+    public function isTimeAvailable($startsAt, $endsAt): bool
+    {
+        return $this->rehearsals()
+            ->where(static function (Builder $query) use ($startsAt) {
+                $query->where('starts_at', '<', $startsAt)
+                    ->where('ends_at', '>', $startsAt);
+            })
+            ->orWhere(static function (Builder $query) use ($endsAt) {
+                $query->where('starts_at', '<', $endsAt)
+                    ->where('ends_at', '>', $endsAt);
+            })
+            ->orWhere(static function (Builder $query) use ($endsAt, $startsAt) {
+                $query->where('starts_at', '>', $startsAt)
+                    ->where('ends_at', '<', $endsAt);
+            })
+            ->doesntExist();
     }
 }
