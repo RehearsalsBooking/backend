@@ -17,23 +17,11 @@ class RouteServiceProvider extends ServiceProvider
     protected $namespace = 'App\Http\Controllers';
 
     /**
-     * Define your route model bindings, pattern filters, etc.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        //
-
-        parent::boot();
-    }
-
-    /**
      * Define the routes for the application.
      *
      * @return void
      */
-    public function map()
+    public function map(): void
     {
         $this->mapApiRoutes();
 
@@ -46,14 +34,12 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function mapApiRoutes()
+    protected function mapApiRoutes(): void
     {
         Route::middleware('api')
-            ->namespace('App\Http\Controllers\Users')
             ->group(base_path('routes/users/api.php'));
 
         Route::middleware('api')
-            ->namespace('App\Http\Controllers')
             ->group(base_path('routes/auth.php'));
     }
 }
