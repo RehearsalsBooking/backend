@@ -7,11 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class OrganizationResource
+ * Class OrganizationDetailResource
  * @package App\Http\Resources\Users
  * @mixin Organization
  */
-class OrganizationResource extends JsonResource
+class OrganizationDetailResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -25,6 +25,10 @@ class OrganizationResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'address' => $this->address,
+            'description' => $this->description,
+            'opens_at' => $this->opens_at ?? null,
+            'closes_at' => $this->closes_at ?? null,
+            'owner' => new UserResource($this->owner)
         ];
     }
 }
