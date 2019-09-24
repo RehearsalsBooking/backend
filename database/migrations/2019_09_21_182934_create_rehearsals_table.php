@@ -17,6 +17,7 @@ class CreateRehearsalsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('organization_id')->references('id')->on('organizations');
             $table->unsignedBigInteger('user_id')->references('id')->on('users');
+            $table->boolean('is_confirmed')->default(false);
             $table->dateTime('starts_at');
             $table->dateTime('ends_at');
             $table->timestamps();

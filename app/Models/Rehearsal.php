@@ -34,6 +34,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Rehearsal whereUserId($value)
  * @mixin Eloquent
  * @method static Builder|Rehearsal filter(FilterRequest $filters)
+ * @property bool $is_confirmed
+ * @method static Builder|Rehearsal whereIsConfirmed($value)
  */
 class Rehearsal extends Model
 {
@@ -46,6 +48,10 @@ class Rehearsal extends Model
         'ends_at',
         'created_at',
         'updated_at'
+    ];
+
+    protected $casts = [
+        'is_confirmed' => 'boolean'
     ];
 
     /**

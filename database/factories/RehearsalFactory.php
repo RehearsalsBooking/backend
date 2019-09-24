@@ -30,6 +30,7 @@ $factory->define(Rehearsal::class, static function (Faker $faker) {
             return factory(User::class)->create()->id;
         },
 
+        'is_confirmed' => true,
         'starts_at' => $startsAt,
         'ends_at' => $endsAt
     ];

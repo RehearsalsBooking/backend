@@ -45,6 +45,8 @@ use Illuminate\Support\Carbon;
  * @property int|null $closes_at
  * @method static Builder|Organization whereClosesAt($value)
  * @method static Builder|Organization whereOpensAt($value)
+ * @property bool $active
+ * @method static Builder|Organization whereActive($value)
  */
 class Organization extends Model
 {

@@ -48,6 +48,7 @@ class CreateRehearsalRequest extends FormRequest
             'starts_at' => $this->get('starts_at'),
             'ends_at' => $this->get('ends_at'),
             'user_id' => auth()->id(),
+            'is_confirmed' => false
         ];
     }
 }
