@@ -18,7 +18,7 @@ class CreateOrganizationsTable extends Migration
             $table->string('name');
             $table->string('address');
             $table->string('coordinates')->nullable();
-            $table->boolean('active')->default(false);
+            $table->boolean('is_active')->default(false);
             $table->text('description')->nullable();
             $table->string('opens_at')->nullable();
             $table->string('closes_at')->nullable();

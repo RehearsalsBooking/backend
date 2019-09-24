@@ -20,6 +20,6 @@ class OnlyActiveScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        $builder->where('active', true);
+        $builder->where('is_active', true);
     }
 }

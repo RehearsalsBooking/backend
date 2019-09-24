@@ -12,7 +12,7 @@ $factory->define(Organization::class, static function (Faker $faker) {
         'name' => $faker->word,
         'address' => $faker->address,
         'description' => $faker->paragraph,
-        'active' => true,
+        'is_active' => true,
         'owner_id' => static function () {
             return factory(User::class)->create()->id;
         }

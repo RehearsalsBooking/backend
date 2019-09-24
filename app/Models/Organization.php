@@ -45,11 +45,14 @@ use Illuminate\Support\Carbon;
  * @property int|null $closes_at
  * @method static Builder|Organization whereClosesAt($value)
  * @method static Builder|Organization whereOpensAt($value)
- * @property bool $active
- * @method static Builder|Organization whereActive($value)
+ * @property bool $is_active
+ * @method static Builder|Organization whereIsActive($value)
  */
 class Organization extends Model
 {
+    protected $casts = [
+        'is_active' => 'boolean'
+    ];
 
     protected static function boot(): void
     {

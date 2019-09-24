@@ -63,12 +63,12 @@ class OrganizationsTest extends TestCase
         $numberOfActiveOrganizations = 3;
         $numberOfInactiveOrganizations = 2;
 
-        factory(Organization::class, $numberOfActiveOrganizations)->create([
-            'active' => true,
+        $activeOrganizations = factory(Organization::class, $numberOfActiveOrganizations)->create([
+            'is_active' => true,
         ]);
 
         factory(Organization::class, $numberOfInactiveOrganizations)->create([
-            'active' => false,
+            'is_active' => false,
         ]);
 
         $this->assertEquals(
@@ -84,7 +84,7 @@ class OrganizationsTest extends TestCase
 
         $this->assertCount($numberOfActiveOrganizations, $data);
         $this->assertEquals(
-            OrganizationResource::collection(Organization::get())->toArray(null),
+            OrganizationResource::collection($activeOrganizations)->toArray(null),
             $data
         );
     }
