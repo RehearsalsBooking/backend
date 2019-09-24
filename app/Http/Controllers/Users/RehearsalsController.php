@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Requests\Users\CreateRehearsalRequest;
 use App\Http\Resources\Users\RehearsalResource;
-use App\Models\Filters\RehearsalsFilter;
+use App\Models\Filters\RehearsalsFilterRequest;
 use App\Models\Organization;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -14,11 +14,11 @@ use Illuminate\Http\Response;
 class RehearsalsController extends Controller
 {
     /**
-     * @param RehearsalsFilter $filter
+     * @param RehearsalsFilterRequest $filter
      * @param Organization $organization
      * @return AnonymousResourceCollection
      */
-    public function index(RehearsalsFilter $filter, Organization $organization): AnonymousResourceCollection
+    public function index(RehearsalsFilterRequest $filter, Organization $organization): AnonymousResourceCollection
     {
         $rehearsals = $organization
             ->rehearsals()

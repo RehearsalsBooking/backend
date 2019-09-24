@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Filters\Filter;
+use App\Models\Filters\FilterRequest;
 use App\Models\Filters\Filterable;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -33,7 +33,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Rehearsal whereUpdatedAt($value)
  * @method static Builder|Rehearsal whereUserId($value)
  * @mixin Eloquent
- * @method static Builder|Rehearsal filter(Filter $filters)
+ * @method static Builder|Rehearsal filter(FilterRequest $filters)
  */
 class Rehearsal extends Model
 {

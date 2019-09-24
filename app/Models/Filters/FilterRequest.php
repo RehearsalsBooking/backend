@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
  * @property Builder $builder
  * @property array $filters
  */
-abstract class Filter
+abstract class FilterRequest
 {
     public $request;
     protected $builder;

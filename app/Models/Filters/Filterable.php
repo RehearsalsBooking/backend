@@ -9,10 +9,10 @@ trait Filterable
 {
     /**
      * @param Builder $query
-     * @param Filter $filters
+     * @param FilterRequest $filters
      * @return Builder
      */
-    public function scopeFilter(Builder $query, Filter $filters): Builder
+    public function scopeFilter(Builder $query, FilterRequest $filters): Builder
     {
         return $filters->apply($query);
     }

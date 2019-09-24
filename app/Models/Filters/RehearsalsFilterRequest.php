@@ -2,7 +2,7 @@
 
 namespace App\Models\Filters;
 
-class RehearsalsFilter extends Filter
+class RehearsalsFilterRequest extends FilterRequest
 {
     public $filters = [
         'from',
