@@ -18,9 +18,7 @@ class OrganizationsTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $numberOfOrganizations = 5;
-        factory(Organization::class, $numberOfOrganizations)->create([
-            'verified' => true
-        ]);
+        factory(Organization::class, $numberOfOrganizations)->create();
 
         $this->assertCount($numberOfOrganizations, Organization::all());
 
@@ -62,17 +60,21 @@ class OrganizationsTest extends TestCase
     /** @test */
     public function users_can_see_only_verified_organizations(): void
     {
-        $numberOfVerifiedOrganizations = 3;
+        $numberOfActiveOrganizations = 3;
+        $numberOfInactiveOrganizations = 2;
 
-        factory(Organization::class, $numberOfVerifiedOrganizations)->create([
-            'verified' => true,
+        factory(Organization::class, $numberOfActiveOrganizations)->create([
+            'active' => true,
         ]);
 
-        factory(Organization::class, 2)->create([
-            'verified' => false,
+        factory(Organization::class, $numberOfInactiveOrganizations)->create([
+            'active' => false,
         ]);
 
-        $this->assertCount(5, Organization::all());
+        $this->assertEquals(
+            $numberOfInactiveOrganizations + $numberOfActiveOrganizations,
+            Organization::withoutGlobalScopes()->count()
+        );
 
         $response = $this->get(route('organizations.list'));
 
@@ -80,9 +82,9 @@ class OrganizationsTest extends TestCase
 
         $data = $response->json('data');
 
-        $this->assertCount($numberOfVerifiedOrganizations, $data);
+        $this->assertCount($numberOfActiveOrganizations, $data);
         $this->assertEquals(
-            OrganizationResource::collection(Organization::verified()->get())->toArray(null),
+            OrganizationResource::collection(Organization::get())->toArray(null),
             $data
         );
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\GlobalScopes\OnlyActiveScope;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -47,6 +48,13 @@ use Illuminate\Support\Carbon;
  */
 class Organization extends Model
 {
+
+    protected static function boot(): void
+    {
+        parent::boot();
+        static::addGlobalScope(new OnlyActiveScope);
+    }
+
     /**
      * Filters query by only verified organizations
      *

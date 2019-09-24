@@ -15,7 +15,7 @@ class OrganizationsController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        return OrganizationResource::collection(Organization::verified()->paginate());
+        return OrganizationResource::collection(Organization::paginate());
     }
 
     /**
