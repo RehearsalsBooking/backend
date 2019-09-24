@@ -26,6 +26,7 @@ class CreateRehearsalRequest extends FormRequest
                 'bail',
                 'required',
                 'date',
+                'after:now',
                 new AfterTimeWhenOrganizationIsOpened($organization)
             ],
             'ends_at' => [

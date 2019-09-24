@@ -48,7 +48,7 @@ class RehearsalsTest extends TestCase
 
         $this->assertEquals(0, Rehearsal::count());
 
-        $rehearsalStart = $this->generateRandomDate();
+        $rehearsalStart = Carbon::now()->addHour();
 
         /**
          * @var $rehearsalEnd Carbon
@@ -68,8 +68,8 @@ class RehearsalsTest extends TestCase
         $this->assertEquals(1, Rehearsal::count());
 
         $createdRehearsal = Rehearsal::first();
-        $this->assertEquals($rehearsalStart, $createdRehearsal->starts_at);
-        $this->assertEquals($rehearsalEnd, $createdRehearsal->ends_at);
+        $this->assertEquals($rehearsalStart, $createdRehearsal->starts_at->toDateTimeString());
+        $this->assertEquals($rehearsalEnd, $createdRehearsal->ends_at->toDateTimeString());
         $this->assertEquals($user->id, $createdRehearsal->user->id);
         $this->assertEquals($organization->id, $createdRehearsal->organization->id);
         $this->assertEquals(

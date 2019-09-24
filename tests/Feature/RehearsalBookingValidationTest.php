@@ -240,6 +240,14 @@ class RehearsalBookingValidationTest extends TestCase
                     ],
                     'ends_at'
                 ],
+
+                [
+                    [
+                        'starts_at' => $date->subHour()->toDateTimeString(),
+                        'ends_at' => $date->addHour()->toDateTimeString(),
+                    ],
+                    'starts_at'
+                ],
             ];
     }
 
@@ -292,6 +300,6 @@ class RehearsalBookingValidationTest extends TestCase
      */
     protected function getDateTimeAt($hour, $minute): string
     {
-        return Carbon::now()->setHour($hour)->setMinute($minute)->setSeconds(0)->toDateTimeString();
+        return Carbon::now()->addDay()->setHour($hour)->setMinute($minute)->setSeconds(0)->toDateTimeString();
     }
 }
