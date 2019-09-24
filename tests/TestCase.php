@@ -41,4 +41,14 @@ abstract class TestCase extends BaseTestCase
             $this->faker->numberBetween(8, 20)
         );
     }
+
+    /**
+     * @param $hour
+     * @param $minute
+     * @return string
+     */
+    protected function getDateTimeAt($hour, $minute): string
+    {
+        return Carbon::now()->addDay()->setHour($hour)->setMinute($minute)->setSeconds(0)->toDateTimeString();
+    }
 }

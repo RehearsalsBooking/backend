@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Filters\Filter;
+use App\Models\Filters\Filterable;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -31,9 +33,12 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Rehearsal whereUpdatedAt($value)
  * @method static Builder|Rehearsal whereUserId($value)
  * @mixin Eloquent
+ * @method static Builder|Rehearsal filter(Filter $filters)
  */
 class Rehearsal extends Model
 {
+    use Filterable;
+
     protected $guarded = ['id'];
 
     protected $dates = [
