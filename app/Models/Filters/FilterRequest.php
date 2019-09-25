@@ -23,13 +23,8 @@ abstract class FilterRequest
 
     public function __construct(Request $request)
     {
-        $request->validate($this->rules());
+        $request->validate($this->filters);
         $this->request = $request;
-    }
-
-    protected function rules(): array
-    {
-        return [];
     }
 
     /**
@@ -56,6 +51,6 @@ abstract class FilterRequest
      */
     protected function getFilters(): array
     {
-        return $this->request->only($this->filters);
+        return $this->request->only(array_keys($this->filters));
     }
 }

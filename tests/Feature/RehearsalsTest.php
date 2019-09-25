@@ -98,11 +98,15 @@ class RehearsalsTest extends TestCase
     public function it_responds_with_422_when_user_provided_invalid_data_for_filter($data, $invalidKey): void
     {
         $organization = $this->createOrganization();
-        $this->json(
+        $response = $this->json(
             'get',
             route('organizations.rehearsals.list', $organization->id),
             $data
-        )->assertJsonValidationErrors($invalidKey);
+        );
+
+        $response
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors($invalidKey);
     }
 
     /**

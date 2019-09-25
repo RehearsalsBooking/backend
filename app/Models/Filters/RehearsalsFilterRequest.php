@@ -5,17 +5,9 @@ namespace App\Models\Filters;
 class RehearsalsFilterRequest extends FilterRequest
 {
     public $filters = [
-        'from',
-        'to'
+        'from' => 'sometimes|date',
+        'to' => 'sometimes|date|after:from'
     ];
-
-    protected function rules(): array
-    {
-        return [
-            'from' => 'sometimes|date',
-            'to' => 'sometimes|date|after:from'
-        ];
-    }
 
     /**
      * @param string $date
