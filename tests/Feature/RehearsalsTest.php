@@ -140,6 +140,7 @@ class RehearsalsTest extends TestCase
     /** @test */
     public function it_responds_with_404_when_client_provided_unknown_organization(): void
     {
+        $this->assertEquals(0, Rehearsal::count());
         $this->get(route('organizations.rehearsals.list', 10000))->assertStatus(Response::HTTP_NOT_FOUND);
         $this->get(route('organizations.rehearsals.list', 'asd'))->assertStatus(Response::HTTP_NOT_FOUND);
     }

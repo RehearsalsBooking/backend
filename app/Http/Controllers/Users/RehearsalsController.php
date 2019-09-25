@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Requests\Users\CreateRehearsalRequest;
+use App\Http\Requests\Users\RehearsalDeleteRequest;
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Filters\RehearsalsFilterRequest;
 use App\Models\Organization;
 use App\Http\Controllers\Controller;
+use App\Models\Rehearsal;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -46,5 +50,20 @@ class RehearsalsController extends Controller
         $rehearsal = $organization->rehearsals()->create($request->getAttributes());
 
         return new RehearsalResource($rehearsal);
+    }
+
+    /**
+     * @param Rehearsal $rehearsal
+     * @return JsonResponse
+     * @throws AuthorizationException
+     * @throws Exception
+     */
+    public function delete(Rehearsal $rehearsal): JsonResponse
+    {
+        $this->authorize('delete', $rehearsal);
+
+        $rehearsal->delete();
+
+        return response()->json('rehearsal successfully deleted');
     }
 }

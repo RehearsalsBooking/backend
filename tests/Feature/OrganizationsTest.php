@@ -53,6 +53,7 @@ class OrganizationsTest extends TestCase
     /** @test */
     public function it_responds_with_404_when_user_fetches_organization_with_unknown_id(): void
     {
+        $this->assertEquals(0, Organization::count());
         $this->get(route('organizations.show', 1000))->assertStatus(Response::HTTP_NOT_FOUND);
         $this->get(route('organizations.show', 'asd'))->assertStatus(Response::HTTP_NOT_FOUND);
     }
