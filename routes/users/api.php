@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\RehearsalsController;
 
@@ -24,4 +25,9 @@ Route::middleware('auth:api')->prefix('rehearsals')->name('rehearsals.')->group(
     Route::delete('{rehearsal}', [RehearsalsController::class, 'delete'])
         ->where('rehearsal', '[0-9]+')
         ->name('delete');
+});
+
+Route::middleware('auth:api')->prefix('bands')->name('bands.')->group(static function () {
+    Route::post('/', [BandsController::class, 'create'])
+        ->name('create');
 });
