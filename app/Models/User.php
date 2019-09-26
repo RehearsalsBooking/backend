@@ -42,6 +42,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property-read int|null $notifications_count
  * @property-read int|null $organizations_count
  * @method static Builder|User whereType($value)
+ * @property-read Collection|Band[] $bands
+ * @property-read int|null $bands_count
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -52,8 +54,6 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = [
@@ -61,8 +61,6 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
-     *
      * @var array
      */
     protected $hidden = [
@@ -70,13 +68,16 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     /**
-     * Returns collection of organizations owned by user
-     *
      * @return HasMany
      */
     public function organizations(): HasMany
     {
         return $this->hasMany(Organization::class, 'owner_id');
+    }
+
+    public function bands()
+    {
+        return $this->hasMany(Band::class, 'admin_id');
     }
 
     /**
