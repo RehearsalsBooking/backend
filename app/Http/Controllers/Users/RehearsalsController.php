@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Users;
 use App\Http\Requests\Users\CreateRehearsalRequest;
 use App\Http\Requests\Users\RehearsalDeleteRequest;
 use App\Http\Resources\Users\RehearsalResource;
-use App\Models\Filters\RehearsalsFilterRequest;
+use App\Filters\RehearsalsFilterRequest;
 use App\Models\Organization;
 use App\Http\Controllers\Controller;
 use App\Models\Rehearsal;

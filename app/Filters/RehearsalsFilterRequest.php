@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Filters;
+namespace App\Filters;
 
 class RehearsalsFilterRequest extends FilterRequest
 {
