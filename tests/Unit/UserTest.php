@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Band;
 use App\Models\Organization;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -36,10 +37,42 @@ class UserTest extends TestCase
             'admin_id' => $user->id
         ]);
 
-        $this->assertEquals($numberOfUsersBands, $user->bands()->count());
+        $this->assertEquals($numberOfUsersBands, $user->createdBands()->count());
         $this->assertEquals(
             $usersBands->toArray(),
-            $user->bands->toArray()
+            $user->createdBands->toArray()
+        );
+    }
+
+    /** @test */
+    public function users_can_participate_in_multiple_bands(): void
+    {
+        $drummer = $this->createUser();
+        $guitarist = $this->createUser();
+
+        /** @var Band $rockBand */
+        $rockBand = factory(Band::class)->create();
+
+        /** @var Band $rapBand */
+        $rapBand = factory(Band::class)->create();
+
+        /** @var Band $rapBand */
+        $popBand = factory(Band::class)->create();
+
+        $drummersBands = collect([$rockBand, $rapBand, $popBand]);
+        $guitaristsBands = collect([$rockBand, $popBand]);
+
+        $drummer->bands()->attach($drummersBands->pluck('id'));
+        $guitarist->bands()->attach($guitaristsBands->pluck('id'));
+
+        $this->assertEquals(
+            $drummersBands->pluck('id'),
+            $drummer->bands->pluck('id')
+        );
+
+        $this->assertEquals(
+            $guitaristsBands->pluck('id'),
+            $guitarist->bands->pluck('id')
         );
     }
 }

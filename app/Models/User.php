@@ -5,6 +5,7 @@ namespace App\Models;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -42,14 +43,15 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property-read int|null $notifications_count
  * @property-read int|null $organizations_count
  * @method static Builder|User whereType($value)
+ * @property-read Collection|Band[] $createdBands
+ * @property-read int|null $createdBands_count
  * @property-read Collection|Band[] $bands
  * @property-read int|null $bands_count
+ * @property-read int|null $created_bands_count
  */
 class User extends Authenticatable implements JWTSubject
 {
     public const TYPE_USER = 1;
-    public const TYPE_OWNER = 2;
-    public const TYPE_ADMIN = 3;
 
     use Notifiable;
 
@@ -75,10 +77,26 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Organization::class, 'owner_id');
     }
 
-    public function bands()
+    /**
+     * Bands that user is admin of
+     *
+     * @return HasMany
+     */
+    public function createdBands(): HasMany
     {
         return $this->hasMany(Band::class, 'admin_id');
     }
+
+    /**
+     * Bands that user is member of
+     *
+     * @return BelongsToMany
+     */
+    public function bands(): BelongsToMany
+    {
+        return $this->belongsToMany(Band::class);
+    }
+
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

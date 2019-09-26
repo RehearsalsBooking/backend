@@ -26,6 +26,35 @@ class BandsTest extends TestCase
             $bandAdmin->toArray(),
             $band->admin->toArray()
         );
+    }
 
+    /** @test */
+    public function band_has_multiple_members(): void
+    {
+        $drummer = $this->createUser();
+        $guitarist = $this->createUser();
+        $vocalist = $this->createUser();
+
+        /** @var Band $rockBand */
+        $rockBand = factory(Band::class)->create();
+
+        /** @var Band $rapBand */
+        $rapBand = factory(Band::class)->create();
+
+        $rockBandMembers = collect([$drummer, $guitarist, $vocalist]);
+        $rapBandMembers = collect([$drummer, $vocalist]);
+
+        $rockBand->members()->attach($rockBandMembers->pluck('id')->toArray());
+        $rapBand->members()->attach($rapBandMembers->pluck('id')->toArray());
+
+        $this->assertEquals(
+            $rockBandMembers->pluck('id'),
+            $rockBand->members->pluck('id')
+        );
+
+        $this->assertEquals(
+            $rapBandMembers->pluck('id'),
+            $rapBand->members->pluck('id')
+        );
     }
 }

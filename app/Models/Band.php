@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -26,6 +28,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Band whereName($value)
  * @method static Builder|Band whereUpdatedAt($value)
  * @mixin Eloquent
+ * @property-read Collection|User[] $members
+ * @property-read int|null $members_count
  */
 class Band extends Model
 {
@@ -39,5 +43,13 @@ class Band extends Model
     public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
     }
 }
