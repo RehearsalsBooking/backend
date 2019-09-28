@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Organizations;
 
 use App\Models\Organization;
 use App\Models\Rehearsal;

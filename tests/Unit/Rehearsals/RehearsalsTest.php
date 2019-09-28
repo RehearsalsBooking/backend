@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Rehearsals;
 
 use App\Models\Organization;
 use App\Models\Rehearsal;
@@ -13,7 +13,7 @@ class RehearsalsTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function rehearsal_has_organization(): void
+    public function rehearsal_has_one_organization(): void
     {
         $organization = $this->createOrganization();
 
@@ -23,7 +23,7 @@ class RehearsalsTest extends TestCase
     }
 
     /** @test */
-    public function rehearsal_has_user(): void
+    public function rehearsal_has_user_who_booked_this_rehearsal(): void
     {
         $user = $this->createUser();
         $rehearsal = factory(Rehearsal::class)->create(['user_id' => $user->id]);

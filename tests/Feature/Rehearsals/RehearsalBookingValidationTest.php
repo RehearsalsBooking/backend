@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Rehearsals;
 
 use App\Models\Rehearsal;
 use Carbon\Carbon;
@@ -68,9 +68,7 @@ class RehearsalBookingValidationTest extends TestCase
         $response->assertJsonValidationErrors($keyWithError);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function it_responds_with_validation_error_when_user_selected_unavailable_time(): void
     {
         $this->actingAs($this->createUser());

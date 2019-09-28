@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Rehearsals;
 
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;

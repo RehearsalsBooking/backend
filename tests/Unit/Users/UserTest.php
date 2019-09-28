@@ -1,11 +1,10 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Users;
 
 use App\Models\Band;
 use App\Models\Organization;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -14,7 +13,7 @@ class UserTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function user_may_have_organizations(): void
+    public function user_can_have_organizations(): void
     {
         $user = $this->createUser();
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Rehearsals;
 
 use App\Models\Rehearsal;
 use App\Models\User;

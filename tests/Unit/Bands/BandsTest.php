@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Bands;
 
 use App\Models\Band;
 use App\Models\User;

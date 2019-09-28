@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Bands;
 
 use App\Http\Resources\Users\BandResource;
 use App\Models\Band;
@@ -8,7 +8,7 @@ use Illuminate\Http\Response;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class BandsTest extends TestCase
+class BandsRegistrationTest extends TestCase
 {
     use RefreshDatabase;
 

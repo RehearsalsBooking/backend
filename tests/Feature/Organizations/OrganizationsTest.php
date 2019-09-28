@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Organizations;
 
 use App\Http\Resources\Users\OrganizationDetailResource;
 use App\Http\Resources\Users\OrganizationResource;
@@ -59,7 +59,7 @@ class OrganizationsTest extends TestCase
     }
 
     /** @test */
-    public function users_can_see_only_verified_organizations(): void
+    public function users_can_see_only_active_organizations(): void
     {
         $numberOfActiveOrganizations = 3;
         $numberOfInactiveOrganizations = 2;
