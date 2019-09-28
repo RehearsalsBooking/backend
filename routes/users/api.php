@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\OrganizationsController;
+use App\Http\Controllers\Users\OrganizationRehearsalsController;
 use App\Http\Controllers\Users\RehearsalsController;
 
 Route::name('organizations.')->prefix('organizations')->group(static function () {
@@ -11,11 +12,11 @@ Route::name('organizations.')->prefix('organizations')->group(static function ()
         ->where('organization', '[0-9]+')
         ->name('show');
 
-    Route::get('/{organization}/rehearsals', [RehearsalsController::class, 'index'])
+    Route::get('/{organization}/rehearsals', [OrganizationRehearsalsController::class, 'index'])
         ->where('organization', '[0-9]+')
         ->name('rehearsals.list');
 
-    Route::post('/{organization}/rehearsals', [RehearsalsController::class, 'create'])
+    Route::post('/{organization}/rehearsals', [OrganizationRehearsalsController::class, 'create'])
         ->where('organization', '[0-9]+')
         ->name('rehearsals.create')
         ->middleware('auth:api');
