@@ -12,14 +12,11 @@ class RehearsalBookingValidationTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function unauthorized_user_cannot_book_a_rehearsal(): void
+    protected function setUp(): void
     {
-        $organization = $this->createOrganization();
+        parent::setUp();
 
-        $response = $this->json('post', route('organizations.rehearsals.create', $organization->id));
-
-        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $this->actingAs($this->createUser());
     }
 
     /**
@@ -30,8 +27,6 @@ class RehearsalBookingValidationTest extends TestCase
      */
     public function it_responds_with_validation_error_when_user_provided_invalid_parameters($data, $keyWithError): void
     {
-        $this->actingAs($this->createUser());
-
         $organization = $this->createOrganization([
             'opens_at' => '08:00',
             'closes_at' => '22:00',
@@ -46,6 +41,34 @@ class RehearsalBookingValidationTest extends TestCase
         $response->assertJsonValidationErrors($keyWithError);
     }
 
+    /** @test */
+    public function it_responds_with_404_when_user_provided_unknown_organization_in_uri(): void
+    {
+        $this->json('post', route('organizations.rehearsals.create', 10000))
+            ->assertStatus(Response::HTTP_NOT_FOUND);
+        $this->json('post', route('organizations.rehearsals.create', 'asd'))
+            ->assertStatus(Response::HTTP_NOT_FOUND);
+
+    }
+
+    /** @test */
+    public function it_responds_with_validation_error_when_user_provided_unknown_band_id(): void
+    {
+        $organization = $this->createOrganization([
+            'opens_at' => '8:00',
+            'closes_at' => '22:00'
+        ]);
+
+        $this->json('post', route('organizations.rehearsals.create', $organization->id), [
+            'band_id' => 10000,
+            'starts_at' => $this->getDateTimeAt(12, 00),
+            'ends_at' => $this->getDateTimeAt(13, 00)
+        ])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('band_id');
+
+    }
+
     /**
      * @test
      * @dataProvider getDataOutOfBoundariesOfOrganizationWorkingDay
@@ -55,8 +78,6 @@ class RehearsalBookingValidationTest extends TestCase
      */
     public function it_responds_with_validation_error_when_user_provided_time_when_organization_is_closed($organizationWorkingHours, $data, $keyWithError): void
     {
-        $this->actingAs($this->createUser());
-
         $organization = $this->createOrganization($organizationWorkingHours);
 
         $response = $this->json(
@@ -71,8 +92,6 @@ class RehearsalBookingValidationTest extends TestCase
     /** @test */
     public function it_responds_with_validation_error_when_user_selected_unavailable_time(): void
     {
-        $this->actingAs($this->createUser());
-
         $organization = $this->createOrganization([
             'opens_at' => '06:00',
             'closes_at' => '22:00',

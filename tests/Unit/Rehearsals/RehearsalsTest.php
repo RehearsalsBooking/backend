@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Rehearsals;
 
+use App\Models\Band;
 use App\Models\Organization;
 use App\Models\Rehearsal;
 use App\Models\User;
@@ -29,5 +30,29 @@ class RehearsalsTest extends TestCase
         $rehearsal = factory(Rehearsal::class)->create(['user_id' => $user->id]);
 
         $this->assertInstanceOf(User::class, $rehearsal->user);
+    }
+
+    /** @test */
+    public function rehearsal_can_be_booked_by_band(): void
+    {
+        $user = $this->createUser();
+        $band = $this->createBandForUser($user);
+
+        /** @var Rehearsal $rehearsal */
+        $rehearsal = factory(Rehearsal::class)->create([
+            'user_id' => $user->id,
+            'band_id' => $band->id,
+        ]);
+
+        $this->assertInstanceOf(
+            Band::class,
+            $rehearsal->band
+        );
+
+        $this->assertEquals(
+            $band->toArray(),
+            $rehearsal->band->toArray()
+        );
+
     }
 }

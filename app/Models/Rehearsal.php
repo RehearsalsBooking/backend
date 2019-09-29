@@ -36,6 +36,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Rehearsal filter(FilterRequest $filters)
  * @property bool $is_confirmed
  * @method static Builder|Rehearsal whereIsConfirmed($value)
+ * @property int|null $band_id
+ * @property-read Band|null $band
+ * @method static Builder|Rehearsal whereBandId($value)
  */
 class Rehearsal extends Model
 {
@@ -68,5 +71,13 @@ class Rehearsal extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function band(): BelongsTo
+    {
+        return $this->belongsTo(Band::class);
     }
 }

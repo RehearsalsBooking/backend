@@ -3,6 +3,7 @@
 namespace Tests\Unit\Bands;
 
 use App\Models\Band;
+use App\Models\Rehearsal;
 use App\Models\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,10 +17,7 @@ class BandsTest extends TestCase
     {
         $bandAdmin = $this->createUser();
 
-        /** @var Band $band */
-        $band = factory(Band::class)->create([
-            'admin_id' => $bandAdmin->id
-        ]);
+        $band = $this->createBandForUser($bandAdmin);
 
         $this->assertInstanceOf(User::class, $band->admin);
         $this->assertEquals(
@@ -29,7 +27,7 @@ class BandsTest extends TestCase
     }
 
     /** @test */
-    public function band_has_multiple_members(): void
+    public function band_has_members(): void
     {
         $drummer = $this->createUser();
         $guitarist = $this->createUser();
@@ -55,6 +53,28 @@ class BandsTest extends TestCase
         $this->assertEquals(
             $rapBandMembers->pluck('id'),
             $rapBand->members->pluck('id')
+        );
+    }
+
+    /** @test */
+    public function band_has_rehearsals(): void
+    {
+        $band = $this->createBandForUser($this->createUser());
+
+        $bandRehearsalsCount = 5;
+
+        $bandRehearsals = factory(Rehearsal::class, $bandRehearsalsCount)->create([
+            'band_id' => $band->id
+        ]);
+
+        $this->assertEquals(
+            $bandRehearsalsCount,
+            $band->rehearsals()->count()
+        );
+
+        $this->assertEquals(
+            $bandRehearsals->toArray(),
+            $band->rehearsals->toArray()
         );
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -30,6 +31,8 @@ use Illuminate\Support\Carbon;
  * @mixin Eloquent
  * @property-read Collection|User[] $members
  * @property-read int|null $members_count
+ * @property-read Collection|Rehearsal[] $rehearsals
+ * @property-read int|null $rehearsals_count
  */
 class Band extends Model
 {
@@ -51,5 +54,13 @@ class Band extends Model
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function rehearsals(): HasMany
+    {
+        return $this->hasMany(Rehearsal::class);
     }
 }

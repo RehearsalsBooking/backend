@@ -23,6 +23,7 @@ class RehearsalResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'band_id' => new BandResource($this->band),
             'user' => new UserResource($this->user),
             'starts_at' => $this->starts_at->toDateTimeString(),
             'ends_at' => $this->ends_at->toDateTimeString(),

@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Models\Band;
 use App\Models\Organization;
 use App\Models\User;
 use Carbon\Carbon;
@@ -50,5 +51,16 @@ abstract class TestCase extends BaseTestCase
     protected function getDateTimeAt($hour, $minute): string
     {
         return Carbon::now()->addDay()->setHour($hour)->setMinute($minute)->setSeconds(0)->toDateTimeString();
+    }
+
+    /**
+     * @param User $user
+     * @return Band
+     */
+    protected function createBandForUser(User $user): Band
+    {
+        return factory(Band::class)->create([
+            'admin_id' => $user->id
+        ]);
     }
 }
