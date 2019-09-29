@@ -25,10 +25,15 @@ Route::name('organizations.')->prefix('organizations')->group(static function ()
 Route::middleware('auth:api')->prefix('rehearsals')->name('rehearsals.')->group(static function () {
     Route::delete('{rehearsal}', [RehearsalsController::class, 'delete'])
         ->where('rehearsal', '[0-9]+')
+        ->middleware('can:delete,rehearsal')
         ->name('delete');
 });
 
 Route::middleware('auth:api')->prefix('bands')->name('bands.')->group(static function () {
     Route::post('/', [BandsController::class, 'create'])
         ->name('create');
+
+    Route::put('/{band}', [BandsController::class, 'update'])
+        ->middleware('can:update,band')
+        ->name('update');
 });
