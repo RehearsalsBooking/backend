@@ -25,7 +25,7 @@
     "nunomaduro/collision": "^2.0",
     "phpunit/phpunit": "^7.0",
     "roave/security-advisories": "dev-master",
-      "ext-json": "*"
+    "ext-json": "*"
   },
   "config": {
     "optimize-autoloader": true,
@@ -67,7 +67,8 @@
     "post-update-cmd": [
       "Illuminate\\Foundation\\ComposerScripts::postUpdate",
       "php artisan ide-helper:generate",
-      "php artisan ide-helper:meta"
+      "php artisan ide-helper:meta",
+      "php artisan ide-helper:models -N"
     ]
   }
 }
