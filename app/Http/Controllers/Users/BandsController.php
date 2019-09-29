@@ -18,6 +18,8 @@ class BandsController extends Controller
     {
         $band = Band::create($request->getAttributes());
 
+        $band->members()->attach(auth()->id());
+
         return new BandResource($band);
     }
 

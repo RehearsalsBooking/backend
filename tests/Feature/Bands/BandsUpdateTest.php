@@ -9,6 +9,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
+/**
+ * Class BandsUpdateTest
+ * @property Band $band
+ * @property User $bandOwner
+ * @package Tests\Feature\Bands
+ */
 class BandsUpdateTest extends TestCase
 {
     use RefreshDatabase;
