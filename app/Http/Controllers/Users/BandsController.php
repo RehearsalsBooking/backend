@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Requests\Users\CreateBandRequest;
-use App\Http\Requests\Users\EditBandRequest;
+use App\Http\Requests\Users\UpdateBandRequest;
 use App\Http\Resources\Users\BandResource;
 use App\Models\Band;
 use App\Http\Controllers\Controller;
@@ -24,11 +24,11 @@ class BandsController extends Controller
     }
 
     /**
-     * @param EditBandRequest $request
+     * @param UpdateBandRequest $request
      * @param Band $band
      * @return BandResource
      */
-    public function update(EditBandRequest $request, Band $band): BandResource
+    public function update(UpdateBandRequest $request, Band $band): BandResource
     {
         $band->update($request->getUpdatedBandAttributes());
 

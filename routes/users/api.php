@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Users\BandMembersController;
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\OrganizationRehearsalsController;
@@ -22,18 +23,23 @@ Route::name('organizations.')->prefix('organizations')->group(static function ()
         ->middleware('auth:api');
 });
 
-Route::middleware('auth:api')->prefix('rehearsals')->name('rehearsals.')->group(static function () {
+Route::name('rehearsals.')->prefix('rehearsals')->middleware('auth:api')->group(static function () {
     Route::delete('{rehearsal}', [RehearsalsController::class, 'delete'])
         ->where('rehearsal', '[0-9]+')
         ->middleware('can:delete,rehearsal')
         ->name('delete');
 });
 
-Route::middleware('auth:api')->prefix('bands')->name('bands.')->group(static function () {
+Route::name('bands.')->prefix('bands')->middleware('auth:api')->group(static function () {
     Route::post('/', [BandsController::class, 'create'])
         ->name('create');
 
     Route::put('/{band}', [BandsController::class, 'update'])
+        ->where('band', '[0-9]+')
         ->middleware('can:update,band')
         ->name('update');
+
+    Route::put('/{band}/members', [BandMembersController::class, 'update'])
+        ->where('band', '[0-9]+')
+        ->name('members.update');
 });

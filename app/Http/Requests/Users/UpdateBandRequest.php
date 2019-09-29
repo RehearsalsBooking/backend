@@ -4,7 +4,7 @@ namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class EditBandRequest extends FormRequest
+class UpdateBandRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.

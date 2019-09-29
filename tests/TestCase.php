@@ -31,6 +31,15 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * @param int $count
+     * @return mixed
+     */
+    protected function createUsers(int $count)
+    {
+        return factory(User::class, $count)->create();
+    }
+
+    /**
      * @return Carbon
      */
     protected function generateRandomDate(): Carbon
