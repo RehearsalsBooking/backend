@@ -94,23 +94,36 @@ class Organization extends Model
     /**
      * @param $startsAt
      * @param $endsAt
+     * @param Rehearsal|null $rehearsal
      * @return bool
      */
-    public function isTimeAvailable($startsAt, $endsAt): bool
+    public function isTimeAvailable($startsAt, $endsAt, Rehearsal $rehearsal = null): bool
     {
-        return $this->rehearsals()
-            ->where(static function (Builder $query) use ($startsAt) {
-                $query->where('starts_at', '<', $startsAt)
-                    ->where('ends_at', '>', $startsAt);
-            })
-            ->orWhere(static function (Builder $query) use ($endsAt) {
-                $query->where('starts_at', '<', $endsAt)
-                    ->where('ends_at', '>', $endsAt);
-            })
-            ->orWhere(static function (Builder $query) use ($endsAt, $startsAt) {
-                $query->where('starts_at', '>', $startsAt)
-                    ->where('ends_at', '<', $endsAt);
-            })
-            ->doesntExist();
+        $query = $this->rehearsals()
+            ->where(static function (Builder $query) use ($endsAt, $startsAt) {
+
+                $query
+                    ->where(static function (Builder $query) use ($startsAt) {
+                        $query->where('starts_at', '<', $startsAt)
+                            ->where('ends_at', '>', $startsAt);
+                    })
+                    ->orWhere(static function (Builder $query) use ($endsAt) {
+                        $query->where('starts_at', '<', $endsAt)
+                            ->where('ends_at', '>', $endsAt);
+                    })
+                    ->orWhere(static function (Builder $query) use ($endsAt, $startsAt) {
+                        $query->where('starts_at', '>', $startsAt)
+                            ->where('ends_at', '<', $endsAt);
+                    });
+
+            });
+
+        // if rehearsal was passed as a parameter, then we want to determine if this rehearsal
+        // is available for reschedule, so we must exclude it from query
+        if ($rehearsal) {
+            $query->where('id', '!=', $rehearsal->id);
+        }
+
+        return $query->doesntExist();
     }
 }

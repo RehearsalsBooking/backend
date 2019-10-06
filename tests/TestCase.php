@@ -4,10 +4,12 @@ namespace Tests;
 
 use App\Models\Band;
 use App\Models\Organization;
+use App\Models\Rehearsal;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Tests\Feature\Rehearsals\RehearsalRescheduleValidationTest;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -70,6 +72,36 @@ abstract class TestCase extends BaseTestCase
     {
         return factory(Band::class)->create([
             'admin_id' => $user->id
+        ]);
+    }
+
+    /**
+     * @param Organization $organization
+     * @param $startsAt
+     * @param $endsAt
+     * @param Band|null $band
+     * @param bool $isConfirmed
+     * @param User|null $user
+     * @return mixed
+     */
+    protected function createRehearsal(
+        ?Organization $organization,
+        $startsAt,
+        $endsAt,
+        Band $band = null,
+        bool $isConfirmed = false,
+        User $user = null
+    ): Rehearsal {
+
+        $user = $user ?? factory(User::class)->create();
+
+        return factory(Rehearsal::class)->create([
+            'starts_at' => $this->getDateTimeAt($startsAt, 00),
+            'ends_at' => $this->getDateTimeAt($endsAt, 00),
+            'organization_id' => optional($organization)->id,
+            'band_id' => optional($band)->id,
+            'is_confirmed' => $isConfirmed,
+            'user_id' => $user->id,
         ]);
     }
 }

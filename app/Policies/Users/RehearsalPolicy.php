@@ -27,6 +27,26 @@ class RehearsalPolicy
     }
 
     /**
+     * Determine whether the user can reschedule the rehearsal.
+     *
+     * User can reschedule rehearsal on behalf of a band only if he is
+     * the admin of that band
+     *
+     * @param User $user
+     * @param Rehearsal $rehearsal
+     * @param Band $band
+     * @return bool
+     */
+    public function reschedule(User $user, Rehearsal $rehearsal, ?Band $band): bool
+    {
+        if (!$band) {
+            return $rehearsal->user_id === $user->id;
+        }
+
+        return $band->admin_id === $user->id;
+    }
+
+    /**
      * Determine whether the user can delete the rehearsal.
      *
      * @param User $user

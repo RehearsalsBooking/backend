@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Rehearsals;
+namespace Tests\Feature\Rehearsals\Booking;
 
 use App\Models\Rehearsal;
 use Carbon\Carbon;
@@ -118,59 +118,43 @@ class RehearsalBookingValidationTest extends TestCase
             'organization_id' => $otherOrganization->id
         ]);
 
-        $this->json(
-            'post',
-            route('organizations.rehearsals.create', $organization->id),
+        $unavailableTime = [
             [
                 'starts_at' => $this->getDateTimeAt(8, 00),
-                'ends_at' => $this->getDateTimeAt(10, 00),
-            ]
-        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $this->json(
-            'post',
-            route('organizations.rehearsals.create', $organization->id),
+                'ends_at' => $this->getDateTimeAt(10, 00)
+            ],
             [
                 'starts_at' => $this->getDateTimeAt(9, 00),
-                'ends_at' => $this->getDateTimeAt(10, 00),
-            ]
-        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $this->json(
-            'post',
-            route('organizations.rehearsals.create', $organization->id),
+                'ends_at' => $this->getDateTimeAt(10, 00)
+            ],
             [
                 'starts_at' => $this->getDateTimeAt(10, 00),
-                'ends_at' => $this->getDateTimeAt(11, 00),
-            ]
-        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $this->json(
-            'post',
-            route('organizations.rehearsals.create', $organization->id),
+                'ends_at' => $this->getDateTimeAt(11, 00)
+            ],
             [
                 'starts_at' => $this->getDateTimeAt(10, 00),
-                'ends_at' => $this->getDateTimeAt(12, 00),
-            ]
-        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $this->json(
-            'post',
-            route('organizations.rehearsals.create', $organization->id),
+                'ends_at' => $this->getDateTimeAt(12, 00)
+            ],
             [
                 'starts_at' => $this->getDateTimeAt(10, 00),
-                'ends_at' => $this->getDateTimeAt(13, 00),
-            ]
-        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        $this->json(
-            'post',
-            route('organizations.rehearsals.create', $organization->id),
+                'ends_at' => $this->getDateTimeAt(13, 00)
+            ],
             [
                 'starts_at' => $this->getDateTimeAt(8, 00),
                 'ends_at' => $this->getDateTimeAt(12, 00),
             ]
-        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        ];
+
+        foreach ($unavailableTime as $rehearsalTime) {
+            $this->json(
+                'post',
+                route('organizations.rehearsals.create', $organization->id),
+                [
+                    'starts_at' => $rehearsalTime['starts_at'],
+                    'ends_at' => $rehearsalTime['ends_at'],
+                ]
+            )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         $this->json(
             'post',
@@ -262,6 +246,14 @@ class RehearsalBookingValidationTest extends TestCase
                     [
                         'starts_at' => $date->subHour()->toDateTimeString(),
                         'ends_at' => $date->addHour()->toDateTimeString(),
+                    ],
+                    'starts_at'
+                ],
+
+                [
+                    [
+                        'starts_at' => $date->subHours(2)->toDateTimeString(),
+                        'ends_at' => $date->subHour()->toDateTimeString(),
                     ],
                     'starts_at'
                 ],

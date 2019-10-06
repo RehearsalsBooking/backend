@@ -21,6 +21,12 @@ Route::name('organizations.')->prefix('organizations')->group(static function ()
         ->where('organization', '[0-9]+')
         ->name('rehearsals.create')
         ->middleware('auth:api');
+
+    Route::put('/{organization}/rehearsals/{rehearsal}', [OrganizationRehearsalsController::class, 'reschedule'])
+        ->where('organization', '[0-9]+')
+        ->where('rehearsal', '[0-9]+')
+        ->name('rehearsals.reschedule')
+        ->middleware('auth:api');
 });
 
 Route::name('rehearsals.')->prefix('rehearsals')->middleware('auth:api')->group(static function () {

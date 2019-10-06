@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Rehearsals;
+namespace Tests\Feature\Rehearsals\Booking;
 
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
@@ -106,7 +106,7 @@ class RehearsalsBookingTest extends TestCase
     }
 
     /** @test */
-    public function when_user_books_rehearsal_its_status_is_set_to_unverified(): void
+    public function when_user_books_rehearsal_its_status_is_set_to_unconfirmed(): void
     {
         $organization = $this->createOrganization();
 
