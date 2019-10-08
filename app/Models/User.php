@@ -48,6 +48,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property-read Collection|Band[] $bands
  * @property-read int|null $bands_count
  * @property-read int|null $created_bands_count
+ * @property-read Collection|Rehearsal[] $rehearsals
+ * @property-read int|null $rehearsals_count
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -97,6 +99,13 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Band::class);
     }
 
+    /**
+     * @return BelongsToMany
+     */
+    public function rehearsals(): BelongsToMany
+    {
+        return $this->belongsToMany(Rehearsal::class);
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

@@ -53,6 +53,24 @@ class RehearsalsTest extends TestCase
             $band->toArray(),
             $rehearsal->band->toArray()
         );
+    }
 
+    /** @test */
+    public function rehearsal_has_many_attendees(): void
+    {
+        $rehearsal = factory(Rehearsal::class)->create();
+
+        $attendeesCount = 5;
+        $attendees = factory(User::class, $attendeesCount)->create()->each(static function ($attendee) use ($rehearsal) {
+            \DB::table('rehearsal_user')
+                ->insert([
+                    'rehearsal_id' => $rehearsal->id,
+                    'user_id' => $attendee->id
+                ]);
+        });
+
+        $this->assertEquals($attendeesCount, $rehearsal->attendees()->count());
+        $this->assertInstanceOf(User::class, $rehearsal->attendees->first());
+        $this->assertEquals($attendees->pluck('id'), $rehearsal->attendees->pluck('id'));
     }
 }

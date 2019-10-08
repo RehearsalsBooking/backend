@@ -4,6 +4,7 @@ namespace Tests\Unit\Users;
 
 use App\Models\Band;
 use App\Models\Organization;
+use App\Models\Rehearsal;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -73,5 +74,25 @@ class UserTest extends TestCase
             $guitaristsBands->pluck('id'),
             $guitarist->bands->pluck('id')
         );
+    }
+
+    /** @test */
+    public function user_can_attend_to_multiple_rehearsals(): void
+    {
+        $user = $this->createUser();
+
+        $attendingRehearsalsCount = 5;
+
+        $rehearsals = factory(Rehearsal::class, $attendingRehearsalsCount)->create()->each(static function ($rehearsal) use ($user) {
+            \DB::table('rehearsal_user')
+                ->insert([
+                    'user_id' => $user->id,
+                    'rehearsal_id' => $rehearsal->id
+                ]);
+        });
+
+        $this->assertEquals($attendingRehearsalsCount, $user->rehearsals()->count());
+        $this->assertInstanceOf(Rehearsal::class, $user->rehearsals->first());
+        $this->assertEquals($rehearsals->pluck('id'), $user->rehearsals->pluck('id'));
     }
 }
