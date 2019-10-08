@@ -20,11 +20,12 @@ class RescheduleRehearsalRequest extends FormRequest
 
         // laravel runs authorization before validation,
         // so we have to check band existence manually
+        //
+        // if band doesnt exist, just return true,
+        // request must fail at validation
+        // TODO: remove duplicated query (custom form request? move this logic into controller? https://github.com/laravel/framework/issues/27808)
+        // TODO: investigate error bag initialization
         if ($bandId && Band::where('id', $bandId)->doesntExist()) {
-            // if band doesnt exist, just return true,
-            // request will fail at validation
-            // TODO: remove duplicated query (custom form request? move this logic into controller? https://github.com/laravel/framework/issues/27808)
-            // TODO: investigate error bag initialization
             return true;
         }
 

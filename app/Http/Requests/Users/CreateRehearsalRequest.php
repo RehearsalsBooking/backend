@@ -18,19 +18,17 @@ class CreateRehearsalRequest extends FormRequest
     {
         $bandId = $this->get('band_id');
 
-        // if we dont have band id parameter,
-        // then user books rehearsal on behalf of himself,
-        // which is always allowed
-        if (!$bandId) {
+        if (!$this->onBehalfOfTheBand()) {
             return true;
         }
 
         //laravel runs authorization before validation,
         //so we have to check band existence manually
+        //
+        // if band doesnt exist, just return true,
+        // request must fail at validation
+        // TODO: remove duplicated query (custom form request? move this logic into controller? https://github.com/laravel/framework/issues/27808)
         if (Band::where('id', $bandId)->doesntExist()) {
-            // if band doesnt exist, just return true,
-            // request will fail at validation
-            // TODO: remove duplicated query (custom form request? move this logic into controller? https://github.com/laravel/framework/issues/27808)
             return true;
         }
 
@@ -86,5 +84,15 @@ class CreateRehearsalRequest extends FormRequest
             'is_confirmed' => false,
             'band_id' => $this->get('band_id')
         ];
+    }
+
+    /**
+     * Determines if request is on behalf of the band
+     *
+     * @return bool
+     */
+    protected function onBehalfOfTheBand(): bool
+    {
+        return $this->has('band_id');
     }
 }
