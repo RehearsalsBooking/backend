@@ -46,7 +46,14 @@ class OrganizationRehearsalsController extends Controller
             return response()->json('Selected time is unavailable', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        /** @var Rehearsal $rehearsal */
         $rehearsal = $organization->rehearsals()->create($request->getAttributes());
+
+        if ($request->onBehalfOfTheBand()) {
+            $rehearsal->registerBandMembersAsAttendees();
+        } else {
+            $rehearsal->registerUserAsAttendee();
+        }
 
         return new RehearsalResource($rehearsal);
     }

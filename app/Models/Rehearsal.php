@@ -92,4 +92,23 @@ class Rehearsal extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    /**
+     *  Adds all of this rehearsals band members as attendees
+     */
+    public function registerBandMembersAsAttendees(): void
+    {
+        if ($this->band) {
+            $bandMembers = $this->band->members;
+            $this->attendees()->sync($bandMembers);
+        }
+    }
+
+    /**
+     *  Adds user who booked this rehearsal as attendee
+     */
+    public function registerUserAsAttendee(): void
+    {
+        $this->attendees()->sync($this->user_id);
+    }
 }

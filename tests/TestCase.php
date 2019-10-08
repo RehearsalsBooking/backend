@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Collection;
 use Tests\Feature\Rehearsals\RehearsalRescheduleValidationTest;
 
 abstract class TestCase extends BaseTestCase
@@ -34,9 +35,9 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * @param int $count
-     * @return mixed
+     * @return Collection
      */
-    protected function createUsers(int $count)
+    protected function createUsers(int $count): Collection
     {
         return factory(User::class, $count)->create();
     }
@@ -92,7 +93,6 @@ abstract class TestCase extends BaseTestCase
         bool $isConfirmed = false,
         User $user = null
     ): Rehearsal {
-
         $user = $user ?? factory(User::class)->create();
 
         return factory(Rehearsal::class)->create([
@@ -103,5 +103,26 @@ abstract class TestCase extends BaseTestCase
             'is_confirmed' => $isConfirmed,
             'user_id' => $user->id,
         ]);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getRehearsalTime(): array
+    {
+        /**
+         * @var $rehearsalStart Carbon
+         */
+        $rehearsalStart = Carbon::now()->addHour();
+
+        /**
+         * @var $rehearsalEnd Carbon
+         */
+        $rehearsalEnd = $rehearsalStart->copy()->addHours(2);
+
+        return [
+            'starts_at' => $rehearsalStart->toDateTimeString(),
+            'ends_at' => $rehearsalEnd->toDateTimeString()
+        ];
     }
 }

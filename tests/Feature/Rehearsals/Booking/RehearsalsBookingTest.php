@@ -14,7 +14,7 @@ class RehearsalsBookingTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function user_can_book_a_rehearsal_on_behalf_of_himself(): void
+    public function user_can_book_individual_rehearsal(): void
     {
         $organization = $this->createOrganization();
         $user = $this->createUser();
@@ -23,22 +23,12 @@ class RehearsalsBookingTest extends TestCase
 
         $this->assertEquals(0, Rehearsal::count());
 
-        /**
-         * @var $rehearsalStart Carbon
-         */
-        $rehearsalStart = Carbon::now()->addHour();
+        $rehearsalTime = $this->getRehearsalTime();
 
-        /**
-         * @var $rehearsalEnd Carbon
-         */
-        $rehearsalEnd = $rehearsalStart->copy()->addHours(2);
         $response = $this->json(
             'post',
             route('organizations.rehearsals.create', $organization->id),
-            [
-                'starts_at' => $rehearsalStart->toDateTimeString(),
-                'ends_at' => $rehearsalEnd->toDateTimeString()
-            ]
+            $rehearsalTime
         );
 
         $response->assertStatus(Response::HTTP_CREATED);
@@ -46,8 +36,13 @@ class RehearsalsBookingTest extends TestCase
         $this->assertEquals(1, Rehearsal::count());
 
         $createdRehearsal = Rehearsal::first();
-        $this->assertEquals($rehearsalStart, $createdRehearsal->starts_at->toDateTimeString());
-        $this->assertEquals($rehearsalEnd, $createdRehearsal->ends_at->toDateTimeString());
+        $this->assertEquals(
+            $rehearsalTime,
+            [
+                'starts_at' => $createdRehearsal->starts_at->toDateTimeString(),
+                'ends_at' => $createdRehearsal->ends_at->toDateTimeString()
+            ]
+        );
         $this->assertEquals($user->id, $createdRehearsal->user->id);
         $this->assertEquals($organization->id, $createdRehearsal->organization->id);
         $this->assertEquals(null, $createdRehearsal->band);
@@ -69,24 +64,12 @@ class RehearsalsBookingTest extends TestCase
 
         $this->assertEquals(0, Rehearsal::count());
 
-        /**
-         * @var $rehearsalStart Carbon
-         */
-        $rehearsalStart = Carbon::now()->addHour();
-
-        /**
-         * @var $rehearsalEnd Carbon
-         */
-        $rehearsalEnd = $rehearsalStart->copy()->addHours(2);
+        $rehearsalTime = $this->getRehearsalTime();
 
         $response = $this->json(
             'post',
             route('organizations.rehearsals.create', $organization->id),
-            [
-                'band_id' => $band->id,
-                'starts_at' => $rehearsalStart->toDateTimeString(),
-                'ends_at' => $rehearsalEnd->toDateTimeString()
-            ]
+            array_merge(['band_id' => $band->id], $rehearsalTime)
         );
 
         $response->assertStatus(Response::HTTP_CREATED);
@@ -94,8 +77,13 @@ class RehearsalsBookingTest extends TestCase
         $this->assertEquals(1, Rehearsal::count());
 
         $createdRehearsal = Rehearsal::first();
-        $this->assertEquals($rehearsalStart, $createdRehearsal->starts_at->toDateTimeString());
-        $this->assertEquals($rehearsalEnd, $createdRehearsal->ends_at->toDateTimeString());
+        $this->assertEquals(
+            $rehearsalTime,
+            [
+                'starts_at' => $createdRehearsal->starts_at->toDateTimeString(),
+                'ends_at' => $createdRehearsal->ends_at->toDateTimeString()
+            ]
+        );
         $this->assertEquals($user->id, $createdRehearsal->user->id);
         $this->assertEquals($organization->id, $createdRehearsal->organization->id);
         $this->assertEquals($band->id, $createdRehearsal->band->id);
@@ -112,25 +100,13 @@ class RehearsalsBookingTest extends TestCase
 
         $this->actingAs($this->createUser());
 
-        /**
-         * @var $rehearsalStart Carbon
-         */
-        $rehearsalStart = Carbon::now()->addHour();
-
-        /**
-         * @var $rehearsalEnd Carbon
-         */
-        $rehearsalEnd = $rehearsalStart->copy()->addHours(2);
 
         $this->assertEquals(0, Rehearsal::count());
 
         $response = $this->json(
             'post',
             route('organizations.rehearsals.create', $organization->id),
-            [
-                'starts_at' => $rehearsalStart->toDateTimeString(),
-                'ends_at' => $rehearsalEnd->toDateTimeString()
-            ]
+            $this->getRehearsalTime()
         );
 
         $response->assertStatus(Response::HTTP_CREATED);
@@ -139,5 +115,4 @@ class RehearsalsBookingTest extends TestCase
 
         $this->assertFalse($createdRehearsal->is_confirmed);
     }
-
 }

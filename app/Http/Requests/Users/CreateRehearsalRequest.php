@@ -91,7 +91,7 @@ class CreateRehearsalRequest extends FormRequest
      *
      * @return bool
      */
-    protected function onBehalfOfTheBand(): bool
+    public function onBehalfOfTheBand(): bool
     {
         return $this->has('band_id');
     }
