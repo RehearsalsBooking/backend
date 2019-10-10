@@ -10,11 +10,5 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class BandMembersController extends Controller
 {
-    //todo: replace with invitations
-    public function update(UpdateBandMembersRequest $request, Band $band): AnonymousResourceCollection
-    {
-        $band->members()->sync($request->membersIds());
 
-        return UserResource::collection($band->members);
-    }
 }

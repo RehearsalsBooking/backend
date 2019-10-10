@@ -75,10 +75,22 @@ class Band extends Model
     }
 
     /**
-     * @param User $user
+     * @param User|int $user
      */
-    public function invite(User $user): void
+    public function invite($user): void
     {
-        $this->invitedUsers()->attach($user->id);
+        $userId = $user instanceof User ? $user->id : $user;
+
+        $this->invitedUsers()->attach($userId);
+    }
+
+    /**
+     * @param User|int $user
+     */
+    public function cancelInvite($user): void
+    {
+        $userId = $user instanceof User ? $user->id : $user;
+
+        $this->invitedUsers()->detach($userId);
     }
 }

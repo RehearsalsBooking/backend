@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Users\BandMembersController;
+use App\Http\Controllers\Users\BandInvitesController;
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\OrganizationRehearsalsController;
@@ -45,7 +45,11 @@ Route::name('bands.')->prefix('bands')->middleware('auth:api')->group(static fun
         ->middleware('can:update,band')
         ->name('update');
 
-    Route::put('/{band}/members', [BandMembersController::class, 'update'])
+    Route::post('/{band}/invites', [BandInvitesController::class, 'create'])
         ->where('band', '[0-9]+')
-        ->name('members.update');
+        ->name('invites.create');
+
+    Route::delete('/{band}/invites', [BandInvitesController::class, 'delete'])
+        ->where('band', '[0-9]+')
+        ->name('invites.delete');
 });
