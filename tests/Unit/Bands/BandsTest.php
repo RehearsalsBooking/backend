@@ -77,4 +77,21 @@ class BandsTest extends TestCase
             $band->rehearsals->toArray()
         );
     }
+
+    /** @test */
+    public function band_has_many_invites_for_users(): void
+    {
+        $band = factory(Band::class)->create();
+
+        $invitedUsersCount = 3;
+        $invitedUsers = $this->createUsers($invitedUsersCount);
+
+        $invitedUsers->each(static function (User $user) use ($band) {
+            $band->invite($user);
+        });
+
+        $this->assertEquals($invitedUsersCount, $band->invitedUsers()->count());
+        $this->assertInstanceOf(User::class, $band->invitedUsers->first());
+        $this->assertEquals($invitedUsers->pluck('id'), $band->invitedUsers->pluck('id'));
+    }
 }

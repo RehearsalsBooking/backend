@@ -95,4 +95,21 @@ class UserTest extends TestCase
         $this->assertInstanceOf(Rehearsal::class, $user->rehearsals->first());
         $this->assertEquals($rehearsals->pluck('id'), $user->rehearsals->pluck('id'));
     }
+
+    /** @test */
+    public function user_has_multiple_invites(): void
+    {
+        $user = $this->createUser();
+
+        $bandsThatInvitedUserCount = 3;
+        $bandsThatInvitedUser = factory(Band::class, $bandsThatInvitedUserCount)->create();
+
+        $bandsThatInvitedUser->each(static function (Band $band) use ($user) {
+            $band->invite($user);
+        });
+
+        $this->assertEquals($bandsThatInvitedUserCount, $user->invites()->count());
+        $this->assertInstanceOf(Band::class, $user->invites->first());
+        $this->assertEquals($bandsThatInvitedUser->pluck('id'), $user->invites->pluck('id'));
+    }
 }

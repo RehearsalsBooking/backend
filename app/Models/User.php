@@ -50,6 +50,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property-read int|null $created_bands_count
  * @property-read Collection|Rehearsal[] $rehearsals
  * @property-read int|null $rehearsals_count
+ * @property-read Collection|Band[] $invites
+ * @property-read int|null $invites_count
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -105,6 +107,16 @@ class User extends Authenticatable implements JWTSubject
     public function rehearsals(): BelongsToMany
     {
         return $this->belongsToMany(Rehearsal::class);
+    }
+
+    /**
+     * Returns bands that invited user to join
+     *
+     * @return BelongsToMany
+     */
+    public function invites(): BelongsToMany
+    {
+        return $this->belongsToMany(Band::class, 'band_user_invites')->withTimestamps();
     }
 
     /**

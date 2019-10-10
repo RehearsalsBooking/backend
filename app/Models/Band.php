@@ -33,6 +33,8 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $members_count
  * @property-read Collection|Rehearsal[] $rehearsals
  * @property-read int|null $rehearsals_count
+ * @property-read Collection|User[] $invitedUsers
+ * @property-read int|null $invited_users_count
  */
 class Band extends Model
 {
@@ -62,5 +64,21 @@ class Band extends Model
     public function rehearsals(): HasMany
     {
         return $this->hasMany(Rehearsal::class);
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function invitedUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'band_user_invites')->withTimestamps();
+    }
+
+    /**
+     * @param User $user
+     */
+    public function invite(User $user): void
+    {
+        $this->invitedUsers()->attach($user->id);
     }
 }
