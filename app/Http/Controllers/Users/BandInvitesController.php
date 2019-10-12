@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Users\AcceptBandInviteRequest;
 use App\Http\Requests\Users\CreateBandInviteRequest;
-use App\Http\Requests\Users\DeleteBandInviteRequest;
 use App\Models\Band;
 use App\Models\Invite;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -26,14 +27,16 @@ class BandInvitesController extends Controller
     }
 
     /**
-     * @param DeleteBandInviteRequest $request
      * @param Band $band
      * @param Invite $invite
      * @return JsonResponse
+     * @throws AuthorizationException
      * @throws Exception
      */
-    public function delete(DeleteBandInviteRequest $request, Band $band, Invite $invite): JsonResponse
+    public function delete(Band $band, Invite $invite): JsonResponse
     {
+        $this->authorize('cancel-invites', $band);
+
         $invite->delete();
 
         return response()->json();

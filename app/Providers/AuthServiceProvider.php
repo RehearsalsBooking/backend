@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Band;
+use App\Models\Invite;
 use App\Models\Rehearsal;
+use App\Policies\User\InvitePolicy;
 use App\Policies\Users\BandPolicy;
 use App\Policies\Users\RehearsalPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -18,6 +20,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Rehearsal::class => RehearsalPolicy::class,
         Band::class => BandPolicy::class,
+        Invite::class => InvitePolicy::class,
     ];
 
     /**

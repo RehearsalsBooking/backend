@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Users\BandInvitesController;
 use App\Http\Controllers\Users\BandsController;
+use App\Http\Controllers\Users\InvitesController;
 use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\OrganizationRehearsalsController;
 use App\Http\Controllers\Users\RehearsalsController;
@@ -64,4 +65,11 @@ Route::name('bands.')->prefix('bands')->middleware('auth:api')->group(static fun
             ->name('delete');
     });
 
+});
+
+Route::name('invites.')->prefix('invites')->middleware('auth:api')->group(static function () {
+
+    Route::post('/{invite}/accept', [InvitesController::class, 'accept'])
+        ->where('invite', '[0-9]+')
+        ->name('accept');
 });

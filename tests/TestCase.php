@@ -78,6 +78,14 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * @return Band
+     */
+    protected function createBand(): Band
+    {
+        return factory(Band::class)->create();
+    }
+
+    /**
      * @param Organization $organization
      * @param $startsAt
      * @param $endsAt

@@ -5,7 +5,9 @@ namespace App\Models;
 
 
 use Eloquent;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Carbon;
 
@@ -26,9 +28,30 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Invite whereUpdatedAt($value)
  * @method static Builder|Invite whereUserId($value)
  * @mixin Eloquent
+ * @property-read Band $band
  */
 class Invite extends Pivot
 {
     public $incrementing = true;
     protected $table = 'band_user_invites';
+
+    /**
+     * @return BelongsTo
+     */
+    public function band(): BelongsTo
+    {
+        return $this->belongsTo(Band::class);
+    }
+
+    /**
+     * Adds invited user to band's members
+     *
+     * @throws Exception
+     */
+    public function accept(): void
+    {
+        $this->band->members()->attach($this->user_id);
+
+        $this->delete();
+    }
 }
