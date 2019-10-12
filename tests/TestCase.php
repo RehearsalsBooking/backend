@@ -135,4 +135,15 @@ abstract class TestCase extends BaseTestCase
     {
         return factory(Invite::class)->create($parameters);
     }
+
+    /**
+     * @param User $user
+     * @return Rehearsal
+     */
+    protected function createRehearsalForUser(User $user): Rehearsal
+    {
+        return factory(Rehearsal::class)->create([
+            'user_id' => $user->id
+        ]);
+    }
 }
