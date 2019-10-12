@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\CreateBandInviteRequest;
 use App\Http\Requests\Users\DeleteBandInviteRequest;
 use App\Models\Band;
+use App\Models\Invite;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -26,11 +28,13 @@ class BandInvitesController extends Controller
     /**
      * @param DeleteBandInviteRequest $request
      * @param Band $band
+     * @param Invite $invite
      * @return JsonResponse
+     * @throws Exception
      */
-    public function delete(DeleteBandInviteRequest $request, Band $band): JsonResponse
+    public function delete(DeleteBandInviteRequest $request, Band $band, Invite $invite): JsonResponse
     {
-        $band->cancelInvite($request->invitedUser());
+        $invite->delete();
 
         return response()->json();
     }

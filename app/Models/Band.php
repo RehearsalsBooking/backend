@@ -71,26 +71,23 @@ class Band extends Model
      */
     public function invitedUsers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'band_user_invites')->withTimestamps();
+        return $this
+            ->belongsToMany(User::class, 'band_user_invites')
+            ->withTimestamps()
+            ->using(Invite::class);
     }
 
     /**
-     * @param User|int $user
+     * @param $user
+     * @return Invite
      */
-    public function invite($user): void
+    public function invite($user): Invite
     {
         $userId = $user instanceof User ? $user->id : $user;
 
-        $this->invitedUsers()->attach($userId);
-    }
-
-    /**
-     * @param User|int $user
-     */
-    public function cancelInvite($user): void
-    {
-        $userId = $user instanceof User ? $user->id : $user;
-
-        $this->invitedUsers()->detach($userId);
+        return Invite::create([
+            'user_id' => $userId,
+            'band_id' => $this->id
+        ]);
     }
 }

@@ -116,7 +116,10 @@ class User extends Authenticatable implements JWTSubject
      */
     public function invites(): BelongsToMany
     {
-        return $this->belongsToMany(Band::class, 'band_user_invites')->withTimestamps();
+        return $this
+            ->belongsToMany(Band::class, 'band_user_invites')
+            ->withTimestamps()
+            ->using(Invite::class);
     }
 
     /**

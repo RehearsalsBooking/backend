@@ -66,7 +66,7 @@ class BandsMembersInviteTest extends TestCase
     {
         $invitedUser = $this->createUser();
 
-        $this->band->invite($invitedUser);
+        $invite = $this->band->invite($invitedUser);
 
         $this->assertEquals(1, $this->band->invitedUsers()->count());
         $this->assertEquals(1, $invitedUser->invites()->count());
@@ -75,10 +75,7 @@ class BandsMembersInviteTest extends TestCase
 
         $response = $this->json(
             'delete',
-            route('bands.invites.delete', $this->band->id),
-            [
-                'user_id' => $invitedUser->id
-            ]
+            route('bands.invites.delete', [$this->band->id, $invite->id])
         );
 
         $response->assertOk();

@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Models\Band;
+use App\Models\Invite;
 use App\Models\Organization;
 use App\Models\Rehearsal;
 use App\Models\User;
@@ -124,5 +125,14 @@ abstract class TestCase extends BaseTestCase
             'starts_at' => $rehearsalStart->toDateTimeString(),
             'ends_at' => $rehearsalEnd->toDateTimeString()
         ];
+    }
+
+    /**
+     * @param array $parameters
+     * @return Invite
+     */
+    protected function createInvite(array $parameters = []): Invite
+    {
+        return factory(Invite::class)->create($parameters);
     }
 }

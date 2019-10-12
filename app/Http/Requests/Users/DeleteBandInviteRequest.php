@@ -25,13 +25,6 @@ class DeleteBandInviteRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'user_id' => 'required|exists:band_user_invites'
-        ];
-    }
-
-    public function invitedUser()
-    {
-        return $this->get('userId');
+        return [];
     }
 }
