@@ -72,4 +72,8 @@ Route::name('invites.')->prefix('invites')->middleware('auth:api')->group(static
     Route::post('/{invite}/accept', [InvitesController::class, 'accept'])
         ->where('invite', '[0-9]+')
         ->name('accept');
+
+    Route::post('/{invite}/decline', [InvitesController::class, 'decline'])
+        ->where('invite', '[0-9]+')
+        ->name('decline');
 });

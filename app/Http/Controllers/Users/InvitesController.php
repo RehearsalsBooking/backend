@@ -22,4 +22,18 @@ class InvitesController extends Controller
 
         return response()->json('ok');
     }
+
+    /**
+     * @param Invite $invite
+     * @return JsonResponse
+     * @throws Exception
+     */
+    public function decline(Invite $invite): JsonResponse
+    {
+        $this->authorize('decline-invite', $invite);
+
+        $invite->decline();
+
+        return response()->json('ok');
+    }
 }

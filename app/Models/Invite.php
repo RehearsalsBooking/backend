@@ -54,4 +54,12 @@ class Invite extends Pivot
 
         $this->delete();
     }
+
+    /**
+     * @throws Exception
+     */
+    public function decline(): void
+    {
+        $this->delete();
+    }
 }

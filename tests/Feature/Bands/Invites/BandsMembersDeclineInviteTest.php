@@ -15,20 +15,20 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
  * @property User $bandAdmin
  * @property Band $band
  */
-class BandsMembersAcceptInviteTest extends TestCase
+class BandsMembersDeclineInviteTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
-    public function unauthorized_user_cannot_accept_invite_to_band(): void
+    public function unauthorized_user_cannot_decline_invite_to_band(): void
     {
         $this
-            ->json('post', route('invites.accept', 1))
+            ->json('post', route('invites.decline', 1))
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
     /** @test */
-    public function user_can_accept_only_his_invite_to_band(): void
+    public function user_can_decline_only_his_invite_to_band(): void
     {
         $max = $this->createUser();
         $band = $this->createBand();
@@ -41,7 +41,7 @@ class BandsMembersAcceptInviteTest extends TestCase
         $this->actingAs($john);
 
         $this
-            ->json('post', route('invites.accept', $invite->id))
+            ->json('post', route('invites.decline', $invite->id))
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->assertEquals(1, Invite::count());
@@ -52,7 +52,7 @@ class BandsMembersAcceptInviteTest extends TestCase
     }
 
     /** @test */
-    public function it_respond_with_404_when_user_provided_unknown_invite_to_accept(): void
+    public function it_respond_with_404_when_user_provided_unknown_invite_to_decline(): void
     {
         $this->actingAs($this->createUser());
 
@@ -62,7 +62,7 @@ class BandsMembersAcceptInviteTest extends TestCase
     }
 
     /** @test */
-    public function user_can_accept_invite_to_band(): void
+    public function user_can_decline_invite_to_band(): void
     {
         $user = $this->createUser();
         $band = $this->createBand();
@@ -78,16 +78,13 @@ class BandsMembersAcceptInviteTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->json('post', route('invites.accept', $invite->id));
+        $response = $this->json('post', route('invites.decline', $invite->id));
 
         $response->assertOk();
 
-        $this->assertEquals(1, $user->bands()->count());
-        $this->assertEquals($band->id, $user->bands->first()->id);
-        $this->assertEquals(1, $band->members()->count());
-        $this->assertEquals($user->id, $band->members()->first()->id);
-
-        $this->assertDatabaseMissing('band_user_invites', ['user_id' => $user->id]);
         $this->assertEquals(0, Invite::count());
+        $this->assertDatabaseMissing('band_user_invites', ['user_id' => $user->id]);
+        $this->assertEquals(0, $user->bands()->count());
+        $this->assertEquals(0, $band->members()->count());
     }
 }
