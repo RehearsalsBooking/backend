@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Bands\Invites;
+namespace Tests\Feature\Invites;
 
 use App\Models\Band;
 use App\Models\Invite;
@@ -15,7 +15,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
  * @property User $bandAdmin
  * @property Band $band
  */
-class BandsMembersDeclineInviteTest extends TestCase
+class DeclineInviteTest extends TestCase
 {
     use RefreshDatabase;
 

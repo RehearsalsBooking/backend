@@ -1,9 +1,8 @@
 <?php
 
-namespace Tests\Feature\Bands\Invites;
+namespace Tests\Feature\Invites;
 
 use App\Models\Band;
-use App\Models\Invite;
 use App\Models\User;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -15,7 +14,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
  * @property User $bandAdmin
  * @property Band $band
  */
-class BandsMembersInviteAuthorizationTest extends TestCase
+class InviteAuthorizationTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -34,12 +33,12 @@ class BandsMembersInviteAuthorizationTest extends TestCase
     {
         $this->json(
             'post',
-            route('bands.invites.create', [1, 1])
+            route('invites.create')
         )->assertStatus(Response::HTTP_UNAUTHORIZED);
 
         $this->json(
             'delete',
-            route('bands.invites.delete', [1, 1])
+            route('invites.delete', 1)
         )->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
@@ -54,12 +53,15 @@ class BandsMembersInviteAuthorizationTest extends TestCase
 
         $this->json(
             'post',
-            route('bands.invites.create', $this->band->id)
+            route('invites.create', [
+                'band_id' => $this->band->id,
+                'user_id' => $this->createUser()->id
+            ])
         )->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->json(
             'delete',
-            route('bands.invites.delete', [$this->band->id, $invite->id])
+            route('invites.delete', $invite->id)
         )->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
@@ -74,7 +76,7 @@ class BandsMembersInviteAuthorizationTest extends TestCase
 
         $this->json(
             'delete',
-            route('bands.invites.delete', [$someOtherBand->id, $invite->id])
+            route('invites.delete', $invite->id)
         )->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

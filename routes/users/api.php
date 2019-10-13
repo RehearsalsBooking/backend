@@ -52,22 +52,16 @@ Route::name('bands.')->prefix('bands')->middleware('auth:api')->group(static fun
         ->where('band', '[0-9]+')
         ->middleware('can:update,band')
         ->name('update');
-
-    Route::name('invites.')->prefix('/{band}/invites')->group(static function () {
-
-        Route::post('/', [BandInvitesController::class, 'create'])
-            ->where('band', '[0-9]+')
-            ->name('create');
-
-        Route::delete('/{invite}', [BandInvitesController::class, 'delete'])
-            ->where('band', '[0-9]+')
-            ->where('invite', '[0-9]+')
-            ->name('delete');
-    });
-
 });
 
 Route::name('invites.')->prefix('invites')->middleware('auth:api')->group(static function () {
+
+    Route::post('/', [InvitesController::class, 'create'])
+        ->name('create');
+
+    Route::delete('/{invite}', [InvitesController::class, 'delete'])
+        ->where('invite', '[0-9]+')
+        ->name('delete');
 
     Route::post('/{invite}/accept', [InvitesController::class, 'accept'])
         ->where('invite', '[0-9]+')

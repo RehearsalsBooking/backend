@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Bands\Invites;
+namespace Tests\Feature\Invites;
 
 use App\Models\Band;
 use App\Models\User;
@@ -14,7 +14,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
  * @property User $bandAdmin
  * @property Band $band
  */
-class BandsMembersInviteTest extends TestCase
+class InviteTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -41,8 +41,9 @@ class BandsMembersInviteTest extends TestCase
 
         $response = $this->json(
             'post',
-            route('bands.invites.create', $this->band->id),
+            route('invites.create'),
             [
+                'band_id' => $this->band->id,
                 'user_id' => $invitedUser->id
             ]
         );
@@ -75,7 +76,7 @@ class BandsMembersInviteTest extends TestCase
 
         $response = $this->json(
             'delete',
-            route('bands.invites.delete', [$this->band->id, $invite->id])
+            route('invites.delete', $invite->id)
         );
 
         $response->assertOk();

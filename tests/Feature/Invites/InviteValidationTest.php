@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Bands\Invites;
+namespace Tests\Feature\Invites;
 
 use App\Models\Band;
 use App\Models\User;
@@ -14,7 +14,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
  * @property User $bandAdmin
  * @property Band $band
  */
-class BandsMembersInviteValidationTest extends TestCase
+class InviteValidationTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -31,31 +31,30 @@ class BandsMembersInviteValidationTest extends TestCase
     /** @test */
     public function it_responds_with_404_when_user_provided_unknown_band_or_user_in_url(): void
     {
-        $invite = $this->createInvite();
-
         $this->actingAs($this->bandAdmin);
+        $user = $this->createUser();
 
         $this->json(
             'post',
-            route('bands.invites.create', 1000)
-        )->assertStatus(Response::HTTP_NOT_FOUND);
-
-        $this->json(
-            'post',
-            route('bands.invites.create', $this->band->id),
+            route('invites.create'),
             [
+                'band_id' => 1000,
+                'user_id' => $user->id
+            ]
+        )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $this->json(
+            'post',
+            route('invites.create'),
+            [
+                'band_id' => $this->band->id,
                 'user_id' => 10000
             ]
         )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $this->json(
             'delete',
-            route('bands.invites.delete', [10000, $invite->id])
-        )->assertStatus(Response::HTTP_NOT_FOUND);
-
-        $this->json(
-            'delete',
-            route('bands.invites.delete', [$this->band->id, 10000])
+            route('invites.delete', 1000)
         )->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }
