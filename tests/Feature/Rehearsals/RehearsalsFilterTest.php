@@ -36,7 +36,8 @@ class RehearsalsFilterTest extends TestCase
             'ends_at' => $this->getDateTimeAt(18, 0),
         ]);
 
-        $response = $this->json('get', route('organizations.rehearsals.list', $organization->id), [
+        $response = $this->json('get', route('rehearsals.list'), [
+            'organization_id' => $organization->id,
             'from' => $this->getDateTimeAt(13, 00)
         ]);
         $response->assertOk();
@@ -47,7 +48,8 @@ class RehearsalsFilterTest extends TestCase
             $data
         );
 
-        $response = $this->json('get', route('organizations.rehearsals.list', $organization->id), [
+        $response = $this->json('get', route('rehearsals.list'), [
+            'organization_id' => $organization->id,
             'to' => $this->getDateTimeAt(13, 00)
         ]);
         $response->assertOk();
@@ -58,7 +60,8 @@ class RehearsalsFilterTest extends TestCase
             $data
         );
 
-        $response = $this->json('get', route('organizations.rehearsals.list', $organization->id), [
+        $response = $this->json('get', route('rehearsals.list'), [
+            'organization_id' => $organization->id,
             'from' => $this->getDateTimeAt(11, 30),
             'to' => $this->getDateTimeAt(15, 00)
         ]);
@@ -82,8 +85,8 @@ class RehearsalsFilterTest extends TestCase
         $organization = $this->createOrganization();
         $response = $this->json(
             'get',
-            route('organizations.rehearsals.list', $organization->id),
-            $data
+            route('rehearsals.list'),
+            array_merge($data, ['organization_id' => $organization->id])
         );
 
         $response

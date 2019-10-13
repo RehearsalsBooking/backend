@@ -5,8 +5,6 @@ namespace App\Http\Requests\Users;
 use App\Models\Band;
 use App\Models\Organization;
 use App\Models\Rehearsal;
-use App\Rules\User\AfterTimeWhenOrganizationIsOpened;
-use App\Rules\User\BeforeTimeWhenOrganizationIsClosed;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateRehearsalRequest extends FormRequest
@@ -16,11 +14,11 @@ class CreateRehearsalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $bandId = $this->get('band_id');
-
         if (!$this->onBehalfOfTheBand()) {
             return true;
         }
+
+        $bandId = $this->get('band_id');
 
         //laravel runs authorization before validation,
         //so we have to check band existence manually
@@ -46,29 +44,21 @@ class CreateRehearsalRequest extends FormRequest
      */
     public function rules(): array
     {
-        /**
-         * @var $organization Organization
-         */
-        $organization = $this->route()->parameter('organization');
-
         return [
             'starts_at' => [
                 'bail',
                 'required',
                 'date',
-                'after:now',
-                new AfterTimeWhenOrganizationIsOpened($organization)
+                'after:now'
             ],
             'ends_at' => [
                 'bail',
                 'required',
                 'date',
-                'after:starts_at',
-                new BeforeTimeWhenOrganizationIsClosed($organization)
+                'after:starts_at'
             ],
-            'band_id' => [
-                'exists:bands,id'
-            ]
+            'band_id' => 'bail|numeric|exists:bands,id',
+            'organization_id' => 'bail|required|numeric|exists:organizations,id'
         ];
     }
 
@@ -82,7 +72,8 @@ class CreateRehearsalRequest extends FormRequest
             'ends_at' => $this->get('ends_at'),
             'user_id' => auth()->id(),
             'is_confirmed' => false,
-            'band_id' => $this->get('band_id')
+            'band_id' => $this->get('band_id'),
+            'organization_id' => $this->get('organization_id')
         ];
     }
 
@@ -94,5 +85,13 @@ class CreateRehearsalRequest extends FormRequest
     public function onBehalfOfTheBand(): bool
     {
         return $this->has('band_id');
+    }
+
+    /**
+     * @return Organization
+     */
+    public function organization(): Organization
+    {
+        return Organization::find($this->get('organization_id'));
     }
 }

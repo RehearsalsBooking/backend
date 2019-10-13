@@ -28,7 +28,7 @@ class RehearsalRescheduleTest extends TestCase
 
         $response = $this->json(
             'put',
-            route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]),
+            route('rehearsals.reschedule', $rehearsal->id),
             [
                 'starts_at' => $newRehearsalStartTime->toDateTimeString(),
                 'ends_at' => $newRehearsalEndTime->toDateTimeString()
@@ -67,7 +67,7 @@ class RehearsalRescheduleTest extends TestCase
 
         $response = $this->json(
             'put',
-            route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]),
+            route('rehearsals.reschedule', $rehearsal->id),
             [
                 'starts_at' => $newRehearsalStartTime->toDateTimeString(),
                 'ends_at' => $newRehearsalEndTime->toDateTimeString()
@@ -103,7 +103,7 @@ class RehearsalRescheduleTest extends TestCase
 
         $response = $this->json(
             'put',
-            route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]),
+            route('rehearsals.reschedule', $rehearsal->id),
             [
                 'starts_at' => $newRehearsalStartTime->toDateTimeString(),
                 'ends_at' => $newRehearsalEndTime->toDateTimeString()

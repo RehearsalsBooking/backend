@@ -25,7 +25,7 @@ class RehearsalBookingValidationTest extends TestCase
      * @param $data
      * @param $keyWithError
      */
-    public function it_responds_with_validation_error_when_user_provided_invalid_parameters($data, $keyWithError): void
+    public function it_responds_with_validation_error_when_user_provided_invalid_time_parameters($data, $keyWithError): void
     {
         $organization = $this->createOrganization([
             'opens_at' => '08:00',
@@ -34,21 +34,27 @@ class RehearsalBookingValidationTest extends TestCase
 
         $response = $this->json(
             'post',
-            route('organizations.rehearsals.create', $organization->id),
-            $data
+            route('rehearsals.create'),
+            array_merge($data, ['organization_id' => $organization->id])
         );
 
         $response->assertJsonValidationErrors($keyWithError);
     }
 
     /** @test */
-    public function it_responds_with_404_when_user_provided_unknown_organization_in_uri(): void
+    public function it_responds_with_422_when_user_provided_unknown_organization_id(): void
     {
-        $this->json('post', route('organizations.rehearsals.create', 10000))
-            ->assertStatus(Response::HTTP_NOT_FOUND);
-        $this->json('post', route('organizations.rehearsals.create', 'asd'))
-            ->assertStatus(Response::HTTP_NOT_FOUND);
+        $this->json('post', route('rehearsals.create'), [
+            'organization_id' => 10000
+        ])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('organization_id');
 
+        $this->json('post', route('rehearsals.create'), [
+            'organization_id' => 'asd'
+        ])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('organization_id');
     }
 
     /** @test */
@@ -59,7 +65,8 @@ class RehearsalBookingValidationTest extends TestCase
             'closes_at' => '22:00'
         ]);
 
-        $this->json('post', route('organizations.rehearsals.create', $organization->id), [
+        $this->json('post', route('rehearsals.create'), [
+            'organization_id' => $organization->id,
             'band_id' => 10000,
             'starts_at' => $this->getDateTimeAt(12, 00),
             'ends_at' => $this->getDateTimeAt(13, 00)
@@ -71,22 +78,47 @@ class RehearsalBookingValidationTest extends TestCase
 
     /**
      * @test
-     * @dataProvider getDataOutOfBoundariesOfOrganizationWorkingDay
-     * @param $organizationWorkingHours
-     * @param $data
-     * @param $keyWithError
      */
-    public function it_responds_with_validation_error_when_user_provided_time_when_organization_is_closed($organizationWorkingHours, $data, $keyWithError): void
+    public function it_responds_with_validation_error_when_user_provided_time_when_organization_is_closed(): void
     {
+        $organizationWorkingHours = [
+            'opens_at' => '08:00',
+            'closes_at' => '22:00',
+        ];
+
         $organization = $this->createOrganization($organizationWorkingHours);
 
-        $response = $this->json(
-            'post',
-            route('organizations.rehearsals.create', $organization->id),
-            $data
-        );
+        $paramsWhenOrganizationIsClosed = [
+            [
+                'starts_at' => $this->getDateTimeAt(7, 30),
+                'ends_at' => $this->getDateTimeAt(11, 00),
+                'organization_id' => $organization->id
+            ],
 
-        $response->assertJsonValidationErrors($keyWithError);
+            [
+                'starts_at' => $this->getDateTimeAt(21, 00),
+                'ends_at' => $this->getDateTimeAt(23, 00),
+                'organization_id' => $organization->id
+            ],
+
+            [
+                'starts_at' => $this->getDateTimeAt(7, 00),
+                'ends_at' => $this->getDateTimeAt(23, 00),
+                'organization_id' => $organization->id
+            ],
+        ];
+
+        foreach ($paramsWhenOrganizationIsClosed as $params) {
+
+            $this->json(
+                'post',
+                route('rehearsals.create'),
+                $params
+            )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $this->assertEquals(0, $organization->rehearsals()->count());
+
     }
 
     /** @test */
@@ -148,28 +180,33 @@ class RehearsalBookingValidationTest extends TestCase
         foreach ($unavailableTime as $rehearsalTime) {
             $this->json(
                 'post',
-                route('organizations.rehearsals.create', $organization->id),
+                route('rehearsals.create'),
                 [
+                    'organization_id' => $organization->id,
                     'starts_at' => $rehearsalTime['starts_at'],
                     'ends_at' => $rehearsalTime['ends_at'],
                 ]
             )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        $this->assertEquals(3, Rehearsal::count());
+
         $this->json(
             'post',
-            route('organizations.rehearsals.create', $organization->id),
+            route('rehearsals.create'),
             [
+                'organization_id' => $organization->id,
                 'starts_at' => $this->getDateTimeAt(11, 00),
                 'ends_at' => $this->getDateTimeAt(12, 00),
             ]
         )->assertStatus(Response::HTTP_CREATED);
+
+        $this->assertEquals(4, Rehearsal::count());
     }
 
     public function getDataWithInvalidFormat(): array
     {
         $date = Carbon::now();
-
         return
             [
                 [
@@ -259,47 +296,4 @@ class RehearsalBookingValidationTest extends TestCase
                 ],
             ];
     }
-
-    public function getDataOutOfBoundariesOfOrganizationWorkingDay(): array
-    {
-        return
-            [
-                [
-                    [
-                        'opens_at' => '08:00',
-                        'closes_at' => '22:00',
-                    ],
-                    [
-                        'starts_at' => $this->getDateTimeAt(7, 30),
-                        'ends_at' => $this->getDateTimeAt(11, 00),
-                    ],
-                    'starts_at',
-                ],
-
-                [
-                    [
-                        'opens_at' => '08:00',
-                        'closes_at' => '22:00',
-                    ],
-                    [
-                        'starts_at' => $this->getDateTimeAt(21, 00),
-                        'ends_at' => $this->getDateTimeAt(23, 00),
-                    ],
-                    'ends_at',
-                ],
-
-                [
-                    [
-                        'opens_at' => '08:00',
-                        'closes_at' => '22:00',
-                    ],
-                    [
-                        'starts_at' => $this->getDateTimeAt(7, 00),
-                        'ends_at' => $this->getDateTimeAt(23, 00),
-                    ],
-                    ['ends_at', 'starts_at'],
-                ],
-            ];
-    }
-
 }

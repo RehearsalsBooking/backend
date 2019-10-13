@@ -99,6 +99,8 @@ class Organization extends Model
      */
     public function isTimeAvailable($startsAt, $endsAt, Rehearsal $rehearsal = null): bool
     {
+        $inWorkDayRange = $this->isTimeAfterOrganizationOpens($startsAt) && $this->isTimeBeforeOrganizationCloses($endsAt);
+
         $query = $this->rehearsals()
             ->where(static function (Builder $query) use ($endsAt, $startsAt) {
 
@@ -124,6 +126,24 @@ class Organization extends Model
             $query->where('id', '!=', $rehearsal->id);
         }
 
-        return $query->doesntExist();
+        return $inWorkDayRange && $query->doesntExist();
+    }
+
+    /**
+     * @param $time
+     * @return bool
+     */
+    protected function isTimeAfterOrganizationOpens($time): bool
+    {
+        return strtotime(optional(Carbon::make($time))->format('H:i')) >= strtotime($this->opens_at);
+    }
+
+    /**
+     * @param $time
+     * @return bool
+     */
+    protected function isTimeBeforeOrganizationCloses($time): bool
+    {
+        return strtotime(optional(Carbon::make($time))->format('H:i')) <= strtotime($this->closes_at);
     }
 }

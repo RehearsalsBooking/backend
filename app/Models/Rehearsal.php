@@ -111,4 +111,12 @@ class Rehearsal extends Model
     {
         $this->attendees()->sync($this->user_id);
     }
+
+    /**
+     * @return bool
+     */
+    public function isIndividual(): bool
+    {
+        return $this->band_id === null;
+    }
 }

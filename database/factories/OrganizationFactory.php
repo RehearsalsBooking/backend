@@ -15,6 +15,8 @@ $factory->define(Organization::class, static function (Faker $faker) {
         'is_active' => true,
         'owner_id' => static function () {
             return factory(User::class)->create()->id;
-        }
+        },
+        'opens_at' => '00:00',
+        'closes_at' => '24:59'
     ];
 });

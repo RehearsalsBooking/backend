@@ -40,7 +40,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $response = $this->json(
             'put',
-            route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]),
+            route('rehearsals.reschedule', $rehearsal->id),
             $data
         );
 
@@ -49,49 +49,12 @@ class RehearsalRescheduleValidationTest extends TestCase
     }
 
     /** @test */
-    public function it_responds_with_404_when_user_provided_unknown_organization_in_uri(): void
-    {
-        $rehearsal = $this->createRehearsal($this->createOrganization(), 9, 11);
-
-        $this->json('put', route('organizations.rehearsals.reschedule', [10000, $rehearsal->id]))
-            ->assertStatus(Response::HTTP_NOT_FOUND);
-        $this->json('put', route('organizations.rehearsals.reschedule', ['asd', $rehearsal->id]))
-            ->assertStatus(Response::HTTP_NOT_FOUND);
-    }
-
-    /** @test */
     public function it_responds_with_404_when_user_provided_unknown_rehearsal_in_uri(): void
     {
-        $organization = $this->createOrganization();
-
-        $this->json('put', route('organizations.rehearsals.reschedule', [$organization->id, 10000]))
+        $this->json('put', route('rehearsals.reschedule', 10000))
             ->assertStatus(Response::HTTP_NOT_FOUND);
-        $this->json('put', route('organizations.rehearsals.reschedule', [$organization->id, 'asd']))
+        $this->json('put', route('rehearsals.reschedule', 'asd'))
             ->assertStatus(Response::HTTP_NOT_FOUND);
-    }
-
-    /** @test */
-    public function it_responds_with_validation_error_when_user_provided_unknown_band_id(): void
-    {
-        $organization = $this->createOrganization([
-            'opens_at' => '8:00',
-            'closes_at' => '22:00'
-        ]);
-
-        $user = $this->createUser();
-
-        $this->actingAs($user);
-
-        $rehearsal = $this->createRehearsal($organization, 9, 11, null, false, $user);
-
-        $this->json('put', route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]), [
-            'band_id' => 10000,
-            'starts_at' => $this->getDateTimeAt(12, 00),
-            'ends_at' => $this->getDateTimeAt(13, 00)
-        ])
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('band_id');
-
     }
 
     /**
@@ -99,9 +62,8 @@ class RehearsalRescheduleValidationTest extends TestCase
      * @dataProvider getDataOutOfBoundariesOfOrganizationWorkingDay
      * @param $organizationWorkingHours
      * @param $data
-     * @param $keyWithError
      */
-    public function it_responds_with_validation_error_when_user_provided_time_when_organization_is_closed($organizationWorkingHours, $data, $keyWithError): void
+    public function it_responds_with_validation_error_when_user_provided_time_when_organization_is_closed($organizationWorkingHours, $data): void
     {
         $organization = $this->createOrganization($organizationWorkingHours);
 
@@ -113,11 +75,11 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $response = $this->json(
             'put',
-            route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]),
+            route('rehearsals.reschedule', $rehearsal->id),
             $data
         );
 
-        $response->assertJsonValidationErrors($keyWithError);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /** @test */
@@ -185,7 +147,7 @@ class RehearsalRescheduleValidationTest extends TestCase
         foreach ($unavailableTime as $rehearsalTime) {
             $this->json(
                 'put',
-                route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]),
+                route('rehearsals.reschedule', $rehearsal->id),
                 [
                     'starts_at' => $rehearsalTime['starts_at'],
                     'ends_at' => $rehearsalTime['ends_at'],
@@ -195,7 +157,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->json(
             'put',
-            route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]),
+            route('rehearsals.reschedule', $rehearsal->id),
             [
                 'starts_at' => $this->getDateTimeAt(11, 00),
                 'ends_at' => $this->getDateTimeAt(12, 00),
@@ -219,7 +181,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->json(
             'put',
-            route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]),
+            route('rehearsals.reschedule', $rehearsal->id),
             [
                 'starts_at' => $this->getDateTimeAt(11, 00),
                 'ends_at' => $this->getDateTimeAt(13, 00),
@@ -326,7 +288,6 @@ class RehearsalRescheduleValidationTest extends TestCase
                         'starts_at' => $this->getDateTimeAt(7, 30),
                         'ends_at' => $this->getDateTimeAt(11, 00),
                     ],
-                    'starts_at',
                 ],
 
                 [
@@ -338,7 +299,6 @@ class RehearsalRescheduleValidationTest extends TestCase
                         'starts_at' => $this->getDateTimeAt(21, 00),
                         'ends_at' => $this->getDateTimeAt(23, 00),
                     ],
-                    'ends_at',
                 ],
 
                 [
@@ -350,7 +310,6 @@ class RehearsalRescheduleValidationTest extends TestCase
                         'starts_at' => $this->getDateTimeAt(7, 00),
                         'ends_at' => $this->getDateTimeAt(23, 00),
                     ],
-                    ['ends_at', 'starts_at'],
                 ],
             ];
     }

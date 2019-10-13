@@ -127,6 +127,7 @@ class AttendeesRegistrationTest extends TestCase
     protected function bookRehearsal(Organization $organization, Band $band = null): void
     {
         $parameters = $this->getRehearsalTime();
+        $parameters['organization_id'] = $organization->id;
 
         if ($band) {
             $parameters['band_id'] = $band->id;
@@ -134,7 +135,7 @@ class AttendeesRegistrationTest extends TestCase
 
         $this->json(
             'post',
-            route('organizations.rehearsals.create', $organization->id),
+            route('rehearsals.create'),
             $parameters
         );
     }
@@ -158,7 +159,7 @@ class AttendeesRegistrationTest extends TestCase
 
         return $this->json(
             'put',
-            route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]),
+            route('rehearsals.reschedule', $rehearsal->id),
             $parameters
         );
     }

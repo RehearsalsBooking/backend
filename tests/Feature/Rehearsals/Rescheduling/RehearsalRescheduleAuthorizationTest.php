@@ -13,7 +13,7 @@ class RehearsalRescheduleAuthorizationTest extends TestCase
     /** @test */
     public function unauthorized_user_cannot_reschedule_a_rehearsal(): void
     {
-        $response = $this->json('put', route('organizations.rehearsals.reschedule', [1, 1]));
+        $response = $this->json('put', route('rehearsals.reschedule', 1));
 
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
@@ -29,13 +29,13 @@ class RehearsalRescheduleAuthorizationTest extends TestCase
         $user = $this->createUser();
         $this->actingAs($user);
 
-        $this->json('put', route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]), [
+        $this->json('put', route('rehearsals.reschedule', $rehearsal->id), [
             'starts_at' => $this->getDateTimeAt(12, 00),
             'ends_at' => $this->getDateTimeAt(13, 00)
         ])
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
-        $this->json('put', route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]), [
+        $this->json('put', route('rehearsals.reschedule', $rehearsal->id), [
             'band_id' => $band->id,
             'starts_at' => $this->getDateTimeAt(12, 00),
             'ends_at' => $this->getDateTimeAt(13, 00)
@@ -54,7 +54,7 @@ class RehearsalRescheduleAuthorizationTest extends TestCase
         $someOtherUser = $this->createUser();
         $this->actingAs($someOtherUser);
 
-        $this->json('put', route('organizations.rehearsals.reschedule', [$organization->id, $rehearsal->id]), [
+        $this->json('put', route('rehearsals.reschedule', $rehearsal->id), [
             'starts_at' => $this->getDateTimeAt(12, 00),
             'ends_at' => $this->getDateTimeAt(13, 00)
         ])

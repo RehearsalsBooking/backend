@@ -4,7 +4,6 @@ namespace Tests\Feature\Rehearsals\Booking;
 
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
-use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,12 +22,13 @@ class RehearsalsBookingTest extends TestCase
 
         $this->assertEquals(0, Rehearsal::count());
 
-        $rehearsalTime = $this->getRehearsalTime();
+        $params = $rehearsalTime = $this->getRehearsalTime();
+        $params['organization_id'] = $organization->id;
 
         $response = $this->json(
             'post',
-            route('organizations.rehearsals.create', $organization->id),
-            $rehearsalTime
+            route('rehearsals.create'),
+            $params
         );
 
         $response->assertStatus(Response::HTTP_CREATED);
@@ -64,12 +64,14 @@ class RehearsalsBookingTest extends TestCase
 
         $this->assertEquals(0, Rehearsal::count());
 
-        $rehearsalTime = $this->getRehearsalTime();
+        $params = $rehearsalTime = $this->getRehearsalTime();
+        $params['band_id'] = $band->id;
+        $params['organization_id'] = $organization->id;
 
         $response = $this->json(
             'post',
-            route('organizations.rehearsals.create', $organization->id),
-            array_merge(['band_id' => $band->id], $rehearsalTime)
+            route('rehearsals.create'),
+            $params
         );
 
         $response->assertStatus(Response::HTTP_CREATED);
@@ -103,10 +105,13 @@ class RehearsalsBookingTest extends TestCase
 
         $this->assertEquals(0, Rehearsal::count());
 
+        $params = $this->getRehearsalTime();
+        $params['organization_id'] = $organization->id;
+
         $response = $this->json(
             'post',
-            route('organizations.rehearsals.create', $organization->id),
-            $this->getRehearsalTime()
+            route('rehearsals.create'),
+            $params
         );
 
         $response->assertStatus(Response::HTTP_CREATED);

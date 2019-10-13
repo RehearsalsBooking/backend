@@ -10,7 +10,7 @@ class RehearsalBookingAuthorizationTest extends TestCase
     /** @test */
     public function unauthorized_user_cannot_book_a_rehearsal(): void
     {
-        $response = $this->json('post', route('organizations.rehearsals.create', 1));
+        $response = $this->json('post', route('rehearsals.create'));
 
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
@@ -24,7 +24,8 @@ class RehearsalBookingAuthorizationTest extends TestCase
         $user = $this->createUser();
         $this->actingAs($user);
 
-        $this->json('post', route('organizations.rehearsals.create', $organization->id), [
+        $this->json('post', route('rehearsals.create'), [
+            'organization_id' => $organization->id,
             'band_id' => $band->id,
             'starts_at' => $this->getDateTimeAt(12, 00),
             'ends_at' => $this->getDateTimeAt(13, 00)

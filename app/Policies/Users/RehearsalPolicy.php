@@ -34,16 +34,15 @@ class RehearsalPolicy
      *
      * @param User $user
      * @param Rehearsal $rehearsal
-     * @param Band $band
      * @return bool
      */
-    public function reschedule(User $user, Rehearsal $rehearsal, ?Band $band): bool
+    public function reschedule(User $user, Rehearsal $rehearsal): bool
     {
-        if (!$band) {
+        if ($rehearsal->isIndividual()) {
             return $rehearsal->user_id === $user->id;
         }
 
-        return $band->admin_id === $user->id;
+        return $rehearsal->band->admin_id === $user->id;
     }
 
     /**

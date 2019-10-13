@@ -18,7 +18,7 @@ class RehearsalsTest extends TestCase
         $organization = $this->createOrganization();
         $rehearsals = factory(Rehearsal::class, 5)->create(['organization_id' => $organization->id]);
 
-        $response = $this->get(route('organizations.rehearsals.list', $organization->id));
+        $response = $this->get(route('rehearsals.list'), ['organization_id' => $organization->id]);
         $response->assertOk();
 
         $data = $response->json();
@@ -34,7 +34,15 @@ class RehearsalsTest extends TestCase
     public function it_responds_with_404_when_client_provided_unknown_organization(): void
     {
         $this->assertEquals(0, Rehearsal::count());
-        $this->get(route('organizations.rehearsals.list', 10000))->assertStatus(Response::HTTP_NOT_FOUND);
-        $this->get(route('organizations.rehearsals.list', 'asd'))->assertStatus(Response::HTTP_NOT_FOUND);
+
+        $this
+            ->json('get', route('rehearsals.list'), ['organization_id' => 'asd'])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('organization_id');
+
+        $this
+            ->json('get', route('rehearsals.list'), ['organization_id' => 10000])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('organization_id');
     }
 }

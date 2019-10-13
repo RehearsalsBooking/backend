@@ -17,29 +17,29 @@ Route::name('organizations.')->prefix('organizations')->group(static function ()
 
     Route::name('rehearsals.')->prefix('/{organization}/rehearsals')->group(static function () {
 
-        Route::get('/', [OrganizationRehearsalsController::class, 'index'])
-            ->where('organization', '[0-9]+')
-            ->name('list');
 
-        Route::post('/', [OrganizationRehearsalsController::class, 'create'])
-            ->where('organization', '[0-9]+')
-            ->name('create')
-            ->middleware('auth:api');
-
-        Route::put('/{rehearsal}', [OrganizationRehearsalsController::class, 'reschedule'])
-            ->where('organization', '[0-9]+')
-            ->where('rehearsal', '[0-9]+')
-            ->name('reschedule')
-            ->middleware('auth:api');
     });
 
 });
 
-Route::name('rehearsals.')->prefix('rehearsals')->middleware('auth:api')->group(static function () {
+Route::name('rehearsals.')->prefix('rehearsals')->group(static function () {
+
+    Route::get('/', [RehearsalsController::class, 'index'])
+        ->name('list');
+
+    Route::post('/', [RehearsalsController::class, 'create'])
+        ->name('create')
+        ->middleware('auth:api');
+
+    Route::put('/{rehearsal}', [RehearsalsController::class, 'reschedule'])
+        ->where('rehearsal', '[0-9]+')
+        ->name('reschedule')
+        ->middleware('auth:api');
 
     Route::delete('{rehearsal}', [RehearsalsController::class, 'delete'])
         ->where('rehearsal', '[0-9]+')
         ->middleware('can:delete,rehearsal')
+        ->middleware('auth:api')
         ->name('delete');
 });
 
