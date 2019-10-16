@@ -82,6 +82,12 @@ class RehearsalsController extends Controller
      */
     public function delete(Rehearsal $rehearsal): JsonResponse
     {
+        $this->authorize('delete', $rehearsal);
+
+        if ($rehearsal->isInPast()) {
+            return response()->json('you can\'t delete rehearsal in the past', Response::HTTP_FORBIDDEN);
+        }
+
         $rehearsal->delete();
 
         return response()->json('rehearsal successfully deleted');

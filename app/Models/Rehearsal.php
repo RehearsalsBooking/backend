@@ -119,4 +119,12 @@ class Rehearsal extends Model
     {
         return $this->band_id === null;
     }
+
+    /**
+     * @return bool
+     */
+    public function isInPast(): bool
+    {
+        return $this->starts_at < Carbon::now();
+    }
 }

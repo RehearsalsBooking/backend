@@ -38,7 +38,6 @@ Route::name('rehearsals.')->prefix('rehearsals')->group(static function () {
 
     Route::delete('{rehearsal}', [RehearsalsController::class, 'delete'])
         ->where('rehearsal', '[0-9]+')
-        ->middleware('can:delete,rehearsal')
         ->middleware('auth:api')
         ->name('delete');
 });

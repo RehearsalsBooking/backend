@@ -151,7 +151,9 @@ abstract class TestCase extends BaseTestCase
     protected function createRehearsalForUser(User $user): Rehearsal
     {
         return factory(Rehearsal::class)->create([
-            'user_id' => $user->id
+            'user_id' => $user->id,
+            'starts_at' => Carbon::now()->addDay(),
+            'ends_at' => Carbon::now()->addDay()->addHours(2),
         ]);
     }
 }
