@@ -90,4 +90,34 @@ class AcceptInviteTest extends TestCase
         $this->assertDatabaseMissing('band_user_invites', ['user_id' => $user->id]);
         $this->assertEquals(0, Invite::count());
     }
+
+    /** @test */
+    public function when_user_accepts_band_invite_he_becomes_attendee_of_all_future_rehearsals_of_this_band(): void
+    {
+        $user = $this->createUser();
+        $band = $this->createBand();
+
+        $bandsRehearsalInPast = $this->createRehearsalForBandInThePast($band);
+        $bandsRehearsalInFuture = $this->createRehearsalForBandInFuture($band);
+
+        $this->assertEquals(2, $band->rehearsals()->count());
+
+        $invite = $this->createInvite([
+            'user_id' => $user->id,
+            'band_id' => $band->id
+        ]);
+
+        $this->actingAs($user);
+
+        $this->assertEquals(0, $bandsRehearsalInPast->attendees()->count());
+        $this->assertEquals(0, $bandsRehearsalInFuture->attendees()->count());
+
+        $response = $this->json('post', route('invites.accept', $invite->id));
+
+        $this->assertEquals(0, $bandsRehearsalInPast->attendees()->count());
+        $this->assertEquals(1, $bandsRehearsalInFuture->attendees()->count());
+
+        $response->assertOk();
+
+    }
 }

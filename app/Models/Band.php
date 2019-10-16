@@ -35,6 +35,8 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $rehearsals_count
  * @property-read Collection|User[] $invitedUsers
  * @property-read int|null $invited_users_count
+ * @property-read Collection|Rehearsal[] $futureRehearsals
+ * @property-read int|null $future_rehearsals_count
  */
 class Band extends Model
 {
@@ -67,6 +69,14 @@ class Band extends Model
     }
 
     /**
+     * @return HasMany
+     */
+    public function futureRehearsals(): HasMany
+    {
+        return $this->hasMany(Rehearsal::class)->where('starts_at', '>', Carbon::now());
+    }
+
+    /**
      * @return BelongsToMany
      */
     public function invitedUsers(): BelongsToMany
@@ -89,5 +99,23 @@ class Band extends Model
             'user_id' => $userId,
             'band_id' => $this->id
         ]);
+    }
+
+    /**
+     * @param int $userId
+     */
+    public function addMember(int $userId): void
+    {
+        $this->members()->attach($userId);
+    }
+
+    /**
+     * @param int $userId
+     */
+    public function addUserToFutureRehearsals(int $userId): void
+    {
+        $this->futureRehearsals->each(static function (Rehearsal $futureRehearsal) use ($userId) {
+            $futureRehearsal->attendees()->attach($userId);
+        });
     }
 }

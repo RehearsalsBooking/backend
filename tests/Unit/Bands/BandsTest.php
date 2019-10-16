@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Bands;
 
-use App\Models\Band;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Tests\TestCase;
@@ -33,11 +32,9 @@ class BandsTest extends TestCase
         $guitarist = $this->createUser();
         $vocalist = $this->createUser();
 
-        /** @var Band $rockBand */
-        $rockBand = factory(Band::class)->create();
+        $rockBand = $this->createBand();
 
-        /** @var Band $rapBand */
-        $rapBand = factory(Band::class)->create();
+        $rapBand = $this->createBand();
 
         $rockBandMembers = collect([$drummer, $guitarist, $vocalist]);
         $rapBandMembers = collect([$drummer, $vocalist]);
@@ -81,7 +78,7 @@ class BandsTest extends TestCase
     /** @test */
     public function band_has_many_invites_for_users(): void
     {
-        $band = factory(Band::class)->create();
+        $band = $this->createBand();
 
         $invitedUsersCount = 3;
         $invitedUsers = $this->createUsers($invitedUsersCount);
@@ -93,5 +90,18 @@ class BandsTest extends TestCase
         $this->assertEquals($invitedUsersCount, $band->invitedUsers()->count());
         $this->assertInstanceOf(User::class, $band->invitedUsers->first());
         $this->assertEquals($invitedUsers->pluck('id'), $band->invitedUsers->pluck('id'));
+    }
+
+
+    /** @test */
+    public function band_has_rehearsals_in_future(): void
+    {
+        $band = $this->createBand();
+
+        $this->createRehearsalForBandInThePast($band);
+        $rehearsalInFuture = $this->createRehearsalForBandInFuture($band);
+
+        $this->assertEquals([$rehearsalInFuture->id], $band->futureRehearsals->pluck('id')->toArray());
+        $this->assertEquals(1, $band->futureRehearsals()->count());
     }
 }

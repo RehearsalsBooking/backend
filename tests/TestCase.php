@@ -156,4 +156,30 @@ abstract class TestCase extends BaseTestCase
             'ends_at' => Carbon::now()->addDay()->addHours(2),
         ]);
     }
+
+    /**
+     * @param Band $band
+     * @return Rehearsal
+     */
+    protected function createRehearsalForBandInFuture(Band $band): Rehearsal
+    {
+        return factory(Rehearsal::class)->create([
+            'band_id' => $band->id,
+            'starts_at' => Carbon::now()->addDay(),
+            'ends_at' => Carbon::now()->addDay()->addHours(2),
+        ]);
+    }
+
+    /**
+     * @param Band $band
+     * @return Rehearsal
+     */
+    protected function createRehearsalForBandInThePast(Band $band): Rehearsal
+    {
+        return factory(Rehearsal::class)->create([
+            'band_id' => $band->id,
+            'starts_at' => Carbon::now()->subDay(3),
+            'ends_at' => Carbon::now()->setDay()->addHours(2),
+        ]);
+    }
 }
