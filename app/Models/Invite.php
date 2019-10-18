@@ -50,8 +50,7 @@ class Invite extends Pivot
      */
     public function accept(): void
     {
-        $this->band->addMember($this->user_id);
-        $this->band->addUserToFutureRehearsals($this->user_id);
+        $this->band->registerNewMember($this->user_id);
 
         $this->delete();
     }

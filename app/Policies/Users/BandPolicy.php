@@ -42,10 +42,16 @@ class BandPolicy
      * only admin of a band can update its members
      * @param User $user
      * @param Band $band
+     * @param int $memberId
      * @return bool
      */
-    public function removeMembers(User $user, Band $band): bool
+    public function removeMember(User $user, Band $band, int $memberId): bool
     {
+        // user can leave the band
+        if ($memberId === $user->id) {
+            return true;
+        }
+
         return $band->admin_id === $user->id;
     }
 }

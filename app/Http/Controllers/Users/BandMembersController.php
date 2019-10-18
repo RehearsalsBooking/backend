@@ -18,7 +18,7 @@ class BandMembersController extends Controller
      */
     public function delete(Band $band, int $memberId): JsonResponse
     {
-        $this->authorize('remove-members', $band);
+        $this->authorize('remove-member', [$band, $memberId]);
 
         $band->removeMember($memberId);
 

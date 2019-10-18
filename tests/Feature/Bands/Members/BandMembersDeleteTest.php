@@ -63,4 +63,32 @@ class BandMembersDeleteTest extends TestCase
             $this->band->fresh(['members'])->pluck('id')->toArray()
         );
     }
+
+    /** @test */
+    public function user_can_leave_band(): void
+    {
+        $bandMembersCount = 5;
+        $bandMembers = $this->createUsers($bandMembersCount);
+        $this->band->members()->saveMany($bandMembers);
+
+        $this->assertEquals($bandMembersCount, $this->band->members()->count());
+        $this->assertEquals(
+            $bandMembers->pluck('id')->toArray(),
+            $this->band->members->pluck('id')->toArray()
+        );
+
+        $userWhoIsLeavingBand = $this->band->members()->inRandomOrder()->first(['id']);
+
+        $this->actingAs($userWhoIsLeavingBand);
+
+        $response = $this->json('delete', route('bands.members.delete', [$this->band->id, $userWhoIsLeavingBand->id]));
+
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
+
+        $this->assertEquals($bandMembersCount - 1, $this->band->members()->count());
+        $this->assertNotContains(
+            $userWhoIsLeavingBand->id,
+            $this->band->fresh(['members'])->pluck('id')->toArray()
+        );
+    }
 }
