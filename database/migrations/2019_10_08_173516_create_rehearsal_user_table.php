@@ -15,12 +15,14 @@ class CreateRehearsalUserTable extends Migration
     {
         Schema::create('rehearsal_user', static function (Blueprint $table) {
 
-            $table->unsignedBigInteger('rehearsal_id')
+            $table->unsignedBigInteger('rehearsal_id');
+            $table->foreign('rehearsal_id')
                 ->references('id')
                 ->on('rehearsals')
                 ->onDelete('cascade');
 
-            $table->unsignedBigInteger('user_id')
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');

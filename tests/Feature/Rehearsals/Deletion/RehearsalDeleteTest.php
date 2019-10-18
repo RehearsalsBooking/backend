@@ -2,23 +2,35 @@
 
 namespace Tests\Feature\Rehearsals\Deletion;
 
-use App\Models\Rehearsal;
-use Carbon\Carbon;
-use Illuminate\Http\Response;
+use App\Models\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+/**
+ * Class RehearsalDeleteTest
+ * @property $user User
+ * @package Tests\Feature\Rehearsals\Deletion
+ */
 class RehearsalDeleteTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function user_can_delete_his_rehearsal(): void
-    {
-        $user = $this->createUser();
-        $this->actingAs($user);
+    /**
+     * @var User
+     */
+    private $user;
 
-        $rehearsal = $this->createRehearsalForUser($user);
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = $this->createUser();
+        $this->actingAs($this->user);
+    }
+
+    /** @test */
+    public function user_can_delete_his_individual_rehearsal(): void
+    {
+        $rehearsal = $this->createRehearsalForUser($this->user);
 
         $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
 
@@ -30,40 +42,44 @@ class RehearsalDeleteTest extends TestCase
     }
 
     /** @test */
-    public function user_cannot_delete_rehearsal_that_already_began(): void
+    public function admin_of_band_can_delete_bands_rehearsals(): void
     {
-        $user = $this->createUser();
-        $this->actingAs($user);
-
-        $rehearsal = factory(Rehearsal::class)->create([
-            'user_id' => $user->id,
-            'starts_at' => Carbon::now()->subHour(),
-            'ends_at' => Carbon::now()->addHour(),
-        ]);
+        $band = $this->createBandForUser($this->user);
+        $rehearsal = $this->createRehearsalForBandInFuture($band);
 
         $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
 
-        $this->json('delete', route('rehearsals.delete', $rehearsal->id))->assertStatus(Response::HTTP_FORBIDDEN);
+        $response = $this->json('delete', route('rehearsals.delete', $rehearsal->id));
 
-        $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
+        $response->assertOk();
+
+        $this->assertDatabaseMissing('rehearsals', $rehearsal->toArray());
     }
 
+
     /** @test */
-    public function user_cannot_delete_rehearsal_that_already_finished(): void
+    public function when_user_deletes_rehearsal_then_this_rehearsals_attendees_are_also_deleted(): void
     {
-        $user = $this->createUser();
-        $this->actingAs($user);
+        $band = $this->createBandForUser($this->user);
+        $rehearsalAttendees = $this->createUsers(5);
+        $band->members()->saveMany($rehearsalAttendees);
 
-        $rehearsal = factory(Rehearsal::class)->create([
-            'user_id' => $user->id,
-            'starts_at' => Carbon::now()->subHours(3),
-            'ends_at' => Carbon::now()->subHours(2),
+        $rehearsal = $this->createRehearsalForBandInFuture($band);
+        $rehearsal->registerBandMembersAsAttendees();
+
+        $this->assertEquals(
+            $rehearsalAttendees->pluck('id')->toArray(),
+            $rehearsal->attendees->pluck('id')->toArray()
+        );
+
+        $this->actingAs($this->user);
+        $deletedRehearsalId = $rehearsal->id;
+        $response = $this->json('delete', route('rehearsals.delete', $deletedRehearsalId));
+
+        $response->assertOk();
+
+        $this->assertDatabaseMissing('rehearsal_user', [
+            'rehearsal_id' => $deletedRehearsalId
         ]);
-
-        $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
-
-        $this->json('delete', route('rehearsals.delete', $rehearsal->id))->assertStatus(Response::HTTP_FORBIDDEN);
-
-        $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
     }
 }

@@ -54,6 +54,11 @@ class RehearsalPolicy
      */
     public function delete(User $user, Rehearsal $rehearsal)
     {
+        // admin of band can delete rehearsals
+        if (optional($rehearsal->band)->admin_id === $user->id) {
+            return true;
+        }
+
         return $user->id === $rehearsal->user_id;
     }
 }

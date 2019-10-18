@@ -16,8 +16,10 @@ class CreateBandsTable extends Migration
         Schema::create('bands', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->unsignedBigInteger('admin_id')->references('id')->on('users');
+            $table->unsignedBigInteger('admin_id');
             $table->timestamps();
+
+            $table->foreign('admin_id')->references('id')->on('users');
         });
     }
 

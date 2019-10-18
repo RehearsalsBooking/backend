@@ -23,8 +23,10 @@ class CreateOrganizationsTable extends Migration
             $table->string('opens_at')->nullable();
             $table->string('closes_at')->nullable();
 
-            $table->unsignedInteger('owner_id')->references('id')->on('users');
+            $table->unsignedInteger('owner_id');
             $table->timestamps();
+
+            $table->foreign('owner_id')->references('id')->on('users');
         });
     }
 

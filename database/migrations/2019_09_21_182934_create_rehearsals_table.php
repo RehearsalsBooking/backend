@@ -15,13 +15,17 @@ class CreateRehearsalsTable extends Migration
     {
         Schema::create('rehearsals', static function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('organization_id')->references('id')->on('organizations');
-            $table->unsignedBigInteger('user_id')->references('id')->on('users');
-            $table->unsignedBigInteger('band_id')->nullable()->references('id')->on('bands');
+            $table->unsignedBigInteger('organization_id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('band_id')->nullable();
             $table->boolean('is_confirmed')->default(false);
             $table->dateTime('starts_at');
             $table->dateTime('ends_at');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('organization_id')->references('id')->on('organizations');
+            $table->foreign('band_id')->references('id')->on('bands');
         });
     }
 

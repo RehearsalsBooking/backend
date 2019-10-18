@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBandsUsersTable extends Migration
+class CreateBandUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -17,6 +17,9 @@ class CreateBandsUsersTable extends Migration
             $table->unsignedBigInteger('band_id');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
+
+            $table->foreign('band_id')->references('id')->on('bands');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
@@ -27,6 +30,6 @@ class CreateBandsUsersTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bands_users');
+
     }
 }
