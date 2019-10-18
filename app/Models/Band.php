@@ -118,4 +118,12 @@ class Band extends Model
             $futureRehearsal->attendees()->attach($userId);
         });
     }
+
+    /**
+     * @param int $memberId
+     */
+    public function removeMember(int $memberId): void
+    {
+        $this->members()->detach([$memberId]);
+    }
 }

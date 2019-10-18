@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Users\BandInvitesController;
+use App\Http\Controllers\Users\BandMembersController;
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\InvitesController;
 use App\Http\Controllers\Users\OrganizationsController;
@@ -14,12 +15,6 @@ Route::name('organizations.')->prefix('organizations')->group(static function ()
     Route::get('/{organization}', [OrganizationsController::class, 'show'])
         ->where('organization', '[0-9]+')
         ->name('show');
-
-    Route::name('rehearsals.')->prefix('/{organization}/rehearsals')->group(static function () {
-
-
-    });
-
 });
 
 Route::name('rehearsals.')->prefix('rehearsals')->group(static function () {
@@ -69,4 +64,10 @@ Route::name('invites.')->prefix('invites')->middleware('auth:api')->group(static
     Route::post('/{invite}/decline', [InvitesController::class, 'decline'])
         ->where('invite', '[0-9]+')
         ->name('decline');
+});
+
+Route::name('bands.members.')->prefix('bands/{band}/members')->middleware('auth:api')->group(static function () {
+    Route::delete('/{memberId}', [BandMembersController::class, 'delete'])
+        ->where('band', '[0-9]+')
+        ->name('delete');
 });
