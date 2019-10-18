@@ -104,9 +104,9 @@ class Band extends Model
     /**
      * @param int $userId
      */
-    public function registerNewMember(int $userId): void
+    public function addMember(int $userId): void
     {
-        $this->addMember($userId);
+        $this->members()->attach($userId);
         $this->addUserToFutureRehearsals($userId);
     }
 
@@ -115,15 +115,8 @@ class Band extends Model
      */
     public function removeMember(int $memberId): void
     {
+        $this->removeUserFromFutureRehearsals($memberId);
         $this->members()->detach([$memberId]);
-    }
-
-    /**
-     * @param int $userId
-     */
-    private function addMember(int $userId): void
-    {
-        $this->members()->attach($userId);
     }
 
     /**
@@ -133,6 +126,16 @@ class Band extends Model
     {
         $this->futureRehearsals->each(static function (Rehearsal $futureRehearsal) use ($userId) {
             $futureRehearsal->attendees()->attach($userId);
+        });
+    }
+
+    /**
+     * @param int $memberId
+     */
+    private function removeUserFromFutureRehearsals(int $memberId): void
+    {
+        $this->futureRehearsals->each(static function (Rehearsal $futureRehearsal) use ($memberId) {
+            $futureRehearsal->attendees()->detach($memberId);
         });
     }
 }
