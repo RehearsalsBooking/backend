@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
@@ -37,9 +38,18 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $invited_users_count
  * @property-read Collection|Rehearsal[] $futureRehearsals
  * @property-read int|null $future_rehearsals_count
+ * @property Carbon|null $deleted_at
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|Band onlyTrashed()
+ * @method static bool|null restore()
+ * @method static Builder|Band whereDeletedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|Band withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Band withoutTrashed()
  */
 class Band extends Model
 {
+    use SoftDeletes;
+
     protected $guarded = [
         'id'
     ];

@@ -50,10 +50,9 @@ class BandsUpdateTest extends TestCase
     /** @test */
     public function only_admin_of_a_band_can_update_it(): void
     {
-        $someOtherUser = factory(User::class)->create();
-        $this->actingAs($someOtherUser);
+        $this->actingAs($this->createUser());
 
-        $this->json('put', route('bands.update', $this->band))
+        $this->json('put', route('bands.update', $this->band), ['name' => 'new band name'])
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 

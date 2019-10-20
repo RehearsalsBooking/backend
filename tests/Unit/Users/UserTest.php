@@ -39,8 +39,8 @@ class UserTest extends TestCase
 
         $this->assertEquals($numberOfUsersBands, $user->createdBands()->count());
         $this->assertEquals(
-            $usersBands->toArray(),
-            $user->createdBands->toArray()
+            $usersBands->pluck('id')->toArray(),
+            $user->createdBands->pluck('id')->toArray()
         );
     }
 

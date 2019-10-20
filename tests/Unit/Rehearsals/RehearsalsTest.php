@@ -50,8 +50,8 @@ class RehearsalsTest extends TestCase
         );
 
         $this->assertEquals(
-            $band->toArray(),
-            $rehearsal->band->toArray()
+            $band->id,
+            $rehearsal->band->id
         );
     }
 

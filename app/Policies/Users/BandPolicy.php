@@ -24,6 +24,19 @@ class BandPolicy
     }
 
     /**
+     * Determine whether the user can delete the band.
+     *
+     * only admin of a band can update it
+     * @param User $user
+     * @param Band $band
+     * @return bool
+     */
+    public function delete(User $user, Band $band): bool
+    {
+        return $band->admin_id === $user->id;
+    }
+
+    /**
      * Determine whether the user can invite members to the band.
      *
      * only admin of a band can update its members

@@ -18,6 +18,7 @@ class CreateBandsTable extends Migration
             $table->string('name');
             $table->unsignedBigInteger('admin_id');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('admin_id')->references('id')->on('users');
         });

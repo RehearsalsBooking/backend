@@ -44,8 +44,11 @@ Route::name('bands.')->prefix('bands')->middleware('auth:api')->group(static fun
 
     Route::put('/{band}', [BandsController::class, 'update'])
         ->where('band', '[0-9]+')
-        ->middleware('can:update,band')
         ->name('update');
+
+    Route::delete('/{band}', [BandsController::class, 'delete'])
+        ->where('band', '[0-9]+')
+        ->name('delete');
 });
 
 Route::name('invites.')->prefix('invites')->middleware('auth:api')->group(static function () {
