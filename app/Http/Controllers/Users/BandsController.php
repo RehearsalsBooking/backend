@@ -52,6 +52,8 @@ class BandsController extends Controller
     {
         $this->authorize('delete', $band);
 
+        $band->cancelInvites();
+        $band->futureRehearsals()->delete();
         $band->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);

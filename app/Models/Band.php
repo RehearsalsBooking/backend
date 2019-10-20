@@ -98,7 +98,7 @@ class Band extends Model
     }
 
     /**
-     * @param $user
+     * @param User|int $user
      * @return Invite
      */
     public function invite($user): Invite
@@ -147,5 +147,10 @@ class Band extends Model
         $this->futureRehearsals->each(static function (Rehearsal $futureRehearsal) use ($memberId) {
             $futureRehearsal->attendees()->detach($memberId);
         });
+    }
+
+    public function cancelInvites(): void
+    {
+        $this->invitedUsers()->delete();
     }
 }

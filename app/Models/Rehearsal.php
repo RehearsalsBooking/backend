@@ -109,7 +109,7 @@ class Rehearsal extends Model
      */
     public function registerUserAsAttendee(): void
     {
-        $this->attendees()->sync($this->user_id);
+        $this->attendees()->attach($this->user_id);
     }
 
     /**
