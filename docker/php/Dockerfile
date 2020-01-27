@@ -1,4 +1,4 @@
-FROM php:7.3-fpm-stretch
+FROM php:7.4-fpm
 
 # Install modules
 RUN apt-get clean && apt-get update && apt-get install -y \
@@ -22,11 +22,7 @@ RUN apt-get clean && apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install intl pdo pdo_pgsql zip sockets soap xsl
 
-RUN docker-php-ext-configure gd \
-        --with-freetype-dir=/usr/lib/x86_64-linux-gnu/ \
-        --with-png-dir=/usr/lib/x86_64-linux-gnu/ \
-        --with-jpeg-dir=/usr/lib/x86_64-linux-gnu/ \
-    && docker-php-ext-install gd
+RUN docker-php-ext-install gd
 
 # Imagick
 RUN pecl install imagick \

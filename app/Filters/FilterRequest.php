@@ -17,9 +17,9 @@ use Illuminate\Http\Request;
  */
 abstract class FilterRequest
 {
-    public $request;
-    protected $builder;
-    protected $filters = [];
+    public Request $request;
+    protected Builder $builder;
+    protected array $filters = [];
 
     public function __construct(Request $request)
     {
