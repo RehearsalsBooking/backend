@@ -17,7 +17,6 @@ class OrganizationTest extends TestCase
     /** @test */
     public function organization_has_one_owner(): void
     {
-        /** @var User $user */
         $user = $this->createUser();
 
         $organization = $this->createOrganization([

@@ -34,7 +34,7 @@ class AttendeesRegistrationTest extends TestCase
         $this->assertEquals($user->id, $rehearsal->attendees->first()->id);
 
         //test reschedule
-        $this->rescheduleRehearsal($organization, $rehearsal)->assertOk();
+        $this->rescheduleRehearsal($rehearsal)->assertOk();
 
         $rehearsal = Rehearsal::first();
 
@@ -75,7 +75,7 @@ class AttendeesRegistrationTest extends TestCase
         $this->assertEquals($bandMembers->pluck('id'), $rehearsal->attendees->pluck('id'));
 
         //test reschedule
-        $this->rescheduleRehearsal($organization, $rehearsal, $band)->assertOk();
+        $this->rescheduleRehearsal($rehearsal, $band)->assertOk();
 
         $rehearsal = Rehearsal::first();
 
@@ -141,12 +141,11 @@ class AttendeesRegistrationTest extends TestCase
     }
 
     /**
-     * @param Organization $organization
      * @param Rehearsal $rehearsal
      * @param Band|null $band
      * @return TestResponse
      */
-    protected function rescheduleRehearsal(Organization $organization, Rehearsal $rehearsal, Band $band = null): TestResponse
+    protected function rescheduleRehearsal(Rehearsal $rehearsal, Band $band = null): TestResponse
     {
         $parameters = [
             'starts_at' => $rehearsal->starts_at->addHour()->toDateTimeString(),

@@ -57,7 +57,7 @@ class AcceptInviteTest extends TestCase
         $this->actingAs($this->createUser());
 
         $this
-            ->json('post', route('invites.decline', 10000))
+            ->json('post', route('invites.accept', 10000))
             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 

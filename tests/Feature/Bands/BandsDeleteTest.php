@@ -17,15 +17,8 @@ class BandsDeleteTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @var Band
-     */
-    private $band;
-
-    /**
-     * @var User
-     */
-    private $bandOwner;
+    private Band $band;
+    private User $bandOwner;
 
     protected function setUp(): void
     {

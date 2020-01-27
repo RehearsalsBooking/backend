@@ -18,8 +18,8 @@ class InviteValidationTest extends TestCase
 {
     use RefreshDatabase;
 
-    private $bandAdmin;
-    private $band;
+    private User $bandAdmin;
+    private Band $band;
 
     protected function setUp(): void
     {

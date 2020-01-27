@@ -102,23 +102,23 @@ class Organization extends Model
         $inWorkDayRange = $this->isTimeAfterOrganizationOpens($startsAt) && $this->isTimeBeforeOrganizationCloses($endsAt);
 
         $query = $this->rehearsals()
-            ->where(static function (Builder $query) use ($endsAt, $startsAt) {
+            ->where(fn (Builder $query) =>
 
                 $query
-                    ->where(static function (Builder $query) use ($startsAt) {
+                    ->where(fn (Builder $query) =>
                         $query->where('starts_at', '<', $startsAt)
-                            ->where('ends_at', '>', $startsAt);
-                    })
-                    ->orWhere(static function (Builder $query) use ($endsAt) {
+                            ->where('ends_at', '>', $startsAt)
+                    )
+                    ->orWhere(fn (Builder $query) =>
                         $query->where('starts_at', '<', $endsAt)
-                            ->where('ends_at', '>', $endsAt);
-                    })
-                    ->orWhere(static function (Builder $query) use ($endsAt, $startsAt) {
+                            ->where('ends_at', '>', $endsAt)
+                    )
+                    ->orWhere(fn (Builder $query) =>
                         $query->where('starts_at', '>', $startsAt)
-                            ->where('ends_at', '<', $endsAt);
-                    });
+                            ->where('ends_at', '<', $endsAt)
+                    )
 
-            });
+            );
 
         // if rehearsal was passed as a parameter, then we want to determine if this rehearsal
         // is available for reschedule, so we must exclude it from query

@@ -12,12 +12,9 @@ class AuthTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @var User
-     */
-    private $user;
+    private User $user;
 
-    private $credentials = [
+    private array $credentials = [
         'email' => 'some@email.com',
         'password' => 'somepassword'
     ];

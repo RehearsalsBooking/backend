@@ -4,7 +4,7 @@ namespace App\Filters;
 
 class RehearsalsFilterRequest extends FilterRequest
 {
-    public $filters = [
+    public array $filters = [
         'from' => 'sometimes|date',
         'to' => 'sometimes|date|after:from',
         'organization_id' => 'sometimes|numeric|exists:organizations,id'

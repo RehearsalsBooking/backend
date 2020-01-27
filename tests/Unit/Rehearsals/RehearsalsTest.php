@@ -6,6 +6,7 @@ use App\Models\Band;
 use App\Models\Organization;
 use App\Models\Rehearsal;
 use App\Models\User;
+use DB;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -62,7 +63,7 @@ class RehearsalsTest extends TestCase
 
         $attendeesCount = 5;
         $attendees = factory(User::class, $attendeesCount)->create()->each(static function ($attendee) use ($rehearsal) {
-            \DB::table('rehearsal_user')
+            DB::table('rehearsal_user')
                 ->insert([
                     'rehearsal_id' => $rehearsal->id,
                     'user_id' => $attendee->id
