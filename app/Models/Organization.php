@@ -47,6 +47,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Organization whereOpensAt($value)
  * @property bool $is_active
  * @method static Builder|Organization whereIsActive($value)
+ * @property-read Collection|Price[] $prices
+ * @property-read int|null $prices_count
  */
 class Organization extends Model
 {
@@ -91,6 +93,11 @@ class Organization extends Model
         return $this->hasMany(Rehearsal::class);
     }
 
+    public function prices(): HasMany
+    {
+        return $this->hasMany(Price::class);
+    }
+
     /**
      * @param $startsAt
      * @param $endsAt
@@ -102,22 +109,20 @@ class Organization extends Model
         $inWorkDayRange = $this->isTimeAfterOrganizationOpens($startsAt) && $this->isTimeBeforeOrganizationCloses($endsAt);
 
         $query = $this->rehearsals()
-            ->where(fn (Builder $query) =>
-
-                $query
-                    ->where(fn (Builder $query) =>
-                        $query->where('starts_at', '<', $startsAt)
+            ->where(
+                fn (Builder $query) => $query
+                    ->where(
+                        fn (Builder $query) => $query->where('starts_at', '<', $startsAt)
                             ->where('ends_at', '>', $startsAt)
                     )
-                    ->orWhere(fn (Builder $query) =>
-                        $query->where('starts_at', '<', $endsAt)
+                    ->orWhere(
+                        fn (Builder $query) => $query->where('starts_at', '<', $endsAt)
                             ->where('ends_at', '>', $endsAt)
                     )
-                    ->orWhere(fn (Builder $query) =>
-                        $query->where('starts_at', '>', $startsAt)
+                    ->orWhere(
+                        fn (Builder $query) => $query->where('starts_at', '>', $startsAt)
                             ->where('ends_at', '<', $endsAt)
                     )
-
             );
 
         // if rehearsal was passed as a parameter, then we want to determine if this rehearsal

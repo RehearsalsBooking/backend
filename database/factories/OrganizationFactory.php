@@ -17,6 +17,6 @@ $factory->define(Organization::class, static function (Faker $faker) {
             return factory(User::class)->create()->id;
         },
         'opens_at' => '00:00',
-        'closes_at' => '24:59'
+        'closes_at' => '23:59'
     ];
 });

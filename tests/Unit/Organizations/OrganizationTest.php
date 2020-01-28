@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Organizations;
 
-use App\Models\Organization;
+use App\Models\Price;
 use App\Models\Rehearsal;
 use App\Models\User;
 use App\Models\WorkingDay;
@@ -36,5 +36,22 @@ class OrganizationTest extends TestCase
         $this->assertInstanceOf(Collection::class, $organization->rehearsals);
         $this->assertEquals(5, $organization->rehearsals()->count());
         $this->assertInstanceOf(Rehearsal::class, $organization->rehearsals->first());
+    }
+
+    /** @test */
+    public function organization_has_prices(): void
+    {
+        $organization = $this->createOrganization();
+
+        foreach (range(1, 7) as $dayOfWeek) {
+            factory(Price::class)->create([
+                'organization_id' => $organization->id,
+                'day' => $dayOfWeek
+            ]);
+        }
+
+        $this->assertInstanceOf(Collection::class, $organization->prices);
+        $this->assertEquals(7, $organization->prices()->count());
+        $this->assertInstanceOf(Price::class, $organization->prices->first());
     }
 }

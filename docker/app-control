@@ -60,7 +60,7 @@ function bash() {
     echo "=============================="
     echo "Enter into php container using bash"
     echo "=============================="
-    docker-compose run --rm fpm bash
+    docker-compose run --rm -u 1000 fpm bash
 }
 
 function docs() {
