@@ -34,4 +34,5 @@ use Illuminate\Support\Carbon;
  */
 class Price extends Model
 {
+    protected $guarded = ['id'];
 }
