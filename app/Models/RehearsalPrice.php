@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class RehearsalPrice
@@ -49,7 +50,18 @@ class RehearsalPrice
             return $this->calculatePriceForSingleDay($dayOfWeekStart, $this->start, $this->end);
         }
 
-
+        // todo: rehearsal cannot be longer than 24 hours
+        $priceAtFirstDay = $this->calculatePriceForSingleDay(
+            $dayOfWeekStart,
+            $this->start,
+            $this->start->copy()->hours(24)->minute(0)
+        );
+        $priceAtLastDay = $this->calculatePriceForSingleDay(
+            $dayOfWeekEnd,
+            $this->end->copy()->hours(0)->minute(0),
+            $this->end
+        );
+        return $priceAtFirstDay + $priceAtLastDay;
     }
 
     /**
@@ -60,10 +72,52 @@ class RehearsalPrice
      */
     private function calculatePriceForSingleDay(int $day, Carbon $start, Carbon $end)
     {
-        $timeStart = $start->toTimeString();
-        $timeEnd = $end->toTimeString();
+        $matchingPrices = $this->getMatchingPricesForPeriod(
+            $day,
+            $start->toTimeString(),
+            $this->transformMidnight($end->toTimeString())
+        );
 
-        $matchingPrices = $this->organization->prices()
+        if ($matchingPrices->count() === 1) {
+            return $this->calculatePriceForPeriod($start, $end, $matchingPrices->first()->price);
+        }
+
+        $result = 0;
+        /** @var Price $price */
+        foreach ($matchingPrices as $index => $price) {
+            if ($index === 0) {
+                $result += $this->calculatePriceForPeriod(
+                    $start->toTimeString(),
+                    $price->ends_at,
+                    $price->price
+                );
+            } elseif ($index === $matchingPrices->count() - 1) {
+                $result += $this->calculatePriceForPeriod(
+                    $price->starts_at,
+                    $this->transformMidnight($end->toTimeString()),
+                    $price->price
+                );
+            } else {
+                $result += $this->calculatePriceForPeriod(
+                    $price->starts_at,
+                    $price->ends_at,
+                    $price->price
+                );
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param int $day
+     * @param $timeStart
+     * @param $timeEnd
+     * @return Collection
+     */
+    private function getMatchingPricesForPeriod(int $day, $timeStart, $timeEnd): Collection
+    {
+        return $this->organization->prices()
             ->where('day', $day)
             ->where(
                 fn (Builder $query) => $query
@@ -86,25 +140,17 @@ class RehearsalPrice
             )
             ->orderBy('starts_at')
             ->get();
+    }
 
-        // if rehearsal's durations matches only one price setting
-        // then simply calculate it's cost according to duration
-        if ($matchingPrices->count() === 1) {
-            return $this->calculatePriceForPeriod($start, $end, $matchingPrices->first()->price);
-        }
-
-        $result = 0;
-        foreach ($matchingPrices as $index => $price) {
-            if ($index === 0) {
-                $result += $this->calculatePriceForPeriod($start->toTimeString(), $price->ends_at, $price->price);
-            } elseif ($index === $matchingPrices->count() - 1) {
-                $result += $this->calculatePriceForPeriod($price->starts_at, $end->toTimeString(), $price->price);
-            } else {
-                $result += $this->calculatePriceForPeriod($price->starts_at, $price->ends_at, $price->price);
-            }
-        }
-
-        return $result;
+    /**
+     * Transforms midnight time to 24:00 for correct queries
+     *
+     * @param string $time
+     * @return string
+     */
+    private function transformMidnight(string $time): string
+    {
+        return $time === '00:00:00' ? '24:00:00' : $time;
     }
 
     /**
