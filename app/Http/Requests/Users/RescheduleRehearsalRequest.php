@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Users;
 
+use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Models\RehearsalPrice;
 use Carbon\Carbon;
@@ -50,6 +51,7 @@ class RescheduleRehearsalRequest extends FormRequest
     /**
      * @return array
      * @throws PriceCalculationException
+     * @throws InvalidRehearsalDurationException
      */
     public function getRehearsalAttributes(): array
     {

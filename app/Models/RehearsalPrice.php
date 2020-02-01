@@ -3,6 +3,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -43,7 +44,7 @@ class RehearsalPrice
      * @param int $organizationId
      * @param Carbon $start
      * @param Carbon $end
-     * @throws PriceCalculationException
+     * @throws InvalidRehearsalDurationException
      */
     public function __construct(int $organizationId, Carbon $start, Carbon $end)
     {
@@ -53,11 +54,11 @@ class RehearsalPrice
         $this->uncalculatedMinutes = $end->diffInMinutes($start);
 
         if ($this->uncalculatedMinutes >= self::MINUTES_IN_ONE_DAY) {
-            throw new PriceCalculationException('Длительность репетиции не может превышать 24 часа');
+            throw new InvalidRehearsalDurationException('Длительность репетиции не может превышать 24 часа');
         }
 
         if ($this->uncalculatedMinutes % self::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES !== 0) {
-            throw new PriceCalculationException('Некорректная длительность репетиции');
+            throw new InvalidRehearsalDurationException('Некорректная длительность репетиции');
         }
     }
 

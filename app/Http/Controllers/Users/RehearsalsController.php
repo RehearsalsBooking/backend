@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Filters\RehearsalsFilterRequest;
 use App\Http\Controllers\Controller;
@@ -46,7 +47,7 @@ class RehearsalsController extends Controller
         try {
             /** @var Rehearsal $rehearsal */
             $rehearsal = Rehearsal::create($request->getAttributes());
-        } catch (PriceCalculationException $exception) {
+        } catch (PriceCalculationException | InvalidRehearsalDurationException $exception) {
             return response()->json($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -76,7 +77,7 @@ class RehearsalsController extends Controller
 
         try {
             $rehearsal->update($request->getRehearsalAttributes());
-        } catch (PriceCalculationException $exception) {
+        } catch (PriceCalculationException | InvalidRehearsalDurationException $exception) {
             return response()->json($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 

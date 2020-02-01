@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Rehearsals;
 
+use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Models\Organization;
 use App\Models\RehearsalPrice;
@@ -89,6 +90,7 @@ class RehearsalPriceCalculationTest extends TestCase
 
     /** @test
      * @throws PriceCalculationException
+     * @throws InvalidRehearsalDurationException
      */
     public function it_calculates_rehearsal_cost_at_one_period_correctly(): void
     {
@@ -141,6 +143,7 @@ class RehearsalPriceCalculationTest extends TestCase
     }
 
     /** @test
+     * @throws InvalidRehearsalDurationException
      * @throws PriceCalculationException
      */
     public function it_calculates_rehearsal_cost_at_multiple_periods_correctly(): void
@@ -173,6 +176,7 @@ class RehearsalPriceCalculationTest extends TestCase
     }
 
     /** @test
+     * @throws InvalidRehearsalDurationException
      * @throws PriceCalculationException
      */
     public function it_calculates_rehearsal_cost_at_multiple_periods_and_days_correctly(): void
