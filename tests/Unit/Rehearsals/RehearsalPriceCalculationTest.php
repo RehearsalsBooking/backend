@@ -1,13 +1,14 @@
 <?php
 
-namespace Tests\Unit\Organizations;
+namespace Tests\Unit\Rehearsals;
 
 use App\Models\Organization;
+use App\Models\RehearsalPrice;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class PriceCalculationTest extends TestCase
+class RehearsalPriceCalculationTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -24,41 +25,47 @@ class PriceCalculationTest extends TestCase
         // 14-20 200
         // 20-00 300
 
-        $price = $this->organization->calculatePriceForRehearsal(
+        $price = new RehearsalPrice(
+            $this->organization,
             $this->getDateTimeAtMonday(10, 0),
             $this->getDateTimeAtMonday(11, 0),
-            );
-        $this->assertEquals(100.0, $price);
+        );
+        $this->assertEquals(100.0, $price());
 
-        $price = $this->organization->calculatePriceForRehearsal(
+        $price = new RehearsalPrice(
+            $this->organization,
             $this->getDateTimeAtMonday(10, 0),
             $this->getDateTimeAtMonday(13, 0),
-            );
-        $this->assertEquals(300.0, $price);
+        );
+        $this->assertEquals(300.0, $price());
 
-        $price = $this->organization->calculatePriceForRehearsal(
+        $price = new RehearsalPrice(
+            $this->organization,
             $this->getDateTimeAtMonday(14, 0),
             $this->getDateTimeAtMonday(14, 30),
-            );
-        $this->assertEquals(100.0, $price);
+        );
+        $this->assertEquals(100.0, $price());
 
-        $price = $this->organization->calculatePriceForRehearsal(
+        $price = new RehearsalPrice(
+            $this->organization,
             $this->getDateTimeAtMonday(14, 0),
             $this->getDateTimeAtMonday(15, 30),
-            );
-        $this->assertEquals(300.0, $price);
+        );
+        $this->assertEquals(300.0, $price());
 
-        $price = $this->organization->calculatePriceForRehearsal(
+        $price = new RehearsalPrice(
+            $this->organization,
             $this->getDateTimeAtMonday(20, 0),
             $this->getDateTimeAtMonday(20, 30),
-            );
-        $this->assertEquals(150.0, $price);
+        );
+        $this->assertEquals(150.0, $price());
 
-        $price = $this->organization->calculatePriceForRehearsal(
+        $price = new RehearsalPrice(
+            $this->organization,
             $this->getDateTimeAtMonday(20, 0),
             $this->getDateTimeAtMonday(22, 0),
-            );
-        $this->assertEquals(600.0, $price);
+        );
+        $this->assertEquals(600.0, $price());
     }
 
     /**
@@ -89,23 +96,26 @@ class PriceCalculationTest extends TestCase
         // 14-20 200
         // 20-00 300
 
-        $price = $this->organization->calculatePriceForRehearsal(
+        $price = new RehearsalPrice(
+            $this->organization,
             $this->getDateTimeAtMonday(13, 00),
             $this->getDateTimeAtMonday(15, 00),
-            );
-        $this->assertEquals(100 + 200, $price);
+        );
+        $this->assertEquals(100 + 200, $price());
 
-        $price = $this->organization->calculatePriceForRehearsal(
+        $price = new RehearsalPrice(
+            $this->organization,
             $this->getDateTimeAtMonday(19, 30),
             $this->getDateTimeAtMonday(21, 30),
-            );
-        $this->assertEquals(0.5 * 200 + 1.5 * 300, $price);
+        );
+        $this->assertEquals(0.5 * 200 + 1.5 * 300, $price());
 
-        $price = $this->organization->calculatePriceForRehearsal(
+        $price = new RehearsalPrice(
+            $this->organization,
             $this->getDateTimeAtMonday(13, 00),
             $this->getDateTimeAtMonday(21, 00),
-            );
-        $this->assertEquals(100 + 6 * 200 + 300, $price);
+        );
+        $this->assertEquals(100 + 6 * 200 + 300, $price());
     }
 
     /** @test */
@@ -118,11 +128,12 @@ class PriceCalculationTest extends TestCase
         //prices at tuesday
         // 00-06 300
 
-        $price = $this->organization->calculatePriceForRehearsal(
+        $price = new RehearsalPrice(
+            $this->organization,
             $this->getDateTimeAtMonday(23, 00),
             $this->getDateTimeAtTuesday(1, 00),
-            );
-        $this->assertEquals(300 + 300, $price);
+        );
+        $this->assertEquals(300 + 300, $price());
     }
 
     protected function setUp(): void

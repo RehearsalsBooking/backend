@@ -147,86 +147,8 @@ class Organization extends Model
         return $this->hasMany(Rehearsal::class);
     }
 
-    /**
-     * @param Carbon $start
-     * @param Carbon $end
-     * @return float|int
-     * TODO: convert 00-00 time to 24-00 time when admin updates prices
-     * TODO: restrict rehearsal time to 24 hours
-     */
-    public function calculatePriceForRehearsal(Carbon $start, Carbon $end): float
-    {
-        $dayOfWeekStart = $start->dayOfWeekIso;
-        $dayOfWeekEnd = $end->dayOfWeekIso;
-
-        $rehearsalDurationInMinutes = $end->diffInMinutes($start);
-
-        if ($dayOfWeekEnd === $dayOfWeekStart) {
-            return $this->calculatePriceForSingleDay($dayOfWeekStart, $start, $end, $rehearsalDurationInMinutes);
-        }
-    }
-
     public function prices(): HasMany
     {
         return $this->hasMany(Price::class);
-    }
-
-    private function calculatePriceForSingleDay(int $day, Carbon $start, Carbon $end, int $rehearsalDurationInMinutes)
-    {
-        $timeStart = $start->toTimeString();
-        $timeEnd = $end->toTimeString();
-
-        $matchingPrices = $this->prices()
-            ->where('day', $day)
-            ->where(
-                fn (Builder $query) => $query
-                    ->where(
-                        fn (Builder $query) => $query->where('starts_at', '<=', $timeStart)
-                            ->where('ends_at', '>', $timeEnd)
-                    )
-                    ->orWhere(
-                        fn (Builder $query) => $query->where('starts_at', '<=', $timeStart)
-                            ->where('ends_at', '>', $timeStart)
-                    )
-                    ->orWhere(
-                        fn (Builder $query) => $query->where('starts_at', '<=', $timeEnd)
-                            ->where('ends_at', '>', $timeEnd)
-                    )
-                    ->orWhere(
-                        fn (Builder $query) => $query->where('starts_at', '>=', $timeStart)
-                            ->where('ends_at', '<=', $timeEnd)
-                    )
-            )
-            ->orderBy('starts_at')
-            ->get();
-
-        // if rehearsal's durations matches only one price setting
-        // then simply calculate it's cost according to duration
-        if ($matchingPrices->count() === 1) {
-            return $rehearsalDurationInMinutes * $matchingPrices->first()->price / 60;
-        }
-
-        $result = 0;
-        foreach ($matchingPrices as $index => $price) {
-            if ($index === 0) {
-                $timeStart = Carbon::createFromTimeString($start->toTimeString());
-                $priceEnd = Carbon::createFromTimeString($price->ends_at);
-                $delta = $priceEnd->diffInMinutes($timeStart);
-                $result += ($delta * $price->price / 60);
-            } elseif ($index === $matchingPrices->count() - 1) {
-                $timeStart = Carbon::createFromTimeString($end->toTimeString());
-                $priceEnd = Carbon::createFromTimeString($price->starts_at);
-                $delta = $priceEnd->diffInMinutes($timeStart);
-                $result += ($delta * $price->price / 60);
-            } else {
-                $timeStart = Carbon::createFromTimeString($price->starts_at);
-                $priceEnd = Carbon::createFromTimeString($price->ends_at);
-                $delta = $priceEnd->diffInMinutes($timeStart);
-                $result += ($delta * $price->price / 60);
-            }
-        }
-
-
-        return $result;
     }
 }
