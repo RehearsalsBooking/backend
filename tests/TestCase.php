@@ -123,7 +123,7 @@ abstract class TestCase extends BaseTestCase
         /**
          * @var $rehearsalStart Carbon
          */
-        $rehearsalStart = Carbon::now()->addHour()->setSeconds(0);
+        $rehearsalStart = Carbon::now()->addHour()->setMinutes(30)->setSeconds(0);
 
         /**
          * @var $rehearsalEnd Carbon

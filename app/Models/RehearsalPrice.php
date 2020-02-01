@@ -35,6 +35,9 @@ class RehearsalPrice
      */
     private int $uncalculatedMinutes;
 
+    private const MINUTES_IN_ONE_DAY = 60 * 24;
+    private const MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES = 30;
+
     /**
      * RehearsalPrice constructor.
      * @param int $organizationId
@@ -48,8 +51,13 @@ class RehearsalPrice
         $this->start = $start;
         $this->end = $end;
         $this->uncalculatedMinutes = $end->diffInMinutes($start);
-        if ($this->uncalculatedMinutes >= 60 * 24) {
+
+        if ($this->uncalculatedMinutes >= self::MINUTES_IN_ONE_DAY) {
             throw new PriceCalculationException('Длительность репетиции не может превышать 24 часа');
+        }
+
+        if ($this->uncalculatedMinutes % self::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES !== 0) {
+            throw new PriceCalculationException('Некорректная длительность репетиции');
         }
     }
 

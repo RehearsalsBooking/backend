@@ -128,6 +128,54 @@ class RehearsalBookingValidationTest extends TestCase
     /**
      * @test
      */
+    public function it_responds_with_validation_error_when_user_provided_incorrect_rehearsal_duration(): void
+    {
+        $organization = $this->createOrganization();
+
+        $this->createPricesForOrganization($organization);
+
+        $invalidRehearsalDuration = [
+            [
+                'starts_at' => $this->getDateTimeAt(6, 00),
+                'ends_at' => $this->getDateTimeAt(6, 15),
+                'organization_id' => $organization->id
+            ],
+
+            [
+                'starts_at' => $this->getDateTimeAt(7, 30),
+                'ends_at' => $this->getDateTimeAt(8, 24),
+                'organization_id' => $organization->id
+            ],
+
+            [
+                'starts_at' => $this->getDateTimeAt(21, 8),
+                'ends_at' => $this->getDateTimeAt(23, 00),
+                'organization_id' => $organization->id
+            ],
+
+            [
+                'starts_at' => $this->getDateTimeAt(7, 13),
+                'ends_at' => $this->getDateTimeAt(23, 24),
+                'organization_id' => $organization->id
+            ],
+        ];
+
+        foreach ($invalidRehearsalDuration as $params) {
+
+            $this->json(
+                'post',
+                route('rehearsals.create'),
+                $params
+            )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $this->assertEquals(0, $organization->rehearsals()->count());
+
+    }
+
+    /**
+     * @test
+     */
     public function it_responds_with_validation_error_when_user_tries_to_book_rehearsal_longer_than_24_hours(): void
     {
         $organization = $this->createOrganization();

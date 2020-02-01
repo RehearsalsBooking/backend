@@ -110,6 +110,32 @@ class RehearsalRescheduleValidationTest extends TestCase
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
+    /**
+     * @test
+     */
+    public function it_responds_with_validation_error_when_user_changed_rehearsal_duration_to_invalid_value(): void
+    {
+        $organization = $this->createOrganization();
+
+        $this->createPricesForOrganization($organization);
+
+        $user = $this->createUser();
+
+        $this->actingAs($user);
+
+        $rehearsal = $this->createRehearsal($organization, 9, 11, null, false, $user);
+
+        $response = $this->json(
+            'put',
+            route('rehearsals.reschedule', $rehearsal->id),
+            [
+                'starts_at' => $rehearsal->starts_at->toDateTimeString(),
+                'ends_at' => $rehearsal->starts_at->copy()->addHours(2)->addMinutes(13)->toDateTimeString(),
+            ]
+        );
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
     /** @test */
     public function it_responds_with_validation_error_when_user_selected_unavailable_time(): void
     {
