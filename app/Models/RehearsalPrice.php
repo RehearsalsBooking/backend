@@ -35,12 +35,22 @@ class RehearsalPrice
      */
     private int $uncalculatedMinutes;
 
+    /**
+     * RehearsalPrice constructor.
+     * @param int $organizationId
+     * @param Carbon $start
+     * @param Carbon $end
+     * @throws PriceCalculationException
+     */
     public function __construct(int $organizationId, Carbon $start, Carbon $end)
     {
         $this->organizationId = $organizationId;
         $this->start = $start;
         $this->end = $end;
         $this->uncalculatedMinutes = $end->diffInMinutes($start);
+        if ($this->uncalculatedMinutes >= 60 * 24) {
+            throw new PriceCalculationException('Длительность репетиции не может превышать 24 часа');
+        }
     }
 
     /**
@@ -64,7 +74,6 @@ class RehearsalPrice
             return $result;
         }
 
-        // todo: rehearsal cannot be longer than 24 hours
         $priceAtFirstDay = $this->calculatePriceForSingleDay(
             $dayOfWeekStart,
             $this->start,

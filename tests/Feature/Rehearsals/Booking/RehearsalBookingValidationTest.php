@@ -82,6 +82,12 @@ class RehearsalBookingValidationTest extends TestCase
 
         $paramsWhenOrganizationIsClosed = [
             [
+                'starts_at' => $this->getDateTimeAt(6, 00),
+                'ends_at' => $this->getDateTimeAt(8, 00),
+                'organization_id' => $organization->id
+            ],
+
+            [
                 'starts_at' => $this->getDateTimeAt(7, 30),
                 'ends_at' => $this->getDateTimeAt(11, 00),
                 'organization_id' => $organization->id
@@ -98,9 +104,48 @@ class RehearsalBookingValidationTest extends TestCase
                 'ends_at' => $this->getDateTimeAt(23, 00),
                 'organization_id' => $organization->id
             ],
+
+            [
+                'starts_at' => $this->getDateTimeAt(23, 00),
+                'ends_at' => $this->getDateTimeAt(24, 00),
+                'organization_id' => $organization->id
+            ],
         ];
 
         foreach ($paramsWhenOrganizationIsClosed as $params) {
+
+            $this->json(
+                'post',
+                route('rehearsals.create'),
+                $params
+            )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $this->assertEquals(0, $organization->rehearsals()->count());
+
+    }
+
+    /**
+     * @test
+     */
+    public function it_responds_with_validation_error_when_user_tries_to_book_rehearsal_longer_than_24_hours(): void
+    {
+        $organization = $this->createOrganization();
+
+        $this->createPricesForOrganization($organization);
+
+        $rehearsalStart = Carbon::now()->addDay()->setHour(6)->setMinute(0)->setSeconds(0);
+        $rehearsalEnd = $rehearsalStart->copy()->addHours(24);
+
+        $tooLongRehearsals = [
+            [
+                'starts_at' => $rehearsalStart->toDateTimeString(),
+                'ends_at' => $rehearsalEnd->toDateTimeString(),
+                'organization_id' => $organization->id
+            ],
+        ];
+
+        foreach ($tooLongRehearsals as $params) {
 
             $this->json(
                 'post',

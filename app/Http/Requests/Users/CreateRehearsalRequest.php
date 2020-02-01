@@ -83,13 +83,13 @@ class CreateRehearsalRequest extends FormRequest
     {
         $rehearsalPrice = new RehearsalPrice(
             $this->get('organization_id'),
-            Carbon::parse($this->get('starts_at')),
-            Carbon::parse($this->get('ends_at'))
+            Carbon::parse($this->get('starts_at'))->setSeconds(0),
+            Carbon::parse($this->get('ends_at'))->setSeconds(0)
         );
 
         return [
-            'starts_at' => $this->get('starts_at'),
-            'ends_at' => $this->get('ends_at'),
+            'starts_at' => Carbon::parse($this->get('starts_at'))->setSeconds(0),
+            'ends_at' => Carbon::parse($this->get('ends_at'))->setSeconds(0),
             'user_id' => auth()->id(),
             'is_confirmed' => false,
             'band_id' => $this->get('band_id'),
