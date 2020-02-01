@@ -27,10 +27,10 @@ class RehearsalRescheduleValidationTest extends TestCase
      */
     public function it_responds_with_validation_error_when_user_provided_invalid_parameters($data, $keyWithError): void
     {
-        $organization = $this->createOrganization([
-            'opens_at' => '08:00',
-            'closes_at' => '22:00',
-        ]);
+        $organization = $this->createOrganization();
+
+        $this->createPricesForOrganization($organization, '08:00', '16:00');
+        $this->createPricesForOrganization($organization, '16:00', '22:00');
 
         $user = $this->createUser();
 
@@ -60,12 +60,14 @@ class RehearsalRescheduleValidationTest extends TestCase
     /**
      * @test
      * @dataProvider getDataOutOfBoundariesOfOrganizationWorkingDay
-     * @param $organizationWorkingHours
      * @param $data
      */
-    public function it_responds_with_validation_error_when_user_provided_time_when_organization_is_closed($organizationWorkingHours, $data): void
+    public function it_responds_with_validation_error_when_user_provided_time_when_organization_is_closed($data): void
     {
-        $organization = $this->createOrganization($organizationWorkingHours);
+        $organization = $this->createOrganization();
+
+        $this->createPricesForOrganization($organization, '08:00', '16:00');
+        $this->createPricesForOrganization($organization, '16:00', '22:00');
 
         $user = $this->createUser();
 
@@ -85,10 +87,10 @@ class RehearsalRescheduleValidationTest extends TestCase
     /** @test */
     public function it_responds_with_validation_error_when_user_selected_unavailable_time(): void
     {
-        $organization = $this->createOrganization([
-            'opens_at' => '06:00',
-            'closes_at' => '22:00',
-        ]);
+        $organization = $this->createOrganization();
+
+        $this->createPricesForOrganization($organization, '06:00', '16:00');
+        $this->createPricesForOrganization($organization, '16:00', '22:00');
 
         $user = $this->createUser();
 
@@ -96,10 +98,10 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $rehearsal = $this->createRehearsal($organization, 20, 21, null, false, $user);
 
-        $otherOrganization = $this->createOrganization([
-            'opens_at' => '06:00',
-            'closes_at' => '22:00',
-        ]);
+        $otherOrganization = $this->createOrganization();
+
+        $this->createPricesForOrganization($otherOrganization, '06:00', '16:00');
+        $this->createPricesForOrganization($otherOrganization, '16:00', '22:00');
 
         factory(Rehearsal::class)->create([
             'starts_at' => $this->getDateTimeAt(9, 0),
@@ -168,10 +170,10 @@ class RehearsalRescheduleValidationTest extends TestCase
     /** @test */
     public function it_lets_user_reschedule_rehearsal_when_new_time_intersects_with_old_time(): void
     {
-        $organization = $this->createOrganization([
-            'opens_at' => '06:00',
-            'closes_at' => '22:00',
-        ]);
+        $organization = $this->createOrganization();
+
+        $this->createPricesForOrganization($organization, '06:00', '16:00');
+        $this->createPricesForOrganization($organization, '16:00', '22:00');
 
         $user = $this->createUser();
 
@@ -281,10 +283,6 @@ class RehearsalRescheduleValidationTest extends TestCase
             [
                 [
                     [
-                        'opens_at' => '08:00',
-                        'closes_at' => '22:00',
-                    ],
-                    [
                         'starts_at' => $this->getDateTimeAt(7, 30),
                         'ends_at' => $this->getDateTimeAt(11, 00),
                     ],
@@ -292,20 +290,12 @@ class RehearsalRescheduleValidationTest extends TestCase
 
                 [
                     [
-                        'opens_at' => '08:00',
-                        'closes_at' => '22:00',
-                    ],
-                    [
                         'starts_at' => $this->getDateTimeAt(21, 00),
                         'ends_at' => $this->getDateTimeAt(23, 00),
                     ],
                 ],
 
                 [
-                    [
-                        'opens_at' => '08:00',
-                        'closes_at' => '22:00',
-                    ],
                     [
                         'starts_at' => $this->getDateTimeAt(7, 00),
                         'ends_at' => $this->getDateTimeAt(23, 00),

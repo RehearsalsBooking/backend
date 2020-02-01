@@ -20,6 +20,7 @@ class AttendeesRegistrationTest extends TestCase
         $user = $this->createUser();
         $this->actingAs($user);
         $organization = $this->createOrganization();
+        $this->createPricesForOrganization($organization);
 
         $this->assertEquals(0, $user->rehearsals()->count());
         $this->assertEquals(0, Rehearsal::count());
@@ -50,6 +51,7 @@ class AttendeesRegistrationTest extends TestCase
         $this->actingAs($user);
 
         $organization = $this->createOrganization();
+        $this->createPricesForOrganization($organization);
 
         $band = $this->createBandForUser($user);
 
@@ -96,6 +98,7 @@ class AttendeesRegistrationTest extends TestCase
         $this->actingAs($user);
 
         $organization = $this->createOrganization();
+        $this->createPricesForOrganization($organization);
 
         $band = $this->createBandForUser($user);
 

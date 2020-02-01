@@ -41,10 +41,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $rehearsals_count
  * @method static Builder|Organization whereDescription($value)
  * @method static Builder|Organization whereOwnerId($value)
- * @property int|null $opens_at
- * @property int|null $closes_at
- * @method static Builder|Organization whereClosesAt($value)
- * @method static Builder|Organization whereOpensAt($value)
  * @property bool $is_active
  * @method static Builder|Organization whereIsActive($value)
  * @property-read Collection|Price[] $prices
@@ -91,8 +87,6 @@ class Organization extends Model
      */
     public function isTimeAvailable($startsAt, $endsAt, Rehearsal $rehearsal = null): bool
     {
-        $inWorkDayRange = $this->isTimeAfterOrganizationOpens($startsAt) && $this->isTimeBeforeOrganizationCloses($endsAt);
-
         $query = $this->rehearsals()
             ->where(
                 fn (Builder $query) => $query
@@ -116,25 +110,7 @@ class Organization extends Model
             $query->where('id', '!=', $rehearsal->id);
         }
 
-        return $inWorkDayRange && $query->doesntExist();
-    }
-
-    /**
-     * @param $time
-     * @return bool
-     */
-    protected function isTimeAfterOrganizationOpens($time): bool
-    {
-        return strtotime(optional(Carbon::make($time))->format('H:i')) >= strtotime($this->opens_at);
-    }
-
-    /**
-     * @param $time
-     * @return bool
-     */
-    protected function isTimeBeforeOrganizationCloses($time): bool
-    {
-        return strtotime(optional(Carbon::make($time))->format('H:i')) <= strtotime($this->closes_at);
+        return $query->doesntExist();
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Tests;
 use App\Models\Band;
 use App\Models\Invite;
 use App\Models\Organization;
+use App\Models\Price;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Carbon\Carbon;
@@ -57,16 +58,6 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param $hour
-     * @param $minute
-     * @return string
-     */
-    protected function getDateTimeAt($hour, $minute): string
-    {
-        return Carbon::now()->addDay()->setHour($hour)->setMinute($minute)->setSeconds(0)->toDateTimeString();
-    }
-
-    /**
      * @param User $user
      * @return Band
      */
@@ -112,6 +103,16 @@ abstract class TestCase extends BaseTestCase
             'is_confirmed' => $isConfirmed,
             'user_id' => $user->id,
         ]);
+    }
+
+    /**
+     * @param $hour
+     * @param $minute
+     * @return string
+     */
+    protected function getDateTimeAt($hour, $minute): string
+    {
+        return Carbon::now()->addDay()->setHour($hour)->setMinute($minute)->setSeconds(0)->toDateTimeString();
     }
 
     /**
@@ -178,8 +179,25 @@ abstract class TestCase extends BaseTestCase
     {
         return factory(Rehearsal::class)->create([
             'band_id' => $band->id,
-            'starts_at' => Carbon::now()->subDay(3),
-            'ends_at' => Carbon::now()->setDay()->addHours(2),
+            'starts_at' => Carbon::now()->subDays(3),
+            'ends_at' => Carbon::now()->subDays(3)->addHours(2),
         ]);
+    }
+
+    /**
+     * @param Organization $organization
+     * @param string $startsAt
+     * @param string $endsAt
+     */
+    protected function createPricesForOrganization(Organization $organization, string $startsAt = '00:00', string $endsAt = '24:00'): void
+    {
+        foreach (range(1, 7) as $dayOfWeek) {
+            factory(Price::class)->create([
+                'organization_id' => $organization->id,
+                'day' => $dayOfWeek,
+                'starts_at' => $startsAt,
+                'ends_at' => $endsAt,
+            ]);
+        }
     }
 }

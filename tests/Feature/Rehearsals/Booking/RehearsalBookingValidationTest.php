@@ -27,10 +27,7 @@ class RehearsalBookingValidationTest extends TestCase
      */
     public function it_responds_with_validation_error_when_user_provided_invalid_time_parameters($data, $keyWithError): void
     {
-        $organization = $this->createOrganization([
-            'opens_at' => '08:00',
-            'closes_at' => '22:00',
-        ]);
+        $organization = $this->createOrganization();
 
         $response = $this->json(
             'post',
@@ -60,10 +57,7 @@ class RehearsalBookingValidationTest extends TestCase
     /** @test */
     public function it_responds_with_validation_error_when_user_provided_unknown_band_id(): void
     {
-        $organization = $this->createOrganization([
-            'opens_at' => '8:00',
-            'closes_at' => '22:00'
-        ]);
+        $organization = $this->createOrganization();
 
         $this->json('post', route('rehearsals.create'), [
             'organization_id' => $organization->id,
@@ -81,12 +75,10 @@ class RehearsalBookingValidationTest extends TestCase
      */
     public function it_responds_with_validation_error_when_user_provided_time_when_organization_is_closed(): void
     {
-        $organizationWorkingHours = [
-            'opens_at' => '08:00',
-            'closes_at' => '22:00',
-        ];
+        $organization = $this->createOrganization();
 
-        $organization = $this->createOrganization($organizationWorkingHours);
+        $this->createPricesForOrganization($organization, '08:00', '16:00');
+        $this->createPricesForOrganization($organization, '16:00', '22:00');
 
         $paramsWhenOrganizationIsClosed = [
             [
@@ -124,15 +116,15 @@ class RehearsalBookingValidationTest extends TestCase
     /** @test */
     public function it_responds_with_validation_error_when_user_selected_unavailable_time(): void
     {
-        $organization = $this->createOrganization([
-            'opens_at' => '06:00',
-            'closes_at' => '22:00',
-        ]);
+        $organization = $this->createOrganization();
 
-        $otherOrganization = $this->createOrganization([
-            'opens_at' => '06:00',
-            'closes_at' => '22:00',
-        ]);
+        $this->createPricesForOrganization($organization, '06:00', '16:00');
+        $this->createPricesForOrganization($organization, '16:00', '22:00');
+
+        $otherOrganization = $this->createOrganization();
+
+        $this->createPricesForOrganization($otherOrganization, '06:00', '16:00');
+        $this->createPricesForOrganization($otherOrganization, '16:00', '22:00');
 
         factory(Rehearsal::class)->create([
             'starts_at' => $this->getDateTimeAt(9, 0),
@@ -296,4 +288,5 @@ class RehearsalBookingValidationTest extends TestCase
                 ],
             ];
     }
+
 }

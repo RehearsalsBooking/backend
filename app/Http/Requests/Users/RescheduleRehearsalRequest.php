@@ -2,18 +2,26 @@
 
 namespace App\Http\Requests\Users;
 
+use App\Exceptions\User\PriceCalculationException;
+use App\Models\RehearsalPrice;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RescheduleRehearsalRequest extends FormRequest
 {
     /**
+     * @var object|string
+     */
+    private $rehearsal;
+
+    /**
      * @return bool
      */
     public function authorize(): bool
     {
-        $rehearsal = $this->route()->parameter('rehearsal');
+        $this->rehearsal = $this->route()->parameter('rehearsal');
 
-        return auth()->user()->can('reschedule', $rehearsal);
+        return auth()->user()->can('reschedule', $this->rehearsal);
     }
 
     /**
@@ -41,14 +49,22 @@ class RescheduleRehearsalRequest extends FormRequest
 
     /**
      * @return array
+     * @throws PriceCalculationException
      */
     public function getRehearsalAttributes(): array
     {
+        $rehearsalPrice = new RehearsalPrice(
+            $this->rehearsal->organization_id,
+            Carbon::parse($this->get('starts_at')),
+            Carbon::parse($this->get('ends_at'))
+        );
+
         return [
             'starts_at' => $this->get('starts_at'),
             'ends_at' => $this->get('ends_at'),
             'user_id' => auth()->id(),
             'is_confirmed' => false,
+            'price' => $rehearsalPrice()
         ];
     }
 }

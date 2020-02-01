@@ -3,6 +3,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\User\PriceCalculationException;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -10,16 +11,17 @@ use Illuminate\Database\Eloquent\Collection;
 /**
  * Class RehearsalPrice
  * @package App\Models
- * @property Organization $organization
+ * @property int $organizationId
  * @property Carbon $start
  * @property Carbon $end
+ * @property int $uncalculatedMinutes
  */
 class RehearsalPrice
 {
     /**
-     * @var Organization
+     * @var int
      */
-    private Organization $organization;
+    private int $organizationId;
     /**
      * @var Carbon
      */
@@ -28,18 +30,24 @@ class RehearsalPrice
      * @var Carbon
      */
     private Carbon $end;
+    /**
+     * @var int
+     */
+    private int $uncalculatedMinutes;
 
-    public function __construct(Organization $organization, Carbon $start, Carbon $end)
+    public function __construct(int $organizationId, Carbon $start, Carbon $end)
     {
-        $this->organization = $organization;
+        $this->organizationId = $organizationId;
         $this->start = $start;
         $this->end = $end;
+        $this->uncalculatedMinutes = $end->diffInMinutes($start);
     }
 
     /**
      * Calculates price of rehearsal
      *
      * @return float|int
+     * @throws PriceCalculationException
      */
     public function __invoke()
     {
@@ -47,7 +55,13 @@ class RehearsalPrice
         $dayOfWeekEnd = $this->end->dayOfWeekIso;
 
         if ($dayOfWeekEnd === $dayOfWeekStart) {
-            return $this->calculatePriceForSingleDay($dayOfWeekStart, $this->start, $this->end);
+            $result = $this->calculatePriceForSingleDay($dayOfWeekStart, $this->start, $this->end);
+
+            if ($this->uncalculatedMinutes !== 0) {
+                throw new PriceCalculationException();
+            }
+
+            return $result;
         }
 
         // todo: rehearsal cannot be longer than 24 hours
@@ -61,6 +75,11 @@ class RehearsalPrice
             $this->end->copy()->hours(0)->minute(0),
             $this->end
         );
+
+        if ($this->uncalculatedMinutes !== 0) {
+            throw new PriceCalculationException();
+        }
+
         return $priceAtFirstDay + $priceAtLastDay;
     }
 
@@ -69,6 +88,7 @@ class RehearsalPrice
      * @param Carbon $start
      * @param Carbon $end
      * @return float|int
+     * @throws PriceCalculationException
      */
     private function calculatePriceForSingleDay(int $day, Carbon $start, Carbon $end)
     {
@@ -79,7 +99,11 @@ class RehearsalPrice
         );
 
         if ($matchingPrices->count() === 1) {
-            return $this->calculatePriceForPeriod($start, $end, $matchingPrices->first()->price);
+            return $this->calculatePriceForPeriod(
+                $start->toTimeString(),
+                $this->transformMidnight($end->toTimeString()),
+                $matchingPrices->first()
+            );
         }
 
         $result = 0;
@@ -89,19 +113,19 @@ class RehearsalPrice
                 $result += $this->calculatePriceForPeriod(
                     $start->toTimeString(),
                     $price->ends_at,
-                    $price->price
+                    $price
                 );
             } elseif ($index === $matchingPrices->count() - 1) {
                 $result += $this->calculatePriceForPeriod(
                     $price->starts_at,
                     $this->transformMidnight($end->toTimeString()),
-                    $price->price
+                    $price
                 );
             } else {
                 $result += $this->calculatePriceForPeriod(
                     $price->starts_at,
                     $price->ends_at,
-                    $price->price
+                    $price
                 );
             }
         }
@@ -117,7 +141,7 @@ class RehearsalPrice
      */
     private function getMatchingPricesForPeriod(int $day, $timeStart, $timeEnd): Collection
     {
-        return $this->organization->prices()
+        return Price::where('organization_id', $this->organizationId)
             ->where('day', $day)
             ->where(
                 fn (Builder $query) => $query
@@ -156,14 +180,19 @@ class RehearsalPrice
     /**
      * @param string $timeStart
      * @param string $timeEnd
-     * @param float $price cost of one hour of rehearsal
+     * @param Price $price cost of one hour of rehearsal
      * @return float|int
+     * @throws PriceCalculationException
      */
-    private function calculatePriceForPeriod(string $timeStart, string $timeEnd, float $price)
+    private function calculatePriceForPeriod(string $timeStart, string $timeEnd, Price $price)
     {
+        if ($timeStart < $price->starts_at || $timeEnd > $price->ends_at) {
+            throw new PriceCalculationException();
+        }
         $periodStart = Carbon::createFromTimeString($timeStart);
         $periodEnd = Carbon::createFromTimeString($timeEnd);
         $delta = $periodEnd->diffInMinutes($periodStart);
-        return ($delta * $price / 60);
+        $this->uncalculatedMinutes -= $delta;
+        return ($delta * $price->price / 60);
     }
 }

@@ -21,6 +21,7 @@ class CreateRehearsalsTable extends Migration
             $table->boolean('is_confirmed')->default(false);
             $table->dateTime('starts_at');
             $table->dateTime('ends_at');
+            $table->decimal('price');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

@@ -16,6 +16,7 @@ class RehearsalsBookingTest extends TestCase
     public function user_can_book_individual_rehearsal(): void
     {
         $organization = $this->createOrganization();
+        $this->createPricesForOrganization($organization);
         $user = $this->createUser();
 
         $this->actingAs($user);
@@ -56,6 +57,7 @@ class RehearsalsBookingTest extends TestCase
     public function user_can_book_a_rehearsal_on_behalf_of_his_band(): void
     {
         $organization = $this->createOrganization();
+        $this->createPricesForOrganization($organization);
         $user = $this->createUser();
 
         $band = $this->createBandForUser($user);
@@ -99,6 +101,7 @@ class RehearsalsBookingTest extends TestCase
     public function when_user_books_rehearsal_its_status_is_set_to_unconfirmed(): void
     {
         $organization = $this->createOrganization();
+        $this->createPricesForOrganization($organization);
 
         $this->actingAs($this->createUser());
 

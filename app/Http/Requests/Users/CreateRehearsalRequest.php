@@ -2,9 +2,12 @@
 
 namespace App\Http\Requests\Users;
 
+use App\Exceptions\User\PriceCalculationException;
 use App\Models\Band;
 use App\Models\Organization;
 use App\Models\Rehearsal;
+use App\Models\RehearsalPrice;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateRehearsalRequest extends FormRequest
@@ -38,6 +41,16 @@ class CreateRehearsalRequest extends FormRequest
     }
 
     /**
+     * Determines if request is on behalf of the band
+     *
+     * @return bool
+     */
+    public function onBehalfOfTheBand(): bool
+    {
+        return $this->has('band_id');
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -64,27 +77,25 @@ class CreateRehearsalRequest extends FormRequest
 
     /**
      * @return array
+     * @throws PriceCalculationException
      */
     public function getAttributes(): array
     {
+        $rehearsalPrice = new RehearsalPrice(
+            $this->get('organization_id'),
+            Carbon::parse($this->get('starts_at')),
+            Carbon::parse($this->get('ends_at'))
+        );
+
         return [
             'starts_at' => $this->get('starts_at'),
             'ends_at' => $this->get('ends_at'),
             'user_id' => auth()->id(),
             'is_confirmed' => false,
             'band_id' => $this->get('band_id'),
-            'organization_id' => $this->get('organization_id')
+            'organization_id' => $this->get('organization_id'),
+            'price' => $rehearsalPrice()
         ];
-    }
-
-    /**
-     * Determines if request is on behalf of the band
-     *
-     * @return bool
-     */
-    public function onBehalfOfTheBand(): bool
-    {
-        return $this->has('band_id');
     }
 
     /**

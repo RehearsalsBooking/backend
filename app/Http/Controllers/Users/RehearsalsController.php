@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\Exceptions\User\PriceCalculationException;
 use App\Filters\RehearsalsFilterRequest;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\CreateRehearsalRequest;
 use App\Http\Requests\Users\RescheduleRehearsalRequest;
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
@@ -35,7 +36,6 @@ class RehearsalsController extends Controller
      */
     public function create(CreateRehearsalRequest $request)
     {
-        /** @noinspection NullPointerExceptionInspection */
         if (!$request->organization()->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
@@ -43,8 +43,12 @@ class RehearsalsController extends Controller
             return response()->json('Selected time is unavailable', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        /** @var Rehearsal $rehearsal */
-        $rehearsal = Rehearsal::create($request->getAttributes());
+        try {
+            /** @var Rehearsal $rehearsal */
+            $rehearsal = Rehearsal::create($request->getAttributes());
+        } catch (PriceCalculationException $exception) {
+            return response()->json($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         if ($request->onBehalfOfTheBand()) {
             $rehearsal->registerBandMembersAsAttendees();
@@ -70,7 +74,11 @@ class RehearsalsController extends Controller
             return response()->json('Selected time is unavailable', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $rehearsal->update($request->getRehearsalAttributes());
+        try {
+            $rehearsal->update($request->getRehearsalAttributes());
+        } catch (PriceCalculationException $exception) {
+            return response()->json($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         return new RehearsalResource($rehearsal);
     }

@@ -20,9 +20,6 @@ class CreateOrganizationsTable extends Migration
             $table->string('coordinates')->nullable();
             $table->boolean('is_active')->default(false);
             $table->text('description')->nullable();
-            $table->string('opens_at')->nullable();
-            $table->string('closes_at')->nullable();
-
             $table->unsignedInteger('owner_id');
             $table->timestamps();
 
