@@ -93,7 +93,7 @@ abstract class TestCase extends BaseTestCase
         bool $isConfirmed = false,
         User $user = null
     ): Rehearsal {
-        $user = $user ?? factory(User::class)->create();
+        $user ??= factory(User::class)->create();
 
         return factory(Rehearsal::class)->create([
             'starts_at' => $this->getDateTimeAt($startsAt, 00),

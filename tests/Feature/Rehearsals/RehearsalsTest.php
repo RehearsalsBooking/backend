@@ -4,21 +4,25 @@ namespace Tests\Feature\Rehearsals;
 
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
-use Illuminate\Http\Response;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
+/**
+ * Class RehearsalsFilterTest
+ * @package Tests\Feature\Rehearsals
+ */
 class RehearsalsTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
-    public function user_can_fetch_rehearsals_of_organization(): void
+    public function user_can_fetch_rehearsals(): void
     {
-        $organization = $this->createOrganization();
-        $rehearsals = factory(Rehearsal::class, 5)->create(['organization_id' => $organization->id]);
+        $rehearsals = factory(Rehearsal::class, 5)->create();
 
-        $response = $this->get(route('rehearsals.list'), ['organization_id' => $organization->id]);
+        $this->assertEquals(5, Rehearsal::count());
+
+        $response = $this->get(route('rehearsals.list'));
         $response->assertOk();
 
         $data = $response->json();
@@ -28,21 +32,5 @@ class RehearsalsTest extends TestCase
             RehearsalResource::collection($rehearsals)->response()->getData(true),
             $data
         );
-    }
-
-    /** @test */
-    public function it_responds_with_404_when_client_provided_unknown_organization(): void
-    {
-        $this->assertEquals(0, Rehearsal::count());
-
-        $this
-            ->json('get', route('rehearsals.list'), ['organization_id' => 'asd'])
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('organization_id');
-
-        $this
-            ->json('get', route('rehearsals.list'), ['organization_id' => 10000])
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('organization_id');
     }
 }
