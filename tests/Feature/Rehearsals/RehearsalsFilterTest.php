@@ -3,6 +3,7 @@
 namespace Tests\Feature\Rehearsals;
 
 use App\Http\Resources\Users\RehearsalResource;
+use App\Models\Band;
 use App\Models\Organization;
 use App\Models\Rehearsal;
 use Carbon\Carbon;
@@ -28,10 +29,15 @@ class RehearsalsFilterTest extends TestCase
     public function user_can_fetch_rehearsals_of_organization(): void
     {
         $rehearsals = factory(Rehearsal::class, 5)->create(['organization_id' => $this->organization->id]);
+        factory(Rehearsal::class, 5)->create(['organization_id' => $this->createOrganization()->id]);
 
-        $this->assertEquals(5, Rehearsal::count());
+        $this->assertEquals(10, Rehearsal::count());
 
-        $response = $this->get(route('rehearsals.list'), ['organization_id' => $this->organization->id]);
+        $response = $this->json(
+            'get',
+            route('rehearsals.list'),
+            ['organization_id' => $this->organization->id]
+        );
         $response->assertOk();
 
         $data = $response->json();
@@ -55,6 +61,53 @@ class RehearsalsFilterTest extends TestCase
             ->json('get', route('rehearsals.list'), ['organization_id' => 10000])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors('organization_id');
+    }
+
+    /** @test */
+    public function user_can_fetch_rehearsals_of_band(): void
+    {
+        Band::truncate();
+        $band = $this->createBand();
+        $someOtherBand = $this->createBand();
+
+        $this->assertEquals(2, Band::count());
+
+        $bandsRehearsals = collect([
+            $this->createRehearsalForBandInFuture($band),
+            $this->createRehearsalForBandInThePast($band)
+        ]);
+
+        $this->createRehearsalForBandInFuture($someOtherBand);
+        $this->createRehearsalForBandInThePast($someOtherBand);
+
+        $this->assertEquals(4, Rehearsal::count());
+
+        $response = $this->json('get', route('rehearsals.list'), [
+            'band_id' => $band->id
+        ]);
+        $response->assertOk();
+
+        $data = $response->json();
+
+        $this->assertCount(2, $data['data']);
+        $this->assertEquals(
+            RehearsalResource::collection($bandsRehearsals)->response()->getData(true),
+            $data
+        );
+    }
+
+    /** @test */
+    public function it_responds_with_404_when_client_provided_unknown_band(): void
+    {
+        $this
+            ->json('get', route('rehearsals.list'), ['band_id' => 'asd'])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('band_id');
+
+        $this
+            ->json('get', route('rehearsals.list'), ['band_id' => 10000])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('band_id');
     }
 
     /** @test */

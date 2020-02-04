@@ -11,6 +11,7 @@ class RehearsalsFilterRequest extends FilterRequest
         'to' => 'sometimes|date|after:from',
         'organization_id' => 'sometimes|numeric|exists:organizations,id',
         'user_id' => 'sometimes|numeric|exists:users,id',
+        'band_id' => 'sometimes|numeric|exists:bands,id',
     ];
 
     /**
@@ -45,6 +46,14 @@ class RehearsalsFilterRequest extends FilterRequest
                 'band.members',
                 fn (Builder $query) => $query->where('id', $userId)
             );
+    }
+
+    /**
+     * @param int $bandId
+     */
+    protected function band_id(int $bandId): void
+    {
+        $this->builder->where('band_id', $bandId);
     }
 
     /**
