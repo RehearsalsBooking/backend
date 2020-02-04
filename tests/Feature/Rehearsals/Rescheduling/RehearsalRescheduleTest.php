@@ -20,7 +20,7 @@ class RehearsalRescheduleTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal($organization, 10, 12, null, false, $user);
+        $rehearsal = $this->createRehearsal(10, 12, $organization, null, false, $user);
 
         $this->assertEquals(1, Rehearsal::count());
 
@@ -60,7 +60,7 @@ class RehearsalRescheduleTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal($organization, 10, 12, $band, false, $user);
+        $rehearsal = $this->createRehearsal(10, 12, $organization, $band, false, $user);
 
         $this->assertEquals(1, Rehearsal::count());
 
@@ -99,7 +99,7 @@ class RehearsalRescheduleTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal($organization, 10, 12, null, true, $user);
+        $rehearsal = $this->createRehearsal(10, 12, $organization, null, true, $user);
 
         $newRehearsalStartTime = $rehearsal->starts_at->addHours(2);
         $newRehearsalEndTime = $rehearsal->ends_at->addHours(2);

@@ -19,23 +19,6 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication, WithFaker;
 
     /**
-     * @param array $attributes
-     * @return Organization
-     */
-    protected function createOrganization(array $attributes = []): Organization
-    {
-        return factory(Organization::class)->create($attributes);
-    }
-
-    /**
-     * @return User
-     */
-    protected function createUser(): User
-    {
-        return factory(User::class)->create();
-    }
-
-    /**
      * @param int $count
      * @return Collection
      */
@@ -77,32 +60,50 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param Organization $organization
      * @param $startsAt
      * @param $endsAt
+     * @param Organization $organization
      * @param Band|null $band
      * @param bool $isConfirmed
      * @param User|null $user
      * @return mixed
      */
     protected function createRehearsal(
-        ?Organization $organization,
         $startsAt,
         $endsAt,
+        Organization $organization = null,
         Band $band = null,
         bool $isConfirmed = false,
         User $user = null
     ): Rehearsal {
-        $user ??= factory(User::class)->create();
+        $user ??= $this->createUser();
+        $organization ??= $this->createOrganization();
 
         return factory(Rehearsal::class)->create([
             'starts_at' => $this->getDateTimeAt($startsAt, 00),
             'ends_at' => $this->getDateTimeAt($endsAt, 00),
-            'organization_id' => optional($organization)->id,
+            'organization_id' => $organization->id,
             'band_id' => optional($band)->id,
             'is_confirmed' => $isConfirmed,
             'user_id' => $user->id,
         ]);
+    }
+
+    /**
+     * @return User
+     */
+    protected function createUser(): User
+    {
+        return factory(User::class)->create();
+    }
+
+    /**
+     * @param array $attributes
+     * @return Organization
+     */
+    protected function createOrganization(array $attributes = []): Organization
+    {
+        return factory(Organization::class)->create($attributes);
     }
 
     /**

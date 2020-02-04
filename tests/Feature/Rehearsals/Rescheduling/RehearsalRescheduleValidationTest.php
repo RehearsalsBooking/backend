@@ -4,20 +4,13 @@ namespace Tests\Feature\Rehearsals\Rescheduling;
 
 use App\Models\Rehearsal;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RehearsalRescheduleValidationTest extends TestCase
 {
     use RefreshDatabase;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->actingAs($this->createUser());
-    }
 
     /**
      * @test
@@ -36,7 +29,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal($organization, 9, 11, null, false, $user);
+        $rehearsal = $this->createRehearsal(9, 11, $organization, null, false, $user);
 
         $response = $this->json(
             'put',
@@ -73,7 +66,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal($organization, 9, 11, null, false, $user);
+        $rehearsal = $this->createRehearsal(9, 11, $organization, null, false, $user);
 
         $response = $this->json(
             'put',
@@ -97,7 +90,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal($organization, 9, 11, null, false, $user);
+        $rehearsal = $this->createRehearsal(9, 11, $organization, null, false, $user);
 
         $response = $this->json(
             'put',
@@ -123,7 +116,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal($organization, 9, 11, null, false, $user);
+        $rehearsal = $this->createRehearsal(9, 11, $organization, null, false, $user);
 
         $response = $this->json(
             'put',
@@ -148,7 +141,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal($organization, 20, 21, null, false, $user);
+        $rehearsal = $this->createRehearsal(20, 21, $organization, null, false, $user);
 
         $otherOrganization = $this->createOrganization();
 
@@ -231,7 +224,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal($organization, 10, 12, null, false, $user);
+        $rehearsal = $this->createRehearsal(10, 12, $organization, null, false, $user);
 
         $this->json(
             'put',
@@ -354,6 +347,13 @@ class RehearsalRescheduleValidationTest extends TestCase
                     ],
                 ],
             ];
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->actingAs($this->createUser());
     }
 
 }

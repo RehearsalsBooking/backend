@@ -24,9 +24,7 @@ class RehearsalsController extends Controller
      */
     public function index(RehearsalsFilterRequest $filter): AnonymousResourceCollection
     {
-        $rehearsals = Rehearsal::filter($filter)
-            ->with(['user'])
-            ->get();
+        $rehearsals = Rehearsal::filter($filter)->get();
 
         return RehearsalResource::collection($rehearsals);
     }

@@ -113,11 +113,11 @@ class RehearsalsFilterTest extends TestCase
     /** @test */
     public function user_can_filter_rehearsals_of_organization_by_date_range(): void
     {
-        $rehearsal9to11 = $this->createRehearsal($this->organization, 9, 11);
+        $rehearsal9to11 = $this->createRehearsal(9, 11, $this->organization);
 
-        $rehearsal12to14 = $this->createRehearsal($this->organization, 12, 14);
+        $rehearsal12to14 = $this->createRehearsal(12, 14, $this->organization);
 
-        $rehearsal16to18 = $this->createRehearsal($this->organization, 16, 18);
+        $rehearsal16to18 = $this->createRehearsal(16, 18, $this->organization);
 
         $response = $this->json('get', route('rehearsals.list'), [
             'organization_id' => $this->organization->id,

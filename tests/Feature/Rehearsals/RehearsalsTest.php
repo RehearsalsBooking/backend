@@ -33,4 +33,24 @@ class RehearsalsTest extends TestCase
             $data
         );
     }
+
+    /** @test */
+    public function rehearsals_doesnt_contain_private_information(): void
+    {
+        $rehearsal = $this->createRehearsal(1, 2);
+
+        $response = $this->get(route('rehearsals.list'));
+        $response->assertOk();
+
+        $data = $response->json('data');
+
+        $this->assertEquals(
+            [
+                'id' => $rehearsal->id,
+                'starts_at' => $rehearsal->starts_at->toDateTimeString(),
+                'ends_at' => $rehearsal->ends_at->toDateTimeString()
+            ],
+            $data[0]
+        );
+    }
 }

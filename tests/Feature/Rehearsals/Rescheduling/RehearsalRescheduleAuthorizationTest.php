@@ -24,7 +24,7 @@ class RehearsalRescheduleAuthorizationTest extends TestCase
         $organization = $this->createOrganization();
         $band = $this->createBandForUser($this->createUser());
 
-        $rehearsal = $this->createRehearsal($organization, 10, 12, $band);
+        $rehearsal = $this->createRehearsal(10, 12, $organization, $band);
 
         $user = $this->createUser();
         $this->actingAs($user);
@@ -49,7 +49,7 @@ class RehearsalRescheduleAuthorizationTest extends TestCase
         $organization = $this->createOrganization();
         $rehearsalsOwner = $this->createUser();
 
-        $rehearsal = $this->createRehearsal($organization, 10, 12, null, false, $rehearsalsOwner);
+        $rehearsal = $this->createRehearsal(10, 12, $organization, null, false, $rehearsalsOwner);
 
         $someOtherUser = $this->createUser();
         $this->actingAs($someOtherUser);
