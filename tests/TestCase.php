@@ -117,6 +117,18 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * @param User $user
+     * @return Organization
+     */
+    protected function createOrganizationForUser(User $user): Organization
+    {
+        $organization = factory(Organization::class)->create(['owner_id' => $user->id]);
+        $this->createPricesForOrganization($organization);
+
+        return $organization;
+    }
+
+    /**
      * @return array
      */
     protected function getRehearsalTime(): array

@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -38,6 +38,9 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::middleware('api')
             ->group(base_path('routes/users/api.php'));
+
+        Route::middleware(['api', 'auth:api'])
+            ->group(base_path('routes/management/api.php'));
 
         Route::middleware('api')
             ->group(base_path('routes/auth.php'));

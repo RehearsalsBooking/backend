@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\User;
+namespace App\Policies\Users;
 
 use App\Models\Invite;
 use App\Models\User;

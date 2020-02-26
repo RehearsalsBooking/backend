@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\Models\Band;
 use App\Models\Invite;
 use App\Models\Rehearsal;
-use App\Policies\User\InvitePolicy;
+use App\Policies\Users\InvitePolicy;
 use App\Policies\Users\BandPolicy;
 use App\Policies\Users\RehearsalPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;

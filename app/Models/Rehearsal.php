@@ -43,6 +43,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Rehearsal whereBandId($value)
  * @property-read Collection|User[] $attendees
  * @property-read int|null $attendees_count
+ * @property float $price
+ * @method static Builder|Rehearsal wherePrice($value)
  */
 class Rehearsal extends Model
 {

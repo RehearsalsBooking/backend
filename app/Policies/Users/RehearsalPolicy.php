@@ -5,11 +5,13 @@ namespace App\Policies\Users;
 use App\Models\Band;
 use App\Models\User;
 use App\Models\Rehearsal;
+use App\Policies\Management\RehearsalPoliciesForManagers;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class RehearsalPolicy
 {
     use HandlesAuthorization;
+    use RehearsalPoliciesForManagers;
 
     /**
      * Determine whether the user can book the rehearsal.

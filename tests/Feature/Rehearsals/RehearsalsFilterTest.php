@@ -160,10 +160,10 @@ class RehearsalsFilterTest extends TestCase
     /**
      * @test
      * @dataProvider invalidFilterDataForDates
-     * @param $data
-     * @param $invalidKey
+     * @param array $data
+     * @param string $invalidKey
      */
-    public function it_responds_with_422_when_user_provided_invalid_data_for_filter_by_date_filter($data, $invalidKey): void
+    public function it_responds_with_422_when_user_provided_invalid_data_for_filter_by_date_filter(array $data, string $invalidKey): void
     {
         $response = $this->json(
             'get',
