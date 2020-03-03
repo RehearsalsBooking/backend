@@ -7,6 +7,7 @@ use App\Http\Controllers\Users\InvitesController;
 use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\OrganizationRehearsalsController;
 use App\Http\Controllers\Users\RehearsalsController;
+use Illuminate\Support\Facades\Route;
 
 Route::name('organizations.')->prefix('organizations')->group(static function () {
 

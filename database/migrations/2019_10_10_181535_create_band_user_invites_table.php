@@ -14,7 +14,7 @@ class CreateBandUserInvitesTable extends Migration
     public function up(): void
     {
         Schema::create('band_user_invites', static function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->unsignedBigInteger('band_id');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();

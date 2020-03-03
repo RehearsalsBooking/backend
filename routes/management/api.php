@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Management\RehearsalsController;
 
 // auth middleware is applied at route service provider

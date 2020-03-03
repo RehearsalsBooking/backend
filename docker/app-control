@@ -8,6 +8,7 @@ function usage() {
     echo "  init     Create some init directories and links and up your app"
     echo "  up       Up your app"
     echo "  bash     Enters php container"
+    echo "  tinker   Runs tinker inside container"
     echo "  docs     Generates phpdocs for models"
     echo ""
     exit 1
@@ -63,6 +64,13 @@ function bash() {
     docker-compose run --rm -u 1000 fpm bash
 }
 
+function tinker() {
+    echo "=============================="
+    echo "Enter into php container using bash"
+    echo "=============================="
+    docker-compose run --rm fpm bash -c "php artisan tinker"
+}
+
 function docs() {
     echo "=============================="
     echo "Generate docs for models"
@@ -90,6 +98,9 @@ function main() {
             ;;
         "bash")
             bash
+            ;;
+        "tinker")
+            tinker
             ;;
         *)
             usage

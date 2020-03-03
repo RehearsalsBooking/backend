@@ -14,7 +14,7 @@ class CreateRehearsalsTable extends Migration
     public function up(): void
     {
         Schema::create('rehearsals', static function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->unsignedBigInteger('organization_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('band_id')->nullable();
