@@ -40,6 +40,8 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path('routes/users/api.php'));
 
         Route::middleware(['api', 'auth:airlock'])
+            ->prefix('management')
+            ->name('management.')
             ->group(base_path('routes/management/api.php'));
 
         Route::middleware('api')

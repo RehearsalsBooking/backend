@@ -8,7 +8,7 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class UpdateRehearsalStatusTest extends ManagementTestCase
 {
-    private string $endpointForStatusUpdate = 'rehearsal-status-update';
+    private string $endpointForStatusUpdate = 'management.rehearsal.status.update';
 
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void
