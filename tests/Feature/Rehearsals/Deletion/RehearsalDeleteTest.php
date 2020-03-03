@@ -3,6 +3,7 @@
 namespace Tests\Feature\Rehearsals\Deletion;
 
 use App\Models\User;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -33,7 +34,7 @@ class RehearsalDeleteTest extends TestCase
 
         $response = $this->json('delete', route('rehearsals.delete', $rehearsal->id));
 
-        $response->assertOk();
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertDatabaseMissing('rehearsals', $rehearsal->toArray());
     }
@@ -48,7 +49,7 @@ class RehearsalDeleteTest extends TestCase
 
         $response = $this->json('delete', route('rehearsals.delete', $rehearsal->id));
 
-        $response->assertOk();
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertDatabaseMissing('rehearsals', $rehearsal->toArray());
     }
@@ -73,7 +74,7 @@ class RehearsalDeleteTest extends TestCase
         $deletedRehearsalId = $rehearsal->id;
         $response = $this->json('delete', route('rehearsals.delete', $deletedRehearsalId));
 
-        $response->assertOk();
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertDatabaseMissing('rehearsal_user', [
             'rehearsal_id' => $deletedRehearsalId

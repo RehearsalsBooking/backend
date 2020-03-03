@@ -8,12 +8,12 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class UpdateRehearsalStatusTest extends ManagementTestCase
 {
-    private string $endpointForStatusUpdate = 'management.rehearsal.status.update';
+    private string $endpoint = 'management.rehearsal.status.update';
 
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void
     {
-        $this->json('put', route($this->endpointForStatusUpdate, 1))
+        $this->json('put', route($this->endpoint, 1))
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
@@ -34,11 +34,11 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
         );
 
         $this->actingAs($ordinaryClient);
-        $this->json('put', route($this->endpointForStatusUpdate, $rehearsal->id))
+        $this->json('put', route($this->endpoint, $rehearsal->id))
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->actingAs($managerOfAnotherOrganization);
-        $this->json('put', route($this->endpointForStatusUpdate, $rehearsal->id))
+        $this->json('put', route($this->endpoint, $rehearsal->id))
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
@@ -46,9 +46,9 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
     public function it_responds_with_404_when_unknown_rehearsal_is_given(): void
     {
         $this->actingAs($this->manager);
-        $this->json('put', route($this->endpointForStatusUpdate, 1000))
+        $this->json('put', route($this->endpoint, 1000))
             ->assertStatus(Response::HTTP_NOT_FOUND);
-        $this->json('put', route($this->endpointForStatusUpdate, 'some text'))
+        $this->json('put', route($this->endpoint, 'some text'))
             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
@@ -65,7 +65,7 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
         $this->actingAs($this->manager);
         $response = $this->json(
             'put',
-            route($this->endpointForStatusUpdate, $rehearsal->id),
+            route($this->endpoint, $rehearsal->id),
             $data
         );
 
@@ -110,7 +110,6 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
     /** @test */
     public function manager_of_organization_can_update_status_of_rehearsal_at_his_organization(): void
     {
-        $this->withoutExceptionHandling();
         $rehearsal = $this->createRehearsal(1, 2, $this->organization);
 
         $this->assertFalse($rehearsal->is_confirmed);
@@ -119,7 +118,7 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
 
         $response = $this->json(
             'put',
-            route($this->endpointForStatusUpdate, $rehearsal->id),
+            route($this->endpoint, $rehearsal->id),
             ['is_confirmed' => true]
         );
         $response->assertStatus(Response::HTTP_OK);
@@ -134,7 +133,7 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
 
         $response = $this->json(
             'put',
-            route($this->endpointForStatusUpdate, $rehearsal->id),
+            route($this->endpoint, $rehearsal->id),
             ['is_confirmed' => false]
         );
         $response->assertStatus(Response::HTTP_OK);

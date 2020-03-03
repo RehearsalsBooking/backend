@@ -97,6 +97,6 @@ class RehearsalsController extends Controller
 
         $rehearsal->delete();
 
-        return response()->json('rehearsal successfully deleted');
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Policies\Users;
 
 use App\Models\Band;
-use App\Models\User;
 use App\Models\Rehearsal;
+use App\Models\User;
 use App\Policies\Management\RehearsalPoliciesForManagers;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -56,11 +56,11 @@ class RehearsalPolicy
      */
     public function delete(User $user, Rehearsal $rehearsal)
     {
-        // admin of band can delete rehearsals
-        if (optional($rehearsal->band)->admin_id === $user->id) {
-            return true;
-        }
-
-        return $user->id === $rehearsal->user_id;
+        return
+            //user can delete rehearsal that he booked
+            $user->id === $rehearsal->user_id
+            ||
+            //admin of a band can delete rehearsal of band
+            optional($rehearsal->band)->admin_id === $user->id;
     }
 }

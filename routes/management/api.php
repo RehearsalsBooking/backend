@@ -9,3 +9,6 @@ Route::put('rehearsals/{rehearsal}/status', [RehearsalsController::class, 'updat
     ->where('rehearsal', '[0-9]+')
     ->name('rehearsal.status.update');
 
+Route::delete('rehearsals/{rehearsal}', [RehearsalsController::class, 'delete'])
+    ->where('rehearsal', '[0-9]+')
+    ->name('rehearsal.delete');
