@@ -30,18 +30,11 @@ class AuthTest extends TestCase
     }
 
     /** @test */
-    public function it_logins_users(): void
+    public function it_logins_users_with_correct_credentials(): void
     {
         $response = $this->post(route('login'), $this->credentials);
 
         $response->assertOk();
-
-        $data = $response->json();
-
-        $this->assertEquals(
-            auth()->setToken($data['access_token'])->user()->id,
-            $this->user->id
-        );
     }
 
     /** @test */
@@ -59,11 +52,10 @@ class AuthTest extends TestCase
     }
 
     /** @test */
-    public function user_with_valid_token_can_fetch_info_about_himself(): void
+    public function logged_in_user_can_fetch_info_about_himself(): void
     {
-        $token = $this->getTokenForUser();
-
-        $response = $this->get(route('me'), $this->getAuthHeader($token));
+        $this->actingAs($this->user);
+        $response = $this->get(route('me'));
 
         $response->assertOk();
 
@@ -71,50 +63,5 @@ class AuthTest extends TestCase
             (new UserResource($this->user))->toArray(null),
             $response->json('data')
         );
-    }
-
-    /** @test */
-    public function user_with_invalid_token_cannot_fetch_info_about_himself(): void
-    {
-        $this->json('get', route('me'), $this->getAuthHeader('some invalid token'))
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
-    }
-
-    /** @test */
-    public function user_with_valid_token_can_logout(): void
-    {
-        $token = $this->getTokenForUser();
-
-        $authHeader = $this->getAuthHeader($token);
-
-        $response = $this->json('post', route('logout'), $authHeader);
-
-        $response->assertOk();
-
-        $this->json(
-            'get',
-            route('me'),
-            $authHeader
-        )->assertStatus(Response::HTTP_UNAUTHORIZED);
-
-    }
-
-    /**
-     * @return string
-     */
-    protected function getTokenForUser(): string
-    {
-        return $this->post(route('login'), $this->credentials)->json('access_token');
-    }
-
-    /**
-     * @param string $token
-     * @return array
-     */
-    protected function getAuthHeader(string $token): array
-    {
-        return [
-            'Authorization' => "Bearer {$token}"
-        ];
     }
 }

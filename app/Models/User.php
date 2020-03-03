@@ -12,7 +12,6 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Carbon;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * App\Models\User
@@ -53,7 +52,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property-read Collection|Band[] $invites
  * @property-read int|null $invites_count
  */
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
     public const TYPE_USER = 1;
 
@@ -120,25 +119,5 @@ class User extends Authenticatable implements JWTSubject
             ->belongsToMany(Band::class, 'band_user_invites')
             ->withTimestamps()
             ->using(Invite::class);
-    }
-
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
-    public function getJWTIdentifier()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims(): array
-    {
-        return [];
     }
 }
