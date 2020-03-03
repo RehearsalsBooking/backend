@@ -31,7 +31,7 @@ class RehearsalsController extends Controller
      */
     public function delete(Rehearsal $rehearsal): JsonResponse
     {
-        $this->authorize('managementDelete', $rehearsal);
+        $this->authorize('manageRehearsal', $rehearsal);
 
         $rehearsal->delete();
 

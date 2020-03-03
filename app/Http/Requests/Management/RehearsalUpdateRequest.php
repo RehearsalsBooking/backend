@@ -13,7 +13,7 @@ class RehearsalUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()->can('managementUpdateStatus', $this->route()->parameter('rehearsal'));
+        return auth()->user()->can('manageRehearsal', $this->route()->parameter('rehearsal'));
     }
 
     /**
