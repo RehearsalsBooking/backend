@@ -10,6 +10,13 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+/**
+ * Class RehearsalsController
+ *
+ * Middlewares are used for authorization. See routes/management/api.php
+ *
+ * @package App\Http\Controllers\Management
+ */
 class RehearsalsController extends Controller
 {
     /**
@@ -31,8 +38,6 @@ class RehearsalsController extends Controller
      */
     public function delete(Rehearsal $rehearsal): JsonResponse
     {
-        $this->authorize('manageRehearsal', $rehearsal);
-
         $rehearsal->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
