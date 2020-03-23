@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Models\Band;
 use App\Models\Invite;
+use App\Models\Organization;
 use App\Models\Rehearsal;
-use App\Policies\Users\InvitePolicy;
+use App\Policies\Management\OrganizationPolicy;
 use App\Policies\Users\BandPolicy;
+use App\Policies\Users\InvitePolicy;
 use App\Policies\Users\RehearsalPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -21,6 +23,7 @@ class AuthServiceProvider extends ServiceProvider
         Rehearsal::class => RehearsalPolicy::class,
         Band::class => BandPolicy::class,
         Invite::class => InvitePolicy::class,
+        Organization::class => OrganizationPolicy::class
     ];
 
     /**

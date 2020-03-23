@@ -7,6 +7,12 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/**
+ * Class ManagementTestCase
+ * @property User $manager
+ * @property Organization $organization
+ * @package Tests\Feature\Management
+ */
 class ManagementTestCase extends TestCase
 {
     use RefreshDatabase;

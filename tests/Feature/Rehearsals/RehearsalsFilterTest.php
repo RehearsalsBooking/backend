@@ -231,7 +231,7 @@ class RehearsalsFilterTest extends TestCase
     }
 
     /** @test */
-    public function when_user_fetches_his_rehearsals_he_also_receives_rehearsals_of_his_current_band(): void
+    public function when_client_fetches_rehearsals_of_user_he_also_receives_rehearsals_of_this_users_current_band(): void
     {
         $max = $this->createUser();
 

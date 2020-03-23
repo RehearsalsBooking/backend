@@ -129,6 +129,23 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * @param Organization $organization
+     * @param string $startsAt
+     * @param string $endsAt
+     */
+    protected function createPricesForOrganization(Organization $organization, string $startsAt = '00:00', string $endsAt = '24:00'): void
+    {
+        foreach (range(1, 7) as $dayOfWeek) {
+            factory(Price::class)->create([
+                'organization_id' => $organization->id,
+                'day' => $dayOfWeek,
+                'starts_at' => $startsAt,
+                'ends_at' => $endsAt,
+            ]);
+        }
+    }
+
+    /**
      * @return array
      */
     protected function getRehearsalTime(): array
@@ -172,6 +189,20 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * @param Organization $organization
+     * @param int $amount
+     * @return Rehearsal|Collection
+     */
+    protected function createRehearsalsForOrganization(Organization $organization, int $amount = 1)
+    {
+        return factory(Rehearsal::class, $amount)->create([
+            'organization_id' => $organization->id,
+            'starts_at' => Carbon::now()->addDay(),
+            'ends_at' => Carbon::now()->addDay()->addHours(2),
+        ]);
+    }
+
+    /**
      * @param Band $band
      * @return Rehearsal
      */
@@ -195,22 +226,5 @@ abstract class TestCase extends BaseTestCase
             'starts_at' => Carbon::now()->subDays(3),
             'ends_at' => Carbon::now()->subDays(3)->addHours(2),
         ]);
-    }
-
-    /**
-     * @param Organization $organization
-     * @param string $startsAt
-     * @param string $endsAt
-     */
-    protected function createPricesForOrganization(Organization $organization, string $startsAt = '00:00', string $endsAt = '24:00'): void
-    {
-        foreach (range(1, 7) as $dayOfWeek) {
-            factory(Price::class)->create([
-                'organization_id' => $organization->id,
-                'day' => $dayOfWeek,
-                'starts_at' => $startsAt,
-                'ends_at' => $endsAt,
-            ]);
-        }
     }
 }

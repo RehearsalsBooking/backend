@@ -1,18 +1,31 @@
 <?php
 
-namespace App\Filters;
+namespace App\Http\Requests\Management;
 
+use App\Http\Requests\Filters\FilterRequest;
+use App\Models\Organization;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * Class RehearsalsFilterRequest
+ * @inheritDoc
+ * TODO: merge rehearsals filter with inheritance?
+ * @package App\Http\Requests\Management
+ */
 class RehearsalsFilterRequest extends FilterRequest
 {
     public array $filters = [
         'from' => 'sometimes|date',
         'to' => 'sometimes|date|after:from',
-        'organization_id' => 'sometimes|numeric|exists:organizations,id',
+        'organization_id' => 'required|numeric|exists:organizations,id',
         'user_id' => 'sometimes|numeric|exists:users,id',
         'band_id' => 'sometimes|numeric|exists:bands,id',
     ];
+
+    public function organization()
+    {
+        return Organization::find($this->request->get('organization_id'));
+    }
 
     /**
      * @param int $organizationId
