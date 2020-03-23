@@ -25,20 +25,20 @@ Route::name('rehearsals.')->prefix('rehearsals')->group(static function () {
 
     Route::post('/', [RehearsalsController::class, 'create'])
         ->name('create')
-        ->middleware('auth:airlock');
+        ->middleware('auth:sanctum');
 
     Route::put('/{rehearsal}', [RehearsalsController::class, 'reschedule'])
         ->where('rehearsal', '[0-9]+')
         ->name('reschedule')
-        ->middleware('auth:airlock');
+        ->middleware('auth:sanctum');
 
     Route::delete('{rehearsal}', [RehearsalsController::class, 'delete'])
         ->where('rehearsal', '[0-9]+')
-        ->middleware('auth:airlock')
+        ->middleware('auth:sanctum')
         ->name('delete');
 });
 
-Route::name('bands.')->prefix('bands')->middleware('auth:airlock')->group(static function () {
+Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static function () {
 
     Route::post('/', [BandsController::class, 'create'])
         ->name('create');
@@ -52,7 +52,7 @@ Route::name('bands.')->prefix('bands')->middleware('auth:airlock')->group(static
         ->name('delete');
 });
 
-Route::name('invites.')->prefix('invites')->middleware('auth:airlock')->group(static function () {
+Route::name('invites.')->prefix('invites')->middleware('auth:sanctum')->group(static function () {
 
     Route::post('/', [InvitesController::class, 'create'])
         ->name('create');
@@ -70,7 +70,7 @@ Route::name('invites.')->prefix('invites')->middleware('auth:airlock')->group(st
         ->name('decline');
 });
 
-Route::name('bands.members.')->prefix('bands/{band}/members')->middleware('auth:airlock')->group(static function () {
+Route::name('bands.members.')->prefix('bands/{band}/members')->middleware('auth:sanctum')->group(static function () {
     Route::delete('/{memberId}', [BandMembersController::class, 'delete'])
         ->where('band', '[0-9]+')
         ->name('delete');

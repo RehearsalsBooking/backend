@@ -14,7 +14,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:airlock', ['except' => ['login']]);
+        $this->middleware('auth:sanctum', ['except' => ['login']]);
     }
 
     /**
