@@ -127,4 +127,36 @@ class Organization extends Model
     {
         return $this->hasMany(OrganizationPrice::class);
     }
+
+    /**
+     * @param $day
+     * @param $startsAt
+     * @param $endsAt
+     * @return bool
+     */
+    public function hasPriceAt($day, $startsAt, $endsAt): bool
+    {
+        return OrganizationPrice::where('organization_id', $this->id)
+            ->where('day', $day)
+            ->where(
+                fn (Builder $query) => $query
+                    ->where(
+                        fn (Builder $query) => $query->where('starts_at', '<=', $startsAt)
+                            ->where('ends_at', '>', $endsAt)
+                    )
+                    ->orWhere(
+                        fn (Builder $query) => $query->where('starts_at', '<=', $startsAt)
+                            ->where('ends_at', '>', $startsAt)
+                    )
+                    ->orWhere(
+                        fn (Builder $query) => $query->where('starts_at', '<=', $endsAt)
+                            ->where('ends_at', '>', $endsAt)
+                    )
+                    ->orWhere(
+                        fn (Builder $query) => $query->where('starts_at', '>=', $startsAt)
+                            ->where('ends_at', '<=', $endsAt)
+                    )
+            )
+            ->exists();
+    }
 }

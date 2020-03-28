@@ -4,7 +4,7 @@ namespace App\Http\Requests\Management;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RehearsalUpdateRequest extends FormRequest
+class UpdateRehearsalRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.

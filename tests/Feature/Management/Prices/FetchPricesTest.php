@@ -48,7 +48,7 @@ class FetchPricesTest extends ManagementTestCase
     /** @test */
     public function manager_of_organization_can_get_prices_of_his_organization(): void
     {
-        $this->assertEquals(7, $this->organization->prices()->count());
+        $this->assertEquals(5, $this->organization->prices()->count());
 
         $this->actingAs($this->manager);
 
@@ -58,7 +58,7 @@ class FetchPricesTest extends ManagementTestCase
         );
         $response->assertStatus(Response::HTTP_OK);
 
-        $this->assertCount(7, $response->json('data'));
+        $this->assertCount(5, $response->json('data'));
         $this->assertEquals(
             OrganizationPriceResource::collection($this->organization->prices)->response()->getData(true),
             $response->json()

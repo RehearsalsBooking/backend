@@ -22,3 +22,7 @@ Route::get('rehearsals', [RehearsalsController::class, 'index'])
 Route::get('organizations/{organization}/prices', [OrganizationPricesController::class, 'index'])
     ->where('organization', '[0-9]+')
     ->name('organization.prices.list');
+
+Route::post('organizations/{organization}/prices', [OrganizationPricesController::class, 'create'])
+    ->where('organization', '[0-9]+')
+    ->name('organization.price.create');

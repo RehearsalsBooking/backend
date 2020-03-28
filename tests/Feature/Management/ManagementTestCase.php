@@ -26,5 +26,7 @@ class ManagementTestCase extends TestCase
         $this->manager = $this->createUser();
         $this->organization = $this->createOrganizationForUser($this->manager);
         $this->createOrganizationForUser($this->manager);
+
+        $this->organization->prices()->whereIn('day', [6, 7])->delete();
     }
 }

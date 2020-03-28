@@ -74,7 +74,7 @@ class AttendeesRegistrationTest extends TestCase
         });
 
         $this->assertEquals($bandMembersCount, $rehearsal->attendees()->count());
-        $this->assertEquals($bandMembers->pluck('id'), $rehearsal->attendees->pluck('id'));
+        $this->assertEquals($bandMembers->pluck('id')->sort(), $rehearsal->attendees->pluck('id')->sort());
 
         //test reschedule
         $this->rescheduleRehearsal($rehearsal, $band)->assertOk();

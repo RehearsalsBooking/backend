@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Management;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Management\RehearsalsFilterManagementRequest;
-use App\Http\Requests\Management\RehearsalUpdateRequest;
+use App\Http\Requests\Management\UpdateRehearsalRequest;
 use App\Http\Resources\Management\RehearsalDetailedResource;
 use App\Models\Rehearsal;
 use Exception;
@@ -36,10 +36,10 @@ class RehearsalsController extends Controller
 
     /**
      * @param Rehearsal $rehearsal
-     * @param RehearsalUpdateRequest $request
+     * @param UpdateRehearsalRequest $request
      * @return RehearsalDetailedResource
      */
-    public function update(Rehearsal $rehearsal, RehearsalUpdateRequest $request): RehearsalDetailedResource
+    public function update(Rehearsal $rehearsal, UpdateRehearsalRequest $request): RehearsalDetailedResource
     {
         $rehearsal->update($request->getStatusAttribute());
 
