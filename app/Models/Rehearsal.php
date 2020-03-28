@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Requests\Filters\Filterable;
 use App\Http\Requests\Filters\FilterRequest;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Management;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Management\RehearsalsFilterRequest;
+use App\Http\Requests\Management\RehearsalsFilterManagementRequest;
 use App\Http\Requests\Management\RehearsalUpdateRequest;
 use App\Http\Resources\Management\RehearsalDetailedResource;
 use App\Models\Rehearsal;
@@ -24,11 +24,11 @@ class RehearsalsController extends Controller
 {
 
     /**
-     * @param RehearsalsFilterRequest $filterRequest
+     * @param RehearsalsFilterManagementRequest $filterRequest
      * @return AnonymousResourceCollection
      * @throws AuthorizationException
      */
-    public function index(RehearsalsFilterRequest $filterRequest): AnonymousResourceCollection
+    public function index(RehearsalsFilterManagementRequest $filterRequest): AnonymousResourceCollection
     {
         $this->authorize('manage', $filterRequest->organization());
         return RehearsalDetailedResource::collection(Rehearsal::filter($filterRequest)->paginate());

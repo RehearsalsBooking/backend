@@ -13,19 +13,19 @@ use Illuminate\Http\Request;
  *
  * @property Request $request
  * @property Builder $builder
- * @property array $filters
  */
 abstract class FilterRequest
 {
     public Request $request;
     protected Builder $builder;
-    protected array $filters = [];
 
     public function __construct(Request $request)
     {
-        $request->validate($this->filters);
+        $request->validate($this->getRules());
         $this->request = $request;
     }
+
+    abstract protected function getRules(): array;
 
     /**
      * Applies filters from request to query
@@ -51,6 +51,6 @@ abstract class FilterRequest
      */
     protected function getFilters(): array
     {
-        return $this->request->only(array_keys($this->filters));
+        return $this->request->only(array_keys($this->getRules()));
     }
 }

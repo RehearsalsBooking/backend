@@ -6,7 +6,7 @@ use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\CreateRehearsalRequest;
-use App\Http\Requests\Users\RehearsalsFilterRequest;
+use App\Http\Requests\Users\RehearsalsFilterClientRequest;
 use App\Http\Requests\Users\RescheduleRehearsalRequest;
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
@@ -19,10 +19,10 @@ class RehearsalsController extends Controller
 {
 
     /**
-     * @param RehearsalsFilterRequest $filter
+     * @param RehearsalsFilterClientRequest $filter
      * @return AnonymousResourceCollection
      */
-    public function index(RehearsalsFilterRequest $filter): AnonymousResourceCollection
+    public function index(RehearsalsFilterClientRequest $filter): AnonymousResourceCollection
     {
         $rehearsals = Rehearsal::filter($filter)->get();
 

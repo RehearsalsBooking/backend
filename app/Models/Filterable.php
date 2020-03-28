@@ -1,8 +1,8 @@
 <?php
 
+namespace App\Models;
 
-namespace App\Http\Requests\Filters;
-
+use App\Http\Requests\Filters\FilterRequest;
 use Illuminate\Database\Eloquent\Builder;
 
 trait Filterable
