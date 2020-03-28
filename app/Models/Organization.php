@@ -43,7 +43,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder|Organization whereOwnerId($value)
  * @property bool $is_active
  * @method static Builder|Organization whereIsActive($value)
- * @property-read Collection|Price[] $prices
+ * @property-read Collection|OrganizationPrice[] $prices
  * @property-read int|null $prices_count
  */
 class Organization extends Model
@@ -125,6 +125,6 @@ class Organization extends Model
 
     public function prices(): HasMany
     {
-        return $this->hasMany(Price::class);
+        return $this->hasMany(OrganizationPrice::class);
     }
 }

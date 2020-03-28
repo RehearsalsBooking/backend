@@ -13,7 +13,7 @@ class CreatePricesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('prices', static function (Blueprint $table) {
+        Schema::create('organization_prices', static function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('day');
             $table->decimal('price');

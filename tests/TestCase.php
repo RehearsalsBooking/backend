@@ -5,7 +5,7 @@ namespace Tests;
 use App\Models\Band;
 use App\Models\Invite;
 use App\Models\Organization;
-use App\Models\Price;
+use App\Models\OrganizationPrice;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Carbon\Carbon;
@@ -136,7 +136,7 @@ abstract class TestCase extends BaseTestCase
     protected function createPricesForOrganization(Organization $organization, string $startsAt = '00:00', string $endsAt = '24:00'): void
     {
         foreach (range(1, 7) as $dayOfWeek) {
-            factory(Price::class)->create([
+            factory(OrganizationPrice::class)->create([
                 'organization_id' => $organization->id,
                 'day' => $dayOfWeek,
                 'starts_at' => $startsAt,

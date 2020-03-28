@@ -125,7 +125,7 @@ class RehearsalPrice
         }
 
         $result = 0;
-        /** @var Price $price */
+
         foreach ($matchingPrices as $index => $price) {
             if ($index === 0) {
                 $result += $this->calculatePriceForPeriod(
@@ -155,11 +155,11 @@ class RehearsalPrice
      * @param int $day
      * @param $timeStart
      * @param $timeEnd
-     * @return Collection
+     * @return OrganizationPrice[]|Collection
      */
     private function getMatchingPricesForPeriod(int $day, $timeStart, $timeEnd): Collection
     {
-        return Price::where('organization_id', $this->organizationId)
+        return OrganizationPrice::where('organization_id', $this->organizationId)
             ->where('day', $day)
             ->where(
                 fn (Builder $query) => $query
@@ -198,11 +198,11 @@ class RehearsalPrice
     /**
      * @param string $timeStart
      * @param string $timeEnd
-     * @param Price $price cost of one hour of rehearsal
+     * @param OrganizationPrice $price cost of one hour of rehearsal
      * @return float|int
      * @throws PriceCalculationException
      */
-    private function calculatePriceForPeriod(string $timeStart, string $timeEnd, Price $price)
+    private function calculatePriceForPeriod(string $timeStart, string $timeEnd, OrganizationPrice $price)
     {
         if ($timeStart < $price->starts_at || $timeEnd > $price->ends_at) {
             throw new PriceCalculationException();

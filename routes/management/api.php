@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Management\OrganizationPricesController;
 use App\Http\Controllers\Management\RehearsalsController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,7 @@ Route::middleware('check.rehearsal.ownership')->group(static function () {
 
 Route::get('rehearsals', [RehearsalsController::class, 'index'])
     ->name('rehearsals.list');
+
+Route::get('organizations/{organization}/prices', [OrganizationPricesController::class, 'index'])
+    ->where('organization', '[0-9]+')
+    ->name('organization.prices.list');
