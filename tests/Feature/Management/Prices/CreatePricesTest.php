@@ -214,7 +214,7 @@ class CreatePricesTest extends ManagementTestCase
                 'day' => 6,
                 'price' => 500,
                 'starts_at' => '10:00',
-                'ends_at' => '18:00'
+                'ends_at' => '24:00'
             ]
         );
         $response->assertStatus(Response::HTTP_CREATED);
@@ -225,7 +225,7 @@ class CreatePricesTest extends ManagementTestCase
             'day' => 6,
             'price' => 500,
             'starts_at' => '10:00',
-            'ends_at' => '18:00',
+            'ends_at' => '24:00',
             'organization_id' => $this->organization->id
         ]);
         $this->assertEquals(

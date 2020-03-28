@@ -24,10 +24,10 @@ class CreateOrganizationPriceRequest extends FormRequest
             'ends_at' => [
                 'bail',
                 'required',
-                'regex:/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/',
+                'regex:/^([0-1]?[0-9]|2[0-4]):[0-5][0-9]$/',
                 function ($attribute, $value, $fail) {
                     if ($value < $this->get('starts_at')) {
-                        $fail($attribute.' must be after starts_at');
+                        $fail($attribute . ' must be after starts_at');
                     }
                 },
             ],
