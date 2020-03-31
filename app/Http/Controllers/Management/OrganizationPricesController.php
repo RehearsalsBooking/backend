@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Management\CreateOrganizationPriceRequest;
 use App\Http\Resources\OrganizationPriceResource;
 use App\Models\Organization;
+use App\Models\OrganizationPrice;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -54,5 +56,21 @@ class OrganizationPricesController extends Controller
         return (OrganizationPriceResource::collection($organization->prices)
             ->response()
             ->setStatusCode(Response::HTTP_CREATED));
+    }
+
+    /**
+     * @param Organization $organization
+     * @param OrganizationPrice $price
+     * @return JsonResponse
+     * @throws AuthorizationException
+     * @throws Exception
+     */
+    public function delete(Organization $organization, OrganizationPrice $price): JsonResponse
+    {
+        $this->authorize('manage', $organization);
+
+        $price->delete();
+
+        return \response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

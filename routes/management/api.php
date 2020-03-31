@@ -26,3 +26,8 @@ Route::get('organizations/{organization}/prices', [OrganizationPricesController:
 Route::post('organizations/{organization}/prices', [OrganizationPricesController::class, 'create'])
     ->where('organization', '[0-9]+')
     ->name('organization.price.create');
+
+Route::delete('organizations/{organization}/prices/{price}', [OrganizationPricesController::class, 'delete'])
+    ->where('organization', '[0-9]+')
+    ->where('price', '[0-9]+')
+    ->name('organization.price.delete');
