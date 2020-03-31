@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Users;
 
+use App\Http\Resources\OrganizationPriceResource;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,7 +29,8 @@ class OrganizationDetailResource extends JsonResource
             'description' => $this->description,
             'opens_at' => $this->opens_at ?? null,
             'closes_at' => $this->closes_at ?? null,
-            'owner' => new UserResource($this->owner)
+            'owner' => new UserResource($this->owner),
+            'prices' => OrganizationPriceResource::collection($this->prices)
         ];
     }
 }
