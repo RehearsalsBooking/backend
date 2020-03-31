@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -45,6 +46,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder|Organization whereIsActive($value)
  * @property-read Collection|OrganizationPrice[] $prices
  * @property-read int|null $prices_count
+ * @property-read Collection|User[] $bannedUsers
+ * @property-read int|null $banned_users_count
  */
 class Organization extends Model
 {
@@ -126,6 +129,11 @@ class Organization extends Model
     public function prices(): HasMany
     {
         return $this->hasMany(OrganizationPrice::class);
+    }
+
+    public function bannedUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'organizations_users_bans')->using(OrganizationUserBan::class);
     }
 
     /**

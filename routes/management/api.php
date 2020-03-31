@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Management\OrganizationBansController;
 use App\Http\Controllers\Management\OrganizationPricesController;
 use App\Http\Controllers\Management\RehearsalsController;
 use Illuminate\Support\Facades\Route;
@@ -19,15 +20,24 @@ Route::middleware('check.rehearsal.ownership')->group(static function () {
 Route::get('rehearsals', [RehearsalsController::class, 'index'])
     ->name('rehearsals.list');
 
-Route::get('organizations/{organization}/prices', [OrganizationPricesController::class, 'index'])
-    ->where('organization', '[0-9]+')
-    ->name('organization.prices.list');
+Route::prefix('organizations/{organization}')
+    ->name('organization.')
+    ->where(['organization' => '[0-9]+'])
+    ->group(static function () {
 
-Route::post('organizations/{organization}/prices', [OrganizationPricesController::class, 'create'])
-    ->where('organization', '[0-9]+')
-    ->name('organization.price.create');
+        Route::prefix('prices')->name('prices.')->group(static function () {
 
-Route::delete('organizations/{organization}/prices/{price}', [OrganizationPricesController::class, 'delete'])
-    ->where('organization', '[0-9]+')
-    ->where('price', '[0-9]+')
-    ->name('organization.price.delete');
+            Route::get('/', [OrganizationPricesController::class, 'index'])
+                ->name('list');
+
+            Route::post('/', [OrganizationPricesController::class, 'create'])
+                ->name('create');
+
+            Route::delete('{price}', [OrganizationPricesController::class, 'delete'])
+                ->where('price', '[0-9]+')
+                ->name('delete');
+        });
+
+        Route::post('ban', [OrganizationBansController::class, 'create'])->name('ban.create');
+
+    });
