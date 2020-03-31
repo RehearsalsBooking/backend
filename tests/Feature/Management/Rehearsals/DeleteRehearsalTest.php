@@ -8,11 +8,12 @@ use Tests\Feature\Management\ManagementTestCase;
 class DeleteRehearsalTest extends ManagementTestCase
 {
     private string $endpoint = 'management.rehearsal.delete';
+    private string $httpVerb = 'delete';
 
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void
     {
-        $this->json('delete', route($this->endpoint, 1))
+        $this->json($this->httpVerb, route($this->endpoint, 1))
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
@@ -33,11 +34,11 @@ class DeleteRehearsalTest extends ManagementTestCase
         );
 
         $this->actingAs($ordinaryClient);
-        $this->json('delete', route($this->endpoint, $rehearsal->id))
+        $this->json($this->httpVerb, route($this->endpoint, $rehearsal->id))
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->actingAs($managerOfAnotherOrganization);
-        $this->json('delete', route($this->endpoint, $rehearsal->id))
+        $this->json($this->httpVerb, route($this->endpoint, $rehearsal->id))
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
@@ -45,9 +46,9 @@ class DeleteRehearsalTest extends ManagementTestCase
     public function it_responds_with_404_when_unknown_rehearsal_is_given(): void
     {
         $this->actingAs($this->manager);
-        $this->json('delete', route($this->endpoint, 1000))
+        $this->json($this->httpVerb, route($this->endpoint, 1000))
             ->assertStatus(Response::HTTP_NOT_FOUND);
-        $this->json('delete', route($this->endpoint, 'some text'))
+        $this->json($this->httpVerb, route($this->endpoint, 'some text'))
             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
@@ -62,7 +63,7 @@ class DeleteRehearsalTest extends ManagementTestCase
         $this->actingAs($this->manager);
 
         $response = $this->json(
-            'delete',
+            $this->httpVerb,
             route($this->endpoint, $rehearsal->id)
         );
         $response->assertStatus(Response::HTTP_NO_CONTENT);

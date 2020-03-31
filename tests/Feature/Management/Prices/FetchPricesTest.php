@@ -9,11 +9,12 @@ use Tests\Feature\Management\ManagementTestCase;
 class FetchPricesTest extends ManagementTestCase
 {
     private string $endpoint = 'management.organization.prices.list';
+    private string $httpVerb = 'get';
 
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void
     {
-        $this->json('get', route($this->endpoint, 1))
+        $this->json($this->httpVerb, route($this->endpoint, 1))
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
@@ -26,11 +27,11 @@ class FetchPricesTest extends ManagementTestCase
         $this->createOrganizationForUser($managerOfAnotherOrganization);
 
         $this->actingAs($ordinaryClient);
-        $this->json('get', route($this->endpoint, $this->organization->id))
+        $this->json($this->httpVerb, route($this->endpoint, $this->organization->id))
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->actingAs($managerOfAnotherOrganization);
-        $this->json('get', route($this->endpoint, $this->organization->id))
+        $this->json($this->httpVerb, route($this->endpoint, $this->organization->id))
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
@@ -38,9 +39,9 @@ class FetchPricesTest extends ManagementTestCase
     public function it_responds_with_404_when_unknown_organization_is_given(): void
     {
         $this->actingAs($this->manager);
-        $this->json('get', route($this->endpoint, 1000))
+        $this->json($this->httpVerb, route($this->endpoint, 1000))
             ->assertStatus(Response::HTTP_NOT_FOUND);
-        $this->json('get', route($this->endpoint, 'some text'))
+        $this->json($this->httpVerb, route($this->endpoint, 'some text'))
             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
@@ -53,7 +54,7 @@ class FetchPricesTest extends ManagementTestCase
         $this->actingAs($this->manager);
 
         $response = $this->json(
-            'get',
+            $this->httpVerb,
             route($this->endpoint, $this->organization->id)
         );
         $response->assertStatus(Response::HTTP_OK);

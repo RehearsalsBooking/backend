@@ -9,11 +9,12 @@ use Tests\Feature\Management\ManagementTestCase;
 class CreatePricesTest extends ManagementTestCase
 {
     private string $endpoint = 'management.organization.price.create';
+    private string $httpVerb = 'post';
 
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void
     {
-        $this->json('post', route($this->endpoint, 1))
+        $this->json($this->httpVerb, route($this->endpoint, 1))
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
@@ -27,7 +28,7 @@ class CreatePricesTest extends ManagementTestCase
 
         $this->actingAs($ordinaryClient);
         $this->json(
-            'post',
+            $this->httpVerb,
             route($this->endpoint, $this->organization->id),
             [
                 'day' => 6,
@@ -40,7 +41,7 @@ class CreatePricesTest extends ManagementTestCase
 
         $this->actingAs($managerOfAnotherOrganization);
         $this->json(
-            'post',
+            $this->httpVerb,
             route($this->endpoint, $this->organization->id),
             [
                 'day' => 6,
@@ -56,9 +57,9 @@ class CreatePricesTest extends ManagementTestCase
     public function it_responds_with_404_when_unknown_organization_is_given(): void
     {
         $this->actingAs($this->manager);
-        $this->json('post', route($this->endpoint, 1000))
+        $this->json($this->httpVerb, route($this->endpoint, 1000))
             ->assertStatus(Response::HTTP_NOT_FOUND);
-        $this->json('post', route($this->endpoint, 'some text'))
+        $this->json($this->httpVerb, route($this->endpoint, 'some text'))
             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
@@ -73,7 +74,7 @@ class CreatePricesTest extends ManagementTestCase
         $this->assertEquals(5, $this->organization->prices()->count());
         $this->actingAs($this->manager);
         $response = $this->json(
-            'post',
+            $this->httpVerb,
             route($this->endpoint, $this->organization->id),
             $data
         );
@@ -208,7 +209,7 @@ class CreatePricesTest extends ManagementTestCase
         $this->actingAs($this->manager);
 
         $response = $this->json(
-            'post',
+            $this->httpVerb,
             route($this->endpoint, $this->organization->id),
             [
                 'day' => 6,

@@ -18,15 +18,13 @@ use Tests\Feature\Management\ManagementTestCase;
 class FetchRehearsalsTest extends ManagementTestCase
 {
     private string $endpoint = 'management.rehearsals.list';
-    /**
-     * @var Organization
-     */
+    private string $httpVerb = 'get';
     private Organization $anotherOrganization;
 
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void
     {
-        $this->json('get', route($this->endpoint, 1))
+        $this->json($this->httpVerb, route($this->endpoint, 1))
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
@@ -47,11 +45,11 @@ class FetchRehearsalsTest extends ManagementTestCase
         );
 
         $this->actingAs($ordinaryClient);
-        $this->json('get', route($this->endpoint, ['organization_id' => $this->organization->id]))
+        $this->json($this->httpVerb, route($this->endpoint, ['organization_id' => $this->organization->id]))
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->actingAs($managerOfAnotherOrganization);
-        $this->json('get', route($this->endpoint, ['organization_id' => $this->organization->id]))
+        $this->json($this->httpVerb, route($this->endpoint, ['organization_id' => $this->organization->id]))
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
@@ -59,10 +57,10 @@ class FetchRehearsalsTest extends ManagementTestCase
     public function it_responds_with_422_when_unknown_rehearsal_is_given(): void
     {
         $this->actingAs($this->manager);
-        $this->json('get', route($this->endpoint, 1000))
+        $this->json($this->httpVerb, route($this->endpoint, 1000))
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors('organization_id');
-        $this->json('get', route($this->endpoint, 'some text'))
+        $this->json($this->httpVerb, route($this->endpoint, 'some text'))
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors('organization_id');
     }
@@ -76,7 +74,7 @@ class FetchRehearsalsTest extends ManagementTestCase
         $this->actingAs($this->manager);
 
         $response = $this->json(
-            'get',
+            $this->httpVerb,
             route($this->endpoint, ['organization_id' => $this->organization->id])
         );
         $response->assertStatus(Response::HTTP_OK);
@@ -96,7 +94,7 @@ class FetchRehearsalsTest extends ManagementTestCase
         $this->actingAs($this->manager);
 
         $response = $this->json(
-            'get',
+            $this->httpVerb,
             route($this->endpoint, ['organization_id' => $this->organization->id])
         );
 
@@ -113,7 +111,7 @@ class FetchRehearsalsTest extends ManagementTestCase
     {
         $this->actingAs($this->manager);
         $this->json(
-            'get',
+            $this->httpVerb,
             route($this->endpoint)
         )
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
@@ -125,20 +123,20 @@ class FetchRehearsalsTest extends ManagementTestCase
     {
         $this->actingAs($this->manager);
         $this->json(
-            'get',
+            $this->httpVerb,
             route($this->endpoint, ['organization_id' => $this->anotherOrganization->id])
         )
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->json(
-            'get',
+            $this->httpVerb,
             route($this->endpoint, ['organization_id' => 'some_id'])
         )
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors('organization_id');
 
         $this->json(
-            'get',
+            $this->httpVerb,
             route($this->endpoint, ['organization_id' => 1000000])
         )
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
