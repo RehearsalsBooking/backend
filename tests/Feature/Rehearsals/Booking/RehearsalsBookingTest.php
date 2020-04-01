@@ -3,10 +3,11 @@
 namespace Tests\Feature\Rehearsals\Booking;
 
 use App\Http\Resources\Users\RehearsalResource;
+use App\Models\OrganizationUserBan;
 use App\Models\Rehearsal;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RehearsalsBookingTest extends TestCase
 {
@@ -122,5 +123,41 @@ class RehearsalsBookingTest extends TestCase
         $createdRehearsal = Rehearsal::first();
 
         $this->assertFalse($createdRehearsal->is_confirmed);
+    }
+
+    /** @test */
+    public function banned_users_cannot_book_rehearsal(): void
+    {
+        $organization = $this->createOrganization();
+        $this->createPricesForOrganization($organization);
+        $user = $this->createUser();
+
+        OrganizationUserBan::create([
+            'user_id' => $user->id,
+            'organization_id' => $organization->id
+        ]);
+
+        $this->assertEquals($user->id, $organization->bannedUsers->first()->id);
+
+        $this->actingAs($user);
+
+        $params = $this->getRehearsalTime();
+        $params['organization_id'] = $organization->id;
+
+        $this->json(
+            'post',
+            route('rehearsals.create'),
+            $params
+        )->assertStatus(Response::HTTP_FORBIDDEN);
+
+        $params['band_id'] = $this->createBandForUser($user)->id;
+
+        $this->json(
+            'post',
+            route('rehearsals.create'),
+            $params
+        )->assertStatus(Response::HTTP_FORBIDDEN);
+
+        $this->assertEquals(0, Rehearsal::count());
     }
 }

@@ -179,4 +179,13 @@ class Organization extends Model
     {
         return $this->prices->contains($price);
     }
+
+    /**
+     * @param int $userId
+     * @return bool
+     */
+    public function isUserBanned(int $userId): bool
+    {
+        return $this->bannedUsers->contains($userId);
+    }
 }

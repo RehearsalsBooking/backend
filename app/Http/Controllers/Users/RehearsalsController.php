@@ -35,7 +35,13 @@ class RehearsalsController extends Controller
      */
     public function create(CreateRehearsalRequest $request)
     {
-        if (!$request->organization()->isTimeAvailable(
+        $organization = $request->organization();
+
+        if ($organization->isUserBanned(auth()->id())) {
+            return response()->json('you are banned in this organization', Response::HTTP_FORBIDDEN);
+        }
+
+        if (!$organization->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
         )) {
