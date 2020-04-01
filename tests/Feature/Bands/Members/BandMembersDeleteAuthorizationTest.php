@@ -46,6 +46,21 @@ class BandMembersDeleteAuthorizationTest extends TestCase
 
         $this->json('delete', route('bands.members.delete', [$this->band->id, $userIdToRemoveFromBand]))
             ->assertStatus(Response::HTTP_FORBIDDEN);
+    }
 
+    /** @test */
+    public function deleting_member_should_be_in_given_band(): void
+    {
+        $bandMembers = $this->createUsers(2);
+        $this->band->members()->saveMany($bandMembers);
+        $userIdToRemoveFromBand = $this->band->members()->inRandomOrder()->first(['id'])->id;
+
+        $adminOfAnotherBand = $this->createUser();
+        $anotherBand = $this->createBandForUser($adminOfAnotherBand);
+
+        $this->actingAs($adminOfAnotherBand);
+
+        $this->json('delete', route('bands.members.delete', [$anotherBand->id, $userIdToRemoveFromBand]))
+            ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 }

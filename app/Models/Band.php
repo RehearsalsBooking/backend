@@ -63,14 +63,6 @@ class Band extends Model
     }
 
     /**
-     * @return BelongsToMany
-     */
-    public function members(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class);
-    }
-
-    /**
      * @return HasMany
      */
     public function rehearsals(): HasMany
@@ -84,17 +76,6 @@ class Band extends Model
     public function futureRehearsals(): HasMany
     {
         return $this->hasMany(Rehearsal::class)->where('starts_at', '>', Carbon::now());
-    }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function invitedUsers(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(User::class, 'band_user_invites')
-            ->withTimestamps()
-            ->using(Invite::class);
     }
 
     /**
@@ -121,12 +102,11 @@ class Band extends Model
     }
 
     /**
-     * @param int $memberId
+     * @return BelongsToMany
      */
-    public function removeMember(int $memberId): void
+    public function members(): BelongsToMany
     {
-        $this->removeUserFromFutureRehearsals($memberId);
-        $this->members()->detach([$memberId]);
+        return $this->belongsToMany(User::class);
     }
 
     /**
@@ -142,6 +122,15 @@ class Band extends Model
     /**
      * @param int $memberId
      */
+    public function removeMember(int $memberId): void
+    {
+        $this->removeUserFromFutureRehearsals($memberId);
+        $this->members()->detach([$memberId]);
+    }
+
+    /**
+     * @param int $memberId
+     */
     private function removeUserFromFutureRehearsals(int $memberId): void
     {
         $this->futureRehearsals->each(static function (Rehearsal $futureRehearsal) use ($memberId) {
@@ -152,5 +141,25 @@ class Band extends Model
     public function cancelInvites(): void
     {
         $this->invitedUsers()->delete();
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function invitedUsers(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(User::class, 'band_user_invites')
+            ->withTimestamps()
+            ->using(Invite::class);
+    }
+
+    /**
+     * @param int $memberId
+     * @return bool
+     */
+    public function hasMember(int $memberId): bool
+    {
+        return $this->members->contains($memberId);
     }
 }

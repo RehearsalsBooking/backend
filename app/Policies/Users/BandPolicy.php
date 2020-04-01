@@ -2,8 +2,8 @@
 
 namespace App\Policies\Users;
 
-use App\Models\User;
 use App\Models\Band;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class BandPolicy
@@ -63,6 +63,10 @@ class BandPolicy
         // user can leave the band
         if ($memberId === $user->id) {
             return true;
+        }
+
+        if (!$band->hasMember($memberId)) {
+            return false;
         }
 
         return $band->admin_id === $user->id;
