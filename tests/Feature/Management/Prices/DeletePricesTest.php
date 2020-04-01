@@ -44,6 +44,22 @@ class DeletePricesTest extends ManagementTestCase
     }
 
     /** @test */
+    public function deleting_price_should_be_owned_by_organization(): void
+    {
+        $managerOfAnotherOrganization = $this->createUser();
+        $anotherOrganization = $this->createOrganizationForUser($managerOfAnotherOrganization);
+
+        $priceIdToDelete = $this->organization->prices()->first()->id;
+
+        $this->actingAs($managerOfAnotherOrganization);
+        $this->json(
+            $this->httpVerb,
+            route($this->endpoint, [$anotherOrganization->id, $priceIdToDelete])
+        )
+            ->assertStatus(Response::HTTP_FORBIDDEN);
+    }
+
+    /** @test */
     public function it_responds_with_404_when_unknown_price_or_organization_is_given(): void
     {
         $priceId = $this->organization->prices()->where('day', 1)->first()->id;

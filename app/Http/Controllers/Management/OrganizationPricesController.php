@@ -69,8 +69,12 @@ class OrganizationPricesController extends Controller
     {
         $this->authorize('manage', $organization);
 
+        if (!$organization->hasPrice($price)) {
+            return response()->json(null, Response::HTTP_FORBIDDEN);
+        }
+
         $price->delete();
 
-        return \response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

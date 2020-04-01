@@ -170,4 +170,13 @@ class Organization extends Model
             )
             ->exists();
     }
+
+    /**
+     * @param OrganizationPrice $price
+     * @return bool
+     */
+    public function hasPrice(OrganizationPrice $price): bool
+    {
+        return $this->prices->contains($price);
+    }
 }
