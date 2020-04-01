@@ -41,9 +41,9 @@ Route::prefix('organizations/{organization}')
         Route::prefix('bans')->name('bans.')->group(static function () {
 
             Route::post('', [OrganizationBansController::class, 'create'])->name('create');
+            Route::delete('{ban}', [OrganizationBansController::class, 'delete'])->name('delete')->where('ban', '[0-9]+');
             Route::get('', [OrganizationBansController::class, 'index'])->name('list');
         });
-
 
 
     });

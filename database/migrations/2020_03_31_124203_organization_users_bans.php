@@ -15,6 +15,7 @@ class OrganizationUsersBans extends Migration
     {
         Schema::create('organizations_users_bans', static function (Blueprint $table) {
 
+            $table->id();
             $table->unsignedBigInteger('organization_id');
             $table->unsignedBigInteger('user_id');
             $table->text('comment')->nullable();

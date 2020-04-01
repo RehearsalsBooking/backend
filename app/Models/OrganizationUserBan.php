@@ -24,8 +24,20 @@ use Illuminate\Support\Carbon;
  * @mixin Eloquent
  * @property Carbon|null $updated_at
  * @method static Builder|OrganizationUserBan whereUpdatedAt($value)
+ * @property int $id
+ * @method static Builder|OrganizationUserBan whereId($value)
  */
 class OrganizationUserBan extends Pivot
 {
+    public $incrementing = true;
     protected $table = 'organizations_users_bans';
+
+    /**
+     * @param Organization $organization
+     * @return bool
+     */
+    public function byOrganization(Organization $organization): bool
+    {
+        return $this->organization_id === $organization->id;
+    }
 }
