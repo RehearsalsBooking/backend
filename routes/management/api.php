@@ -38,6 +38,12 @@ Route::prefix('organizations/{organization}')
                 ->name('delete');
         });
 
-        Route::post('ban', [OrganizationBansController::class, 'create'])->name('ban.create');
+        Route::prefix('bans')->name('bans.')->group(static function () {
+
+            Route::post('', [OrganizationBansController::class, 'create'])->name('create');
+            Route::get('', [OrganizationBansController::class, 'index'])->name('list');
+        });
+
+
 
     });

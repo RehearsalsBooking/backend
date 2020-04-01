@@ -133,7 +133,10 @@ class Organization extends Model
 
     public function bannedUsers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'organizations_users_bans')->using(OrganizationUserBan::class);
+        return $this->belongsToMany(User::class, 'organizations_users_bans')
+            ->using(OrganizationUserBan::class)
+            ->withPivot(['comment'])
+            ->withTimestamps();
     }
 
     /**

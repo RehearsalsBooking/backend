@@ -6,6 +6,7 @@ use App\Models\Band;
 use App\Models\Invite;
 use App\Models\Organization;
 use App\Models\OrganizationPrice;
+use App\Models\OrganizationUserBan;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Carbon\Carbon;
@@ -17,6 +18,19 @@ use Tests\Feature\Rehearsals\RehearsalRescheduleValidationTest;
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication, WithFaker;
+
+    protected function banUsers(Organization $organization, int $usersCount = 3): Collection
+    {
+        $bannedUsers = $this->createUsers($usersCount);
+        $bannedUsers->each(static function (User $user) use ($organization) {
+            OrganizationUserBan::create([
+                'user_id' => $user->id,
+                'organization_id' => $organization->id,
+                'comment' => 'reason to ban'
+            ]);
+        });
+        return $bannedUsers;
+    }
 
     /**
      * @param int $count
@@ -75,7 +89,8 @@ abstract class TestCase extends BaseTestCase
         Band $band = null,
         bool $isConfirmed = false,
         User $user = null
-    ): Rehearsal {
+    ): Rehearsal
+    {
         $user ??= $this->createUser();
         $organization ??= $this->createOrganization();
 
