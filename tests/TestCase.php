@@ -89,8 +89,7 @@ abstract class TestCase extends BaseTestCase
         Band $band = null,
         bool $isConfirmed = false,
         User $user = null
-    ): Rehearsal
-    {
+    ): Rehearsal {
         $user ??= $this->createUser();
         $organization ??= $this->createOrganization();
 
@@ -228,6 +227,46 @@ abstract class TestCase extends BaseTestCase
             'starts_at' => Carbon::now()->addDay(),
             'ends_at' => Carbon::now()->addDay()->addHours(2),
         ]);
+    }
+
+    /**
+     * @param User $user
+     * @param Organization $organization
+     * @return Rehearsal
+     */
+    protected function createRehearsalForUserInFuture(User $user, Organization $organization): Rehearsal
+    {
+        $rehearsal = factory(Rehearsal::class)->create([
+            'user_id' => $user->id,
+            'organization_id' => $organization->id,
+            'starts_at' => Carbon::now()->addDay(),
+            'ends_at' => Carbon::now()->addDay()->addHours(2),
+        ]);
+
+        /** @var Rehearsal $rehearsal */
+        $rehearsal->attendees()->attach($user->id);
+
+        return $rehearsal;
+    }
+
+    /**
+     * @param User $user
+     * @param Organization $organization
+     * @return Rehearsal
+     */
+    protected function createRehearsalForUserInPast(User $user, Organization $organization): Rehearsal
+    {
+        $rehearsal = factory(Rehearsal::class)->create([
+            'user_id' => $user->id,
+            'organization_id' => $organization->id,
+            'starts_at' => Carbon::now()->subDays(3),
+            'ends_at' => Carbon::now()->subDays(3)->addHours(2),
+        ]);
+
+        /** @var Rehearsal $rehearsal */
+        $rehearsal->attendees()->attach($user->id);
+
+        return $rehearsal;
     }
 
     /**

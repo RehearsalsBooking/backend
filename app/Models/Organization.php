@@ -188,4 +188,14 @@ class Organization extends Model
     {
         return $this->bannedUsers->contains($userId);
     }
+
+    /**
+     * @param $userId
+     */
+    public function deleteRehearsalsForUserInFuture($userId): void
+    {
+        $this->rehearsals()->where('starts_at', '>', Carbon::now())
+            ->where('user_id', $userId)
+            ->delete();
+    }
 }

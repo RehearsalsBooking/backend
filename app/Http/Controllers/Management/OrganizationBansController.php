@@ -27,6 +27,8 @@ class OrganizationBansController extends Controller
 
         OrganizationUserBan::create($request->organizationUserBan());
 
+        $organization->deleteRehearsalsForUserInFuture($request->bannedUserId());
+
         return response()->json('user successfully banned', Response::HTTP_CREATED);
     }
 

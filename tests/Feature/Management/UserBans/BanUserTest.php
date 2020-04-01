@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Management\Rehearsals;
 
+use App\Models\Rehearsal;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
@@ -94,6 +95,52 @@ class BanUserTest extends ManagementTestCase
             'organization_id' => $this->organization->id,
             'user_id' => $bannedUser->id,
             'comment' => 'reason'
+        ]);
+    }
+
+    /** @test */
+    public function when_user_is_banned_all_his_future_rehearsals_at_this_organization_are_deleted(): void
+    {
+        $bannedUser = $this->createUser();
+        $rehearsalInFuture = $this->createRehearsalForUserInFuture($bannedUser, $this->organization);
+        $rehearsalInPast = $this->createRehearsalForUserInPast($bannedUser, $this->organization);
+
+        $this->assertEquals(
+            2,
+            Rehearsal::where('organization_id', $this->organization->id)
+                ->where('user_id', $bannedUser->id)
+                ->count()
+        );
+
+        $this->assertEquals(2, $bannedUser->rehearsals()->count());
+
+        $this->actingAs($this->manager);
+
+        $response = $this->json(
+            $this->httpVerb,
+            route($this->endpoint, $this->organization->id),
+            [
+                'user_id' => $bannedUser->id,
+                'comment' => 'reason'
+            ]
+        );
+        $response->assertStatus(Response::HTTP_CREATED);
+
+        $this->assertEquals(
+            1,
+            Rehearsal::where('organization_id', $this->organization->id)
+                ->where('user_id', $bannedUser->id)
+                ->count()
+        );
+        $this->assertEquals(1, $bannedUser->rehearsals()->count());
+        $this->assertDatabaseMissing('rehearsals', [
+            'id' => $rehearsalInFuture->id,
+        ]);
+        $this->assertDatabaseMissing('rehearsal_user', [
+            'rehearsal_id' => $rehearsalInFuture->id,
+        ]);
+        $this->assertDatabaseHas('rehearsal_user', [
+            'rehearsal_id' => $rehearsalInPast->id,
         ]);
     }
 }

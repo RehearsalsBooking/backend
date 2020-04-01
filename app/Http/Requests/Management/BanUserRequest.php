@@ -31,4 +31,12 @@ class BanUserRequest extends FormRequest
             'comment' => $this->get('comment')
         ];
     }
+
+    /**
+     * @return int
+     */
+    public function bannedUserId(): int
+    {
+        return $this->get('user_id');
+    }
 }
