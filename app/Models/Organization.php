@@ -91,21 +91,7 @@ class Organization extends Model
     public function isTimeAvailable($startsAt, $endsAt, Rehearsal $rehearsal = null): bool
     {
         $query = $this->rehearsals()
-            ->where(
-                fn (Builder $query) => $query
-                    ->where(
-                        fn (Builder $query) => $query->where('starts_at', '<', $startsAt)
-                            ->where('ends_at', '>', $startsAt)
-                    )
-                    ->orWhere(
-                        fn (Builder $query) => $query->where('starts_at', '<', $endsAt)
-                            ->where('ends_at', '>', $endsAt)
-                    )
-                    ->orWhere(
-                        fn (Builder $query) => $query->where('starts_at', '>', $startsAt)
-                            ->where('ends_at', '<', $endsAt)
-                    )
-            );
+            ->whereRaw('time && ?::tsrange', [(new TimestampRange($startsAt, $endsAt))]);
 
         // if rehearsal was passed as a parameter, then we want to determine if this rehearsal
         // is available for reschedule, so we must exclude it from query
@@ -194,7 +180,7 @@ class Organization extends Model
      */
     public function deleteRehearsalsForUserInFuture($userId): void
     {
-        $this->rehearsals()->where('starts_at', '>', Carbon::now())
+        $this->rehearsals()->whereRaw('time && ?', [new TimestampRange(Carbon::now(), null)])
             ->where('user_id', $userId)
             ->delete();
     }

@@ -8,6 +8,7 @@ use App\Models\Band;
 use App\Models\Organization;
 use App\Models\Rehearsal;
 use App\Models\RehearsalPrice;
+use App\Models\TimestampRange;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -90,8 +91,10 @@ class CreateRehearsalRequest extends FormRequest
         );
 
         return [
-            'starts_at' => Carbon::parse($this->get('starts_at'))->setSeconds(0),
-            'ends_at' => Carbon::parse($this->get('ends_at'))->setSeconds(0),
+            'time' => new TimestampRange(
+                Carbon::parse($this->get('starts_at'))->setSeconds(0)->toDateTimeString(),
+                Carbon::parse($this->get('ends_at'))->setSeconds(0)->toDateTimeString(),
+            ),
             'user_id' => auth()->id(),
             'is_confirmed' => false,
             'band_id' => $this->get('band_id'),

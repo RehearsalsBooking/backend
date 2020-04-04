@@ -31,7 +31,7 @@ class RehearsalsController extends Controller
     public function index(RehearsalsFilterManagementRequest $filterRequest): AnonymousResourceCollection
     {
         $this->authorize('manage', $filterRequest->organization());
-        return RehearsalDetailedResource::collection(Rehearsal::filter($filterRequest)->paginate());
+        return RehearsalDetailedResource::collection(Rehearsal::filter($filterRequest)->orderBy('id')->paginate());
     }
 
     /**

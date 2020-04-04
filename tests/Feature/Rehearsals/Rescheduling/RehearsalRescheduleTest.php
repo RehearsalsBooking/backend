@@ -24,8 +24,8 @@ class RehearsalRescheduleTest extends TestCase
 
         $this->assertEquals(1, Rehearsal::count());
 
-        $newRehearsalStartTime = $rehearsal->starts_at->addHours(2);
-        $newRehearsalEndTime = $rehearsal->ends_at->addHours(2);
+        $newRehearsalStartTime = $rehearsal->time->from()->addHours(2);
+        $newRehearsalEndTime = $rehearsal->time->to()->addHours(2);
 
         $response = $this->json(
             'put',
@@ -41,8 +41,8 @@ class RehearsalRescheduleTest extends TestCase
         $this->assertEquals(1, Rehearsal::count());
 
         $rescheduledRehearsal = Rehearsal::first();
-        $this->assertEquals($newRehearsalStartTime, $rescheduledRehearsal->starts_at->toDateTimeString());
-        $this->assertEquals($newRehearsalEndTime, $rescheduledRehearsal->ends_at->toDateTimeString());
+        $this->assertEquals($newRehearsalStartTime, $rescheduledRehearsal->time->from()->toDateTimeString());
+        $this->assertEquals($newRehearsalEndTime, $rescheduledRehearsal->time->to()->toDateTimeString());
         $this->assertEquals(
             (new RehearsalResource($rescheduledRehearsal))->response()->getData(true),
             $response->json()
@@ -64,8 +64,8 @@ class RehearsalRescheduleTest extends TestCase
 
         $this->assertEquals(1, Rehearsal::count());
 
-        $newRehearsalStartTime = $rehearsal->starts_at->addHours(2);
-        $newRehearsalEndTime = $rehearsal->ends_at->addHours(2);
+        $newRehearsalStartTime = $rehearsal->time->from()->addHours(2);
+        $newRehearsalEndTime = $rehearsal->time->to()->addHours(2);
 
         $response = $this->json(
             'put',
@@ -81,8 +81,8 @@ class RehearsalRescheduleTest extends TestCase
         $this->assertEquals(1, Rehearsal::count());
 
         $rescheduledRehearsal = Rehearsal::first();
-        $this->assertEquals($newRehearsalStartTime, $rescheduledRehearsal->starts_at->toDateTimeString());
-        $this->assertEquals($newRehearsalEndTime, $rescheduledRehearsal->ends_at->toDateTimeString());
+        $this->assertEquals($newRehearsalStartTime, $rescheduledRehearsal->time->from()->toDateTimeString());
+        $this->assertEquals($newRehearsalEndTime, $rescheduledRehearsal->time->to()->toDateTimeString());
         $this->assertEquals(
             (new RehearsalResource($rescheduledRehearsal))->response()->getData(true),
             $response->json()
@@ -101,8 +101,8 @@ class RehearsalRescheduleTest extends TestCase
 
         $rehearsal = $this->createRehearsal(10, 12, $organization, null, true, $user);
 
-        $newRehearsalStartTime = $rehearsal->starts_at->addHours(2);
-        $newRehearsalEndTime = $rehearsal->ends_at->addHours(2);
+        $newRehearsalStartTime = $rehearsal->time->from()->addHours(2);
+        $newRehearsalEndTime = $rehearsal->time->to()->addHours(2);
 
         $response = $this->json(
             'put',

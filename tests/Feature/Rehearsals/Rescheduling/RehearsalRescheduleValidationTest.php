@@ -96,8 +96,8 @@ class RehearsalRescheduleValidationTest extends TestCase
             'put',
             route('rehearsals.reschedule', $rehearsal->id),
             [
-                'starts_at' => $rehearsal->starts_at->toDateTimeString(),
-                'ends_at' => $rehearsal->starts_at->copy()->addHours(24)->toDateTimeString(),
+                'starts_at' => $rehearsal->time->from()->toDateTimeString(),
+                'ends_at' => $rehearsal->time->from()->copy()->addHours(24)->toDateTimeString(),
             ]
         );
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -122,8 +122,8 @@ class RehearsalRescheduleValidationTest extends TestCase
             'put',
             route('rehearsals.reschedule', $rehearsal->id),
             [
-                'starts_at' => $rehearsal->starts_at->toDateTimeString(),
-                'ends_at' => $rehearsal->starts_at->copy()->addHours(2)->addMinutes(13)->toDateTimeString(),
+                'starts_at' => $rehearsal->time->from()->toDateTimeString(),
+                'ends_at' => $rehearsal->time->from()->copy()->addHours(2)->addMinutes(13)->toDateTimeString(),
             ]
         );
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -149,18 +149,24 @@ class RehearsalRescheduleValidationTest extends TestCase
         $this->createPricesForOrganization($otherOrganization, '16:00', '22:00');
 
         factory(Rehearsal::class)->create([
-            'starts_at' => $this->getDateTimeAt(9, 0),
-            'ends_at' => $this->getDateTimeAt(11, 0),
+            'time' => $this->getTimestampRange(
+                $this->getDateTimeAt(9, 0),
+                $this->getDateTimeAt(11, 0)
+            ),
             'organization_id' => $organization->id
         ]);
         factory(Rehearsal::class)->create([
-            'starts_at' => $this->getDateTimeAt(12, 0),
-            'ends_at' => $this->getDateTimeAt(15, 0),
+            'time' => $this->getTimestampRange(
+                $this->getDateTimeAt(12, 0),
+                $this->getDateTimeAt(15, 0)
+            ),
             'organization_id' => $organization->id
         ]);
         factory(Rehearsal::class)->create([
-            'starts_at' => $this->getDateTimeAt(11, 0),
-            'ends_at' => $this->getDateTimeAt(12, 0),
+            'time' => $this->getTimestampRange(
+                $this->getDateTimeAt(11, 0),
+                $this->getDateTimeAt(12, 0)
+            ),
             'organization_id' => $otherOrganization->id
         ]);
 

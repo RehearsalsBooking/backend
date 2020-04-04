@@ -28,8 +28,8 @@ class RehearsalsFilterTest extends TestCase
     /** @test */
     public function user_can_fetch_rehearsals_of_organization(): void
     {
-        $rehearsals = factory(Rehearsal::class, 5)->create(['organization_id' => $this->organization->id]);
-        factory(Rehearsal::class, 5)->create(['organization_id' => $this->createOrganization()->id]);
+        $rehearsals = $this->createRehearsalsForOrganization($this->organization, 5);
+        $this->createRehearsalsForOrganization($this->createOrganization(), 5);
 
         $this->assertEquals(10, Rehearsal::count());
 
@@ -44,7 +44,7 @@ class RehearsalsFilterTest extends TestCase
 
         $this->assertCount(5, $data['data']);
         $this->assertEquals(
-            RehearsalResource::collection($rehearsals)->response()->getData(true),
+            RehearsalResource::collection($rehearsals->sortBy('id'))->response()->getData(true),
             $data
         );
     }

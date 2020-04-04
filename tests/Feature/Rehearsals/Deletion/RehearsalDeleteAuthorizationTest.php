@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\Rehearsals\Deletion;
 
-use App\Models\Rehearsal;
-use App\Models\User;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;

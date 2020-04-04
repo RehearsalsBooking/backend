@@ -220,18 +220,24 @@ class RehearsalBookingValidationTest extends TestCase
         $this->createPricesForOrganization($otherOrganization, '16:00', '22:00');
 
         factory(Rehearsal::class)->create([
-            'starts_at' => $this->getDateTimeAt(9, 0),
-            'ends_at' => $this->getDateTimeAt(11, 0),
+            'time' => $this->getTimestampRange(
+                $this->getDateTimeAt(9, 0),
+                $this->getDateTimeAt(11, 0),
+            ),
             'organization_id' => $organization->id
         ]);
         factory(Rehearsal::class)->create([
-            'starts_at' => $this->getDateTimeAt(12, 0),
-            'ends_at' => $this->getDateTimeAt(15, 0),
+            'time' => $this->getTimestampRange(
+                $this->getDateTimeAt(12, 0),
+                $this->getDateTimeAt(15, 0)
+            ),
             'organization_id' => $organization->id
         ]);
         factory(Rehearsal::class)->create([
-            'starts_at' => $this->getDateTimeAt(11, 0),
-            'ends_at' => $this->getDateTimeAt(12, 0),
+            'time' => $this->getTimestampRange(
+                $this->getDateTimeAt(11, 0),
+                $this->getDateTimeAt(12, 0)
+            ),
             'organization_id' => $otherOrganization->id
         ]);
 

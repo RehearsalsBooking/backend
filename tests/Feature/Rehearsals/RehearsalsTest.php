@@ -47,8 +47,8 @@ class RehearsalsTest extends TestCase
         $this->assertEquals(
             [
                 'id' => $rehearsal->id,
-                'starts_at' => $rehearsal->starts_at->toDateTimeString(),
-                'ends_at' => $rehearsal->ends_at->toDateTimeString()
+                'starts_at' => $rehearsal->time->from()->toDateTimeString(),
+                'ends_at' => $rehearsal->time->to()->toDateTimeString()
             ],
             $data[0]
         );

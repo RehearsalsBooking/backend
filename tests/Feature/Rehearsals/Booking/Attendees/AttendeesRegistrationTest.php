@@ -74,7 +74,10 @@ class AttendeesRegistrationTest extends TestCase
         });
 
         $this->assertEquals($bandMembersCount, $rehearsal->attendees()->count());
-        $this->assertEquals($bandMembers->pluck('id')->sort(), $rehearsal->attendees->pluck('id')->sort());
+        $this->assertEquals(
+            $bandMembers->sortBy('id')->pluck('id'),
+            $rehearsal->attendees->sortBy('id')->pluck('id')
+        );
 
         //test reschedule
         $this->rescheduleRehearsal($rehearsal, $band)->assertOk();
@@ -151,8 +154,8 @@ class AttendeesRegistrationTest extends TestCase
     protected function rescheduleRehearsal(Rehearsal $rehearsal, Band $band = null): TestResponse
     {
         $parameters = [
-            'starts_at' => $rehearsal->starts_at->addHour()->toDateTimeString(),
-            'ends_at' => $rehearsal->ends_at->addHour()->toDateTimeString()
+            'starts_at' => $rehearsal->time->from()->addHour()->toDateTimeString(),
+            'ends_at' => $rehearsal->time->to()->addHour()->toDateTimeString()
         ];
 
         if ($band) {

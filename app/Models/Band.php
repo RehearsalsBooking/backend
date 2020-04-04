@@ -75,7 +75,9 @@ class Band extends Model
      */
     public function futureRehearsals(): HasMany
     {
-        return $this->hasMany(Rehearsal::class)->where('starts_at', '>', Carbon::now());
+        return $this->hasMany(Rehearsal::class)->whereRaw('time && ?', [
+            new TimestampRange(Carbon::now(), null)
+        ]);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Requests\Filters\FilterRequest;
+use App\Models\Casts\TsRangeCast;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -17,8 +18,6 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $organization_id
  * @property int $user_id
- * @property Carbon $starts_at
- * @property Carbon $ends_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Organization $organization
@@ -44,6 +43,7 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $attendees_count
  * @property float $price
  * @method static Builder|Rehearsal wherePrice($value)
+ * @property TimestampRange time
  */
 class Rehearsal extends Model
 {
@@ -51,15 +51,9 @@ class Rehearsal extends Model
 
     protected $guarded = ['id'];
 
-    protected $dates = [
-        'starts_at',
-        'ends_at',
-        'created_at',
-        'updated_at'
-    ];
-
     protected $casts = [
-        'is_confirmed' => 'boolean'
+        'is_confirmed' => 'boolean',
+        'time' => TsRangeCast::class,
     ];
 
     /**
@@ -126,6 +120,6 @@ class Rehearsal extends Model
      */
     public function isInPast(): bool
     {
-        return $this->starts_at < Carbon::now();
+        return $this->time->from() < Carbon::now();
     }
 }

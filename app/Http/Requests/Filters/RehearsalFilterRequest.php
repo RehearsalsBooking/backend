@@ -30,7 +30,7 @@ abstract class RehearsalFilterRequest extends FilterRequest
      */
     protected function from(string $date): void
     {
-        $this->builder->where('starts_at', '>=', $date);
+        $this->builder->whereRaw('lower(time) >= ?', [$date]);
     }
 
     /**
@@ -72,7 +72,7 @@ abstract class RehearsalFilterRequest extends FilterRequest
      */
     protected function to(string $date): void
     {
-        $this->builder->where('starts_at', '<=', $date);
+        $this->builder->whereRaw('lower(time) <= ?', [$date]);
     }
 
     /**

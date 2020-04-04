@@ -8,6 +8,7 @@ use App\Models\Organization;
 use App\Models\OrganizationPrice;
 use App\Models\OrganizationUserBan;
 use App\Models\Rehearsal;
+use App\Models\TimestampRange;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -94,8 +95,12 @@ abstract class TestCase extends BaseTestCase
         $organization ??= $this->createOrganization();
 
         return factory(Rehearsal::class)->create([
-            'starts_at' => $this->getDateTimeAt($startsAt, 00),
-            'ends_at' => $this->getDateTimeAt($endsAt, 00),
+            'time' => new TimestampRange(
+                $this->getDateTimeAt($startsAt, 00),
+                $this->getDateTimeAt($endsAt, 00),
+                '[',
+                ')'
+            ),
             'organization_id' => $organization->id,
             'band_id' => optional($band)->id,
             'is_confirmed' => $isConfirmed,
@@ -197,8 +202,10 @@ abstract class TestCase extends BaseTestCase
     {
         return factory(Rehearsal::class)->create([
             'user_id' => $user->id,
-            'starts_at' => Carbon::now()->addDay(),
-            'ends_at' => Carbon::now()->addDay()->addHours(2),
+            'time' => $this->getTimestampRange(
+                Carbon::now()->addDay()->toDateTimeString(),
+                Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
+            ),
         ]);
     }
 
@@ -209,11 +216,17 @@ abstract class TestCase extends BaseTestCase
      */
     protected function createRehearsalsForOrganization(Organization $organization, int $amount = 1)
     {
-        return factory(Rehearsal::class, $amount)->create([
-            'organization_id' => $organization->id,
-            'starts_at' => Carbon::now()->addDay(),
-            'ends_at' => Carbon::now()->addDay()->addHours(2),
-        ]);
+        $rehearsals = [];
+        foreach (range(1, $amount) as $index) {
+            $rehearsals[] = factory(Rehearsal::class)->create([
+                'organization_id' => $organization->id,
+                'time' => $this->getTimestampRange(
+                    Carbon::now()->addDays($index)->toDateTimeString(),
+                    Carbon::now()->addDays($index)->addHours(2)->toDateTimeString(),
+                ),
+            ]);
+        }
+        return collect($rehearsals);
     }
 
     /**
@@ -224,8 +237,10 @@ abstract class TestCase extends BaseTestCase
     {
         return factory(Rehearsal::class)->create([
             'band_id' => $band->id,
-            'starts_at' => Carbon::now()->addDay(),
-            'ends_at' => Carbon::now()->addDay()->addHours(2),
+            'time' => $this->getTimestampRange(
+                Carbon::now()->addDay()->toDateTimeString(),
+                Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
+            ),
         ]);
     }
 
@@ -239,14 +254,29 @@ abstract class TestCase extends BaseTestCase
         $rehearsal = factory(Rehearsal::class)->create([
             'user_id' => $user->id,
             'organization_id' => $organization->id,
-            'starts_at' => Carbon::now()->addDay(),
-            'ends_at' => Carbon::now()->addDay()->addHours(2),
+            'time' => $this->getTimestampRange(
+                Carbon::now()->addDay()->toDateTimeString(),
+                Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
+            ),
         ]);
 
         /** @var Rehearsal $rehearsal */
         $rehearsal->attendees()->attach($user->id);
 
         return $rehearsal;
+    }
+
+    /**
+     * @param $start
+     * @param $end
+     * @return TimestampRange
+     */
+    protected function getTimestampRange($start, $end): TimestampRange
+    {
+        return new TimestampRange(
+            $start,
+            $end
+        );
     }
 
     /**
@@ -259,8 +289,10 @@ abstract class TestCase extends BaseTestCase
         $rehearsal = factory(Rehearsal::class)->create([
             'user_id' => $user->id,
             'organization_id' => $organization->id,
-            'starts_at' => Carbon::now()->subDays(3),
-            'ends_at' => Carbon::now()->subDays(3)->addHours(2),
+            'time' => $this->getTimestampRange(
+                Carbon::now()->subDays(3)->toDateTimeString(),
+                Carbon::now()->subDays(3)->addHours(2)->toDateTimeString(),
+            ),
         ]);
 
         /** @var Rehearsal $rehearsal */
@@ -277,8 +309,10 @@ abstract class TestCase extends BaseTestCase
     {
         return factory(Rehearsal::class)->create([
             'band_id' => $band->id,
-            'starts_at' => Carbon::now()->subDays(3),
-            'ends_at' => Carbon::now()->subDays(3)->addHours(2),
+            'time' => $this->getTimestampRange(
+                Carbon::now()->subDays(3)->toDateTimeString(),
+                Carbon::now()->subDays(3)->addHours(2)->toDateTimeString()
+            )
         ]);
     }
 }

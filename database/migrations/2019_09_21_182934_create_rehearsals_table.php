@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateRehearsalsTable extends Migration
 {
@@ -19,8 +19,6 @@ class CreateRehearsalsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('band_id')->nullable();
             $table->boolean('is_confirmed')->default(false);
-            $table->dateTime('starts_at');
-            $table->dateTime('ends_at');
             $table->decimal('price');
             $table->timestamps();
 
@@ -28,6 +26,24 @@ class CreateRehearsalsTable extends Migration
             $table->foreign('organization_id')->references('id')->on('organizations');
             $table->foreign('band_id')->references('id')->on('bands');
         });
+
+        DB::statement('
+            ALTER TABLE rehearsals
+            ADD COLUMN time tsrange NOT NULL;
+        ');
+
+        DB::statement('
+            CREATE INDEX ON rehearsals USING GIST (time);
+        ');
+
+        DB::statement('
+            CREATE EXTENSION IF NOT EXISTS btree_gist;
+        ');
+
+        DB::statement('
+            ALTER TABLE rehearsals
+            ADD EXCLUDE USING GIST (organization_id WITH =, time WITH &&);
+        ');
     }
 
     /**

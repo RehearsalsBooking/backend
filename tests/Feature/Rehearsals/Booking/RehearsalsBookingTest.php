@@ -41,8 +41,8 @@ class RehearsalsBookingTest extends TestCase
         $this->assertEquals(
             $rehearsalTime,
             [
-                'starts_at' => $createdRehearsal->starts_at->toDateTimeString(),
-                'ends_at' => $createdRehearsal->ends_at->toDateTimeString()
+                'starts_at' => $createdRehearsal->time->from()->toDateTimeString(),
+                'ends_at' => $createdRehearsal->time->to()->toDateTimeString()
             ]
         );
         $this->assertEquals($user->id, $createdRehearsal->user->id);
@@ -85,8 +85,8 @@ class RehearsalsBookingTest extends TestCase
         $this->assertEquals(
             $rehearsalTime,
             [
-                'starts_at' => $createdRehearsal->starts_at->toDateTimeString(),
-                'ends_at' => $createdRehearsal->ends_at->toDateTimeString()
+                'starts_at' => $createdRehearsal->time->from()->toDateTimeString(),
+                'ends_at' => $createdRehearsal->time->to()->toDateTimeString()
             ]
         );
         $this->assertEquals($user->id, $createdRehearsal->user->id);

@@ -4,6 +4,7 @@
 
 use App\Models\Organization;
 use App\Models\Rehearsal;
+use App\Models\TimestampRange;
 use App\Models\User;
 use Carbon\Carbon;
 use Faker\Generator as Faker;
@@ -31,8 +32,10 @@ $factory->define(Rehearsal::class, static function (Faker $faker) {
         },
 
         'is_confirmed' => true,
-        'starts_at' => $startsAt,
-        'ends_at' => $endsAt,
+        'time' => new TimestampRange(
+            $startsAt->toDateTimeString(),
+            $endsAt->toDateTimeString(),
+        ),
         'price' => $faker->randomNumber(3)
     ];
 });

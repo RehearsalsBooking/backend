@@ -5,6 +5,7 @@ namespace App\Http\Requests\Users;
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Models\RehearsalPrice;
+use App\Models\TimestampRange;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -62,8 +63,10 @@ class RescheduleRehearsalRequest extends FormRequest
         );
 
         return [
-            'starts_at' => $this->get('starts_at'),
-            'ends_at' => $this->get('ends_at'),
+            'time' => new TimestampRange(
+                Carbon::parse($this->get('starts_at'))->setSeconds(0)->toDateTimeString(),
+                Carbon::parse($this->get('ends_at'))->setSeconds(0)->toDateTimeString()
+            ),
             'user_id' => auth()->id(),
             'is_confirmed' => false,
             'price' => $rehearsalPrice()
