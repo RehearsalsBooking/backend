@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Management;
 
+use App\Models\Ranges\TimeRange;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateOrganizationPriceRequest extends FormRequest
@@ -42,8 +43,7 @@ class CreateOrganizationPriceRequest extends FormRequest
         return [
             'day' => $this->get('day'),
             'price' => $this->get('price'),
-            'starts_at' => $this->get('starts_at'),
-            'ends_at' => $this->get('ends_at'),
+            'time' => new TimeRange($this->get('starts_at'), $this->get('ends_at'))
         ];
     }
 }

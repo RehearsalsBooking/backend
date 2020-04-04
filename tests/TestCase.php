@@ -7,8 +7,9 @@ use App\Models\Invite;
 use App\Models\Organization;
 use App\Models\OrganizationPrice;
 use App\Models\OrganizationUserBan;
+use App\Models\Ranges\TimeRange;
+use App\Models\Ranges\TimestampRange;
 use App\Models\Rehearsal;
-use App\Models\TimestampRange;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -158,8 +159,7 @@ abstract class TestCase extends BaseTestCase
             factory(OrganizationPrice::class)->create([
                 'organization_id' => $organization->id,
                 'day' => $dayOfWeek,
-                'starts_at' => $startsAt,
-                'ends_at' => $endsAt,
+                'time' => new TimeRange($startsAt, $endsAt)
             ]);
         }
     }
@@ -207,6 +207,19 @@ abstract class TestCase extends BaseTestCase
                 Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
             ),
         ]);
+    }
+
+    /**
+     * @param $start
+     * @param $end
+     * @return TimestampRange
+     */
+    protected function getTimestampRange($start, $end): TimestampRange
+    {
+        return new TimestampRange(
+            $start,
+            $end
+        );
     }
 
     /**
@@ -264,19 +277,6 @@ abstract class TestCase extends BaseTestCase
         $rehearsal->attendees()->attach($user->id);
 
         return $rehearsal;
-    }
-
-    /**
-     * @param $start
-     * @param $end
-     * @return TimestampRange
-     */
-    protected function getTimestampRange($start, $end): TimestampRange
-    {
-        return new TimestampRange(
-            $start,
-            $end
-        );
     }
 
     /**

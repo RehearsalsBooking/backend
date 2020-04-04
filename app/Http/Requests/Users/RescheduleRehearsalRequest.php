@@ -4,8 +4,8 @@ namespace App\Http\Requests\Users;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
+use App\Models\Ranges\TimestampRange;
 use App\Models\RehearsalPrice;
-use App\Models\TimestampRange;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 

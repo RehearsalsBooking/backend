@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\GlobalScopes\OnlyActiveScope;
+use App\Models\Ranges\TimeRange;
+use App\Models\Ranges\TimestampRange;
 use Carbon\Carbon;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -135,25 +137,7 @@ class Organization extends Model
     {
         return OrganizationPrice::where('organization_id', $this->id)
             ->where('day', $day)
-            ->where(
-                fn (Builder $query) => $query
-                    ->where(
-                        fn (Builder $query) => $query->where('starts_at', '<=', $startsAt)
-                            ->where('ends_at', '>', $endsAt)
-                    )
-                    ->orWhere(
-                        fn (Builder $query) => $query->where('starts_at', '<=', $startsAt)
-                            ->where('ends_at', '>', $startsAt)
-                    )
-                    ->orWhere(
-                        fn (Builder $query) => $query->where('starts_at', '<=', $endsAt)
-                            ->where('ends_at', '>', $endsAt)
-                    )
-                    ->orWhere(
-                        fn (Builder $query) => $query->where('starts_at', '>=', $startsAt)
-                            ->where('ends_at', '<=', $endsAt)
-                    )
-            )
+            ->whereRaw('time && ?::timerange', [new TimeRange($startsAt, $endsAt)])
             ->exists();
     }
 

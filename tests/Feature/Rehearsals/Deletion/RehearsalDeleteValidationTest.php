@@ -3,7 +3,6 @@
 namespace Tests\Feature\Rehearsals\Deletion;
 
 use App\Models\Rehearsal;
-use App\Models\TimestampRange;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;

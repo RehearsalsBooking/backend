@@ -5,6 +5,7 @@ namespace Tests\Unit\Rehearsals;
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Models\Organization;
+use App\Models\Ranges\TimeRange;
 use App\Models\RehearsalPrice;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,75 +19,6 @@ class RehearsalPriceCalculationTest extends TestCase
      * @var Organization
      */
     private Organization $organization;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->organization = $this->createOrganization();
-
-        // prices at monday
-        // 10-14 100
-        // 14-20 200
-        // 20-00 300
-        $this->organization->prices()->createMany([
-            [
-                'day' => 1,
-                'price' => 100,
-                'starts_at' => '10:00',
-                'ends_at' => '14:00',
-            ],
-            [
-                'day' => 1,
-                'price' => 200,
-                'starts_at' => '14:00',
-                'ends_at' => '20:00',
-            ],
-            [
-                'day' => 1,
-                'price' => 300,
-                'starts_at' => '20:00',
-                'ends_at' => '24:00',
-            ],
-        ]);
-
-        //prices at tuesday
-        // 00-06 300
-        $this->organization->prices()->createMany([
-            [
-                'day' => 2,
-                'price' => 300,
-                'starts_at' => '00:00',
-                'ends_at' => '06:00',
-            ],
-        ]);
-
-        //prices at saturday
-        // 10-14 200
-        // 14-20 400
-        // 20-00 600
-        $this->organization->prices()->createMany([
-            [
-                'day' => 6,
-                'price' => 200,
-                'starts_at' => '10:00',
-                'ends_at' => '14:00',
-            ],
-            [
-                'day' => 6,
-                'price' => 400,
-                'starts_at' => '14:00',
-                'ends_at' => '20:00',
-            ],
-            [
-                'day' => 6,
-                'price' => 600,
-                'starts_at' => '20:00',
-                'ends_at' => '00:00',
-            ],
-        ]);
-    }
-
 
     /** @test
      * @throws PriceCalculationException
@@ -140,6 +72,16 @@ class RehearsalPriceCalculationTest extends TestCase
             $this->getDateTimeAtMonday(22, 0),
         );
         $this->assertEquals(600.0, $price());
+    }
+
+    /**
+     * @param int $hour
+     * @param int $minute
+     * @return Carbon
+     */
+    private function getDateTimeAtMonday(int $hour, int $minute): Carbon
+    {
+        return Carbon::create(2020, 1, 27, $hour, $minute);
     }
 
     /** @test
@@ -220,13 +162,64 @@ class RehearsalPriceCalculationTest extends TestCase
         return Carbon::create(2020, 1, 28, $hour, $minute);
     }
 
-    /**
-     * @param int $hour
-     * @param int $minute
-     * @return Carbon
-     */
-    private function getDateTimeAtMonday(int $hour, int $minute): Carbon
+    protected function setUp(): void
     {
-        return Carbon::create(2020, 1, 27, $hour, $minute);
+        parent::setUp();
+
+        $this->organization = $this->createOrganization();
+
+        // prices at monday
+        // 10-14 100
+        // 14-20 200
+        // 20-00 300
+        $this->organization->prices()->createMany([
+            [
+                'day' => 1,
+                'price' => 100,
+                'time' => new TimeRange('10:00', '14:00')
+            ],
+            [
+                'day' => 1,
+                'price' => 200,
+                'time' => new TimeRange('14:00', '20:00')
+            ],
+            [
+                'day' => 1,
+                'price' => 300,
+                'time' => new TimeRange('20:00', '24:00')
+            ],
+        ]);
+
+        //prices at tuesday
+        // 00-06 300
+        $this->organization->prices()->createMany([
+            [
+                'day' => 2,
+                'price' => 300,
+                'time' => new TimeRange('00:00', '06:00')
+            ],
+        ]);
+
+        //prices at saturday
+        // 10-14 200
+        // 14-20 400
+        // 20-00 600
+        $this->organization->prices()->createMany([
+            [
+                'day' => 6,
+                'price' => 200,
+                'time' => new TimeRange('10:00', '14:00')
+            ],
+            [
+                'day' => 6,
+                'price' => 400,
+                'time' => new TimeRange('14:00', '20:00')
+            ],
+            [
+                'day' => 6,
+                'price' => 600,
+                'time' => new TimeRange('20:00', '24:00')
+            ],
+        ]);
     }
 }

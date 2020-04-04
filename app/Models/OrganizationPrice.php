@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Casts\TimeRangeCast;
+use App\Models\Ranges\TimeRange;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -31,8 +33,13 @@ use Illuminate\Support\Carbon;
  * @property string $ends_at
  * @method static Builder|OrganizationPrice whereEndsAt($value)
  * @method static Builder|OrganizationPrice whereStartsAt($value)
+ * @property TimeRange $time
  */
 class OrganizationPrice extends Model
 {
     protected $guarded = ['id'];
+
+    protected $casts = [
+        'time' => TimeRangeCast::class
+    ];
 }

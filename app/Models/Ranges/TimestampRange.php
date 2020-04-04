@@ -1,12 +1,11 @@
 <?php
 
-
-namespace App\Models;
+namespace App\Models\Ranges;
 
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 
-class TimestampRange
+class TimestampRange implements SerializesRange
 {
     private string $fromBound;
     private string $toBound;

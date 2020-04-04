@@ -3,6 +3,7 @@
 namespace Tests\Feature\Management\Rehearsals;
 
 use App\Http\Resources\OrganizationPriceResource;
+use App\Models\Ranges\TimeRange;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
@@ -225,8 +226,7 @@ class CreatePricesTest extends ManagementTestCase
         $this->assertDatabaseHas('organization_prices', [
             'day' => 6,
             'price' => 500,
-            'starts_at' => '10:00',
-            'ends_at' => '24:00',
+            'time' => new TimeRange('10:00', '24:00'),
             'organization_id' => $this->organization->id
         ]);
         $this->assertEquals(

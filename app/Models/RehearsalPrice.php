@@ -5,8 +5,8 @@ namespace App\Models;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
+use App\Models\Ranges\TimeRange;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -130,19 +130,19 @@ class RehearsalPrice
             if ($index === 0) {
                 $result += $this->calculatePriceForPeriod(
                     $start->toTimeString(),
-                    $price->ends_at,
+                    $price->time->to(),
                     $price
                 );
             } elseif ($index === $matchingPrices->count() - 1) {
                 $result += $this->calculatePriceForPeriod(
-                    $price->starts_at,
+                    $price->time->from(),
                     $this->transformMidnight($end->toTimeString()),
                     $price
                 );
             } else {
                 $result += $this->calculatePriceForPeriod(
-                    $price->starts_at,
-                    $price->ends_at,
+                    $price->time->from(),
+                    $price->time->to(),
                     $price
                 );
             }
@@ -161,26 +161,8 @@ class RehearsalPrice
     {
         return OrganizationPrice::where('organization_id', $this->organizationId)
             ->where('day', $day)
-            ->where(
-                fn (Builder $query) => $query
-                    ->where(
-                        fn (Builder $query) => $query->where('starts_at', '<=', $timeStart)
-                            ->where('ends_at', '>', $timeEnd)
-                    )
-                    ->orWhere(
-                        fn (Builder $query) => $query->where('starts_at', '<=', $timeStart)
-                            ->where('ends_at', '>', $timeStart)
-                    )
-                    ->orWhere(
-                        fn (Builder $query) => $query->where('starts_at', '<=', $timeEnd)
-                            ->where('ends_at', '>', $timeEnd)
-                    )
-                    ->orWhere(
-                        fn (Builder $query) => $query->where('starts_at', '>=', $timeStart)
-                            ->where('ends_at', '<=', $timeEnd)
-                    )
-            )
-            ->orderBy('starts_at')
+            ->whereRaw('time && ?::timerange', [new TimeRange($timeStart, $timeEnd)])
+            ->orderBy('time')
             ->get();
     }
 
@@ -204,7 +186,7 @@ class RehearsalPrice
      */
     private function calculatePriceForPeriod(string $timeStart, string $timeEnd, OrganizationPrice $price)
     {
-        if ($timeStart < $price->starts_at || $timeEnd > $price->ends_at) {
+        if ($timeStart < $price->time->from() || $timeEnd > $price->time->to()) {
             throw new PriceCalculationException();
         }
         $periodStart = Carbon::createFromTimeString($timeStart);

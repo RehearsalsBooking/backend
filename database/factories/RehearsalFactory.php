@@ -3,8 +3,8 @@
 /** @var Factory $factory */
 
 use App\Models\Organization;
+use App\Models\Ranges\TimestampRange;
 use App\Models\Rehearsal;
-use App\Models\TimestampRange;
 use App\Models\User;
 use Carbon\Carbon;
 use Faker\Generator as Faker;

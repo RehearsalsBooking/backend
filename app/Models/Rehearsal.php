@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use App\Http\Requests\Filters\FilterRequest;
-use App\Models\Casts\TsRangeCast;
+use App\Models\Casts\TimestampRangeCast;
+use App\Models\Ranges\TimestampRange;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -53,7 +54,7 @@ class Rehearsal extends Model
 
     protected $casts = [
         'is_confirmed' => 'boolean',
-        'time' => TsRangeCast::class,
+        'time' => TimestampRangeCast::class,
     ];
 
     /**

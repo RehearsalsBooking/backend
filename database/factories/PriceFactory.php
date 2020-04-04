@@ -4,6 +4,7 @@
 
 use App\Models\Organization;
 use App\Models\OrganizationPrice;
+use App\Models\Ranges\TimeRange;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
@@ -12,7 +13,6 @@ $factory->define(OrganizationPrice::class, static function (Faker $faker) {
         'day' => $faker->numberBetween(1, 7),
         'price' => $faker->randomNumber(3),
         'organization_id' => fn () => factory(Organization::class)->create()->id,
-        'starts_at' => '00:00',
-        'ends_at' => '24:00'
+        'time' => new TimeRange('00:00', '24:00')
     ];
 });
