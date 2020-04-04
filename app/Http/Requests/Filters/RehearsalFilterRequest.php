@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Filters;
 
+use App\Models\TimestampRange;
 use Illuminate\Database\Eloquent\Builder;
 
 abstract class RehearsalFilterRequest extends FilterRequest
@@ -26,11 +27,31 @@ abstract class RehearsalFilterRequest extends FilterRequest
     abstract protected function organizationRequirement(): string;
 
     /**
-     * @param string $date
+     * @return array
      */
-    protected function from(string $date): void
+    protected function getFilters(): array
     {
-        $this->builder->whereRaw('lower(time) >= ?', [$date]);
+        return array_merge(
+            parent::getFilters(),
+            [
+                'time' => [
+                    $this->request->get('from'),
+                    $this->request->get('to')
+                ]
+            ]
+        );
+    }
+
+    /**
+     * @param $boundaries
+     */
+    protected function time($boundaries): void
+    {
+        [$from, $to] = $boundaries;
+
+        $range = new TimestampRange($from, $to, '[', ']');
+
+        $this->builder->whereRaw('time <@ ?::tsrange', [$range]);
     }
 
     /**
@@ -65,14 +86,6 @@ abstract class RehearsalFilterRequest extends FilterRequest
                 'band.members',
                 fn (Builder $query) => $query->where('id', $userId)
             );
-    }
-
-    /**
-     * @param string $date
-     */
-    protected function to(string $date): void
-    {
-        $this->builder->whereRaw('lower(time) <= ?', [$date]);
     }
 
     /**

@@ -125,9 +125,25 @@ class RehearsalsFilterTest extends TestCase
         ]);
         $response->assertOk();
         $data = $response->json();
+        // 9----11  12----14  16----18
+        //             13-------------
         $this->assertCount(1, $data['data']);
         $this->assertEquals(
             RehearsalResource::collection(collect([$rehearsal16to18]))->response()->getData(true),
+            $data
+        );
+
+        $response = $this->json('get', route('rehearsals.list'), [
+            'organization_id' => $this->organization->id,
+            'from' => $this->getDateTimeAt(12, 00)
+        ]);
+        $response->assertOk();
+        $data = $response->json();
+        // 9----11  12----14  16----18
+        //          12----------------
+        $this->assertCount(2, $data['data']);
+        $this->assertEquals(
+            RehearsalResource::collection(collect([$rehearsal12to14, $rehearsal16to18]))->response()->getData(true),
             $data
         );
 
@@ -137,6 +153,22 @@ class RehearsalsFilterTest extends TestCase
         ]);
         $response->assertOk();
         $data = $response->json();
+        // 9----11  12----14  16----18
+        // ------------13
+        $this->assertCount(1, $data['data']);
+        $this->assertEquals(
+            RehearsalResource::collection(collect([$rehearsal9to11]))->response()->getData(true),
+            $data
+        );
+
+        $response = $this->json('get', route('rehearsals.list'), [
+            'organization_id' => $this->organization->id,
+            'to' => $this->getDateTimeAt(14, 00)
+        ]);
+        $response->assertOk();
+        $data = $response->json();
+        // 9----11  12----14  16----18
+        // ---------------14
         $this->assertCount(2, $data['data']);
         $this->assertEquals(
             RehearsalResource::collection(collect([$rehearsal9to11, $rehearsal12to14]))->response()->getData(true),
@@ -146,10 +178,27 @@ class RehearsalsFilterTest extends TestCase
         $response = $this->json('get', route('rehearsals.list'), [
             'organization_id' => $this->organization->id,
             'from' => $this->getDateTimeAt(11, 30),
-            'to' => $this->getDateTimeAt(15, 00)
+            'to' => $this->getDateTimeAt(16, 00)
         ]);
         $response->assertOk();
         $data = $response->json();
+        // 9----11  12----14  16----18
+        //      11------------16
+        $this->assertCount(1, $data['data']);
+        $this->assertEquals(
+            RehearsalResource::collection(collect([$rehearsal12to14]))->response()->getData(true),
+            $data
+        );
+
+        $response = $this->json('get', route('rehearsals.list'), [
+            'organization_id' => $this->organization->id,
+            'from' => $this->getDateTimeAt(10, 30),
+            'to' => $this->getDateTimeAt(17, 00)
+        ]);
+        $response->assertOk();
+        $data = $response->json();
+        // 9----11  12----14  16----18
+        //   10------------------17
         $this->assertCount(1, $data['data']);
         $this->assertEquals(
             RehearsalResource::collection(collect([$rehearsal12to14]))->response()->getData(true),
