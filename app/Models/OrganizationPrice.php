@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Casts\TimeRangeCast;
-use App\Models\Ranges\TimeRange;
+use Belamov\PostgresRange\Casts\TimeRangeCast;
+use Belamov\PostgresRange\Ranges\TimeRange;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

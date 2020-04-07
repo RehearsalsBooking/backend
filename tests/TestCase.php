@@ -7,10 +7,10 @@ use App\Models\Invite;
 use App\Models\Organization;
 use App\Models\OrganizationPrice;
 use App\Models\OrganizationUserBan;
-use App\Models\Ranges\TimeRange;
-use App\Models\Ranges\TimestampRange;
 use App\Models\Rehearsal;
 use App\Models\User;
+use Belamov\PostgresRange\Ranges\TimeRange;
+use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -19,23 +19,28 @@ use Tests\Feature\Rehearsals\RehearsalRescheduleValidationTest;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication, WithFaker;
+    use CreatesApplication;
+    use WithFaker;
 
     protected function banUsers(Organization $organization, int $usersCount = 3): Collection
     {
         $bannedUsers = $this->createUsers($usersCount);
-        $bannedUsers->each(static function (User $user) use ($organization) {
-            OrganizationUserBan::create([
-                'user_id' => $user->id,
-                'organization_id' => $organization->id,
-                'comment' => 'reason to ban'
-            ]);
-        });
+        $bannedUsers->each(
+            static function (User $user) use ($organization) {
+                OrganizationUserBan::create(
+                    [
+                        'user_id' => $user->id,
+                        'organization_id' => $organization->id,
+                        'comment' => 'reason to ban'
+                    ]
+                );
+            }
+        );
         return $bannedUsers;
     }
 
     /**
-     * @param int $count
+     * @param  int  $count
      * @return Collection
      */
     protected function createUsers(int $count): Collection
@@ -57,14 +62,16 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param User $user
+     * @param  User  $user
      * @return Band
      */
     protected function createBandForUser(User $user): Band
     {
-        return factory(Band::class)->create([
-            'admin_id' => $user->id
-        ]);
+        return factory(Band::class)->create(
+            [
+                'admin_id' => $user->id
+            ]
+        );
     }
 
     /**
@@ -78,10 +85,10 @@ abstract class TestCase extends BaseTestCase
     /**
      * @param $startsAt
      * @param $endsAt
-     * @param Organization $organization
-     * @param Band|null $band
-     * @param bool $isConfirmed
-     * @param User|null $user
+     * @param  Organization  $organization
+     * @param  Band|null  $band
+     * @param  bool  $isConfirmed
+     * @param  User|null  $user
      * @return mixed
      */
     protected function createRehearsal(
@@ -95,18 +102,20 @@ abstract class TestCase extends BaseTestCase
         $user ??= $this->createUser();
         $organization ??= $this->createOrganization();
 
-        return factory(Rehearsal::class)->create([
-            'time' => new TimestampRange(
-                $this->getDateTimeAt($startsAt, 00),
-                $this->getDateTimeAt($endsAt, 00),
-                '[',
-                ')'
-            ),
-            'organization_id' => $organization->id,
-            'band_id' => optional($band)->id,
-            'is_confirmed' => $isConfirmed,
-            'user_id' => $user->id,
-        ]);
+        return factory(Rehearsal::class)->create(
+            [
+                'time' => new TimestampRange(
+                    $this->getDateTimeAt($startsAt, 00),
+                    $this->getDateTimeAt($endsAt, 00),
+                    '[',
+                    ')'
+                ),
+                'organization_id' => $organization->id,
+                'band_id' => optional($band)->id,
+                'is_confirmed' => $isConfirmed,
+                'user_id' => $user->id,
+            ]
+        );
     }
 
     /**
@@ -118,7 +127,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param array $attributes
+     * @param  array  $attributes
      * @return Organization
      */
     protected function createOrganization(array $attributes = []): Organization
@@ -137,7 +146,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param User $user
+     * @param  User  $user
      * @return Organization
      */
     protected function createOrganizationForUser(User $user): Organization
@@ -149,18 +158,23 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param Organization $organization
-     * @param string $startsAt
-     * @param string $endsAt
+     * @param  Organization  $organization
+     * @param  string  $startsAt
+     * @param  string  $endsAt
      */
-    protected function createPricesForOrganization(Organization $organization, string $startsAt = '00:00', string $endsAt = '24:00'): void
-    {
+    protected function createPricesForOrganization(
+        Organization $organization,
+        string $startsAt = '00:00',
+        string $endsAt = '24:00'
+    ): void {
         foreach (range(1, 7) as $dayOfWeek) {
-            factory(OrganizationPrice::class)->create([
-                'organization_id' => $organization->id,
-                'day' => $dayOfWeek,
-                'time' => new TimeRange($startsAt, $endsAt)
-            ]);
+            factory(OrganizationPrice::class)->create(
+                [
+                    'organization_id' => $organization->id,
+                    'day' => $dayOfWeek,
+                    'time' => new TimeRange($startsAt, $endsAt)
+                ]
+            );
         }
     }
 
@@ -186,7 +200,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param array $parameters
+     * @param  array  $parameters
      * @return Invite
      */
     protected function createInvite(array $parameters = []): Invite
@@ -195,18 +209,20 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param User $user
+     * @param  User  $user
      * @return Rehearsal
      */
     protected function createRehearsalForUser(User $user): Rehearsal
     {
-        return factory(Rehearsal::class)->create([
-            'user_id' => $user->id,
-            'time' => $this->getTimestampRange(
-                Carbon::now()->addDay()->toDateTimeString(),
-                Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
-            ),
-        ]);
+        return factory(Rehearsal::class)->create(
+            [
+                'user_id' => $user->id,
+                'time' => $this->getTimestampRange(
+                    Carbon::now()->addDay()->toDateTimeString(),
+                    Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
+                ),
+            ]
+        );
     }
 
     /**
@@ -223,55 +239,61 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param Organization $organization
-     * @param int $amount
+     * @param  Organization  $organization
+     * @param  int  $amount
      * @return Rehearsal|Collection
      */
     protected function createRehearsalsForOrganization(Organization $organization, int $amount = 1)
     {
         $rehearsals = [];
         foreach (range(1, $amount) as $index) {
-            $rehearsals[] = factory(Rehearsal::class)->create([
-                'organization_id' => $organization->id,
-                'time' => $this->getTimestampRange(
-                    Carbon::now()->addDays($index)->toDateTimeString(),
-                    Carbon::now()->addDays($index)->addHours(2)->toDateTimeString(),
-                ),
-            ]);
+            $rehearsals[] = factory(Rehearsal::class)->create(
+                [
+                    'organization_id' => $organization->id,
+                    'time' => $this->getTimestampRange(
+                        Carbon::now()->addDays($index)->toDateTimeString(),
+                        Carbon::now()->addDays($index)->addHours(2)->toDateTimeString(),
+                    ),
+                ]
+            );
         }
         return collect($rehearsals);
     }
 
     /**
-     * @param Band $band
+     * @param  Band  $band
      * @return Rehearsal
      */
     protected function createRehearsalForBandInFuture(Band $band): Rehearsal
     {
-        return factory(Rehearsal::class)->create([
-            'band_id' => $band->id,
-            'time' => $this->getTimestampRange(
-                Carbon::now()->addDay()->toDateTimeString(),
-                Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
-            ),
-        ]);
+        return factory(Rehearsal::class)->create(
+            [
+                'band_id' => $band->id,
+                'time' => $this->getTimestampRange(
+                    Carbon::now()->addDay()->toDateTimeString(),
+                    Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
+                ),
+            ]
+        );
     }
 
     /**
-     * @param User $user
-     * @param Organization $organization
+     * @param  User  $user
+     * @param  Organization  $organization
      * @return Rehearsal
      */
     protected function createRehearsalForUserInFuture(User $user, Organization $organization): Rehearsal
     {
-        $rehearsal = factory(Rehearsal::class)->create([
-            'user_id' => $user->id,
-            'organization_id' => $organization->id,
-            'time' => $this->getTimestampRange(
-                Carbon::now()->addDay()->toDateTimeString(),
-                Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
-            ),
-        ]);
+        $rehearsal = factory(Rehearsal::class)->create(
+            [
+                'user_id' => $user->id,
+                'organization_id' => $organization->id,
+                'time' => $this->getTimestampRange(
+                    Carbon::now()->addDay()->toDateTimeString(),
+                    Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
+                ),
+            ]
+        );
 
         /** @var Rehearsal $rehearsal */
         $rehearsal->attendees()->attach($user->id);
@@ -280,20 +302,22 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param User $user
-     * @param Organization $organization
+     * @param  User  $user
+     * @param  Organization  $organization
      * @return Rehearsal
      */
     protected function createRehearsalForUserInPast(User $user, Organization $organization): Rehearsal
     {
-        $rehearsal = factory(Rehearsal::class)->create([
-            'user_id' => $user->id,
-            'organization_id' => $organization->id,
-            'time' => $this->getTimestampRange(
-                Carbon::now()->subDays(3)->toDateTimeString(),
-                Carbon::now()->subDays(3)->addHours(2)->toDateTimeString(),
-            ),
-        ]);
+        $rehearsal = factory(Rehearsal::class)->create(
+            [
+                'user_id' => $user->id,
+                'organization_id' => $organization->id,
+                'time' => $this->getTimestampRange(
+                    Carbon::now()->subDays(3)->toDateTimeString(),
+                    Carbon::now()->subDays(3)->addHours(2)->toDateTimeString(),
+                ),
+            ]
+        );
 
         /** @var Rehearsal $rehearsal */
         $rehearsal->attendees()->attach($user->id);
@@ -302,17 +326,19 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param Band $band
+     * @param  Band  $band
      * @return Rehearsal
      */
     protected function createRehearsalForBandInThePast(Band $band): Rehearsal
     {
-        return factory(Rehearsal::class)->create([
-            'band_id' => $band->id,
-            'time' => $this->getTimestampRange(
-                Carbon::now()->subDays(3)->toDateTimeString(),
-                Carbon::now()->subDays(3)->addHours(2)->toDateTimeString()
-            )
-        ]);
+        return factory(Rehearsal::class)->create(
+            [
+                'band_id' => $band->id,
+                'time' => $this->getTimestampRange(
+                    Carbon::now()->subDays(3)->toDateTimeString(),
+                    Carbon::now()->subDays(3)->addHours(2)->toDateTimeString()
+                )
+            ]
+        );
     }
 }

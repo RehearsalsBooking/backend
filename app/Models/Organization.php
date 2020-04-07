@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Models\GlobalScopes\OnlyActiveScope;
-use App\Models\Ranges\TimeRange;
-use App\Models\Ranges\TimestampRange;
+use Belamov\PostgresRange\Ranges\TimeRange;
+use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -60,13 +60,13 @@ class Organization extends Model
     protected static function boot(): void
     {
         parent::boot();
-        static::addGlobalScope(new OnlyActiveScope);
+        static::addGlobalScope(new OnlyActiveScope());
     }
 
     /**
      * Filters query by only verified organizations
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeVerified(Builder $query): Builder
@@ -87,7 +87,7 @@ class Organization extends Model
     /**
      * @param $startsAt
      * @param $endsAt
-     * @param Rehearsal|null $rehearsal
+     * @param  Rehearsal|null  $rehearsal
      * @return bool
      */
     public function isTimeAvailable($startsAt, $endsAt, Rehearsal $rehearsal = null): bool
@@ -142,7 +142,7 @@ class Organization extends Model
     }
 
     /**
-     * @param OrganizationPrice $price
+     * @param  OrganizationPrice  $price
      * @return bool
      */
     public function hasPrice(OrganizationPrice $price): bool
@@ -151,7 +151,7 @@ class Organization extends Model
     }
 
     /**
-     * @param int $userId
+     * @param  int  $userId
      * @return bool
      */
     public function isUserBanned(int $userId): bool

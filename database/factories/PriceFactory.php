@@ -4,7 +4,7 @@
 
 use App\Models\Organization;
 use App\Models\OrganizationPrice;
-use App\Models\Ranges\TimeRange;
+use Belamov\PostgresRange\Ranges\TimeRange;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 

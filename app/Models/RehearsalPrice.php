@@ -5,7 +5,7 @@ namespace App\Models;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
-use App\Models\Ranges\TimeRange;
+use Belamov\PostgresRange\Ranges\TimeRange;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -186,7 +186,7 @@ class RehearsalPrice
      */
     private function calculatePriceForPeriod(string $timeStart, string $timeEnd, OrganizationPrice $price)
     {
-        if ($timeStart < $price->time->from() || $timeEnd > $price->time->to()) {
+        if ($timeStart < $price->time->from() || $timeEnd > $this->transformMidnight($price->time->to())) {
             throw new PriceCalculationException();
         }
         $periodStart = Carbon::createFromTimeString($timeStart);

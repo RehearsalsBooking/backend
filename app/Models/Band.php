@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Ranges\TimestampRange;
+use Belamov\PostgresRange\Ranges\TimestampRange;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

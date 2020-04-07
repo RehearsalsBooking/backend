@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Http\Requests\Filters\FilterRequest;
-use App\Models\Casts\TimestampRangeCast;
-use App\Models\Ranges\TimestampRange;
+use Belamov\PostgresRange\Casts\TimestampRangeCast;
+use Belamov\PostgresRange\Ranges\TimestampRange;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

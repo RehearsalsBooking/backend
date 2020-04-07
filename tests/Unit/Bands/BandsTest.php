@@ -70,8 +70,8 @@ class BandsTest extends TestCase
         );
 
         $this->assertEquals(
-            $bandRehearsals->toArray(),
-            $band->rehearsals->toArray()
+            $bandRehearsals->pluck('id')->toArray(),
+            $band->rehearsals->pluck('id')->toArray()
         );
     }
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Management;
 
-use App\Models\Ranges\TimeRange;
+use Belamov\PostgresRange\Ranges\TimeRange;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateOrganizationPriceRequest extends FormRequest

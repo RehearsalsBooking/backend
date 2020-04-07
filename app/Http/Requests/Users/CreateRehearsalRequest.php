@@ -6,7 +6,7 @@ use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Models\Band;
 use App\Models\Organization;
-use App\Models\Ranges\TimestampRange;
+use Belamov\PostgresRange\Ranges\TimestampRange;
 use App\Models\Rehearsal;
 use App\Models\RehearsalPrice;
 use Carbon\Carbon;

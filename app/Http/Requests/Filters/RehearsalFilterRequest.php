@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Filters;
 
-use App\Models\Ranges\TimestampRange;
+use Belamov\PostgresRange\Ranges\TimestampRange;
 use Illuminate\Database\Eloquent\Builder;
 
 abstract class RehearsalFilterRequest extends FilterRequest

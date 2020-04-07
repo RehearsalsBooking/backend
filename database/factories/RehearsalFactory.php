@@ -3,7 +3,7 @@
 /** @var Factory $factory */
 
 use App\Models\Organization;
-use App\Models\Ranges\TimestampRange;
+use Belamov\PostgresRange\Ranges\TimestampRange;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Carbon\Carbon;

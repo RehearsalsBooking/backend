@@ -3,7 +3,7 @@
 namespace Tests\Feature\Management\Rehearsals;
 
 use App\Http\Resources\OrganizationPriceResource;
-use App\Models\Ranges\TimeRange;
+use Belamov\PostgresRange\Ranges\TimeRange;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 

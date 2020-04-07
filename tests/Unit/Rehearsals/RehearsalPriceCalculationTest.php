@@ -5,7 +5,7 @@ namespace Tests\Unit\Rehearsals;
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Models\Organization;
-use App\Models\Ranges\TimeRange;
+use Belamov\PostgresRange\Ranges\TimeRange;
 use App\Models\RehearsalPrice;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
