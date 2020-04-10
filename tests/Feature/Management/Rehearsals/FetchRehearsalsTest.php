@@ -31,6 +31,8 @@ class FetchRehearsalsTest extends ManagementTestCase
     /** @test */
     public function it_responds_with_forbidden_error_when_endpoint_is_accessed_not_by_organization_owner(): void
     {
+        Rehearsal::truncate();
+
         $ordinaryClient = $this->createUser();
 
         $managerOfAnotherOrganization = $this->createUser();

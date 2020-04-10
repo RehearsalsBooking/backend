@@ -20,30 +20,15 @@ class CreateRehearsalsTable extends Migration
             $table->unsignedBigInteger('band_id')->nullable();
             $table->boolean('is_confirmed')->default(false);
             $table->decimal('price');
+            $table->timestampRange('time');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('organization_id')->references('id')->on('organizations');
             $table->foreign('band_id')->references('id')->on('bands');
+            $table->uniqueRange('time', 'organization_id');
+            $table->spatialIndex('time');
         });
-
-        DB::statement('
-            ALTER TABLE rehearsals
-            ADD COLUMN time tsrange NOT NULL;
-        ');
-
-        DB::statement('
-            CREATE INDEX ON rehearsals USING GIST (time);
-        ');
-
-        DB::statement('
-            CREATE EXTENSION IF NOT EXISTS btree_gist;
-        ');
-
-        DB::statement('
-            ALTER TABLE rehearsals
-            ADD EXCLUDE USING GIST (organization_id WITH =, time WITH &&);
-        ');
     }
 
     /**
