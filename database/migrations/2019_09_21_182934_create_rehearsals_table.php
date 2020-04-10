@@ -26,7 +26,7 @@ class CreateRehearsalsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('organization_id')->references('id')->on('organizations');
             $table->foreign('band_id')->references('id')->on('bands');
-            $table->uniqueRange('time', 'organization_id');
+            $table->excludeRangeOverlapping('time', 'organization_id');
             $table->spatialIndex('time');
         });
     }

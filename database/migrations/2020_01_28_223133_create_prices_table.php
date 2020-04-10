@@ -22,7 +22,7 @@ class CreatePricesTable extends Migration
             $table->timestamps();
 
             $table->foreign('organization_id')->references('id')->on('organizations');
-            $table->uniqueRange('time', 'organization_id', 'day');
+            $table->excludeRangeOverlapping('time', 'organization_id', 'day');
         });
     }
 
