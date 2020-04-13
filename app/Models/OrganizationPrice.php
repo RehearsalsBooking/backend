@@ -34,6 +34,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|OrganizationPrice whereEndsAt($value)
  * @method static Builder|OrganizationPrice whereStartsAt($value)
  * @property TimeRange $time
+ * @method static Builder|OrganizationPrice whereTime($value)
  */
 class OrganizationPrice extends Model
 {

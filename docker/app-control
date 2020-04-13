@@ -76,7 +76,7 @@ function docs() {
     echo "Generate docs for models"
     echo "=============================="
     docker-compose run --rm fpm bash -c "php artisan migrate:fresh"
-    docker-compose run --rm -u 1000 fpm bash -c "php /app/artisan ide-helper:models -W -I \"App\Models\Rehearsal\""
+    docker-compose run --rm -u 1000 fpm bash -c "php /app/artisan ide-helper:models -W"
 }
 
 

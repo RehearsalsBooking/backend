@@ -44,7 +44,8 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $attendees_count
  * @property float $price
  * @method static Builder|Rehearsal wherePrice($value)
- * @property TimestampRange time
+ * @property TimestampRange $time
+ * @method static Builder|Rehearsal whereTime($value)
  */
 class Rehearsal extends Model
 {

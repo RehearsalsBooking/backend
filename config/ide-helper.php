@@ -1,5 +1,10 @@
 <?php
 
+use Belamov\PostgresRange\Casts\TimeRangeCast;
+use Belamov\PostgresRange\Casts\TimestampRangeCast;
+use Belamov\PostgresRange\Ranges\TimeRange;
+use Belamov\PostgresRange\Ranges\TimestampRange;
+
 return array(
 
     /*
@@ -78,7 +83,7 @@ return array(
     'include_helpers' => false,
 
     'helper_files' => array(
-        base_path() . '/vendor/laravel/framework/src/Illuminate/Support/helpers.php',
+        base_path().'/vendor/laravel/framework/src/Illuminate/Support/helpers.php',
     ),
 
     /*
@@ -151,6 +156,10 @@ return array(
     |
     */
     'custom_db_types' => array(
+        'postgresql' => array(
+            'timerange' => 'string',
+            'tsrange' => 'string',
+        ),
     ),
 
     /*
@@ -190,6 +199,9 @@ return array(
     'type_overrides' => array(
         'integer' => 'int',
         'boolean' => 'bool',
+        //TODO: remove once https://github.com/barryvdh/laravel-ide-helper/pull/913 gets merged
+        '\\'.TimestampRangeCast::class => '\\'.TimestampRange::class,
+        '\\'.TimeRangeCast::class => '\\'.TimeRange::class
     ),
 
     /*
