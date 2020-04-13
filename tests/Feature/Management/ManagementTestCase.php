@@ -8,10 +8,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Class ManagementTestCase
+ * Class ManagementTestCase.
  * @property User $manager
  * @property Organization $organization
- * @package Tests\Feature\Management
  */
 class ManagementTestCase extends TestCase
 {

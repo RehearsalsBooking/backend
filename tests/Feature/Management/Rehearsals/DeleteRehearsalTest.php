@@ -52,7 +52,6 @@ class DeleteRehearsalTest extends ManagementTestCase
             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
-
     /** @test */
     public function manager_of_organization_can_delete_rehearsal_of_his_organization(): void
     {

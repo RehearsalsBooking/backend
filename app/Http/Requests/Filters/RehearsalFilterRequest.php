@@ -36,8 +36,8 @@ abstract class RehearsalFilterRequest extends FilterRequest
             [
                 'time' => [
                     $this->request->get('from'),
-                    $this->request->get('to')
-                ]
+                    $this->request->get('to'),
+                ],
             ]
         );
     }

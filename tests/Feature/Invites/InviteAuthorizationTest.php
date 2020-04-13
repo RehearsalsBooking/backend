@@ -4,13 +4,12 @@ namespace Tests\Feature\Invites;
 
 use App\Models\Band;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
- * Class BandsMembersInviteTest
- * @package Tests\Feature\Bands
+ * Class BandsMembersInviteTest.
  * @property User $bandAdmin
  * @property Band $band
  */
@@ -55,7 +54,7 @@ class InviteAuthorizationTest extends TestCase
             'post',
             route('invites.create', [
                 'band_id' => $this->band->id,
-                'user_id' => $this->createUser()->id
+                'user_id' => $this->createUser()->id,
             ])
         )->assertStatus(Response::HTTP_FORBIDDEN);
 

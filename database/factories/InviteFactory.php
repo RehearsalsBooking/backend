@@ -2,7 +2,6 @@
 
 /** @var Factory $factory */
 
-use App\Model;
 use App\Models\Band;
 use App\Models\Invite;
 use App\Models\User;
@@ -15,6 +14,6 @@ $factory->define(Invite::class, static function () {
         },
         'band_id' => static function () {
             return factory(Band::class)->create()->id;
-        }
+        },
     ];
 });

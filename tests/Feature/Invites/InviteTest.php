@@ -4,13 +4,12 @@ namespace Tests\Feature\Invites;
 
 use App\Models\Band;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
- * Class BandsMembersInviteTest
- * @package Tests\Feature\Bands
+ * Class BandsMembersInviteTest.
  * @property User $bandAdmin
  * @property Band $band
  */
@@ -26,7 +25,6 @@ class InviteTest extends TestCase
         parent::setUp();
         $this->bandAdmin = $this->createUser();
         $this->band = $this->createBandForUser($this->bandAdmin);
-
     }
 
     /** @test */
@@ -44,7 +42,7 @@ class InviteTest extends TestCase
             route('invites.create'),
             [
                 'band_id' => $this->band->id,
-                'user_id' => $invitedUser->id
+                'user_id' => $invitedUser->id,
             ]
         );
 
@@ -83,6 +81,5 @@ class InviteTest extends TestCase
 
         $this->assertEquals(0, $this->band->invitedUsers()->count());
         $this->assertEquals(0, $invitedUser->invites()->count());
-
     }
 }

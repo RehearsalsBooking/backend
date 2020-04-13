@@ -45,7 +45,6 @@ class FetchPricesTest extends ManagementTestCase
             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
-
     /** @test */
     public function manager_of_organization_can_get_prices_of_his_organization(): void
     {
@@ -64,6 +63,5 @@ class FetchPricesTest extends ManagementTestCase
             OrganizationPriceResource::collection($this->organization->prices)->response()->getData(true),
             $response->json()
         );
-
     }
 }

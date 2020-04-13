@@ -65,7 +65,7 @@ class BandPolicy
             return true;
         }
 
-        if (!$band->hasMember($memberId)) {
+        if (! $band->hasMember($memberId)) {
             return false;
         }
 

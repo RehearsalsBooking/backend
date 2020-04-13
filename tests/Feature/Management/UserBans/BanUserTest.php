@@ -32,7 +32,7 @@ class BanUserTest extends ManagementTestCase
             route($this->endpoint, $this->organization->id),
             [
                 'user_id' => $ordinaryClient->id,
-                'comment' => 'reason'
+                'comment' => 'reason',
             ]
         )
             ->assertStatus(Response::HTTP_FORBIDDEN);
@@ -43,7 +43,7 @@ class BanUserTest extends ManagementTestCase
             route($this->endpoint, $this->organization->id),
             [
                 'user_id' => $ordinaryClient->id,
-                'comment' => 'reason'
+                'comment' => 'reason',
             ]
         )
             ->assertStatus(Response::HTTP_FORBIDDEN);
@@ -85,7 +85,7 @@ class BanUserTest extends ManagementTestCase
             route($this->endpoint, $this->organization->id),
             [
                 'user_id' => $bannedUser->id,
-                'comment' => 'reason'
+                'comment' => 'reason',
             ]
         );
         $response->assertStatus(Response::HTTP_CREATED);
@@ -94,7 +94,7 @@ class BanUserTest extends ManagementTestCase
         $this->assertDatabaseHas('organizations_users_bans', [
             'organization_id' => $this->organization->id,
             'user_id' => $bannedUser->id,
-            'comment' => 'reason'
+            'comment' => 'reason',
         ]);
     }
 
@@ -121,7 +121,7 @@ class BanUserTest extends ManagementTestCase
             route($this->endpoint, $this->organization->id),
             [
                 'user_id' => $bannedUser->id,
-                'comment' => 'reason'
+                'comment' => 'reason',
             ]
         );
         $response->assertStatus(Response::HTTP_CREATED);

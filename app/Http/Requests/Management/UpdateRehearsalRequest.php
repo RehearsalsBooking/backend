@@ -14,7 +14,7 @@ class UpdateRehearsalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'is_confirmed' => 'required|boolean'
+            'is_confirmed' => 'required|boolean',
         ];
     }
 

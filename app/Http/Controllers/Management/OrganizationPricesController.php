@@ -23,6 +23,7 @@ class OrganizationPricesController extends Controller
     public function index(Organization $organization): AnonymousResourceCollection
     {
         $this->authorize('manage', $organization);
+
         return OrganizationPriceResource::collection($organization->prices);
     }
 
@@ -46,16 +47,16 @@ class OrganizationPricesController extends Controller
                 'errors' => [
                     'day' => 'this price entry intersects with other prices',
                     'starts_at' => 'this price entry intersects with other prices',
-                    'ends_at' => 'this price entry intersects with other prices'
-                ]
+                    'ends_at' => 'this price entry intersects with other prices',
+                ],
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $organization->prices()->create($request->getAttributes());
 
-        return (OrganizationPriceResource::collection($organization->prices)
+        return OrganizationPriceResource::collection($organization->prices)
             ->response()
-            ->setStatusCode(Response::HTTP_CREATED));
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -69,7 +70,7 @@ class OrganizationPricesController extends Controller
     {
         $this->authorize('manage', $organization);
 
-        if (!$organization->hasPrice($price)) {
+        if (! $organization->hasPrice($price)) {
             return response()->json(null, Response::HTTP_FORBIDDEN);
         }
 

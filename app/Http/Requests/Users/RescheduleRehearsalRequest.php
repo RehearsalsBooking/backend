@@ -4,8 +4,8 @@ namespace App\Http\Requests\Users;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
-use Belamov\PostgresRange\Ranges\TimestampRange;
 use App\Models\RehearsalPrice;
+use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -38,13 +38,13 @@ class RescheduleRehearsalRequest extends FormRequest
                 'bail',
                 'required',
                 'date',
-                'after:now'
+                'after:now',
             ],
             'ends_at' => [
                 'bail',
                 'required',
                 'date',
-                'after:starts_at'
+                'after:starts_at',
             ],
         ];
     }
@@ -69,7 +69,7 @@ class RescheduleRehearsalRequest extends FormRequest
             ),
             'user_id' => auth()->id(),
             'is_confirmed' => false,
-            'price' => $rehearsalPrice()
+            'price' => $rehearsalPrice(),
         ];
     }
 }

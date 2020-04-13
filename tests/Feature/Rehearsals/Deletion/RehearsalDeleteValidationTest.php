@@ -10,9 +10,8 @@ use Illuminate\Http\Response;
 use Tests\TestCase;
 
 /**
- * Class RehearsalDeleteValidationTest
+ * Class RehearsalDeleteValidationTest.
  * @property $user User
- * @package Tests\Feature\Rehearsals\Deletion
  */
 class RehearsalDeleteValidationTest extends TestCase
 {
@@ -34,7 +33,7 @@ class RehearsalDeleteValidationTest extends TestCase
     {
         $rehearsal = factory(Rehearsal::class)->create([
             'user_id' => $this->user->id,
-            'time' => $this->getTimestampRange(Carbon::now()->subHour(), Carbon::now()->addHour())
+            'time' => $this->getTimestampRange(Carbon::now()->subHour(), Carbon::now()->addHour()),
         ]);
 
         $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
@@ -49,7 +48,7 @@ class RehearsalDeleteValidationTest extends TestCase
     {
         $rehearsal = factory(Rehearsal::class)->create([
             'user_id' => $this->user->id,
-            'time' => $this->getTimestampRange(Carbon::now()->subHours(3), Carbon::now()->subHours(2))
+            'time' => $this->getTimestampRange(Carbon::now()->subHours(3), Carbon::now()->subHours(2)),
         ]);
 
         $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());

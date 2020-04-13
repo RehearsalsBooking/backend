@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\CreateBandRequest;
 use App\Http\Requests\Users\UpdateBandRequest;
 use App\Http\Resources\Users\BandResource;
 use App\Models\Band;
-use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;

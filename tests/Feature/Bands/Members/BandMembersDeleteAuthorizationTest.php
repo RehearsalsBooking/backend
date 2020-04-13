@@ -4,15 +4,14 @@ namespace Tests\Feature\Bands;
 
 use App\Models\Band;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
- * Class BandsRegistrationTest
+ * Class BandsRegistrationTest.
  * @property User $bandAdmin
  * @property Band $band
- * @package Tests\Feature\Bands
  */
 class BandMembersDeleteAuthorizationTest extends TestCase
 {

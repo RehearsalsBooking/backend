@@ -9,11 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 /**
- * Class CheckRehearsalOwnership
+ * Class CheckRehearsalOwnership.
  *
  * Determines if given rehearsal is booked in organization that is managed by logged in user
- *
- * @package App\Http\Middleware\Management
  */
 class CheckRehearsalOwnership
 {
@@ -32,7 +30,7 @@ class CheckRehearsalOwnership
         /** @var User $user */
         $user = auth()->user();
 
-        if (!$user->organizations->contains($rehearsal->organization)) {
+        if (! $user->organizations->contains($rehearsal->organization)) {
             return response()->json('You cannot manage this rehearsal', Response::HTTP_FORBIDDEN);
         }
 

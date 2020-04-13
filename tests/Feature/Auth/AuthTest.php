@@ -4,9 +4,9 @@ namespace Tests\Feature\Auth;
 
 use App\Http\Resources\Users\UserResource;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AuthTest extends TestCase
 {
@@ -16,7 +16,7 @@ class AuthTest extends TestCase
 
     private array $credentials = [
         'email' => 'some@email.com',
-        'password' => 'somepassword'
+        'password' => 'somepassword',
     ];
 
     protected function setUp(): void
@@ -25,7 +25,7 @@ class AuthTest extends TestCase
 
         $this->user = factory(User::class)->create([
             'password' => bcrypt($this->credentials['password']),
-            'email' => $this->credentials['email']
+            'email' => $this->credentials['email'],
         ]);
     }
 
@@ -42,12 +42,12 @@ class AuthTest extends TestCase
     {
         $this->post(route('login'), [
             'email' => $this->credentials['email'],
-            'password' => 'some wrong password'
+            'password' => 'some wrong password',
         ])->assertStatus(Response::HTTP_UNAUTHORIZED);
 
         $this->post(route('login'), [
             'email' => 'unknown@email.com',
-            'password' => $this->credentials['password']
+            'password' => $this->credentials['password'],
         ])->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 

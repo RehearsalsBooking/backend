@@ -28,7 +28,7 @@ class RehearsalBookingAuthorizationTest extends TestCase
             'organization_id' => $organization->id,
             'band_id' => $band->id,
             'starts_at' => $this->getDateTimeAt(12, 00),
-            'ends_at' => $this->getDateTimeAt(13, 00)
+            'ends_at' => $this->getDateTimeAt(13, 00),
         ])
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }

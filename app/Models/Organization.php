@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * App\Models\Organization
+ * App\Models\Organization.
  *
  * @property int $id
  * @property string $name
@@ -54,7 +54,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Organization extends Model
 {
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     protected static function boot(): void
@@ -64,7 +64,7 @@ class Organization extends Model
     }
 
     /**
-     * Filters query by only verified organizations
+     * Filters query by only verified organizations.
      *
      * @param  Builder  $query
      * @return Builder
@@ -75,7 +75,7 @@ class Organization extends Model
     }
 
     /**
-     * Owner of organization
+     * Owner of organization.
      *
      * @return BelongsTo
      */
@@ -105,7 +105,7 @@ class Organization extends Model
     }
 
     /**
-     * Rehearsals of organization
+     * Rehearsals of organization.
      *
      * @return HasMany
      */

@@ -14,7 +14,6 @@ class CreateRehearsalUserTable extends Migration
     public function up(): void
     {
         Schema::create('rehearsal_user', static function (Blueprint $table) {
-
             $table->unsignedBigInteger('rehearsal_id');
             $table->foreign('rehearsal_id')
                 ->references('id')

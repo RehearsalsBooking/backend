@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\User
+ * App\Models\User.
  *
  * @property int $id
  * @property string $name
@@ -81,7 +81,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Bands that user is admin of
+     * Bands that user is admin of.
      *
      * @return HasMany
      */
@@ -91,7 +91,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Bands that user is member of
+     * Bands that user is member of.
      *
      * @return BelongsToMany
      */
@@ -109,7 +109,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Returns bands that invited user to join
+     * Returns bands that invited user to join.
      *
      * @return BelongsToMany
      */

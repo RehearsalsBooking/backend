@@ -153,48 +153,48 @@ class RehearsalRescheduleValidationTest extends TestCase
                 $this->getDateTimeAt(9, 0),
                 $this->getDateTimeAt(11, 0)
             ),
-            'organization_id' => $organization->id
+            'organization_id' => $organization->id,
         ]);
         factory(Rehearsal::class)->create([
             'time' => $this->getTimestampRange(
                 $this->getDateTimeAt(12, 0),
                 $this->getDateTimeAt(15, 0)
             ),
-            'organization_id' => $organization->id
+            'organization_id' => $organization->id,
         ]);
         factory(Rehearsal::class)->create([
             'time' => $this->getTimestampRange(
                 $this->getDateTimeAt(11, 0),
                 $this->getDateTimeAt(12, 0)
             ),
-            'organization_id' => $otherOrganization->id
+            'organization_id' => $otherOrganization->id,
         ]);
 
         $unavailableTime = [
             [
                 'starts_at' => $this->getDateTimeAt(8, 00),
-                'ends_at' => $this->getDateTimeAt(10, 00)
+                'ends_at' => $this->getDateTimeAt(10, 00),
             ],
             [
                 'starts_at' => $this->getDateTimeAt(9, 00),
-                'ends_at' => $this->getDateTimeAt(10, 00)
+                'ends_at' => $this->getDateTimeAt(10, 00),
             ],
             [
                 'starts_at' => $this->getDateTimeAt(10, 00),
-                'ends_at' => $this->getDateTimeAt(11, 00)
+                'ends_at' => $this->getDateTimeAt(11, 00),
             ],
             [
                 'starts_at' => $this->getDateTimeAt(10, 00),
-                'ends_at' => $this->getDateTimeAt(12, 00)
+                'ends_at' => $this->getDateTimeAt(12, 00),
             ],
             [
                 'starts_at' => $this->getDateTimeAt(10, 00),
-                'ends_at' => $this->getDateTimeAt(13, 00)
+                'ends_at' => $this->getDateTimeAt(13, 00),
             ],
             [
                 'starts_at' => $this->getDateTimeAt(8, 00),
                 'ends_at' => $this->getDateTimeAt(12, 00),
-            ]
+            ],
         ];
 
         foreach ($unavailableTime as $rehearsalTime) {
@@ -253,14 +253,14 @@ class RehearsalRescheduleValidationTest extends TestCase
                         'starts_at' => null,
                         'ends_at' => $date->toDateTimeString(),
                     ],
-                    'starts_at'
+                    'starts_at',
                 ],
 
                 [
                     [
                         'ends_at' => $date->toDateTimeString(),
                     ],
-                    'starts_at'
+                    'starts_at',
                 ],
 
                 [
@@ -268,7 +268,7 @@ class RehearsalRescheduleValidationTest extends TestCase
                         'starts_at' => 123123,
                         'ends_at' => $date->toDateTimeString(),
                     ],
-                    'starts_at'
+                    'starts_at',
                 ],
 
                 [
@@ -276,7 +276,7 @@ class RehearsalRescheduleValidationTest extends TestCase
                         'starts_at' => '123123',
                         'ends_at' => $date->toDateTimeString(),
                     ],
-                    'starts_at'
+                    'starts_at',
                 ],
 
                 [
@@ -284,14 +284,14 @@ class RehearsalRescheduleValidationTest extends TestCase
                         'starts_at' => $date->toDateTimeString(),
                         'ends_at' => null,
                     ],
-                    'ends_at'
+                    'ends_at',
                 ],
 
                 [
                     [
                         'starts_at' => $date->toDateTimeString(),
                     ],
-                    'ends_at'
+                    'ends_at',
                 ],
 
                 [
@@ -299,7 +299,7 @@ class RehearsalRescheduleValidationTest extends TestCase
                         'starts_at' => $date->toDateTimeString(),
                         'ends_at' => 123123,
                     ],
-                    'ends_at'
+                    'ends_at',
                 ],
 
                 [
@@ -307,7 +307,7 @@ class RehearsalRescheduleValidationTest extends TestCase
                         'starts_at' => $date->toDateTimeString(),
                         'ends_at' => '123123',
                     ],
-                    'ends_at'
+                    'ends_at',
                 ],
 
                 [
@@ -315,7 +315,7 @@ class RehearsalRescheduleValidationTest extends TestCase
                         'starts_at' => $date->toDateTimeString(),
                         'ends_at' => $date->copy()->subHour()->toDateTimeString(),
                     ],
-                    'ends_at'
+                    'ends_at',
                 ],
 
                 [
@@ -323,7 +323,7 @@ class RehearsalRescheduleValidationTest extends TestCase
                         'starts_at' => $date->subHour()->toDateTimeString(),
                         'ends_at' => $date->addHour()->toDateTimeString(),
                     ],
-                    'starts_at'
+                    'starts_at',
                 ],
             ];
     }
@@ -361,5 +361,4 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($this->createUser());
     }
-
 }

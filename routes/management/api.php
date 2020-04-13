@@ -24,9 +24,7 @@ Route::prefix('organizations/{organization}')
     ->name('organization.')
     ->where(['organization' => '[0-9]+'])
     ->group(static function () {
-
         Route::prefix('prices')->name('prices.')->group(static function () {
-
             Route::get('/', [OrganizationPricesController::class, 'index'])
                 ->name('list');
 
@@ -39,11 +37,8 @@ Route::prefix('organizations/{organization}')
         });
 
         Route::prefix('bans')->name('bans.')->group(static function () {
-
             Route::post('', [OrganizationBansController::class, 'create'])->name('create');
             Route::delete('{ban}', [OrganizationBansController::class, 'delete'])->name('delete')->where('ban', '[0-9]+');
             Route::get('', [OrganizationBansController::class, 'index'])->name('list');
         });
-
-
     });

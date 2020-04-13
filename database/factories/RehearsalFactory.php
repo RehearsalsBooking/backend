@@ -3,9 +3,9 @@
 /** @var Factory $factory */
 
 use App\Models\Organization;
-use Belamov\PostgresRange\Ranges\TimestampRange;
 use App\Models\Rehearsal;
 use App\Models\User;
+use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
@@ -36,6 +36,6 @@ $factory->define(Rehearsal::class, static function (Faker $faker) {
             $startsAt->toDateTimeString(),
             $endsAt->toDateTimeString(),
         ),
-        'price' => $faker->randomNumber(3)
+        'price' => $faker->randomNumber(3),
     ];
 });

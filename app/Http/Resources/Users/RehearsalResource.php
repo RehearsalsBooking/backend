@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class RehearsalResource
- * @package App\Http\Resources\Users
+ * Class RehearsalResource.
  * @mixin Rehearsal
  */
 class RehearsalResource extends JsonResource

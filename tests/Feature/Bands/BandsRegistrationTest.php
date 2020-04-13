@@ -5,14 +5,13 @@ namespace Tests\Feature\Bands;
 use App\Http\Resources\Users\BandResource;
 use App\Models\Band;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
- * Class BandsRegistrationTest
+ * Class BandsRegistrationTest.
  * @property User $user
- * @package Tests\Feature\Bands
  */
 class BandsRegistrationTest extends TestCase
 {
@@ -41,7 +40,7 @@ class BandsRegistrationTest extends TestCase
         $this->assertEquals(0, Band::count());
 
         $newBandAttributes = [
-            'name' => 'some new band name'
+            'name' => 'some new band name',
         ];
 
         $response = $this->json('post', route('bands.create'), $newBandAttributes);

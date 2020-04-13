@@ -8,8 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Class RehearsalsFilterTest
- * @package Tests\Feature\Rehearsals
+ * Class RehearsalsFilterTest.
  */
 class RehearsalsTest extends TestCase
 {
@@ -48,7 +47,7 @@ class RehearsalsTest extends TestCase
             [
                 'id' => $rehearsal->id,
                 'starts_at' => $rehearsal->time->from()->toDateTimeString(),
-                'ends_at' => $rehearsal->time->to()->toDateTimeString()
+                'ends_at' => $rehearsal->time->to()->toDateTimeString(),
             ],
             $data[0]
         );

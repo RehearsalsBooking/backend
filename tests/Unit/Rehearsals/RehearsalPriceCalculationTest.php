@@ -5,8 +5,8 @@ namespace Tests\Unit\Rehearsals;
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Models\Organization;
-use Belamov\PostgresRange\Ranges\TimeRange;
 use App\Models\RehearsalPrice;
+use Belamov\PostgresRange\Ranges\TimeRange;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -176,17 +176,17 @@ class RehearsalPriceCalculationTest extends TestCase
             [
                 'day' => 1,
                 'price' => 100,
-                'time' => new TimeRange('10:00', '14:00')
+                'time' => new TimeRange('10:00', '14:00'),
             ],
             [
                 'day' => 1,
                 'price' => 200,
-                'time' => new TimeRange('14:00', '20:00')
+                'time' => new TimeRange('14:00', '20:00'),
             ],
             [
                 'day' => 1,
                 'price' => 300,
-                'time' => new TimeRange('20:00', '24:00')
+                'time' => new TimeRange('20:00', '24:00'),
             ],
         ]);
 
@@ -196,7 +196,7 @@ class RehearsalPriceCalculationTest extends TestCase
             [
                 'day' => 2,
                 'price' => 300,
-                'time' => new TimeRange('00:00', '06:00')
+                'time' => new TimeRange('00:00', '06:00'),
             ],
         ]);
 
@@ -208,17 +208,17 @@ class RehearsalPriceCalculationTest extends TestCase
             [
                 'day' => 6,
                 'price' => 200,
-                'time' => new TimeRange('10:00', '14:00')
+                'time' => new TimeRange('10:00', '14:00'),
             ],
             [
                 'day' => 6,
                 'price' => 400,
-                'time' => new TimeRange('14:00', '20:00')
+                'time' => new TimeRange('14:00', '20:00'),
             ],
             [
                 'day' => 6,
                 'price' => 600,
-                'time' => new TimeRange('20:00', '24:00')
+                'time' => new TimeRange('20:00', '24:00'),
             ],
         ]);
     }

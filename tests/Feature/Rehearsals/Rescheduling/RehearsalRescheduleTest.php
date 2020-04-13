@@ -32,7 +32,7 @@ class RehearsalRescheduleTest extends TestCase
             route('rehearsals.reschedule', $rehearsal->id),
             [
                 'starts_at' => $newRehearsalStartTime->toDateTimeString(),
-                'ends_at' => $newRehearsalEndTime->toDateTimeString()
+                'ends_at' => $newRehearsalEndTime->toDateTimeString(),
             ]
         );
 
@@ -72,7 +72,7 @@ class RehearsalRescheduleTest extends TestCase
             route('rehearsals.reschedule', $rehearsal->id),
             [
                 'starts_at' => $newRehearsalStartTime->toDateTimeString(),
-                'ends_at' => $newRehearsalEndTime->toDateTimeString()
+                'ends_at' => $newRehearsalEndTime->toDateTimeString(),
             ]
         );
 
@@ -109,7 +109,7 @@ class RehearsalRescheduleTest extends TestCase
             route('rehearsals.reschedule', $rehearsal->id),
             [
                 'starts_at' => $newRehearsalStartTime->toDateTimeString(),
-                'ends_at' => $newRehearsalEndTime->toDateTimeString()
+                'ends_at' => $newRehearsalEndTime->toDateTimeString(),
             ]
         );
 
@@ -119,5 +119,4 @@ class RehearsalRescheduleTest extends TestCase
 
         $this->assertFalse($createdRehearsal->is_confirmed);
     }
-
 }
