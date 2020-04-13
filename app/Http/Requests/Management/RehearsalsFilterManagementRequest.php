@@ -2,14 +2,12 @@
 
 namespace App\Http\Requests\Management;
 
-use App\Http\Requests\Filters\FiltersForRehearsals;
 use App\Http\Requests\Filters\RehearsalFilterRequest;
 use App\Models\Organization;
 
 /**
  * Class RehearsalsFilterRequest
- * @inheritDoc
- * @package App\Http\Requests\Management
+ * {@inheritdoc}
  */
 class RehearsalsFilterManagementRequest extends RehearsalFilterRequest
 {

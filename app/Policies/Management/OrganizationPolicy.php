@@ -24,6 +24,4 @@ class OrganizationPolicy
     {
         return $user->organizations->contains($organization);
     }
-
-
 }

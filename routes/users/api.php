@@ -1,16 +1,13 @@
 <?php
 
-use App\Http\Controllers\Users\BandInvitesController;
 use App\Http\Controllers\Users\BandMembersController;
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\InvitesController;
 use App\Http\Controllers\Users\OrganizationsController;
-use App\Http\Controllers\Users\OrganizationRehearsalsController;
 use App\Http\Controllers\Users\RehearsalsController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('organizations.')->prefix('organizations')->group(static function () {
-
     Route::get('/', [OrganizationsController::class, 'index'])->name('list');
 
     Route::get('/{organization}', [OrganizationsController::class, 'show'])
@@ -19,7 +16,6 @@ Route::name('organizations.')->prefix('organizations')->group(static function ()
 });
 
 Route::name('rehearsals.')->prefix('rehearsals')->group(static function () {
-
     Route::get('/', [RehearsalsController::class, 'index'])
         ->name('list');
 
@@ -39,7 +35,6 @@ Route::name('rehearsals.')->prefix('rehearsals')->group(static function () {
 });
 
 Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static function () {
-
     Route::post('/', [BandsController::class, 'create'])
         ->name('create');
 
@@ -53,7 +48,6 @@ Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static
 });
 
 Route::name('invites.')->prefix('invites')->middleware('auth:sanctum')->group(static function () {
-
     Route::post('/', [InvitesController::class, 'create'])
         ->name('create');
 

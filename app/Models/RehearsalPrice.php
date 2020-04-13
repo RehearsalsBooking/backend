@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Models;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
@@ -10,8 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * Class RehearsalPrice
- * @package App\Models
+ * Class RehearsalPrice.
  * @property int $organizationId
  * @property Carbon $start
  * @property Carbon $end
@@ -63,7 +61,7 @@ class RehearsalPrice
     }
 
     /**
-     * Calculates price of rehearsal
+     * Calculates price of rehearsal.
      *
      * @return float|int
      * @throws PriceCalculationException
@@ -167,7 +165,7 @@ class RehearsalPrice
     }
 
     /**
-     * Transforms midnight time to 24:00 for correct queries
+     * Transforms midnight time to 24:00 for correct queries.
      *
      * @param string $time
      * @return string
@@ -193,6 +191,7 @@ class RehearsalPrice
         $periodEnd = Carbon::createFromTimeString($timeEnd);
         $delta = $periodEnd->diffInMinutes($periodStart);
         $this->uncalculatedMinutes -= $delta;
-        return ($delta * $price->price / 60);
+
+        return $delta * $price->price / 60;
     }
 }

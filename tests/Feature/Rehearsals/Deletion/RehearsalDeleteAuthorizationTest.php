@@ -2,9 +2,9 @@
 
 namespace Tests\Feature\Rehearsals\Deletion;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RehearsalDeleteAuthorizationTest extends TestCase
 {
@@ -16,7 +16,6 @@ class RehearsalDeleteAuthorizationTest extends TestCase
         $this->json('delete', route('rehearsals.delete', 1))
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
-
 
     /** @test */
     public function user_cannot_delete_rehearsal_that_he_didnt_book(): void

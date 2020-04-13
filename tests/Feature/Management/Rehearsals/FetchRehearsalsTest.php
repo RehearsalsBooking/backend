@@ -10,10 +10,8 @@ use Tests\Feature\Management\ManagementTestCase;
 
 /**
  * Class FetchRehearsalsTest
- * @inheritDoc
+ * {@inheritdoc}
  * @property Organization $anotherOrganization
- *
- * @package Tests\Feature\Management\Rehearsals
  */
 class FetchRehearsalsTest extends ManagementTestCase
 {
@@ -143,7 +141,6 @@ class FetchRehearsalsTest extends ManagementTestCase
         )
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors('organization_id');
-
     }
 
     protected function setUp(): void

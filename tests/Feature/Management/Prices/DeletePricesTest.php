@@ -94,7 +94,7 @@ class DeletePricesTest extends ManagementTestCase
         $this->assertEquals(4, $this->organization->prices()->count());
         $this->assertDatabaseMissing('organization_prices', [
             'day' => 1,
-            'organization_id' => $this->organization->id
+            'organization_id' => $this->organization->id,
         ]);
     }
 }

@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class OrganizationResource
- * @package App\Http\Resources\Users
+ * Class OrganizationResource.
  * @mixin Organization
  */
 class OrganizationResource extends JsonResource

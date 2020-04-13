@@ -17,7 +17,7 @@ class CreateBandInviteRequest extends FormRequest
         $band = Band::find($this->get('band_id'));
 
         // if we cant find band, let request pass authorization, it must fail in validation
-        if (!$band) {
+        if (! $band) {
             return true;
         }
 
@@ -34,7 +34,7 @@ class CreateBandInviteRequest extends FormRequest
     {
         return [
             'band_id' => 'required|exists:bands,id',
-            'user_id' => 'required|exists:users,id'
+            'user_id' => 'required|exists:users,id',
         ];
     }
 
@@ -45,7 +45,7 @@ class CreateBandInviteRequest extends FormRequest
     {
         return [
             'user_id' => $this->get('user_id'),
-            'band_id' => $this->get('band_id')
+            'band_id' => $this->get('band_id'),
         ];
     }
 }

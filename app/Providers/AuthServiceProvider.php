@@ -23,7 +23,7 @@ class AuthServiceProvider extends ServiceProvider
         Rehearsal::class => RehearsalPolicy::class,
         Band::class => BandPolicy::class,
         Invite::class => InvitePolicy::class,
-        Organization::class => OrganizationPolicy::class
+        Organization::class => OrganizationPolicy::class,
     ];
 
     /**

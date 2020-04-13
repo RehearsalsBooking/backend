@@ -35,7 +35,7 @@ class CreatePricesTest extends ManagementTestCase
                 'day' => 6,
                 'price' => 500,
                 'starts_at' => '10:00',
-                'ends_at' => '18:00'
+                'ends_at' => '18:00',
             ]
         )
             ->assertStatus(Response::HTTP_FORBIDDEN);
@@ -48,7 +48,7 @@ class CreatePricesTest extends ManagementTestCase
                 'day' => 6,
                 'price' => 500,
                 'starts_at' => '10:00',
-                'ends_at' => '18:00'
+                'ends_at' => '18:00',
             ]
         )
             ->assertStatus(Response::HTTP_FORBIDDEN);
@@ -97,98 +97,98 @@ class CreatePricesTest extends ManagementTestCase
                 [
                     'day' => '8',
                 ],
-                'day'
+                'day',
             ],
             [
                 [
                     'day' => '0',
                 ],
-                'day'
+                'day',
             ],
             [
                 [
                     'day' => 'monday',
                 ],
-                'day'
+                'day',
             ],
             [
                 [
                     'price' => 'big number',
                 ],
-                'price'
+                'price',
             ],
             [
                 [
                     'price' => -100,
                 ],
-                'price'
+                'price',
             ],
             [
                 [
                     'starts_at' => 'midnight',
                 ],
-                'starts_at'
+                'starts_at',
             ],
             [
                 [
                     'starts_at' => '000:00',
                 ],
-                'starts_at'
+                'starts_at',
             ],
             [
                 [
                     'starts_at' => '25:00',
                 ],
-                'starts_at'
+                'starts_at',
             ],
             [
                 [
                     'starts_at' => '14:65',
                 ],
-                'starts_at'
+                'starts_at',
             ],
             [
                 [
                     'starts_at' => '2005-08-09T18:31:42',
                 ],
-                'starts_at'
+                'starts_at',
             ],
             [
                 [
                     'ends_at' => 'midnight',
                 ],
-                'ends_at'
+                'ends_at',
             ],
             [
                 [
                     'ends_at' => '000:00',
                 ],
-                'ends_at'
+                'ends_at',
             ],
             [
                 [
                     'ends_at' => '25:00',
                 ],
-                'ends_at'
+                'ends_at',
             ],
             [
                 [
                     'ends_at' => '14:65',
                 ],
-                'ends_at'
+                'ends_at',
             ],
             [
                 [
                     'ends_at' => '2005-08-09T18:31:42',
                 ],
-                'ends_at'
+                'ends_at',
             ],
             [
                 [
                     'starts_at' => '10:00',
                     'ends_at' => '08:00',
                 ],
-                'ends_at'
+                'ends_at',
             ],
             [
                 [
@@ -197,7 +197,7 @@ class CreatePricesTest extends ManagementTestCase
                     'starts_at' => '14:00',
                     'ends_at' => '18:00',
                 ],
-                ['starts_at', 'ends_at', 'day']
+                ['starts_at', 'ends_at', 'day'],
             ],
         ];
     }
@@ -216,7 +216,7 @@ class CreatePricesTest extends ManagementTestCase
                 'day' => 6,
                 'price' => 500,
                 'starts_at' => '10:00',
-                'ends_at' => '24:00'
+                'ends_at' => '24:00',
             ]
         );
         $response->assertStatus(Response::HTTP_CREATED);
@@ -227,7 +227,7 @@ class CreatePricesTest extends ManagementTestCase
             'day' => 6,
             'price' => 500,
             'time' => new TimeRange('10:00', '24:00'),
-            'organization_id' => $this->organization->id
+            'organization_id' => $this->organization->id,
         ]);
         $this->assertEquals(
             OrganizationPriceResource::collection($this->organization->prices)->response()->getData(true),

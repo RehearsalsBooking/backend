@@ -10,10 +10,9 @@ use Illuminate\Http\Response;
 use Tests\TestCase;
 
 /**
- * Class BandsUpdateTest
+ * Class BandsUpdateTest.
  * @property Band $band
  * @property User $bandOwner
- * @package Tests\Feature\Bands
  */
 class BandsUpdateTest extends TestCase
 {
@@ -28,9 +27,8 @@ class BandsUpdateTest extends TestCase
 
         $this->bandOwner = factory(User::class)->create();
         $this->band = factory(Band::class)->create([
-            'admin_id' => $this->bandOwner->id
+            'admin_id' => $this->bandOwner->id,
         ]);
-
     }
 
     /** @test */
@@ -55,7 +53,7 @@ class BandsUpdateTest extends TestCase
         $this->actingAs($this->bandOwner);
 
         $newBandData = [
-            'name' => 'band\'s new name'
+            'name' => 'band\'s new name',
         ];
 
         $this->assertDatabaseMissing('bands', $newBandData);

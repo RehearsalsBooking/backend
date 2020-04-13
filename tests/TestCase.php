@@ -15,7 +15,6 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Collection;
-use Tests\Feature\Rehearsals\RehearsalRescheduleValidationTest;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -31,11 +30,12 @@ abstract class TestCase extends BaseTestCase
                     [
                         'user_id' => $user->id,
                         'organization_id' => $organization->id,
-                        'comment' => 'reason to ban'
+                        'comment' => 'reason to ban',
                     ]
                 );
             }
         );
+
         return $bannedUsers;
     }
 
@@ -69,7 +69,7 @@ abstract class TestCase extends BaseTestCase
     {
         return factory(Band::class)->create(
             [
-                'admin_id' => $user->id
+                'admin_id' => $user->id,
             ]
         );
     }
@@ -172,7 +172,7 @@ abstract class TestCase extends BaseTestCase
                 [
                     'organization_id' => $organization->id,
                     'day' => $dayOfWeek,
-                    'time' => new TimeRange($startsAt, $endsAt)
+                    'time' => new TimeRange($startsAt, $endsAt),
                 ]
             );
         }
@@ -195,7 +195,7 @@ abstract class TestCase extends BaseTestCase
 
         return [
             'starts_at' => $rehearsalStart->toDateTimeString(),
-            'ends_at' => $rehearsalEnd->toDateTimeString()
+            'ends_at' => $rehearsalEnd->toDateTimeString(),
         ];
     }
 
@@ -257,6 +257,7 @@ abstract class TestCase extends BaseTestCase
                 ]
             );
         }
+
         return collect($rehearsals);
     }
 
@@ -337,7 +338,7 @@ abstract class TestCase extends BaseTestCase
                 'time' => $this->getTimestampRange(
                     Carbon::now()->subDays(3)->toDateTimeString(),
                     Carbon::now()->subDays(3)->addHours(2)->toDateTimeString()
-                )
+                ),
             ]
         );
     }

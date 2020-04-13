@@ -3,14 +3,13 @@
 namespace Tests\Feature\Rehearsals\Deletion;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
- * Class RehearsalDeleteTest
+ * Class RehearsalDeleteTest.
  * @property $user User
- * @package Tests\Feature\Rehearsals\Deletion
  */
 class RehearsalDeleteTest extends TestCase
 {
@@ -54,7 +53,6 @@ class RehearsalDeleteTest extends TestCase
         $this->assertDatabaseMissing('rehearsals', $rehearsal->toArray());
     }
 
-
     /** @test */
     public function when_user_deletes_rehearsal_then_this_rehearsals_attendees_are_also_deleted(): void
     {
@@ -77,7 +75,7 @@ class RehearsalDeleteTest extends TestCase
         $response->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertDatabaseMissing('rehearsal_user', [
-            'rehearsal_id' => $deletedRehearsalId
+            'rehearsal_id' => $deletedRehearsalId,
         ]);
     }
 }

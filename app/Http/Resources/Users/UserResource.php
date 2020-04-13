@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class UserResource
- * @package App\Http\Resources\Users
+ * Class UserResource.
  * @mixin User
  */
 class UserResource extends JsonResource
@@ -23,7 +22,7 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name
+            'name' => $this->name,
         ];
     }
 }

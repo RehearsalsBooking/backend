@@ -9,8 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class RehearsalDetailedResource
- * @package App\Http\Resources\Management
+ * Class RehearsalDetailedResource.
  * @mixin Rehearsal
  */
 class RehearsalDetailedResource extends JsonResource
@@ -30,7 +29,7 @@ class RehearsalDetailedResource extends JsonResource
             'user' => new UserResource($this->user),
             'band' => new BandResource($this->band),
             'price' => $this->price,
-            'is_confirmed' => $this->is_confirmed
+            'is_confirmed' => $this->is_confirmed,
         ];
     }
 }

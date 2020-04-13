@@ -14,15 +14,12 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 /**
- * Class RehearsalsController
+ * Class RehearsalsController.
  *
  * Middlewares are used for authorization. See routes/management/api.php
- *
- * @package App\Http\Controllers\Management
  */
 class RehearsalsController extends Controller
 {
-
     /**
      * @param RehearsalsFilterManagementRequest $filterRequest
      * @return AnonymousResourceCollection
@@ -31,6 +28,7 @@ class RehearsalsController extends Controller
     public function index(RehearsalsFilterManagementRequest $filterRequest): AnonymousResourceCollection
     {
         $this->authorize('manage', $filterRequest->organization());
+
         return RehearsalDetailedResource::collection(Rehearsal::filter($filterRequest)->orderBy('id')->paginate());
     }
 

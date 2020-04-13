@@ -4,13 +4,12 @@ namespace Tests\Feature\Invites;
 
 use App\Models\Band;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
- * Class BandsMembersInviteTest
- * @package Tests\Feature\Bands
+ * Class BandsMembersInviteTest.
  * @property User $bandAdmin
  * @property Band $band
  */
@@ -39,7 +38,7 @@ class InviteValidationTest extends TestCase
             route('invites.create'),
             [
                 'band_id' => 1000,
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ]
         )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
@@ -48,7 +47,7 @@ class InviteValidationTest extends TestCase
             route('invites.create'),
             [
                 'band_id' => $this->band->id,
-                'user_id' => 10000
+                'user_id' => 10000,
             ]
         )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 

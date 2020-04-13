@@ -6,9 +6,9 @@ use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Models\Band;
 use App\Models\Organization;
-use Belamov\PostgresRange\Ranges\TimestampRange;
 use App\Models\Rehearsal;
 use App\Models\RehearsalPrice;
+use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -19,7 +19,7 @@ class CreateRehearsalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if (!$this->onBehalfOfTheBand()) {
+        if (! $this->onBehalfOfTheBand()) {
             return true;
         }
 
@@ -43,7 +43,7 @@ class CreateRehearsalRequest extends FormRequest
     }
 
     /**
-     * Determines if request is on behalf of the band
+     * Determines if request is on behalf of the band.
      *
      * @return bool
      */
@@ -64,16 +64,16 @@ class CreateRehearsalRequest extends FormRequest
                 'bail',
                 'required',
                 'date',
-                'after:now'
+                'after:now',
             ],
             'ends_at' => [
                 'bail',
                 'required',
                 'date',
-                'after:starts_at'
+                'after:starts_at',
             ],
             'band_id' => 'bail|numeric|exists:bands,id',
-            'organization_id' => 'bail|required|numeric|exists:organizations,id'
+            'organization_id' => 'bail|required|numeric|exists:organizations,id',
         ];
     }
 
@@ -99,7 +99,7 @@ class CreateRehearsalRequest extends FormRequest
             'is_confirmed' => false,
             'band_id' => $this->get('band_id'),
             'organization_id' => $this->get('organization_id'),
-            'price' => $rehearsalPrice()
+            'price' => $rehearsalPrice(),
         ];
     }
 

@@ -4,8 +4,8 @@ namespace Tests\Unit\Bands;
 
 use App\Models\Rehearsal;
 use App\Models\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class BandsTest extends TestCase
 {
@@ -61,7 +61,7 @@ class BandsTest extends TestCase
         $bandRehearsalsCount = 5;
 
         $bandRehearsals = factory(Rehearsal::class, $bandRehearsalsCount)->create([
-            'band_id' => $band->id
+            'band_id' => $band->id,
         ]);
 
         $this->assertEquals(
@@ -91,7 +91,6 @@ class BandsTest extends TestCase
         $this->assertInstanceOf(User::class, $band->invitedUsers->first());
         $this->assertEquals($invitedUsers->pluck('id'), $band->invitedUsers->pluck('id'));
     }
-
 
     /** @test */
     public function band_has_rehearsals_in_future(): void
