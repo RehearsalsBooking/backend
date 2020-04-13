@@ -200,7 +200,7 @@ return [
         'boolean' => 'bool',
         //TODO: remove once https://github.com/barryvdh/laravel-ide-helper/pull/913 gets merged
         '\\'.TimestampRangeCast::class => '\\'.TimestampRange::class,
-        '\\'.TimeRangeCast::class => '\\'.TimeRange::class
+        '\\'.TimeRangeCast::class => '\\'.TimeRange::class,
     ],
 
     /*
