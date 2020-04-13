@@ -12,8 +12,7 @@ use Illuminate\Http\Response;
 use Tests\TestCase;
 
 /**
- * Class RehearsalsFilterTest
- * @package Tests\Feature\Rehearsals
+ * Class RehearsalsFilterTest.
  * @property Organization $organization
  */
 class RehearsalsFilterTest extends TestCase
@@ -74,7 +73,7 @@ class RehearsalsFilterTest extends TestCase
 
         $bandsRehearsals = collect([
             $this->createRehearsalForBandInFuture($band),
-            $this->createRehearsalForBandInThePast($band)
+            $this->createRehearsalForBandInThePast($band),
         ]);
 
         $this->createRehearsalForBandInFuture($someOtherBand);
@@ -83,7 +82,7 @@ class RehearsalsFilterTest extends TestCase
         $this->assertEquals(4, Rehearsal::count());
 
         $response = $this->json('get', route('rehearsals.list'), [
-            'band_id' => $band->id
+            'band_id' => $band->id,
         ]);
         $response->assertOk();
 
@@ -121,7 +120,7 @@ class RehearsalsFilterTest extends TestCase
 
         $response = $this->json('get', route('rehearsals.list'), [
             'organization_id' => $this->organization->id,
-            'from' => $this->getDateTimeAt(13, 00)
+            'from' => $this->getDateTimeAt(13, 00),
         ]);
         $response->assertOk();
         $data = $response->json();
@@ -135,7 +134,7 @@ class RehearsalsFilterTest extends TestCase
 
         $response = $this->json('get', route('rehearsals.list'), [
             'organization_id' => $this->organization->id,
-            'from' => $this->getDateTimeAt(12, 00)
+            'from' => $this->getDateTimeAt(12, 00),
         ]);
         $response->assertOk();
         $data = $response->json();
@@ -149,7 +148,7 @@ class RehearsalsFilterTest extends TestCase
 
         $response = $this->json('get', route('rehearsals.list'), [
             'organization_id' => $this->organization->id,
-            'to' => $this->getDateTimeAt(13, 00)
+            'to' => $this->getDateTimeAt(13, 00),
         ]);
         $response->assertOk();
         $data = $response->json();
@@ -163,7 +162,7 @@ class RehearsalsFilterTest extends TestCase
 
         $response = $this->json('get', route('rehearsals.list'), [
             'organization_id' => $this->organization->id,
-            'to' => $this->getDateTimeAt(14, 00)
+            'to' => $this->getDateTimeAt(14, 00),
         ]);
         $response->assertOk();
         $data = $response->json();
@@ -178,7 +177,7 @@ class RehearsalsFilterTest extends TestCase
         $response = $this->json('get', route('rehearsals.list'), [
             'organization_id' => $this->organization->id,
             'from' => $this->getDateTimeAt(11, 30),
-            'to' => $this->getDateTimeAt(16, 00)
+            'to' => $this->getDateTimeAt(16, 00),
         ]);
         $response->assertOk();
         $data = $response->json();
@@ -193,7 +192,7 @@ class RehearsalsFilterTest extends TestCase
         $response = $this->json('get', route('rehearsals.list'), [
             'organization_id' => $this->organization->id,
             'from' => $this->getDateTimeAt(10, 30),
-            'to' => $this->getDateTimeAt(17, 00)
+            'to' => $this->getDateTimeAt(17, 00),
         ]);
         $response->assertOk();
         $data = $response->json();
@@ -235,20 +234,20 @@ class RehearsalsFilterTest extends TestCase
                 [
                     'from' => 'invalid date',
                 ],
-                'from'
+                'from',
             ],
             [
                 [
                     'to' => 'invalid date',
                 ],
-                'to'
+                'to',
             ],
             [
                 [
                     'from' => Carbon::now()->addDay(),
                     'to' => Carbon::now()->addDay()->subHour(),
                 ],
-                'to'
+                'to',
             ],
         ];
     }
@@ -265,7 +264,7 @@ class RehearsalsFilterTest extends TestCase
         $this->assertEquals(2, Rehearsal::count());
 
         $response = $this->json('get', route('rehearsals.list'), [
-            'user_id' => $max->id
+            'user_id' => $max->id,
         ]);
 
         $response->assertOk();
@@ -299,7 +298,7 @@ class RehearsalsFilterTest extends TestCase
         $this->assertEquals(5, Rehearsal::count());
 
         $response = $this->json('get', route('rehearsals.list'), [
-            'user_id' => $max->id
+            'user_id' => $max->id,
         ]);
 
         $response->assertOk();

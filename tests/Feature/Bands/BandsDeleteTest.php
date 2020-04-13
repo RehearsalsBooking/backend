@@ -9,9 +9,8 @@ use Illuminate\Http\Response;
 use Tests\TestCase;
 
 /**
- * Class BandsUpdateTest
+ * Class BandsUpdateTest.
  * @property User $bandOwner
- * @package Tests\Feature\Bands
  */
 class BandsDeleteTest extends TestCase
 {
@@ -26,9 +25,8 @@ class BandsDeleteTest extends TestCase
 
         $this->bandOwner = factory(User::class)->create();
         $this->band = factory(Band::class)->create([
-            'admin_id' => $this->bandOwner->id
+            'admin_id' => $this->bandOwner->id,
         ]);
-
     }
 
     /** @test */
@@ -103,6 +101,5 @@ class BandsDeleteTest extends TestCase
             $rehearsalInPast->fresh()->attendees->pluck('id')->toArray()
         );
         $this->assertEquals(0, $this->band->invitedUsers()->count());
-
     }
 }

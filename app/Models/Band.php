@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\Band
+ * App\Models\Band.
  *
  * @property int $id
  * @property string $name
@@ -52,7 +52,7 @@ class Band extends Model
     use SoftDeletes;
 
     protected $guarded = [
-        'id'
+        'id',
     ];
 
     /**
@@ -77,7 +77,7 @@ class Band extends Model
     public function futureRehearsals(): HasMany
     {
         return $this->hasMany(Rehearsal::class)->whereRaw('time && ?', [
-            new TimestampRange(Carbon::now(), null)
+            new TimestampRange(Carbon::now(), null),
         ]);
     }
 
@@ -91,7 +91,7 @@ class Band extends Model
 
         return Invite::create([
             'user_id' => $userId,
-            'band_id' => $this->id
+            'band_id' => $this->id,
         ]);
     }
 

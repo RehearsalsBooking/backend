@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\OrganizationUserBan
+ * App\Models\OrganizationUserBan.
  *
  * @property int $organization_id
  * @property int $user_id

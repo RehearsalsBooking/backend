@@ -155,7 +155,7 @@ class AttendeesRegistrationTest extends TestCase
     {
         $parameters = [
             'starts_at' => $rehearsal->time->from()->addHour()->toDateTimeString(),
-            'ends_at' => $rehearsal->time->to()->addHour()->toDateTimeString()
+            'ends_at' => $rehearsal->time->to()->addHour()->toDateTimeString(),
         ];
 
         if ($band) {

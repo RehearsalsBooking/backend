@@ -42,7 +42,7 @@ class RehearsalsBookingTest extends TestCase
             $rehearsalTime,
             [
                 'starts_at' => $createdRehearsal->time->from()->toDateTimeString(),
-                'ends_at' => $createdRehearsal->time->to()->toDateTimeString()
+                'ends_at' => $createdRehearsal->time->to()->toDateTimeString(),
             ]
         );
         $this->assertEquals($user->id, $createdRehearsal->user->id);
@@ -86,7 +86,7 @@ class RehearsalsBookingTest extends TestCase
             $rehearsalTime,
             [
                 'starts_at' => $createdRehearsal->time->from()->toDateTimeString(),
-                'ends_at' => $createdRehearsal->time->to()->toDateTimeString()
+                'ends_at' => $createdRehearsal->time->to()->toDateTimeString(),
             ]
         );
         $this->assertEquals($user->id, $createdRehearsal->user->id);
@@ -105,7 +105,6 @@ class RehearsalsBookingTest extends TestCase
         $this->createPricesForOrganization($organization);
 
         $this->actingAs($this->createUser());
-
 
         $this->assertEquals(0, Rehearsal::count());
 
@@ -134,7 +133,7 @@ class RehearsalsBookingTest extends TestCase
 
         OrganizationUserBan::create([
             'user_id' => $user->id,
-            'organization_id' => $organization->id
+            'organization_id' => $organization->id,
         ]);
 
         $this->assertEquals($user->id, $organization->bannedUsers->first()->id);

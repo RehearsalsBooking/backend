@@ -5,13 +5,12 @@ namespace Tests\Feature\Invites;
 use App\Models\Band;
 use App\Models\Invite;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
- * Class BandsMembersInviteTest
- * @package Tests\Feature\Bands
+ * Class BandsMembersInviteTest.
  * @property User $bandAdmin
  * @property Band $band
  */
@@ -34,7 +33,7 @@ class DeclineInviteTest extends TestCase
         $band = $this->createBand();
         $invite = $this->createInvite([
             'user_id' => $max->id,
-            'band_id' => $band->id
+            'band_id' => $band->id,
         ]);
 
         $john = $this->createUser();
@@ -68,7 +67,7 @@ class DeclineInviteTest extends TestCase
         $band = $this->createBand();
         $invite = $this->createInvite([
             'user_id' => $user->id,
-            'band_id' => $band->id
+            'band_id' => $band->id,
         ]);
 
         $this->assertEquals(1, Invite::count());

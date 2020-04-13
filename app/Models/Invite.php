@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Models;
-
 
 use Eloquent;
 use Exception;
@@ -12,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\Invite
+ * App\Models\Invite.
  *
  * @property int $id
  * @property int $band_id
@@ -44,7 +42,7 @@ class Invite extends Pivot
     }
 
     /**
-     * Adds invited user to band's members
+     * Adds invited user to band's members.
      *
      * @throws Exception
      */

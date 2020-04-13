@@ -7,8 +7,8 @@ use App\Models\Organization;
 use App\Models\Rehearsal;
 use App\Models\User;
 use DB;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class RehearsalsTest extends TestCase
 {
@@ -66,7 +66,7 @@ class RehearsalsTest extends TestCase
             DB::table('rehearsal_user')
                 ->insert([
                     'rehearsal_id' => $rehearsal->id,
-                    'user_id' => $attendee->id
+                    'user_id' => $attendee->id,
                 ]);
         });
 

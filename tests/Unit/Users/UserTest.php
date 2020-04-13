@@ -6,8 +6,8 @@ use App\Models\Band;
 use App\Models\Organization;
 use App\Models\Rehearsal;
 use Illuminate\Database\Eloquent\Collection;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class UserTest extends TestCase
 {
@@ -19,7 +19,7 @@ class UserTest extends TestCase
         $user = $this->createUser();
 
         $this->createOrganization([
-            'owner_id' => $user->id
+            'owner_id' => $user->id,
         ]);
 
         $this->assertInstanceOf(Collection::class, $user->organizations);
@@ -34,7 +34,7 @@ class UserTest extends TestCase
         $numberOfUsersBands = 5;
 
         $usersBands = factory(Band::class, $numberOfUsersBands)->create([
-            'admin_id' => $user->id
+            'admin_id' => $user->id,
         ]);
 
         $this->assertEquals($numberOfUsersBands, $user->createdBands()->count());
@@ -87,7 +87,7 @@ class UserTest extends TestCase
             \DB::table('rehearsal_user')
                 ->insert([
                     'user_id' => $user->id,
-                    'rehearsal_id' => $rehearsal->id
+                    'rehearsal_id' => $rehearsal->id,
                 ]);
         });
 

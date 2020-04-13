@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\Price
+ * App\Models\Price.
  *
  * @property int $id
  * @property int $day
@@ -41,6 +41,6 @@ class OrganizationPrice extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'time' => TimeRangeCast::class
+        'time' => TimeRangeCast::class,
     ];
 }

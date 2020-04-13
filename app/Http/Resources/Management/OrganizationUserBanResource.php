@@ -8,9 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class OrganizationUserBanResource
+ * Class OrganizationUserBanResource.
  * @mixin User
- * @package App\Http\Resources\Management
  */
 class OrganizationUserBanResource extends JsonResource
 {
@@ -25,7 +24,7 @@ class OrganizationUserBanResource extends JsonResource
         return [
             'user' => new UserResource($this),
             'comment' => $this->pivot->comment,
-            'created_at' => $this->pivot->created_at
+            'created_at' => $this->pivot->created_at,
         ];
     }
 }

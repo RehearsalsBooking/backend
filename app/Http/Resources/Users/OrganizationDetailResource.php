@@ -8,8 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class OrganizationDetailResource
- * @package App\Http\Resources\Users
+ * Class OrganizationDetailResource.
  * @mixin Organization
  */
 class OrganizationDetailResource extends JsonResource
@@ -30,7 +29,7 @@ class OrganizationDetailResource extends JsonResource
             'opens_at' => $this->opens_at ?? null,
             'closes_at' => $this->closes_at ?? null,
             'owner' => new UserResource($this->owner),
-            'prices' => OrganizationPriceResource::collection($this->prices)
+            'prices' => OrganizationPriceResource::collection($this->prices),
         ];
     }
 }

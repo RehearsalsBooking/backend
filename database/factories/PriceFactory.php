@@ -13,6 +13,6 @@ $factory->define(OrganizationPrice::class, static function (Faker $faker) {
         'day' => $faker->numberBetween(1, 7),
         'price' => $faker->randomNumber(3),
         'organization_id' => fn () => factory(Organization::class)->create()->id,
-        'time' => new TimeRange('00:00', '24:00')
+        'time' => new TimeRange('00:00', '24:00'),
     ];
 });

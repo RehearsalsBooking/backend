@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class BanUserRequest extends FormRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,7 +15,7 @@ class BanUserRequest extends FormRequest
     {
         return [
             'user_id' => 'required|numeric|exists:users,id',
-            'comment' => 'nullable|string'
+            'comment' => 'nullable|string',
         ];
     }
 
@@ -28,7 +27,7 @@ class BanUserRequest extends FormRequest
         return [
             'organization_id' => $this->route()->originalParameter('organization'),
             'user_id' => $this->get('user_id'),
-            'comment' => $this->get('comment')
+            'comment' => $this->get('comment'),
         ];
     }
 

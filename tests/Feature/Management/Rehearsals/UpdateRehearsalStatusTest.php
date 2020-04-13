@@ -85,25 +85,25 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
                 [
                     'is_confirmed' => 'not boolean',
                 ],
-                'is_confirmed'
+                'is_confirmed',
             ],
             [
                 [
                     'is_confirmed' => 11,
                 ],
-                'is_confirmed'
+                'is_confirmed',
             ],
             [
                 [
                     'is_confirmed' => null,
                 ],
-                'is_confirmed'
+                'is_confirmed',
             ],
             [
                 [
                     'confirmed' => true,
                 ],
-                'is_confirmed'
+                'is_confirmed',
             ],
         ];
     }

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\Rehearsal
+ * App\Models\Rehearsal.
  *
  * @property int $id
  * @property int $organization_id
@@ -91,7 +91,7 @@ class Rehearsal extends Model
     }
 
     /**
-     *  Adds all of this rehearsals band members as attendees
+     *  Adds all of this rehearsals band members as attendees.
      */
     public function registerBandMembersAsAttendees(): void
     {
@@ -102,7 +102,7 @@ class Rehearsal extends Model
     }
 
     /**
-     *  Adds user who booked this rehearsal as attendee
+     *  Adds user who booked this rehearsal as attendee.
      */
     public function registerUserAsAttendee(): void
     {

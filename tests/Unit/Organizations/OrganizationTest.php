@@ -7,7 +7,6 @@ use App\Models\OrganizationPrice;
 use App\Models\OrganizationUserBan;
 use App\Models\Rehearsal;
 use App\Models\User;
-use App\Models\WorkingDay;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
@@ -24,7 +23,7 @@ class OrganizationTest extends TestCase
         $user = $this->createUser();
 
         $organization = $this->createOrganization([
-            'owner_id' => $user->id
+            'owner_id' => $user->id,
         ]);
 
         $this->assertInstanceOf(User::class, $organization->owner);
@@ -46,7 +45,7 @@ class OrganizationTest extends TestCase
         foreach (range(1, 7) as $dayOfWeek) {
             factory(OrganizationPrice::class)->create([
                 'organization_id' => $this->organization->id,
-                'day' => $dayOfWeek
+                'day' => $dayOfWeek,
             ]);
         }
 
@@ -63,7 +62,7 @@ class OrganizationTest extends TestCase
             OrganizationUserBan::create([
                 'organization_id' => $this->organization->id,
                 'user_id' => $user->id,
-                'comment' => 'some reason to ban user'
+                'comment' => 'some reason to ban user',
             ]);
         }
 

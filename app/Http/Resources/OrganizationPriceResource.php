@@ -7,9 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class OrganizationPriceResource
+ * Class OrganizationPriceResource.
  * @mixin OrganizationPrice
- * @package App\Http\Resources
  */
 class OrganizationPriceResource extends JsonResource
 {

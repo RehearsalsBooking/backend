@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 /**
- * Class for filtering models
+ * Class for filtering models.
  *
  * apply method is called in scopeFilter of the Filterable trait.
  * all filtration logic and request validation is defined in concrete class implementation
@@ -28,7 +28,7 @@ abstract class FilterRequest
     abstract protected function getRules(): array;
 
     /**
-     * Applies filters from request to query
+     * Applies filters from request to query.
      *
      * @param $builder
      * @return Builder
@@ -41,11 +41,12 @@ abstract class FilterRequest
                 $this->$filter($value);
             }
         }
+
         return $this->builder;
     }
 
     /**
-     * Returns filters from request
+     * Returns filters from request.
      *
      * @return array
      */

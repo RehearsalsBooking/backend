@@ -31,14 +31,14 @@ class RehearsalRescheduleAuthorizationTest extends TestCase
 
         $this->json('put', route('rehearsals.reschedule', $rehearsal->id), [
             'starts_at' => $this->getDateTimeAt(12, 00),
-            'ends_at' => $this->getDateTimeAt(13, 00)
+            'ends_at' => $this->getDateTimeAt(13, 00),
         ])
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->json('put', route('rehearsals.reschedule', $rehearsal->id), [
             'band_id' => $band->id,
             'starts_at' => $this->getDateTimeAt(12, 00),
-            'ends_at' => $this->getDateTimeAt(13, 00)
+            'ends_at' => $this->getDateTimeAt(13, 00),
         ])
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
@@ -56,7 +56,7 @@ class RehearsalRescheduleAuthorizationTest extends TestCase
 
         $this->json('put', route('rehearsals.reschedule', $rehearsal->id), [
             'starts_at' => $this->getDateTimeAt(12, 00),
-            'ends_at' => $this->getDateTimeAt(13, 00)
+            'ends_at' => $this->getDateTimeAt(13, 00),
         ])
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }

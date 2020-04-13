@@ -17,7 +17,6 @@ use Illuminate\Http\Response;
 
 class RehearsalsController extends Controller
 {
-
     /**
      * @param RehearsalsFilterClientRequest $filter
      * @return AnonymousResourceCollection
@@ -41,7 +40,7 @@ class RehearsalsController extends Controller
             return response()->json('you are banned in this organization', Response::HTTP_FORBIDDEN);
         }
 
-        if (!$organization->isTimeAvailable(
+        if (! $organization->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
         )) {
@@ -71,7 +70,7 @@ class RehearsalsController extends Controller
      */
     public function reschedule(RescheduleRehearsalRequest $request, Rehearsal $rehearsal)
     {
-        if (!$rehearsal->organization->isTimeAvailable(
+        if (! $rehearsal->organization->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
             $rehearsal
