@@ -21,7 +21,6 @@ Route::middleware('check.rehearsal.ownership')->group(static function () {
 Route::get('rehearsals', [RehearsalsController::class, 'index'])
     ->name('rehearsals.list');
 
-
 Route::prefix('organizations/')->name('organizations.')->group(static function () {
     Route::get('/', [OrganizationsController::class, 'index'])->name('list');
 
