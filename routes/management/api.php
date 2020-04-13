@@ -27,6 +27,8 @@ Route::prefix('organizations/')->name('organizations.')->group(static function (
     Route::prefix('{organization}')
         ->where(['organization' => '[0-9]+'])
         ->group(static function () {
+            Route::put('/', [OrganizationsController::class, 'update'])->name('update');
+
             Route::prefix('prices')->name('prices.')->group(static function () {
                 Route::get('/', [OrganizationPricesController::class, 'index'])
                     ->name('list');

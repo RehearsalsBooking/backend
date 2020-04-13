@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Class OrganizationDetailResource.
+ *
  * @mixin Organization
  */
 class OrganizationDetailResource extends JsonResource
@@ -16,7 +17,7 @@ class OrganizationDetailResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request): array
@@ -25,6 +26,7 @@ class OrganizationDetailResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'address' => $this->address,
+            'coordinates' => $this->coordinates,
             'description' => $this->description,
             'owner' => new UserResource($this->owner),
             'prices' => OrganizationPriceResource::collection($this->prices),

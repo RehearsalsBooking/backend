@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Management;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Management\OrganizationUpdateRequest;
 use App\Http\Resources\Management\OrganizationResource;
-use App\Http\Resources\Users\OrganizationDetailResource;
 use App\Models\Organization;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class OrganizationsController extends Controller
@@ -19,11 +20,17 @@ class OrganizationsController extends Controller
     }
 
     /**
+     * @param  OrganizationUpdateRequest  $request
      * @param  Organization  $organization
-     * @return OrganizationDetailResource
+     * @return OrganizationResource
+     * @throws AuthorizationException
      */
-    public function show(Organization $organization): OrganizationDetailResource
+    public function update(OrganizationUpdateRequest $request, Organization $organization): OrganizationResource
     {
-        return new OrganizationDetailResource($organization);
+        $this->authorize('manage', $organization);
+
+        $organization->update($request->getAttributes());
+
+        return new OrganizationResource($organization);
     }
 }
