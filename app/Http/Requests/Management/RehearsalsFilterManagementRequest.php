@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Management;
 
 use App\Http\Requests\Filters\RehearsalFilterRequest;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 
 /**
  * Class RehearsalsFilterRequest

@@ -3,7 +3,7 @@
 namespace Tests\Unit\Users;
 
 use App\Models\Band;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;

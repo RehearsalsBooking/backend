@@ -3,7 +3,7 @@
 namespace Tests\Feature\Management\Rehearsals;
 
 use App\Http\Resources\Management\OrganizationResource;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Management;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Management\OrganizationUpdateRequest;
 use App\Http\Resources\Management\OrganizationResource;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 

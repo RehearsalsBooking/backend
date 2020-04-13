@@ -5,7 +5,7 @@ namespace Tests\Feature\Organizations;
 use App\Http\Resources\OrganizationPriceResource;
 use App\Http\Resources\Users\OrganizationDetailResource;
 use App\Http\Resources\Users\OrganizationResource;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;

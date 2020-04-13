@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Management\Rehearsals;
 
-use App\Models\OrganizationUserBan;
+use App\Models\Organization\OrganizationUserBan;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 

@@ -2,8 +2,8 @@
 
 /** @var Factory $factory */
 
-use App\Models\Organization;
-use App\Models\OrganizationPrice;
+use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationPrice;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;

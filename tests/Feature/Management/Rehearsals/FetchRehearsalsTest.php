@@ -3,7 +3,7 @@
 namespace Tests\Feature\Management\Rehearsals;
 
 use App\Http\Resources\Management\RehearsalDetailedResource;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
@@ -11,7 +11,8 @@ use Tests\Feature\Management\ManagementTestCase;
 /**
  * Class FetchRehearsalsTest
  * {@inheritdoc}
- * @property Organization $anotherOrganization
+ *
+ * @property \App\Models\Organization\Organization $anotherOrganization
  */
 class FetchRehearsalsTest extends ManagementTestCase
 {

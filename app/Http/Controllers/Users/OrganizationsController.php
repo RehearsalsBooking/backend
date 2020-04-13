@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Users\OrganizationDetailResource;
 use App\Http\Resources\Users\OrganizationResource;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class OrganizationsController extends Controller
@@ -19,7 +19,7 @@ class OrganizationsController extends Controller
     }
 
     /**
-     * @param Organization $organization
+     * @param \App\Models\Organization\Organization $organization
      * @return OrganizationDetailResource
      */
     public function show(Organization $organization): OrganizationDetailResource

@@ -2,7 +2,7 @@
 
 /** @var Factory $factory */
 
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimestampRange;

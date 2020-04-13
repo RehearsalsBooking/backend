@@ -5,7 +5,7 @@ namespace App\Http\Requests\Users;
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Models\Band;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use App\Models\RehearsalPrice;
 use Belamov\PostgresRange\Ranges\TimestampRange;

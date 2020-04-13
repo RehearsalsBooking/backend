@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Organization\Organization;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

@@ -2,13 +2,14 @@
 
 namespace App\Http\Resources;
 
-use App\Models\OrganizationPrice;
+use App\Models\Organization\OrganizationPrice;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Class OrganizationPriceResource.
- * @mixin OrganizationPrice
+ *
+ * @mixin \App\Models\Organization\OrganizationPrice
  */
 class OrganizationPriceResource extends JsonResource
 {

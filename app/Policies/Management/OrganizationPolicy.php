@@ -2,7 +2,7 @@
 
 namespace App\Policies\Management;
 
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -17,7 +17,7 @@ class OrganizationPolicy
      * the admin of that band
      *
      * @param User $user
-     * @param Organization $organization
+     * @param \App\Models\Organization\Organization $organization
      * @return bool
      */
     public function manage(User $user, Organization $organization): bool

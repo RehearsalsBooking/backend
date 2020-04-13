@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Organizations;
 
-use App\Models\Organization;
-use App\Models\OrganizationPrice;
-use App\Models\OrganizationUserBan;
+use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationPrice;
+use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

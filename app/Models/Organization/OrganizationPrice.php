@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Organization;
 
 use Belamov\PostgresRange\Casts\TimeRangeCast;
 use Belamov\PostgresRange\Ranges\TimeRange;

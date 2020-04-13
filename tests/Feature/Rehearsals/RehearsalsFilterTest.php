@@ -4,7 +4,7 @@ namespace Tests\Feature\Rehearsals;
 
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Band;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;

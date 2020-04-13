@@ -3,7 +3,7 @@
 namespace Tests\Feature\Rehearsals\Booking\Attendees;
 
 use App\Models\Band;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

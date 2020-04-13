@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Organization;
 
 use App\Models\GlobalScopes\OnlyActiveScope;
+use App\Models\Rehearsal;
+use App\Models\User;
+use App\Models\WorkingDay;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
@@ -15,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * App\Models\Organization.
+ * App\Models\Organization\Organization.
  *
  * @property int $id
  * @property string $name

@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Models\Band;
 use App\Models\Invite;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use App\Policies\Management\OrganizationPolicy;
 use App\Policies\Users\BandPolicy;

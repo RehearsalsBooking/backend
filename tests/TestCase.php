@@ -4,9 +4,9 @@ namespace Tests;
 
 use App\Models\Band;
 use App\Models\Invite;
-use App\Models\Organization;
-use App\Models\OrganizationPrice;
-use App\Models\OrganizationUserBan;
+use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationPrice;
+use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimeRange;
@@ -85,7 +85,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * @param $startsAt
      * @param $endsAt
-     * @param  Organization  $organization
+     * @param  \App\Models\Organization\Organization  $organization
      * @param  Band|null  $band
      * @param  bool  $isConfirmed
      * @param  User|null  $user
@@ -159,7 +159,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param  Organization  $organization
+     * @param  \App\Models\Organization\Organization  $organization
      * @param  string  $startsAt
      * @param  string  $endsAt
      */
@@ -240,7 +240,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param  Organization  $organization
+     * @param  \App\Models\Organization\Organization  $organization
      * @param  int  $amount
      * @return Rehearsal|Collection
      */
@@ -281,7 +281,7 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * @param  User  $user
-     * @param  Organization  $organization
+     * @param  \App\Models\Organization\Organization  $organization
      * @return Rehearsal
      */
     protected function createRehearsalForUserInFuture(User $user, Organization $organization): Rehearsal
@@ -305,7 +305,7 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * @param  User  $user
-     * @param  Organization  $organization
+     * @param  \App\Models\Organization\Organization  $organization
      * @return Rehearsal
      */
     protected function createRehearsalForUserInPast(User $user, Organization $organization): Rehearsal

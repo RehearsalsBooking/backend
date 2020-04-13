@@ -3,7 +3,7 @@
 namespace Tests\Feature\Rehearsals\Booking;
 
 use App\Http\Resources\Users\RehearsalResource;
-use App\Models\OrganizationUserBan;
+use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;

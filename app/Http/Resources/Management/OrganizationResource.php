@@ -2,14 +2,14 @@
 
 namespace App\Http\Resources\Management;
 
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Class OrganizationResource.
  *
- * @mixin Organization
+ * @mixin \App\Models\Organization\Organization
  */
 class OrganizationResource extends JsonResource
 {

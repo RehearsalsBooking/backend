@@ -2,15 +2,16 @@
 
 namespace Tests\Feature\Management;
 
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
  * Class ManagementTestCase.
+ *
  * @property User $manager
- * @property Organization $organization
+ * @property \App\Models\Organization\Organization $organization
  */
 class ManagementTestCase extends TestCase
 {

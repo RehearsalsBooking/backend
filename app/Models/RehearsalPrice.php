@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
+use App\Models\Organization\OrganizationPrice;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;

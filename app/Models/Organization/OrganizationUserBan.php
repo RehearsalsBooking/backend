@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Organization;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\OrganizationUserBan.
+ * App\Models\Organization\OrganizationUserBan.
  *
  * @property int $organization_id
  * @property int $user_id

@@ -4,7 +4,7 @@ namespace Tests\Unit\Rehearsals;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
-use App\Models\Organization;
+use App\Models\Organization\Organization;
 use App\Models\RehearsalPrice;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Carbon\Carbon;
