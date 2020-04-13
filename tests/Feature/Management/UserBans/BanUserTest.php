@@ -8,7 +8,7 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class BanUserTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.organization.bans.create';
+    private string $endpoint = 'management.organizations.bans.create';
     private string $httpVerb = 'post';
 
     /** @test */

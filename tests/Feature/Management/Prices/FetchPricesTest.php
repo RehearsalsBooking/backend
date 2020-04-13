@@ -8,7 +8,7 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class FetchPricesTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.organization.prices.list';
+    private string $endpoint = 'management.organizations.prices.list';
     private string $httpVerb = 'get';
 
     /** @test */

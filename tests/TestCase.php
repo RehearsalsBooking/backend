@@ -147,11 +147,12 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * @param  User  $user
+     * @param  array  $params
      * @return Organization
      */
-    protected function createOrganizationForUser(User $user): Organization
+    protected function createOrganizationForUser(User $user, array $params = []): Organization
     {
-        $organization = factory(Organization::class)->create(['owner_id' => $user->id]);
+        $organization = factory(Organization::class)->create(array_merge($params, ['owner_id' => $user->id]));
         $this->createPricesForOrganization($organization);
 
         return $organization;
@@ -220,7 +221,7 @@ abstract class TestCase extends BaseTestCase
                 'time' => $this->getTimestampRange(
                     Carbon::now()->addDay()->toDateTimeString(),
                     Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
-                ),
+                    ),
             ]
         );
     }
@@ -253,7 +254,7 @@ abstract class TestCase extends BaseTestCase
                     'time' => $this->getTimestampRange(
                         Carbon::now()->addDays($index)->toDateTimeString(),
                         Carbon::now()->addDays($index)->addHours(2)->toDateTimeString(),
-                    ),
+                        ),
                 ]
             );
         }
@@ -273,7 +274,7 @@ abstract class TestCase extends BaseTestCase
                 'time' => $this->getTimestampRange(
                     Carbon::now()->addDay()->toDateTimeString(),
                     Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
-                ),
+                    ),
             ]
         );
     }
@@ -292,7 +293,7 @@ abstract class TestCase extends BaseTestCase
                 'time' => $this->getTimestampRange(
                     Carbon::now()->addDay()->toDateTimeString(),
                     Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
-                ),
+                    ),
             ]
         );
 
@@ -316,7 +317,7 @@ abstract class TestCase extends BaseTestCase
                 'time' => $this->getTimestampRange(
                     Carbon::now()->subDays(3)->toDateTimeString(),
                     Carbon::now()->subDays(3)->addHours(2)->toDateTimeString(),
-                ),
+                    ),
             ]
         );
 

@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Http\Resources\Users;
+namespace App\Http\Resources\Management;
 
-use App\Http\Resources\OrganizationPriceResource;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class OrganizationDetailResource.
+ * Class OrganizationResource.
+ *
  * @mixin Organization
  */
-class OrganizationDetailResource extends JsonResource
+class OrganizationResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request): array
@@ -24,10 +24,9 @@ class OrganizationDetailResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'address' => $this->address,
             'description' => $this->description,
-            'owner' => new UserResource($this->owner),
-            'prices' => OrganizationPriceResource::collection($this->prices),
+            'address' => $this->address,
+            'is_active' => $this->is_active,
         ];
     }
 }

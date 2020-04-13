@@ -8,7 +8,7 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class BanUserFetchTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.organization.bans.list';
+    private string $endpoint = 'management.organizations.bans.list';
     private string $httpVerb = 'get';
 
     /** @test */

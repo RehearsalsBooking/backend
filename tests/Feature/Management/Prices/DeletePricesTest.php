@@ -7,7 +7,7 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class DeletePricesTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.organization.prices.delete';
+    private string $endpoint = 'management.organizations.prices.delete';
     private string $httpVerb = 'delete';
 
     /** @test */

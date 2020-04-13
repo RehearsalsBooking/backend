@@ -9,7 +9,7 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class CreatePricesTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.organization.prices.create';
+    private string $endpoint = 'management.organizations.prices.create';
     private string $httpVerb = 'post';
 
     /** @test */

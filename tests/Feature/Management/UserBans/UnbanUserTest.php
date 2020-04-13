@@ -8,7 +8,7 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class UnbanUserTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.organization.bans.delete';
+    private string $endpoint = 'management.organizations.bans.delete';
     private string $httpVerb = 'delete';
 
     /** @test */
