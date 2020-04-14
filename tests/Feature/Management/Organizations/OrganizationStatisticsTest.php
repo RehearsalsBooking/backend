@@ -103,7 +103,7 @@ class OrganizationStatisticsTest extends ManagementTestCase
                 [
                     'interval' => 'by year',
                 ],
-            ]
+            ],
         ];
     }
 
@@ -228,7 +228,7 @@ class OrganizationStatisticsTest extends ManagementTestCase
             [
                 'interval' => 'year',
                 'from' => $this->startingDate,
-                'to' => $this->startingDate->clone()->addYear()
+                'to' => $this->startingDate->clone()->addYear(),
             ]
         );
         $response->assertOk();
