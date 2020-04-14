@@ -3,6 +3,7 @@
 use App\Http\Controllers\Management\OrganizationBansController;
 use App\Http\Controllers\Management\OrganizationPricesController;
 use App\Http\Controllers\Management\OrganizationsController;
+use App\Http\Controllers\Management\OrganizationStatisticsController;
 use App\Http\Controllers\Management\RehearsalsController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,16 @@ Route::prefix('organizations/')->name('organizations.')->group(static function (
         ->where(['organization' => '[0-9]+'])
         ->group(static function () {
             Route::put('/', [OrganizationsController::class, 'update'])->name('update');
+
+            Route::get(
+                '/statistics/total',
+                [OrganizationStatisticsController::class, 'total'],
+            )->name('statistics.total');
+
+            Route::get(
+                '/statistics/grouped',
+                [OrganizationStatisticsController::class, 'grouped'],
+            )->name('statistics.grouped');
 
             Route::prefix('prices')->name('prices.')->group(static function () {
                 Route::get('/', [OrganizationPricesController::class, 'index'])
