@@ -40,7 +40,7 @@ class RehearsalsForStatisticsSeeder extends Seeder
                             'organization_id' => $organization->id,
                             'user_id' => $user->id,
                             'price' => $price,
-                            'time' => new TimestampRange($date, $date->clone()->addHour())
+                            'time' => new TimestampRange($date, $date->clone()->addHour()),
                         ]);
                         $date = $date->addHours(3);
                     }
