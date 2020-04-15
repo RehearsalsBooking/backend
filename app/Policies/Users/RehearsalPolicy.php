@@ -25,6 +25,7 @@ class RehearsalPolicy
     {
         if ($bandId !== null) {
             $band = Band::find($bandId);
+
             return $band->admin_id === $user->id;
         }
 
