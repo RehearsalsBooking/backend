@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUnusedLocalVariableInspection */
+<?php
+
+/** @noinspection PhpUnusedLocalVariableInspection */
 
 use App\Models\Band;
 use App\Models\Organization\Organization;
@@ -47,7 +49,7 @@ class DatabaseSeeder extends Seeder
                 OrganizationUserBan::create([
                     'organization_id' => $organization->id,
                     'user_id' => $randomBannedUser,
-                    'comment' => 'some reason to ban'
+                    'comment' => 'some reason to ban',
                 ]);
             }
         }
@@ -64,7 +66,6 @@ class DatabaseSeeder extends Seeder
             $individualRehearsals->each(fn ($rehearsal) => $rehearsal->registerUserAsAttendee());
         } catch (Throwable $throwable) {
         }
-
 
         $bands = factory(Band::class, 10)->create();
 
