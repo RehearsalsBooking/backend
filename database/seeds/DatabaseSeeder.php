@@ -180,7 +180,7 @@ class DatabaseSeeder extends Seeder
         $this->bands->each(function ($band) use ($count) {
             foreach (range(1, $count) as $_) {
                 try {
-                    $bandRehearsal = factory(Rehearsal::class)->create([
+                    factory(Rehearsal::class)->create([
                         'organization_id' => $this->organizations->random()->id,
                         'user_id' => $band->admin_id,
                         'band_id' => $band->id,
