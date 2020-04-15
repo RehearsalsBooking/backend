@@ -9,8 +9,10 @@ use App\Http\Requests\Users\CreateRehearsalRequest;
 use App\Http\Requests\Users\RehearsalsFilterClientRequest;
 use App\Http\Requests\Users\RescheduleRehearsalRequest;
 use App\Http\Resources\Users\RehearsalResource;
+use App\Models\Band;
 use App\Models\Rehearsal;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -18,7 +20,7 @@ use Illuminate\Http\Response;
 class RehearsalsController extends Controller
 {
     /**
-     * @param RehearsalsFilterClientRequest $filter
+     * @param  RehearsalsFilterClientRequest  $filter
      * @return AnonymousResourceCollection
      */
     public function index(RehearsalsFilterClientRequest $filter): AnonymousResourceCollection
@@ -29,11 +31,23 @@ class RehearsalsController extends Controller
     }
 
     /**
-     * @param CreateRehearsalRequest $request
+     * @param  CreateRehearsalRequest  $request
      * @return RehearsalResource|JsonResponse
+     * @throws AuthorizationException
      */
     public function create(CreateRehearsalRequest $request)
     {
+        // if we have band id parameter, then its booking rehearsal
+        // on behalf of a band. we need to ensure that user
+        // who books rehearsal on behalf of a band can do it
+        // logic for that check is contained in rehearsal policy
+        if ($request->onBehalfOfTheBand()) {
+            $this->authorize(
+                'createOnBehalfOfBand',
+                [Rehearsal::class, Band::find($request->get('band_id'))]
+            );
+        }
+
         $organization = $request->organization();
 
         if ($organization->isUserBanned(auth()->id())) {
@@ -64,8 +78,8 @@ class RehearsalsController extends Controller
     }
 
     /**
-     * @param RescheduleRehearsalRequest $request
-     * @param Rehearsal $rehearsal
+     * @param  RescheduleRehearsalRequest  $request
+     * @param  Rehearsal  $rehearsal
      * @return RehearsalResource|JsonResponse
      */
     public function reschedule(RescheduleRehearsalRequest $request, Rehearsal $rehearsal)
@@ -88,7 +102,7 @@ class RehearsalsController extends Controller
     }
 
     /**
-     * @param Rehearsal $rehearsal
+     * @param  Rehearsal  $rehearsal
      * @return JsonResponse
      * @throws Exception
      */

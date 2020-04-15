@@ -11,7 +11,7 @@ class BanUserRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'user_id' => 'required|numeric|exists:users,id',
@@ -24,6 +24,7 @@ class BanUserRequest extends FormRequest
      */
     public function organizationUserBan(): array
     {
+        /** @noinspection NullPointerExceptionInspection */
         return [
             'organization_id' => $this->route()->originalParameter('organization'),
             'user_id' => $this->get('user_id'),

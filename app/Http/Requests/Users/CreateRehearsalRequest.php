@@ -4,9 +4,7 @@ namespace App\Http\Requests\Users;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
-use App\Models\Band;
 use App\Models\Organization\Organization;
-use App\Models\Rehearsal;
 use App\Models\RehearsalPrice;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
@@ -14,34 +12,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CreateRehearsalRequest extends FormRequest
 {
-    /**
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        if (! $this->onBehalfOfTheBand()) {
-            return true;
-        }
-
-        $bandId = $this->get('band_id');
-
-        //laravel runs authorization before validation,
-        //so we have to check band existence manually
-        //
-        // if band doesnt exist, just return true,
-        // request must fail at validation
-        // TODO: remove duplicated query (custom form request? move this logic into controller? https://github.com/laravel/framework/issues/27808)
-        if (Band::where('id', $bandId)->doesntExist()) {
-            return true;
-        }
-
-        // if we have band id parameter, then its booking rehearsal
-        // on behalf of a band. we need to ensure that user
-        // who books rehearsal on behalf of a band can do it
-        // logic for that check is contained in rehearsal policy
-        return auth()->user()->can('createOnBehalfOfBand', [Rehearsal::class, Band::find($bandId)]);
-    }
-
     /**
      * Determines if request is on behalf of the band.
      *
