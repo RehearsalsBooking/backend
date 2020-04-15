@@ -11,7 +11,7 @@ use Tests\TestCase;
  * Class ManagementTestCase.
  *
  * @property User $manager
- * @property \App\Models\Organization\Organization $organization
+ * @property Organization $organization
  */
 class ManagementTestCase extends TestCase
 {

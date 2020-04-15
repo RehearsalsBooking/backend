@@ -19,7 +19,7 @@ class OrganizationsController extends Controller
     }
 
     /**
-     * @param \App\Models\Organization\Organization $organization
+     * @param  Organization  $organization
      * @return OrganizationDetailResource
      */
     public function show(Organization $organization): OrganizationDetailResource

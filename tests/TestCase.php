@@ -85,7 +85,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * @param $startsAt
      * @param $endsAt
-     * @param  \App\Models\Organization\Organization  $organization
+     * @param  Organization  $organization
      * @param  Band|null  $band
      * @param  bool  $isConfirmed
      * @param  User|null  $user
@@ -159,7 +159,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param  \App\Models\Organization\Organization  $organization
+     * @param  Organization  $organization
      * @param  string  $startsAt
      * @param  string  $endsAt
      */
@@ -221,7 +221,7 @@ abstract class TestCase extends BaseTestCase
                 'time' => $this->getTimestampRange(
                     Carbon::now()->addDay()->toDateTimeString(),
                     Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
-                    ),
+                ),
             ]
         );
     }
@@ -240,7 +240,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param  \App\Models\Organization\Organization  $organization
+     * @param  Organization  $organization
      * @param  int  $amount
      * @return Rehearsal|Collection
      */
@@ -254,7 +254,7 @@ abstract class TestCase extends BaseTestCase
                     'time' => $this->getTimestampRange(
                         Carbon::now()->addDays($index)->toDateTimeString(),
                         Carbon::now()->addDays($index)->addHours(2)->toDateTimeString(),
-                        ),
+                    ),
                 ]
             );
         }
@@ -274,14 +274,14 @@ abstract class TestCase extends BaseTestCase
                 'time' => $this->getTimestampRange(
                     Carbon::now()->addDay()->toDateTimeString(),
                     Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
-                    ),
+                ),
             ]
         );
     }
 
     /**
      * @param  User  $user
-     * @param  \App\Models\Organization\Organization  $organization
+     * @param  Organization  $organization
      * @return Rehearsal
      */
     protected function createRehearsalForUserInFuture(User $user, Organization $organization): Rehearsal
@@ -293,7 +293,7 @@ abstract class TestCase extends BaseTestCase
                 'time' => $this->getTimestampRange(
                     Carbon::now()->addDay()->toDateTimeString(),
                     Carbon::now()->addDay()->addHours(2)->toDateTimeString(),
-                    ),
+                ),
             ]
         );
 
@@ -305,7 +305,7 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * @param  User  $user
-     * @param  \App\Models\Organization\Organization  $organization
+     * @param  Organization  $organization
      * @return Rehearsal
      */
     protected function createRehearsalForUserInPast(User $user, Organization $organization): Rehearsal
@@ -317,7 +317,7 @@ abstract class TestCase extends BaseTestCase
                 'time' => $this->getTimestampRange(
                     Carbon::now()->subDays(3)->toDateTimeString(),
                     Carbon::now()->subDays(3)->addHours(2)->toDateTimeString(),
-                    ),
+                ),
             ]
         );
 

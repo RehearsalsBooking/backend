@@ -12,7 +12,7 @@ use Tests\Feature\Management\ManagementTestCase;
  * Class FetchRehearsalsTest
  * {@inheritdoc}
  *
- * @property \App\Models\Organization\Organization $anotherOrganization
+ * @property Organization $anotherOrganization
  */
 class FetchRehearsalsTest extends ManagementTestCase
 {

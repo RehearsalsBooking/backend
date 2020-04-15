@@ -43,9 +43,53 @@ class AttendeesRegistrationTest extends TestCase
         $this->assertEquals($user->id, $rehearsal->attendees->first()->id);
     }
 
-    /** @test */
-    public function when_user_books_and_reschedules_rehearsal_for_band_then_all_band_members_become_this_rehearsals_attendees(): void
+    /**
+     * @param  Organization  $organization
+     * @param  Band|null  $band
+     * @return void
+     */
+    protected function bookRehearsal(Organization $organization, Band $band = null): void
     {
+        $parameters = $this->getRehearsalTime();
+        $parameters['organization_id'] = $organization->id;
+
+        if ($band) {
+            $parameters['band_id'] = $band->id;
+        }
+
+        $this->json(
+            'post',
+            route('rehearsals.create'),
+            $parameters
+        );
+    }
+
+    /**
+     * @param  Rehearsal  $rehearsal
+     * @param  Band|null  $band
+     * @return TestResponse
+     */
+    protected function rescheduleRehearsal(Rehearsal $rehearsal, Band $band = null): TestResponse
+    {
+        $parameters = [
+            'starts_at' => $rehearsal->time->from()->addHour()->toDateTimeString(),
+            'ends_at' => $rehearsal->time->to()->addHour()->toDateTimeString(),
+        ];
+
+        if ($band) {
+            $parameters['band_id'] = $band->id;
+        }
+
+        return $this->json(
+            'put',
+            route('rehearsals.reschedule', $rehearsal->id),
+            $parameters
+        );
+    }
+
+    /** @test */
+    public function when_user_books_and_reschedules_rehearsal_for_band_then_all_band_members_become_this_rehearsals_attendees(
+    ): void {
         $user = $this->createUser();
 
         $this->actingAs($user);
@@ -90,7 +134,12 @@ class AttendeesRegistrationTest extends TestCase
         });
 
         $this->assertEquals($bandMembersCount, $rehearsal->attendees()->count());
-        $this->assertEquals($bandMembers->pluck('id'), $rehearsal->attendees->pluck('id'));
+        $expectedBandMembersIds = $bandMembers->pluck('id')->toArray();
+        $actualBandMembersArray = $rehearsal->attendees->pluck('id')->toArray();
+        $this->assertEquals(
+            asort($expectedBandMembersIds),
+            asort($actualBandMembersArray)
+        );
     }
 
     /** @test */
@@ -123,49 +172,5 @@ class AttendeesRegistrationTest extends TestCase
         $bandMembers->each(function (User $bandMember) {
             $this->assertEquals(0, $bandMember->rehearsals()->count());
         });
-    }
-
-    /**
-     * @param Organization $organization
-     * @param Band|null $band
-     * @return void
-     */
-    protected function bookRehearsal(Organization $organization, Band $band = null): void
-    {
-        $parameters = $this->getRehearsalTime();
-        $parameters['organization_id'] = $organization->id;
-
-        if ($band) {
-            $parameters['band_id'] = $band->id;
-        }
-
-        $this->json(
-            'post',
-            route('rehearsals.create'),
-            $parameters
-        );
-    }
-
-    /**
-     * @param Rehearsal $rehearsal
-     * @param Band|null $band
-     * @return TestResponse
-     */
-    protected function rescheduleRehearsal(Rehearsal $rehearsal, Band $band = null): TestResponse
-    {
-        $parameters = [
-            'starts_at' => $rehearsal->time->from()->addHour()->toDateTimeString(),
-            'ends_at' => $rehearsal->time->to()->addHour()->toDateTimeString(),
-        ];
-
-        if ($band) {
-            $parameters['band_id'] = $band->id;
-        }
-
-        return $this->json(
-            'put',
-            route('rehearsals.reschedule', $rehearsal->id),
-            $parameters
-        );
     }
 }

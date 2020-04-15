@@ -17,7 +17,7 @@ class OrganizationPolicy
      * the admin of that band
      *
      * @param User $user
-     * @param \App\Models\Organization\Organization $organization
+     * @param  Organization  $organization
      * @return bool
      */
     public function manage(User $user, Organization $organization): bool

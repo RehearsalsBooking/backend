@@ -5,6 +5,7 @@ namespace Tests\Unit\Users;
 use App\Models\Band;
 use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
+use DB;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -84,7 +85,7 @@ class UserTest extends TestCase
         $attendingRehearsalsCount = 5;
 
         $rehearsals = factory(Rehearsal::class, $attendingRehearsalsCount)->create()->each(static function ($rehearsal) use ($user) {
-            \DB::table('rehearsal_user')
+            DB::table('rehearsal_user')
                 ->insert([
                     'user_id' => $user->id,
                     'rehearsal_id' => $rehearsal->id,
