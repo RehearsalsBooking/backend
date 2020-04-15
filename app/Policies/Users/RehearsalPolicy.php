@@ -23,7 +23,7 @@ class RehearsalPolicy
      */
     public function create(User $user, ?int $bandId): bool
     {
-        if ($bandId) {
+        if ($bandId !== null) {
             $band = Band::find($bandId);
             return $band->admin_id === $user->id;
         }
