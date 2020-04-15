@@ -20,6 +20,7 @@ class CreateBandUserTable extends Migration
 
             $table->foreign('band_id')->references('id')->on('bands');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->unique(['band_id', 'user_id']);
         });
     }
 
