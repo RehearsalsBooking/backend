@@ -270,6 +270,7 @@ abstract class TestCase extends BaseTestCase
     protected function createRehearsalForBandInFuture(Band $band, ?User $user = null): Rehearsal
     {
         $user ??= $this->createUser();
+
         return factory(Rehearsal::class)->create(
             [
                 'user_id' => $user->id,
