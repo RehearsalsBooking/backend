@@ -17,13 +17,18 @@ class RehearsalPolicy
      * User can book rehearsal on behalf of a band only if he is
      * the admin of that band
      *
-     * @param User $user
-     * @param Band $band
+     * @param  User  $user
+     * @param  int|null  $bandId
      * @return bool
      */
-    public function createOnBehalfOfBand(User $user, Band $band): bool
+    public function create(User $user, ?int $bandId): bool
     {
-        return $band->admin_id === $user->id;
+        if ($bandId) {
+            $band = Band::find($bandId);
+            return $band->admin_id === $user->id;
+        }
+
+        return true;
     }
 
     /**
@@ -32,8 +37,8 @@ class RehearsalPolicy
      * User can reschedule rehearsal on behalf of a band only if he is
      * the admin of that band
      *
-     * @param User $user
-     * @param Rehearsal $rehearsal
+     * @param  User  $user
+     * @param  Rehearsal  $rehearsal
      * @return bool
      */
     public function reschedule(User $user, Rehearsal $rehearsal): bool
@@ -48,8 +53,8 @@ class RehearsalPolicy
     /**
      * Determine whether the user can delete the rehearsal.
      *
-     * @param User $user
-     * @param Rehearsal $rehearsal
+     * @param  User  $user
+     * @param  Rehearsal  $rehearsal
      * @return mixed
      */
     public function delete(User $user, Rehearsal $rehearsal)

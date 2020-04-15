@@ -9,7 +9,6 @@ use App\Http\Requests\Users\CreateRehearsalRequest;
 use App\Http\Requests\Users\RehearsalsFilterClientRequest;
 use App\Http\Requests\Users\RescheduleRehearsalRequest;
 use App\Http\Resources\Users\RehearsalResource;
-use App\Models\Band;
 use App\Models\Rehearsal;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -37,19 +36,16 @@ class RehearsalsController extends Controller
      */
     public function create(CreateRehearsalRequest $request)
     {
-        // if we have band id parameter, then its booking rehearsal
-        // on behalf of a band. we need to ensure that user
-        // who books rehearsal on behalf of a band can do it
-        // logic for that check is contained in rehearsal policy
-        if ($request->onBehalfOfTheBand()) {
-            $this->authorize(
-                'createOnBehalfOfBand',
-                [Rehearsal::class, Band::find($request->get('band_id'))]
-            );
-        }
+        $this->authorize(
+            'create',
+            [Rehearsal::class, $request->get('band_id')]
+        );
 
         $organization = $request->organization();
 
+        // keeping this check here instead of rehearsal policy
+        // because we have to provide a reason, why this action is forbidden
+        // if moved to policy, response message will always be the same
         if ($organization->isUserBanned(auth()->id())) {
             return response()->json('you are banned in this organization', Response::HTTP_FORBIDDEN);
         }
