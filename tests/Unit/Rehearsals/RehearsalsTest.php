@@ -8,6 +8,7 @@ use App\Models\Rehearsal;
 use App\Models\User;
 use DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class RehearsalsTest extends TestCase
@@ -39,11 +40,7 @@ class RehearsalsTest extends TestCase
         $user = $this->createUser();
         $band = $this->createBandForUser($user);
 
-        /** @var Rehearsal $rehearsal */
-        $rehearsal = factory(Rehearsal::class)->create([
-            'user_id' => $user->id,
-            'band_id' => $band->id,
-        ]);
+        $rehearsal = $this->createRehearsalForBandInFuture($band, $user);
 
         $this->assertInstanceOf(
             Band::class,
@@ -59,10 +56,11 @@ class RehearsalsTest extends TestCase
     /** @test */
     public function rehearsal_has_many_attendees(): void
     {
+        Event::fake();
         $rehearsal = factory(Rehearsal::class)->create();
-
         $attendeesCount = 5;
-        $attendees = factory(User::class, $attendeesCount)->create()->each(static function ($attendee) use ($rehearsal) {
+        $attendees = factory(User::class, $attendeesCount)->create()->each(static function ($attendee) use ($rehearsal
+        ) {
             DB::table('rehearsal_user')
                 ->insert([
                     'rehearsal_id' => $rehearsal->id,
@@ -73,5 +71,32 @@ class RehearsalsTest extends TestCase
         $this->assertEquals($attendeesCount, $rehearsal->attendees()->count());
         $this->assertInstanceOf(User::class, $rehearsal->attendees->first());
         $this->assertEquals($attendees->pluck('id'), $rehearsal->attendees->pluck('id'));
+    }
+
+    /** @test */
+    public function when_individual_rehearsal_is_created_user_becomes_its_attendee(): void
+    {
+        $user = $this->createUser();
+        $rehearsal = $this->createRehearsalForUser($user);
+
+        $this->assertEquals(1, $rehearsal->attendees()->count());
+        $this->assertContains($user->id, $rehearsal->attendees()->pluck('id'));
+    }
+
+    /** @test */
+    public function when_band_rehearsal_is_created_band_members_become_its_attendee(): void
+    {
+        $user = $this->createUser();
+        $band = $this->createBandForUser($user);
+
+        $bandMembers = $this->createUsers(4)->push($user);
+        $band->members()->sync($bandMembers);
+
+        $rehearsal = $this->createRehearsalForBandInFuture($band, $user);
+
+        $this->assertEquals(5, $rehearsal->attendees()->count());
+        $expectedMemberIds = array_values($bandMembers->pluck('id')->sort()->toArray());
+        $actualMemberIds = array_values($rehearsal->attendees->pluck('id')->sort()->toArray());
+        $this->assertEquals($expectedMemberIds, $actualMemberIds);
     }
 }

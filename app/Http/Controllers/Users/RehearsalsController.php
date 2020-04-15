@@ -64,12 +64,6 @@ class RehearsalsController extends Controller
             return response()->json($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if ($request->onBehalfOfTheBand()) {
-            $rehearsal->registerBandMembersAsAttendees();
-        } else {
-            $rehearsal->registerUserAsAttendee();
-        }
-
         return new RehearsalResource($rehearsal);
     }
 

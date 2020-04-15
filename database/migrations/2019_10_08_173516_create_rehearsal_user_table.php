@@ -25,6 +25,8 @@ class CreateRehearsalUserTable extends Migration
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
+
+            $table->unique(['rehearsal_id', 'user_id']);
         });
     }
 

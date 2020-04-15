@@ -5,7 +5,6 @@ namespace App\Models\Organization;
 use App\Models\GlobalScopes\OnlyActiveScope;
 use App\Models\Rehearsal;
 use App\Models\User;
-use App\Models\WorkingDay;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;

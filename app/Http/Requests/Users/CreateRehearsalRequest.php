@@ -13,16 +13,6 @@ use Illuminate\Foundation\Http\FormRequest;
 class CreateRehearsalRequest extends FormRequest
 {
     /**
-     * Determines if request is on behalf of the band.
-     *
-     * @return bool
-     */
-    public function onBehalfOfTheBand(): bool
-    {
-        return $this->has('band_id');
-    }
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array

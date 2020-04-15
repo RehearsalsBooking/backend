@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Bands;
+namespace Tests\Feature\Bands\Members;
 
 use App\Models\Band;
 use App\Models\User;
@@ -92,10 +92,8 @@ class BandMembersDeleteTest extends TestCase
         $this->band->members()->saveMany($bandMembers);
 
         $rehearsalInPast = $this->createRehearsalForBandInThePast($this->band);
-        $rehearsalInPast->registerBandMembersAsAttendees();
 
         $rehearsalInFuture = $this->createRehearsalForBandInFuture($this->band);
-        $rehearsalInFuture->registerBandMembersAsAttendees();
 
         $this->assertEquals(
             $bandMembers->pluck('id')->toArray(),

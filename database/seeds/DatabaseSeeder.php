@@ -9,10 +9,36 @@ use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimeRange;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
+    public const ADMINS_COUNT = 5;
+    public const ORGANIZATIONS_COUNT = 5;
+    public const USERS_COUNT = 20;
+    public const INDIVIDUAL_REHEARSALS_COUNT = 50;
+    public const BANDS_COUNT = 10;
+    public const REHEARSALS_PER_BAND_COUNT = 500;
+    public const BAND_MEMBERS_COUNT = 4;
+    /**
+     * @var User|User[]|Collection|Model|\Illuminate\Support\Collection|mixed
+     */
+    private $admins;
+    /**
+     * @var Collection|Model|mixed
+     */
+    private $organizations;
+    /**
+     * @var User|User[]|Collection|Model|\Illuminate\Support\Collection|mixed
+     */
+    private $users;
+    /**
+     * @var Band|Band[]|Collection|Model|mixed
+     */
+    private $bands;
+
     /**
      * Seed the application's database.
      *
@@ -20,78 +46,152 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $admins = factory(User::class, 5)->create();
+        $this->admins = $this->createUsers(self::ADMINS_COUNT);
 
+        $this->organizations = $this->createOrganizations(self::ORGANIZATIONS_COUNT);
+
+        $this->users = $this->createUsers(self::USERS_COUNT);
+
+        $this->createPricesAndBansForOrganizations();
+
+        $this->createIndividualRehearsals(self::INDIVIDUAL_REHEARSALS_COUNT);
+
+        $this->bands = $this->createBands(self::BANDS_COUNT);
+
+        $this->addMembersToBands();
+
+        $this->createBandInvites();
+
+        $this->createBandRehearsals(self::REHEARSALS_PER_BAND_COUNT);
+    }
+
+    /**
+     * @param  int  $count
+     * @return User|User[]|Collection|Model|mixed
+     */
+    protected function createUsers(int $count): \Illuminate\Support\Collection
+    {
+        return factory(User::class, $count)->create();
+    }
+
+    /**
+     * @param  int  $count
+     * @return Collection|Model|mixed
+     */
+    protected function createOrganizations(int $count)
+    {
         $organizations = [];
-        foreach (range(1, 5) as $_) {
-            $organizations[] = factory(Organization::class)->create(['owner_id' => $admins->random()->id]);
-        }
-        $organizations = collect($organizations);
-
-        $users = factory(User::class, 100)->create();
-
-        foreach (range(1, 7) as $dayOfWeek) {
-            foreach ($organizations as $organization) {
-                try {
-                    factory(OrganizationPrice::class)->create(
-                        [
-                            'organization_id' => $organization->id,
-                            'day' => $dayOfWeek,
-                            'time' => new TimeRange('00:00', '24:00'),
-                        ]
-                    );
-                } catch (Throwable $throwable) {
-                }
-                $randomBannedUser = User::whereNotIn(
-                    'id',
-                    OrganizationUserBan::where('organization_id', $organization->id)->get('user_id')->toArray()
-                )->inRandomOrder()->first()->id;
-                OrganizationUserBan::create([
-                    'organization_id' => $organization->id,
-                    'user_id' => $randomBannedUser,
-                    'comment' => 'some reason to ban',
-                ]);
-            }
-        }
-
-        //individual rehearsals
-        try {
-            $individualRehearsals = factory(Rehearsal::class, 50)->create(
+        foreach (range(1, $count) as $_) {
+            $organizations[] = factory(Organization::class)->create(
                 [
-                    'user_id' => $users->random()->id,
-                    'organization_id' => $organizations->random()->id,
-                    'is_confirmed' => array_rand([true, false]),
+                    'owner_id' => $this->admins->random()->id
                 ]
             );
-            $individualRehearsals->each(fn ($rehearsal) => $rehearsal->registerUserAsAttendee());
-        } catch (Throwable $throwable) {
         }
+        return collect($organizations);
+    }
 
-        $bands = factory(Band::class, 10)->create();
+    /**
+     */
+    protected function createPricesAndBansForOrganizations(): void
+    {
+        foreach (range(1, 7) as $dayOfWeek) {
+            foreach ($this->organizations as $organization) {
+                factory(OrganizationPrice::class)->create(
+                    [
+                        'organization_id' => $organization->id,
+                        'day' => $dayOfWeek,
+                        'time' => new TimeRange('00:00', '24:00'),
+                    ]
+                );
 
-        foreach ($bands as $band) {
-            $band->members()->sync($users->random(4)->pluck('id'));
+                try {
+                    OrganizationUserBan::create([
+                        'organization_id' => $organization->id,
+                        'user_id' => $this->users->random()->id,
+                        'comment' => 'some reason to ban',
+                    ]);
+                } catch (PDOException $e) {
+                    // we may get already banned user
+                    // in that case just continue creating
+                    continue;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $count
+     */
+    protected function createIndividualRehearsals($count): void
+    {
+        foreach (range(1, $count) as $_) {
+            try {
+                $individualRehearsal = factory(Rehearsal::class)->create(
+                    [
+                        'user_id' => $this->users->random()->id,
+                        'organization_id' => $this->organizations->random()->id,
+                        'is_confirmed' => array_rand([true, false]),
+                    ]
+                );
+                $individualRehearsal->registerUserAsAttendee();
+            } catch (PDOException $e) {
+                // because rehearsal time is completely random
+                // there is possible overlapping
+                // so we just continue creating, if that occurs
+                continue;
+            }
+        }
+    }
+
+    /**
+     * @param  int  $count
+     * @return Band|Band[]|Collection|Model|mixed
+     */
+    protected function createBands(int $count)
+    {
+        return factory(Band::class, $count)->create();
+    }
+
+    private function addMembersToBands(): void
+    {
+        $this->bands->each(
+            fn (Band $band) => $band->members()->sync(
+                $this->users->random(self::BAND_MEMBERS_COUNT)->pluck('id')
+            )
+        );
+    }
+
+    protected function createBandInvites(): void
+    {
+        foreach ($this->bands as $band) {
             $band->invite(
-                $users
-                    ->whereNotIn('id', $band->members->pluck('id')->toArray())
+                $this->users
+                    ->whereNotIn('id', $band->members->fresh()->pluck('id')->toArray())
                     ->random()
             );
         }
+    }
 
-        //band rehearsals
-        $bands->each(static function ($band) use ($organizations) {
-            if ($band->members->fresh()) {
-                foreach (range(1, 50) as $_) {
-                    try {
-                        $bandRehearsal = factory(Rehearsal::class)->create([
-                            'organization_id' => $organizations->random()->id,
-                            'user_id' => $band->members->random()->id,
-                            'band_id' => $band->id,
-                            'is_confirmed' => array_rand([true, false]),
-                        ]);
-                        $bandRehearsal->registerBandMembersAsAttendees();
-                    } catch (Throwable $throwable) {
-                    }
+    /**
+     * @param  int  $count
+     */
+    protected function createBandRehearsals(int $count): void
+    {
+        $this->bands->each(function ($band) use ($count) {
+            foreach (range(1, $count) as $_) {
+                try {
+                    $bandRehearsal = factory(Rehearsal::class)->create([
+                        'organization_id' => $this->organizations->random()->id,
+                        'user_id' => $band->admin_id,
+                        'band_id' => $band->id,
+                        'is_confirmed' => array_rand([true, false]),
+                    ]);
+                } catch (PDOException $e) {
+                    // because rehearsal time is completely random
+                    // there is possible overlapping
+                    // so we just continue creating, if that occurs
+                    continue;
                 }
             }
         });

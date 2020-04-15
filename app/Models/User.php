@@ -55,8 +55,6 @@ use Illuminate\Support\Carbon;
  */
 class User extends Authenticatable
 {
-    public const TYPE_USER = 1;
-
     use Notifiable;
 
     /**

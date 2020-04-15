@@ -9,6 +9,7 @@ use Tests\TestCase;
 
 /**
  * Class RehearsalDeleteTest.
+ *
  * @property $user User
  */
 class RehearsalDeleteTest extends TestCase
@@ -16,13 +17,6 @@ class RehearsalDeleteTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->user = $this->createUser();
-        $this->actingAs($this->user);
-    }
 
     /** @test */
     public function user_can_delete_his_individual_rehearsal(): void
@@ -44,13 +38,13 @@ class RehearsalDeleteTest extends TestCase
         $band = $this->createBandForUser($this->user);
         $rehearsal = $this->createRehearsalForBandInFuture($band);
 
-        $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
+        $this->assertDatabaseHas('rehearsals', ['id' => $rehearsal->id]);
 
         $response = $this->json('delete', route('rehearsals.delete', $rehearsal->id));
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
 
-        $this->assertDatabaseMissing('rehearsals', $rehearsal->toArray());
+        $this->assertDatabaseMissing('rehearsals', ['id' => $rehearsal->id]);
     }
 
     /** @test */
@@ -77,5 +71,12 @@ class RehearsalDeleteTest extends TestCase
         $this->assertDatabaseMissing('rehearsal_user', [
             'rehearsal_id' => $deletedRehearsalId,
         ]);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = $this->createUser();
+        $this->actingAs($this->user);
     }
 }

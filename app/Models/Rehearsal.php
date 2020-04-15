@@ -59,6 +59,50 @@ class Rehearsal extends Model
         'time' => TimestampRangeCast::class,
     ];
 
+    protected static function booted()
+    {
+        static::created(static function (Rehearsal $rehearsal) {
+            $rehearsal->registerAttendees();
+        });
+    }
+
+    private function registerAttendees(): void
+    {
+        if ($this->band_id !== null) {
+            $this->registerBandMembersAsAttendees();
+            return;
+        }
+
+        $this->registerUserAsAttendee();
+    }
+
+    /**
+     *  Adds all of this rehearsals band members as attendees.
+     */
+    public function registerBandMembersAsAttendees(): void
+    {
+        if ($this->band) {
+            $bandMembers = $this->band->members;
+            $this->attendees()->sync($bandMembers);
+        }
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function attendees(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    /**
+     *  Adds user who booked this rehearsal as attendee.
+     */
+    public function registerUserAsAttendee(): void
+    {
+        $this->attendees()->attach($this->user_id);
+    }
+
     /**
      * @return BelongsTo
      */
@@ -81,33 +125,6 @@ class Rehearsal extends Model
     public function band(): BelongsTo
     {
         return $this->belongsTo(Band::class);
-    }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function attendees(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class);
-    }
-
-    /**
-     *  Adds all of this rehearsals band members as attendees.
-     */
-    public function registerBandMembersAsAttendees(): void
-    {
-        if ($this->band) {
-            $bandMembers = $this->band->members;
-            $this->attendees()->sync($bandMembers);
-        }
-    }
-
-    /**
-     *  Adds user who booked this rehearsal as attendee.
-     */
-    public function registerUserAsAttendee(): void
-    {
-        $this->attendees()->attach($this->user_id);
     }
 
     /**
