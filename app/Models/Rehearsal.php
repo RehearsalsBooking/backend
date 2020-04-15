@@ -61,7 +61,7 @@ class Rehearsal extends Model
 
     protected static function booted()
     {
-        static::created(static function (Rehearsal $rehearsal) {
+        static::created(static function (self $rehearsal) {
             $rehearsal->registerAttendees();
         });
     }
@@ -70,6 +70,7 @@ class Rehearsal extends Model
     {
         if ($this->band_id !== null) {
             $this->registerBandMembersAsAttendees();
+
             return;
         }
 

@@ -84,15 +84,14 @@ class DatabaseSeeder extends Seeder
         foreach (range(1, $count) as $_) {
             $organizations[] = factory(Organization::class)->create(
                 [
-                    'owner_id' => $this->admins->random()->id
+                    'owner_id' => $this->admins->random()->id,
                 ]
             );
         }
+
         return collect($organizations);
     }
 
-    /**
-     */
     protected function createPricesAndBansForOrganizations(): void
     {
         foreach (range(1, 7) as $dayOfWeek) {
