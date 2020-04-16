@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->admins = $this->createUsers(self::ADMINS_COUNT);
+        $this->admins = $this->createAdmins(self::ADMINS_COUNT);
 
         $this->organizations = $this->createOrganizations(self::ORGANIZATIONS_COUNT);
 
@@ -69,7 +69,7 @@ class DatabaseSeeder extends Seeder
      * @param  int  $count
      * @return User|User[]|Collection|Model|mixed
      */
-    protected function createUsers(int $count): \Illuminate\Support\Collection
+    protected function createAdmins(int $count): \Illuminate\Support\Collection
     {
         return factory(User::class, $count)->create()->push($this->createUserToLoginWith());
     }
@@ -77,7 +77,7 @@ class DatabaseSeeder extends Seeder
     private function createUserToLoginWith(): User
     {
         return factory(User::class)->create([
-            'email' => 'user@mail.com',
+            'email' => 'belamov@belamov.com',
             'password' => bcrypt('password')
         ]);
     }
@@ -98,6 +98,15 @@ class DatabaseSeeder extends Seeder
         }
 
         return collect($organizations);
+    }
+
+    /**
+     * @param  int  $count
+     * @return User|User[]|Collection|Model|mixed
+     */
+    protected function createUsers(int $count): \Illuminate\Support\Collection
+    {
+        return factory(User::class, $count)->create();
     }
 
     protected function createPricesAndBansForOrganizations(): void
