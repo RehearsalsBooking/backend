@@ -34,15 +34,9 @@ ENV PATH /root/.composer/vendor/bin:$PATH
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     /usr/local/bin/composer global require "fxp/composer-asset-plugin"
 
-# Create supervisor config and crontab updater (Cron and php work together)
-RUN mkdir -p /crontab/
-ADD cron/crontab-updater.sh /crontab
-RUN mkdir -p /var/log/supervisor
-
 COPY . /app
 WORKDIR /app
 
 RUN usermod -u 1000 www-data
 
 EXPOSE 9000
-CMD ["/usr/bin/supervisord"]
