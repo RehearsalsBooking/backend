@@ -5,7 +5,6 @@ services:
     working_dir: /app
     hostname: rehearsals-php
     container_name: rehearsal-php
-    user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
     build:
       context: ./php/
     volumes:

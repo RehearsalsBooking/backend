@@ -23,23 +23,23 @@ help:  ## Display this help
 
 build: check-environment ## Build container and install dependencies
 	$(docker_compose_bin) --file "$(docker_compose_yml)" build
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" composer install
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" composer install
 
 update: check-environment ## Build update dependencies
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" composer update
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" composer update
 
 test: check-environment ## Execute tests
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" vendor/bin/phpunit
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" vendor/bin/phpunit
 
 shell: check-environment ## Run shell environment in container
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" /bin/bash
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash
 
 docs: check-environment ## Generate docs for models
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" /bin/bash -c "php artisan migrate:fresh"
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" /bin/bash -c "php /app/artisan ide-helper:models -W"
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash -c "php artisan migrate:fresh"
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash -c "php /app/artisan ide-helper:models -W"
 
 tinker: check-environment ## Run tinker inside container
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" /bin/bash -c "php artisan tinker"
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash -c "php artisan tinker"
 
 stop-all: ## Stop all containers
 	$(docker_compose_bin) --file "$(docker_compose_yml)" down
