@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Management\Rehearsals;
+namespace Tests\Feature\Management\Prices;
 
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Management\Rehearsals;
+namespace Tests\Feature\Management\Organizations;
 
 use App\Http\Resources\Management\OrganizationResource;
 use App\Models\Organization\Organization;
@@ -17,7 +17,6 @@ class FetchOrganizationsTest extends ManagementTestCase
 {
     private string $endpoint = 'management.organizations.list';
     private string $httpVerb = 'get';
-    private Organization $anotherOrganization;
 
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void

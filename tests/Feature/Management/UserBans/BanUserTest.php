@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Management\Rehearsals;
+namespace Tests\Feature\Management\UserBans;
 
 use App\Models\Rehearsal;
 use Illuminate\Http\Response;

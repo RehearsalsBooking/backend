@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Management\Rehearsals;
+namespace Tests\Feature\Management\Prices;
 
 use App\Http\Resources\OrganizationPriceResource;
 use Illuminate\Http\Response;

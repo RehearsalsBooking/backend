@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Bands;
+namespace Tests\Feature\Bands\Members;
 
 use App\Models\Band;
 use App\Models\User;

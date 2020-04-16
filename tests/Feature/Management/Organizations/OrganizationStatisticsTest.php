@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Management\Rehearsals;
+namespace Tests\Feature\Management\Organizations;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Response;
