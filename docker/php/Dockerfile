@@ -9,6 +9,7 @@ RUN set -xe && apk update && apk add --no-cache \
     icu-dev \
     libmcrypt-dev \
     libxml2-dev \
+    postgresql-libs \
     postgresql-dev \
     libzip-dev \
     pcre-dev \
@@ -18,7 +19,7 @@ RUN set -xe && apk update && apk add --no-cache \
     make \
     unrar
 
-RUN docker-php-ext-install intl pdo pdo_pgsql zip sockets
+RUN docker-php-ext-install intl pdo pgsql pdo_pgsql zip sockets
 
 # Xdebug
 RUN pecl install xdebug \
@@ -31,10 +32,12 @@ RUN mkdir -p /var/log/php7-fpm && \
 # Install composer && global asset plugin
 ENV COMPOSER_HOME /root/.composer
 ENV PATH /root/.composer/vendor/bin:$PATH
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-    /usr/local/bin/composer global require "fxp/composer-asset-plugin"
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY . /app
 WORKDIR /app
+COPY . /app
+
+RUN composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --no-suggest --optimize-autoloader
 
 EXPOSE 9000
+CMD ["php-fpm"]

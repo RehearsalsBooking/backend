@@ -2,11 +2,11 @@ version: '3.5'
 
 services:
   php:
-    working_dir: /app
     hostname: rehearsals-php
     container_name: rehearsal-php
     build:
-      context: ./php/
+      context: ../
+      dockerfile: docker/php/Dockerfile
     volumes:
       - ../:/app
     depends_on:
@@ -15,8 +15,6 @@ services:
   db:
     image: postgres:latest
     hostname: db
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=rehearsals
       - POSTGRES_USER=rehearsals

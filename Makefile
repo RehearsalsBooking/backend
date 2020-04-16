@@ -41,6 +41,9 @@ docs: check-environment ## Generate docs for models
 tinker: check-environment ## Run tinker inside container
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash -c "php artisan tinker"
 
+seed: check-environment ## Seeds db with dummy data
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash -c "php artisan migrate:fresh --seed"
+
 stop-all: ## Stop all containers
 	$(docker_compose_bin) --file "$(docker_compose_yml)" down
 
