@@ -37,7 +37,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 WORKDIR /app
 COPY . /app
 
-RUN composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --no-suggest --optimize-autoloader
+RUN composer install --no-ansi --no-interaction --no-plugins --no-progress --no-suggest --optimize-autoloader
+
+RUN cp .env.example .env
 
 EXPOSE 8000
 CMD ["php","artisan","serve"]
