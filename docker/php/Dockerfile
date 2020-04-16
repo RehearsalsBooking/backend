@@ -39,5 +39,5 @@ COPY . /app
 
 RUN composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --no-suggest --optimize-autoloader
 
-EXPOSE 9000
-CMD ["php-fpm"]
+EXPOSE 8000
+CMD ["php","artisan","serve"]

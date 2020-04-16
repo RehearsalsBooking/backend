@@ -71,7 +71,15 @@ class DatabaseSeeder extends Seeder
      */
     protected function createUsers(int $count): \Illuminate\Support\Collection
     {
-        return factory(User::class, $count)->create();
+        return factory(User::class, $count)->create()->push($this->createUserToLoginWith());
+    }
+
+    private function createUserToLoginWith(): User
+    {
+        return factory(User::class)->create([
+            'email' => 'user@mail.com',
+            'password' => bcrypt('password')
+        ]);
     }
 
     /**
@@ -155,7 +163,7 @@ class DatabaseSeeder extends Seeder
     private function addMembersToBands(): void
     {
         $this->bands->each(
-            fn (Band $band) => $band->members()->sync(
+            fn(Band $band) => $band->members()->sync(
                 $this->users->random(self::BAND_MEMBERS_COUNT)->pluck('id')
             )
         );
