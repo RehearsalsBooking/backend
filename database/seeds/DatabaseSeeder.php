@@ -78,7 +78,7 @@ class DatabaseSeeder extends Seeder
     {
         return factory(User::class)->create([
             'email' => 'belamov@belamov.com',
-            'password' => bcrypt('password')
+            'password' => bcrypt('password'),
         ]);
     }
 
@@ -172,7 +172,7 @@ class DatabaseSeeder extends Seeder
     private function addMembersToBands(): void
     {
         $this->bands->each(
-            fn(Band $band) => $band->members()->sync(
+            fn (Band $band) => $band->members()->sync(
                 $this->users->random(self::BAND_MEMBERS_COUNT)->pluck('id')
             )
         );
