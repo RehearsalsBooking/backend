@@ -37,6 +37,4 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY . /app
 WORKDIR /app
 
-RUN usermod -u 1000 www-data
-
 EXPOSE 9000
