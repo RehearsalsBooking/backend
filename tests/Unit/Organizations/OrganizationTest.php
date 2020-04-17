@@ -32,10 +32,11 @@ class OrganizationTest extends TestCase
     /** @test */
     public function organization_has_rehearsals(): void
     {
-        factory(Rehearsal::class, 5)->create(['organization_id' => $this->organization->id]);
+        $rehearsalsCount = 5;
+        $this->createRehearsalsForOrganization($this->organization, $rehearsalsCount);
 
         $this->assertInstanceOf(Collection::class, $this->organization->rehearsals);
-        $this->assertEquals(5, $this->organization->rehearsals()->count());
+        $this->assertEquals($rehearsalsCount, $this->organization->rehearsals()->count());
         $this->assertInstanceOf(Rehearsal::class, $this->organization->rehearsals->first());
     }
 
@@ -57,7 +58,8 @@ class OrganizationTest extends TestCase
     /** @test */
     public function organization_has_banned_users(): void
     {
-        foreach (range(1, 5) as $userIndex) {
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        foreach (range(1, 5) as $_) {
             $user = $this->createUser();
             OrganizationUserBan::create([
                 'organization_id' => $this->organization->id,

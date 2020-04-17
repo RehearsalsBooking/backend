@@ -6,7 +6,7 @@ services:
     container_name: rehearsal-php
     build:
       context: ../
-      dockerfile: docker/php/Dockerfile
+      dockerfile: docker/dev/Dockerfile
     volumes:
       - ../:/app
     depends_on:
