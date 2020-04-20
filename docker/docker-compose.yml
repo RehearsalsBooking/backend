@@ -14,7 +14,7 @@ services:
 
   db:
     image: postgres:latest
-    hostname: db
+    container_name: db-backend-rehearsals
     environment:
       - POSTGRES_DB=rehearsals
       - POSTGRES_USER=rehearsals
