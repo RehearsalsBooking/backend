@@ -17,6 +17,9 @@ class CreateOrganizationsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('address');
+            // for now simple string is okay
+            // because i wont be querying this column
+            // it's only needed for representation
             $table->string('coordinates')->nullable();
             $table->boolean('is_active')->default(false);
             $table->text('description')->nullable();

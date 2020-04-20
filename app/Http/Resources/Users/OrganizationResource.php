@@ -16,7 +16,7 @@ class OrganizationResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request): array
@@ -25,6 +25,7 @@ class OrganizationResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'address' => $this->address,
+            'coordinates' => $this->coordinates
         ];
     }
 }
