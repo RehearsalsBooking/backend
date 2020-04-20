@@ -31,15 +31,29 @@ abstract class RehearsalFilterRequest extends FilterRequest
      */
     protected function getFilters(): array
     {
-        return array_merge(
-            parent::getFilters(),
-            [
-                'time' => [
-                    $this->request->get('from'),
-                    $this->request->get('to'),
-                ],
-            ]
-        );
+        $filters = parent::getFilters();
+
+        if ($this->filteringByTime()) {
+            return array_merge(
+                $filters,
+                [
+                    'time' => [
+                        $this->request->get('from'),
+                        $this->request->get('to'),
+                    ],
+                ]
+            );
+        }
+
+        return $filters;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function filteringByTime(): bool
+    {
+        return $this->request->has('from') || $this->request->has('to');
     }
 
     /**
@@ -55,7 +69,7 @@ abstract class RehearsalFilterRequest extends FilterRequest
     }
 
     /**
-     * @param int $organizationId
+     * @param  int  $organizationId
      */
     protected function organization_id(int $organizationId): void
     {
@@ -63,7 +77,7 @@ abstract class RehearsalFilterRequest extends FilterRequest
     }
 
     /**
-     * @param int $userId
+     * @param  int  $userId
      */
     protected function user_id(int $userId): void
     {
@@ -89,7 +103,7 @@ abstract class RehearsalFilterRequest extends FilterRequest
     }
 
     /**
-     * @param int $bandId
+     * @param  int  $bandId
      */
     protected function band_id(int $bandId): void
     {

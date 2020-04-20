@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Users;
 
 use App\Http\Requests\Filters\FilterRequest;
+use Belamov\PostgresRange\Ranges\TimestampRange;
+use Illuminate\Database\Eloquent\Builder;
 
 class OrganizationsFilterRequest extends FilterRequest
 {
@@ -24,15 +26,29 @@ class OrganizationsFilterRequest extends FilterRequest
      */
     protected function getFilters(): array
     {
-        return array_merge(
-            parent::getFilters(),
-            [
-                'available_time' => [
-                    $this->request->get('from'),
-                    $this->request->get('to'),
-                ],
-            ]
-        );
+        $filters = parent::getFilters();
+
+        if ($this->filteringByAvailableTime()) {
+            return array_merge(
+                $filters,
+                [
+                    'available_time' => [
+                        $this->request->get('from'),
+                        $this->request->get('to'),
+                    ],
+                ]
+            );
+        }
+
+        return $filters;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function filteringByAvailableTime(): bool
+    {
+        return $this->request->has('from') || $this->request->has('to');
     }
 
     /**
@@ -40,12 +56,13 @@ class OrganizationsFilterRequest extends FilterRequest
      */
     protected function available_time($boundaries): void
     {
-        //TODO
-//        [$from, $to] = $boundaries;
-//
-//        $range = new TimestampRange($from, $to, '[', ']');
-//
-//        $this->builder->whereNotRaw('time <@ ?::tsrange', [$range]);
+        [$from, $to] = $boundaries;
+
+        $range = new TimestampRange($from, $to, '(', ')');
+
+        $this->builder->whereDoesntHave('rehearsals', static function (Builder $builder) use ($range) {
+            $builder->whereRaw('time && ?::tsrange', [$range]);
+        });
     }
 
     /**
