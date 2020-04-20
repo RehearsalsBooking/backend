@@ -2,6 +2,8 @@
 
 namespace App\Models\Organization;
 
+use App\Http\Requests\Filters\FilterRequest;
+use App\Models\Filterable;
 use App\Models\GlobalScopes\OnlyActiveScope;
 use App\Models\Rehearsal;
 use App\Models\User;
@@ -52,9 +54,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $prices_count
  * @property-read Collection|User[] $bannedUsers
  * @property-read int|null $banned_users_count
+ * @method static Builder filter(FilterRequest $filters)
  */
 class Organization extends Model
 {
+    use Filterable;
+
     protected $guarded = ['id'];
     protected $casts = [
         'is_active' => 'boolean',
