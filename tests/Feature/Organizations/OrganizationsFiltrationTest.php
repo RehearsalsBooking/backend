@@ -93,7 +93,7 @@ class OrganizationsFiltrationTest extends TestCase
         $this->assertCount(2, $data['data']);
         $this->assertEquals(
             OrganizationResource::collection(collect([
-                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16
+                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16,
             ]))->response()->getData(true),
             $data
         );
@@ -110,7 +110,7 @@ class OrganizationsFiltrationTest extends TestCase
         $this->assertCount(2, $data['data']);
         $this->assertEquals(
             OrganizationResource::collection(collect([
-                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16
+                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16,
             ]))->response()->getData(true),
             $data
         );
@@ -153,7 +153,7 @@ class OrganizationsFiltrationTest extends TestCase
         $this->assertCount(2, $data['data']);
         $this->assertEquals(
             OrganizationResource::collection(collect([
-                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16
+                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16,
             ]))->response()->getData(true),
             $data
         );
@@ -171,7 +171,7 @@ class OrganizationsFiltrationTest extends TestCase
         $this->assertCount(2, $data['data']);
         $this->assertEquals(
             OrganizationResource::collection(collect([
-                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16
+                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16,
             ]))->response()->getData(true),
             $data
         );
@@ -189,7 +189,7 @@ class OrganizationsFiltrationTest extends TestCase
         $this->assertCount(1, $data['data']);
         $this->assertEquals(
             OrganizationResource::collection(collect([
-                $organizationWithRehearsal9to11
+                $organizationWithRehearsal9to11,
             ]))->response()->getData(true),
             $data
         );
