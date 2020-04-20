@@ -25,7 +25,7 @@ class OrganizationResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'address' => $this->address,
-            'coordinates' => $this->coordinates
+            'coordinates' => $this->coordinates,
         ];
     }
 }
