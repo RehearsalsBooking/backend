@@ -39,7 +39,6 @@ class OrganizationsController extends Controller
 
         $organization->update($attributes);
 
-
         return new OrganizationResource($organization);
     }
 }
