@@ -28,7 +28,8 @@
     "nunomaduro/collision": "^4.1",
     "phpunit/phpunit": "^9",
     "roave/security-advisories": "dev-master",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-gd": "*"
   },
   "config": {
     "optimize-autoloader": true,

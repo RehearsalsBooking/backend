@@ -79,8 +79,7 @@ class UpdateOrganizationTest extends ManagementTestCase
         Storage::fake('public');
 
         $this->actingAs($this->manager);
-
-        $avatar = UploadedFile::fake()->create('avatar.png');
+        $avatar = UploadedFile::fake()->image('avatar.png');
 
         $newOrganizationInfo = [
             'name' => 'new name',
@@ -114,7 +113,7 @@ class UpdateOrganizationTest extends ManagementTestCase
 
         $this->actingAs($this->manager);
 
-        $avatar = UploadedFile::fake()->create('avatar.png');
+        $avatar = UploadedFile::fake()->image('avatar.png');
 
         $newOrganizationInfo = [
             'name' => 'new name',
@@ -132,7 +131,7 @@ class UpdateOrganizationTest extends ManagementTestCase
         Storage::disk('public')->assertExists('avatars/'.$avatar->hashName());
 
         //updating avatar
-        $newAvatar = UploadedFile::fake()->create('new_avatar.png');
+        $newAvatar = UploadedFile::fake()->image('new_avatar.png');
 
         $newOrganizationInfo = [
             'name' => 'new name',

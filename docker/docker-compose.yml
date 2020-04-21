@@ -4,6 +4,7 @@ services:
   php:
     hostname: rehearsals-php
     container_name: rehearsal-php
+    image: rehearsals-backend
     build:
       context: ../
       dockerfile: docker/dev/Dockerfile
