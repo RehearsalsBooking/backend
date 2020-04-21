@@ -55,6 +55,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Collection|User[] $bannedUsers
  * @property-read int|null $banned_users_count
  * @method static Builder filter(FilterRequest $filters)
+ * @property string|null $avatar
+ * @method static Builder|Organization whereAvatar($value)
  */
 class Organization extends Model
 {

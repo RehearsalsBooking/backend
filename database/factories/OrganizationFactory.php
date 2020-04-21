@@ -26,6 +26,7 @@ $factory->define(Organization::class, static function (Faker $faker) use ($maxLo
         'description' => $faker->paragraph,
         'coordinates' => "({$faker->latitude($minLat, $maxLat)},{$faker->longitude($minLon, $maxLon)})",
         'is_active' => true,
+        'avatar' => 'https://picsum.photos/300/200',
         'owner_id' => static function () {
             return factory(User::class)->create()->id;
         },

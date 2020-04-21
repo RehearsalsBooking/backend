@@ -26,6 +26,7 @@ class OrganizationResource extends JsonResource
             'name' => $this->name,
             'address' => $this->address,
             'coordinates' => $this->coordinates,
+            'avatar'=>$this->avatar
         ];
     }
 }
