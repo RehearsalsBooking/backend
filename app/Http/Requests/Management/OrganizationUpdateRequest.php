@@ -16,7 +16,7 @@ class OrganizationUpdateRequest extends FormRequest
         return [
             'name' => 'required',
             'address' => 'required',
-            'avatar' => 'nullable|file'
+            'avatar' => 'nullable|file',
         ];
     }
 

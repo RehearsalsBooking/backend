@@ -119,7 +119,7 @@ class UpdateOrganizationTest extends ManagementTestCase
         $newOrganizationInfo = [
             'name' => 'new name',
             'address' => 'new address',
-            'avatar' => $avatar
+            'avatar' => $avatar,
         ];
 
         $response = $this->json(
@@ -137,7 +137,7 @@ class UpdateOrganizationTest extends ManagementTestCase
         $newOrganizationInfo = [
             'name' => 'new name',
             'address' => 'new address',
-            'avatar' => $newAvatar
+            'avatar' => $newAvatar,
         ];
 
         $response = $this->json(
