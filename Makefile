@@ -32,20 +32,24 @@ test: check-environment ## Execute tests
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" vendor/bin/phpunit
 
 shell: check-environment ## Run shell environment in container
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) -i -t "$(php_container_name)" /bin/bash
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash
 
 docs: check-environment ## Generate docs for models
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash -c "php artisan migrate:fresh"
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash -c "php /app/artisan ide-helper:models -W"
 
 tinker: check-environment ## Run tinker inside container
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) -i -t "$(php_container_name)"  /bin/bash -c "php artisan tinker"
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)"  /bin/bash -c "php artisan tinker"
 
 seed: check-environment ## Seeds db with dummy data
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash -c "php artisan migrate:fresh --seed"
 
 stop-all: ## Stop all containers
 	$(docker_compose_bin) --file "$(docker_compose_yml)" down
+
+stop-db: ## Stop db container
+	$(docker_bin) stop \db-backend-rehearsals
+	$(docker_bin) rm \db-backend-rehearsals
 
 # Check whether the environment file exists
 check-environment:
