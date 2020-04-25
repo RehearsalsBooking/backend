@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Users\BandMembersController;
 use App\Http\Controllers\Users\BandsController;
+use App\Http\Controllers\Users\FavoriteOrganizationsController;
 use App\Http\Controllers\Users\InvitesController;
 use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\RehearsalsController;
@@ -14,6 +15,14 @@ Route::name('organizations.')->prefix('organizations')->group(static function ()
         ->where('organization', '[0-9]+')
         ->name('show');
 });
+
+Route::name('favorite-organizations.')
+    ->prefix('favorite-organizations/{organization}')
+    ->where(['organization' => '[0-9]+'])
+    ->middleware('auth:sanctum')
+    ->group(static function () {
+        Route::post('/', [FavoriteOrganizationsController::class, 'create'])->name('create');
+    });
 
 Route::name('rehearsals.')->prefix('rehearsals')->group(static function () {
     Route::get('/', [RehearsalsController::class, 'index'])
