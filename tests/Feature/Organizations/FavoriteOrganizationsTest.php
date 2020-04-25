@@ -20,16 +20,24 @@ class FavoriteOrganizationsTest extends TestCase
     {
         $this->json('post', route('favorite-organizations.create', $this->organization->id))
             ->assertUnauthorized();
+        $this->json('delete', route('favorite-organizations.delete', $this->organization->id))
+            ->assertUnauthorized();
     }
 
     /** @test */
     public function it_responses_with_404_when_user_provided_unknown_organization(): void
     {
         $this->actingAs($this->user);
-        $this->json('post', route('favorite-organizations.create', 10000))
-            ->assertStatus(Response::HTTP_NOT_FOUND);
-        $this->json('post', route('favorite-organizations.create', 'unknown'))
-            ->assertStatus(Response::HTTP_NOT_FOUND);
+        $endpoints = [
+            ['post', route('favorite-organizations.create', 10000)],
+            ['post', route('favorite-organizations.create', 'unknown')],
+            ['delete', route('favorite-organizations.delete', 10000)],
+            ['delete', route('favorite-organizations.delete', 'unknown')],
+        ];
+        foreach ($endpoints as [$httpVerb, $endpoint]) {
+            $this->json($httpVerb, (string) $endpoint)
+                ->assertStatus(Response::HTTP_NOT_FOUND);
+        }
     }
 
     /** @test */
@@ -61,6 +69,34 @@ class FavoriteOrganizationsTest extends TestCase
 
         $this->assertEquals(2, $this->user->favoriteOrganizations()->count());
         $this->assertEquals($this->organization->id, $this->user->favoriteOrganizations->first()->id);
+    }
+
+    /** @test */
+    public function user_can_delete_organization_from_favorites(): void
+    {
+        $this->user->favoriteOrganizations()->attach($this->organization->id);
+
+        $this->actingAs($this->user);
+
+        $this->assertEquals(1, $this->user->favoriteOrganizations()->count());
+
+        $response = $this->json('delete', route('favorite-organizations.delete', $this->organization->id));
+        $response->assertNoContent();
+
+        $this->assertEquals(0, $this->user->favoriteOrganizations()->count());
+    }
+
+    /** @test */
+    public function when_user_deletes_not_favorite_organization_there_is_no_errors(): void
+    {
+        $this->actingAs($this->user);
+
+        $this->assertEquals(0, $this->user->favoriteOrganizations()->count());
+
+        $response = $this->json('delete', route('favorite-organizations.delete', $this->organization->id));
+        $response->assertNoContent();
+
+        $this->assertEquals(0, $this->user->favoriteOrganizations()->count());
     }
 
     protected function setUp(): void

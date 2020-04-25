@@ -22,6 +22,7 @@ Route::name('favorite-organizations.')
     ->middleware('auth:sanctum')
     ->group(static function () {
         Route::post('/', [FavoriteOrganizationsController::class, 'create'])->name('create');
+        Route::delete('/', [FavoriteOrganizationsController::class, 'delete'])->name('delete');
     });
 
 Route::name('rehearsals.')->prefix('rehearsals')->group(static function () {
