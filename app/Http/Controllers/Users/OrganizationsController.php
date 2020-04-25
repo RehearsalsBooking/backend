@@ -20,7 +20,7 @@ class OrganizationsController extends Controller
     {
         return OrganizationResource::collection(
             Organization::filter($request)
-                ->withCount(['favoritedUsers' => fn(Builder $query) => $query->where('user_id', auth()->id())])
+                ->withCount(['favoritedUsers' => fn (Builder $query) => $query->where('user_id', auth()->id())])
                 ->get()
         );
     }

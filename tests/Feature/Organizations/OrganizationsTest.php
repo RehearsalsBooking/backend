@@ -128,7 +128,7 @@ class OrganizationsTest extends TestCase
 
         $this->assertCount(6, $data);
 
-        $data->each(fn($organization) => $this->assertFalse($organization['is_favorited']));
+        $data->each(fn ($organization) => $this->assertFalse($organization['is_favorited']));
 
         // when logged in user is fetching
         $this->actingAs($user);
