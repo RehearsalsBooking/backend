@@ -57,6 +57,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder filter(FilterRequest $filters)
  * @property string|null $avatar
  * @method static Builder|Organization whereAvatar($value)
+ * @property-read Collection|User[] $favoritedUsers
+ * @property-read int|null $favorited_users_count
  */
 class Organization extends Model
 {
@@ -82,6 +84,28 @@ class Organization extends Model
     public function scopeVerified(Builder $query): Builder
     {
         return $query->where('verified', true);
+    }
+
+    /**
+     * @param  int|null  $userId
+     * @return bool
+     */
+    public function isUserFavorited(?int $userId): bool
+    {
+        return $this->favoritedUsers()->where('user_id', $userId)->exists();
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function favoritedUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'organizations_users_favorites',
+            'organization_id',
+            'user_id'
+        );
     }
 
     /**

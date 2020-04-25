@@ -121,7 +121,7 @@ class UserTest extends TestCase
     {
         $user = $this->createUser();
 
-        $favoriteOrganizations = $this->createOrganizations([], 3);
+        $favoriteOrganizations = $this->createOrganizations(3);
 
         $organizationsIds = $favoriteOrganizations->pluck('id')->toArray();
         $user->favoriteOrganizations()->sync($organizationsIds);

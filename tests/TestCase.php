@@ -159,7 +159,7 @@ abstract class TestCase extends BaseTestCase
      * @param  int  $count
      * @return Organization[]|Collection
      */
-    protected function createOrganizations(array $attributes = [], int $count = 1): Collection
+    protected function createOrganizations(int $count = 1, array $attributes = []): Collection
     {
         return factory(Organization::class, $count)->create($attributes);
     }

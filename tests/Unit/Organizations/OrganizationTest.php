@@ -73,6 +73,17 @@ class OrganizationTest extends TestCase
         $this->assertInstanceOf(User::class, $this->organization->bannedUsers->first());
     }
 
+    /** @test */
+    public function organization_has_users_who_favorited_it(): void
+    {
+        $favoritedUsers = $this->createUsers(3);
+
+        $this->organization->favoritedUsers()->sync($favoritedUsers->pluck('id')->toArray());
+
+        $this->assertEquals($this->organization->favoritedUsers()->count(), $favoritedUsers->count());
+        $this->assertInstanceOf(User::class, $this->organization->favoritedUsers->first());
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

@@ -24,7 +24,7 @@ class OrganizationsTest extends TestCase
 
         $response = $this->get(route('organizations.list'));
 
-        $response->assertStatus(200);
+        $response->assertOk();
 
         $data = $response->json('data');
 
@@ -96,7 +96,7 @@ class OrganizationsTest extends TestCase
 
         $response = $this->get(route('organizations.list'));
 
-        $response->assertStatus(200);
+        $response->assertOk();
 
         $data = $response->json('data');
 
@@ -105,5 +105,74 @@ class OrganizationsTest extends TestCase
             OrganizationResource::collection($activeOrganizations)->toArray(null),
             $data
         );
+    }
+
+    /** @test */
+    public function authorized_users_get_correct_information_about_favorite_organizations(): void
+    {
+        $notFavoritedOrganizations = $this->createOrganizations(3);
+        $favoritedOrganizations = $this->createOrganizations(3);
+
+        $user = $this->createUser();
+        $anotherUser = $this->createUser();
+
+        $user->favoriteOrganizations()->sync($favoritedOrganizations);
+        $anotherUser->favoriteOrganizations()->sync($notFavoritedOrganizations);
+
+        // when guest is fetching
+        $response = $this->get(route('organizations.list'));
+
+        $response->assertOk();
+
+        $data = collect($response->json('data'));
+
+        $this->assertCount(6, $data);
+
+        $data->each(fn($organization) => $this->assertFalse($organization['is_favorited']));
+
+        // when logged in user is fetching
+        $this->actingAs($user);
+
+        $response = $this->get(route('organizations.list'));
+
+        $response->assertOk();
+
+        $data = collect($response->json('data'));
+
+        $this->assertCount(6, $data);
+
+        $favoritedIdsFromResponse = $data->where('is_favorited', true)->pluck('id')->toArray();
+        $this->assertEquals($favoritedOrganizations->pluck('id')->toArray(), $favoritedIdsFromResponse);
+
+        $notFavoritedIdsFromResponse = $data->where('is_favorited', false)->pluck('id')->toArray();
+        $this->assertEquals($notFavoritedOrganizations->pluck('id')->toArray(), $notFavoritedIdsFromResponse);
+    }
+
+    /** @test */
+    public function user_gets_correct_information_about_favorite_organization_in_detailed_resource(): void
+    {
+        $this->withoutExceptionHandling();
+        $organization = $this->createOrganization();
+        $user = $this->createUser();
+
+        $user->favoriteOrganizations()->sync($organization);
+
+        // when guest is fetching
+        $response = $this->get(route('organizations.show', $organization->id));
+
+        $response->assertOk();
+
+        $isFavorited = $response->json('data.is_favorited');
+        $this->assertFalse($isFavorited);
+
+        // when logged in user fetching
+        $this->actingAs($user);
+
+        $response = $this->get(route('organizations.show', $organization->id));
+
+        $response->assertOk();
+
+        $isFavorited = $response->json('data.is_favorited');
+        $this->assertTrue($isFavorited);
     }
 }
