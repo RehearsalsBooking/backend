@@ -38,6 +38,36 @@ class OrganizationsFiltrationTest extends TestCase
     }
 
     /** @test */
+    public function users_can_filter_organizations_by_favorite(): void
+    {
+        $favoritedOrganizations = $this->createOrganizations(3);
+        $this->createOrganizations(3);
+
+        $user = $this->createUser();
+
+        $user->favoriteOrganizations()->sync($favoritedOrganizations);
+
+        $response = $this->json('get', route('organizations.list'), ['favorite' => true]);
+
+        $this->assertCount(6, $response->json('data'));
+
+        $this->actingAs($user);
+
+        $response = $this->json('get', route('organizations.list'), ['favorite' => true]);
+
+        $response->assertOk();
+
+        $data = $response->json('data');
+
+        $this->assertCount($favoritedOrganizations->count(), $data);
+        $fetchedOrganizationsIds = collect($data)->pluck('id')->toArray();
+        $this->assertEquals(
+            $fetchedOrganizationsIds,
+            $favoritedOrganizations->pluck('id')->toArray()
+        );
+    }
+
+    /** @test */
     public function users_can_filter_organizations_by_available_time(): void
     {
         $this->withoutExceptionHandling();

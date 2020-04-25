@@ -72,4 +72,17 @@ class OrganizationsFilterRequest extends FilterRequest
     {
         $this->builder->where('name', 'like', "%$name%");
     }
+
+    /**
+     * @param  bool  $isApplied
+     */
+    protected function favorite(bool $isApplied): void
+    {
+        if ($isApplied && auth()->check()) {
+            $this->builder->whereHas(
+                'favoritedUsers',
+                fn(Builder $query) => $query->where('user_id', auth()->id())
+            );
+        }
+    }
 }
