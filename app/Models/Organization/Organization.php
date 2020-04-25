@@ -25,7 +25,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string $address
  * @property string|null $coordinates
- * @property bool $verified
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @method static Builder|Organization newModelQuery()
@@ -37,9 +36,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder|Organization whereId($value)
  * @method static Builder|Organization whereName($value)
  * @method static Builder|Organization whereUpdatedAt($value)
- * @method static Builder|Organization whereVerified($value)
  * @mixin Eloquent
- * @method static Builder|Organization verified()
  * @property-read User $owner
  * @property-read Collection|WorkingDay[] $workingDays
  * @property string|null $description
@@ -73,17 +70,6 @@ class Organization extends Model
     {
         parent::boot();
         static::addGlobalScope(new OnlyActiveScope());
-    }
-
-    /**
-     * Filters query by only verified organizations.
-     *
-     * @param  Builder  $query
-     * @return Builder
-     */
-    public function scopeVerified(Builder $query): Builder
-    {
-        return $query->where('verified', true);
     }
 
     /**
