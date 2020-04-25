@@ -155,6 +155,16 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * @param  array  $attributes
+     * @param  int  $count
+     * @return Organization[]|Collection
+     */
+    protected function createOrganizations(array $attributes = [], int $count = 1): Collection
+    {
+        return factory(Organization::class, $count)->create($attributes);
+    }
+
+    /**
      * @param  User  $user
      * @param  array  $params
      * @return Organization
@@ -193,14 +203,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function getRehearsalTime(): array
     {
-        /**
-         * @var $rehearsalStart Carbon
-         */
         $rehearsalStart = Carbon::now()->addHour()->setMinutes(30)->setSeconds(0);
 
-        /**
-         * @var $rehearsalEnd Carbon
-         */
         $rehearsalEnd = $rehearsalStart->copy()->addHours(2);
 
         return [

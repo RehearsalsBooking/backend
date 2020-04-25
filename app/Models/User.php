@@ -52,6 +52,8 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $rehearsals_count
  * @property-read Collection|Band[] $invites
  * @property-read int|null $invites_count
+ * @property-read Collection|Organization[] $favoriteOrganizations
+ * @property-read int|null $favorite_organizations_count
  */
 class User extends Authenticatable
 {
@@ -77,6 +79,19 @@ class User extends Authenticatable
     public function organizations(): HasMany
     {
         return $this->hasMany(Organization::class, 'owner_id');
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function favoriteOrganizations(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Organization::class,
+            'organizations_users_favorites',
+            'user_id',
+            'organization_id'
+        );
     }
 
     /**

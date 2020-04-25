@@ -84,13 +84,15 @@ class UserTest extends TestCase
 
         $attendingRehearsalsCount = 5;
 
-        $rehearsals = factory(Rehearsal::class, $attendingRehearsalsCount)->create()->each(static function ($rehearsal) use ($user) {
-            DB::table('rehearsal_user')
-                ->insert([
-                    'user_id' => $user->id,
-                    'rehearsal_id' => $rehearsal->id,
-                ]);
-        });
+        $rehearsals = factory(Rehearsal::class, $attendingRehearsalsCount)
+            ->create()
+            ->each(static function ($rehearsal) use ($user) {
+                DB::table('rehearsal_user')
+                    ->insert([
+                        'user_id' => $user->id,
+                        'rehearsal_id' => $rehearsal->id,
+                    ]);
+            });
 
         $this->assertEquals($attendingRehearsalsCount, $user->rehearsals()->count());
         $this->assertInstanceOf(Rehearsal::class, $user->rehearsals->first());
@@ -112,5 +114,19 @@ class UserTest extends TestCase
         $this->assertEquals($bandsThatInvitedUserCount, $user->invites()->count());
         $this->assertInstanceOf(Band::class, $user->invites->first());
         $this->assertEquals($bandsThatInvitedUser->pluck('id'), $user->invites->pluck('id'));
+    }
+
+    /** @test */
+    public function user_has_favorite_organizations(): void
+    {
+        $user = $this->createUser();
+
+        $favoriteOrganizations = $this->createOrganizations([], 3);
+
+        $organizationsIds = $favoriteOrganizations->pluck('id')->toArray();
+        $user->favoriteOrganizations()->sync($organizationsIds);
+
+        $this->assertEquals($user->favoriteOrganizations()->count(), $favoriteOrganizations->count());
+        $this->assertInstanceOf(Organization::class, $user->favoriteOrganizations->first());
     }
 }
