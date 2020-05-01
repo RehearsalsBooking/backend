@@ -68,7 +68,7 @@ class FavoriteOrganizationsTest extends TestCase
         $response->assertCreated();
 
         $this->assertEquals(2, $this->user->favoriteOrganizations()->count());
-        $this->assertEquals($this->organization->id, $this->user->favoriteOrganizations->first()->id);
+        $this->assertTrue($this->user->favoriteOrganizations->contains($this->organization->id));
     }
 
     /** @test */
