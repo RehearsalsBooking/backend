@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Users\UserResource;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
@@ -26,11 +27,17 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
-        if (! auth()->attempt($credentials)) {
+        if (!auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return response()->json();
+        /** @var User $user */
+        $user = auth()->user();
+
+        return response()->json([
+            'user' => new UserResource($user),
+            'token' => $user->createToken('rehearsals-token')->plainTextToken
+        ]);
     }
 
     /**
