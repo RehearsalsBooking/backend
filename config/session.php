@@ -153,7 +153,7 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN', '.localhost:8080'),
+    'domain' => env('SESSION_DOMAIN', 'rehearsals.local'),
 
     /*
     |--------------------------------------------------------------------------
