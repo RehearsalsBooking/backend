@@ -16,7 +16,7 @@ class AuthTest extends TestCase
 
     private array $credentials = [
         'email' => 'some@email.com',
-        'password' => 'somepassword',
+        'password' => 'some password',
     ];
 
     protected function setUp(): void
@@ -35,10 +35,11 @@ class AuthTest extends TestCase
         $response = $this->post(route('login'), $this->credentials);
 
         $response->assertOk();
+        $this->assertAuthenticatedAs($this->user, 'web');
     }
 
     /** @test */
-    public function it_doesnt_login_user_with_invalid_credetntials(): void
+    public function it_doesnt_login_user_with_invalid_credentials(): void
     {
         $this->post(route('login'), [
             'email' => $this->credentials['email'],
@@ -49,6 +50,7 @@ class AuthTest extends TestCase
             'email' => 'unknown@email.com',
             'password' => $this->credentials['password'],
         ])->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $this->assertGuest('web');
     }
 
     /** @test */
@@ -63,5 +65,19 @@ class AuthTest extends TestCase
             (new UserResource($this->user))->toArray(null),
             $response->json('data')
         );
+    }
+
+    /** @test */
+    public function user_can_logout(): void
+    {
+        $this->actingAs($this->user);
+
+        $this->assertAuthenticated('web');
+
+        $response = $this->json('post', route('logout'));
+
+        $response->assertNoContent();
+
+        $this->assertGuest('web');
     }
 }
