@@ -173,6 +173,7 @@ class RehearsalPrice
      */
     private function transformMidnight(string $time): string
     {
+        //TODO: issue 119
         return $time === '00:00:00' ? '24:00:00' : $time;
     }
 
