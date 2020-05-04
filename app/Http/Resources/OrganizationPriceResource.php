@@ -24,8 +24,8 @@ class OrganizationPriceResource extends JsonResource
         return [
             'day' => $this->day,
             'price' => $this->price,
-            'starts_at' => $this->starts_at,
-            'ends_at' => $this->ends_at,
+            'starts_at' => $this->time->from(),
+            'ends_at' => $this->time->to(),
         ];
     }
 }

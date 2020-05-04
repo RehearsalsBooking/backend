@@ -29,10 +29,6 @@ use Illuminate\Support\Carbon;
  * @method static Builder|OrganizationPrice wherePrice($value)
  * @method static Builder|OrganizationPrice whereUpdatedAt($value)
  * @mixin Eloquent
- * @property string $starts_at
- * @property string $ends_at
- * @method static Builder|OrganizationPrice whereEndsAt($value)
- * @method static Builder|OrganizationPrice whereStartsAt($value)
  * @property TimeRange $time
  * @method static Builder|OrganizationPrice whereTime($value)
  */
