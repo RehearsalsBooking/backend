@@ -187,7 +187,7 @@ abstract class TestCase extends BaseTestCase
         string $startsAt = '00:00',
         string $endsAt = '24:00'
     ): void {
-        foreach (range(1, 7) as $dayOfWeek) {
+        foreach (range(0, 6) as $dayOfWeek) {
             factory(OrganizationPrice::class)->create(
                 [
                     'organization_id' => $organization->id,

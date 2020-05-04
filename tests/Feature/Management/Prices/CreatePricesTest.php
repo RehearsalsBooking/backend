@@ -95,13 +95,13 @@ class CreatePricesTest extends ManagementTestCase
         return [
             [
                 [
-                    'day' => '8',
+                    'day' => '7',
                 ],
                 'day',
             ],
             [
                 [
-                    'day' => '0',
+                    'day' => '-1',
                 ],
                 'day',
             ],

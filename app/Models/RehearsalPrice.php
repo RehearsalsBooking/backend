@@ -69,8 +69,8 @@ class RehearsalPrice
      */
     public function __invoke()
     {
-        $dayOfWeekStart = $this->start->dayOfWeekIso;
-        $dayOfWeekEnd = $this->end->dayOfWeekIso;
+        $dayOfWeekStart = $this->start->dayOfWeek;
+        $dayOfWeekEnd = $this->end->dayOfWeek;
 
         if ($dayOfWeekEnd === $dayOfWeekStart) {
             $result = $this->calculatePriceForSingleDay($dayOfWeekStart, $this->start, $this->end);

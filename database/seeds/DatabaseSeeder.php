@@ -111,13 +111,13 @@ class DatabaseSeeder extends Seeder
 
     protected function createPricesAndBansForOrganizations(): void
     {
-        foreach (range(1, 7) as $dayOfWeek) {
+        foreach (range(0, 6) as $dayOfWeek) {
             foreach ($this->organizations as $organization) {
                 factory(OrganizationPrice::class)->create(
                     [
                         'organization_id' => $organization->id,
                         'day' => $dayOfWeek,
-                        'time' => new TimeRange('00:00', '24:00'),
+                        'time' => new TimeRange('08:00', '24:00'),
                     ]
                 );
 

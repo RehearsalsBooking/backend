@@ -15,7 +15,7 @@ class CreateOrganizationPriceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'day' => 'required|numeric|between:1,7',
+            'day' => 'required|numeric|between:0,6',
             'price' => 'required|numeric|min:0',
             'starts_at' => [
                 'bail',
