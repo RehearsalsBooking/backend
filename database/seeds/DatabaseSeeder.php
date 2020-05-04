@@ -8,6 +8,7 @@ use App\Models\Organization\OrganizationPrice;
 use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
 use App\Models\User;
+use Belamov\PostgresRange\Ranges\TimeRange;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
@@ -116,6 +117,16 @@ class DatabaseSeeder extends Seeder
                     [
                         'organization_id' => $organization->id,
                         'day' => $dayOfWeek,
+                        'time' => new TimeRange('08:00', '19:00'),
+                        'price' => 200,
+                    ]
+                );
+                factory(OrganizationPrice::class)->create(
+                    [
+                        'organization_id' => $organization->id,
+                        'day' => $dayOfWeek,
+                        'time' => new TimeRange('19:00', '23:59'),
+                        'price' => 300,
                     ]
                 );
 
