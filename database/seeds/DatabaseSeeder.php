@@ -117,7 +117,6 @@ class DatabaseSeeder extends Seeder
                     [
                         'organization_id' => $organization->id,
                         'day' => $dayOfWeek,
-                        'time' => new TimeRange('08:00', '24:00'),
                     ]
                 );
 
