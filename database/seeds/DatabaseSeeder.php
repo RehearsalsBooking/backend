@@ -8,7 +8,6 @@ use App\Models\Organization\OrganizationPrice;
 use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
 use App\Models\User;
-use Belamov\PostgresRange\Ranges\TimeRange;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
