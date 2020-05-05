@@ -20,8 +20,8 @@ class BandsTest extends TestCase
 
         $this->assertInstanceOf(User::class, $band->admin);
         $this->assertEquals(
-            $bandAdmin->toArray(),
-            $band->admin->toArray()
+            $bandAdmin->id,
+            $band->admin->id
         );
     }
 

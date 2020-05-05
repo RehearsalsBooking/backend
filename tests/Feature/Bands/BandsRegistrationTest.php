@@ -68,11 +68,6 @@ class BandsRegistrationTest extends TestCase
         $newBand = Band::first();
 
         $this->assertEquals(
-            $newBand->admin->toArray(),
-            $this->user->toArray()
-        );
-
-        $this->assertEquals(
             $newBand->admin_id,
             $this->user->id
         );

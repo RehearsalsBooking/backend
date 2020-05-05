@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  * @mixin User
  */
-class UserResource extends JsonResource
+class OwnerResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -25,6 +25,11 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'avatar' => $this->avatar,
+            'contacts' => [
+                'public_email' => $this->public_email,
+                'phone' => $this->phone,
+                'link' => $this->link,
+            ],
         ];
     }
 }

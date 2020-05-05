@@ -29,7 +29,7 @@ class OrganizationDetailResource extends JsonResource
             'coordinates' => $this->coordinates,
             'description' => $this->description,
             'avatar' => $this->avatar,
-            'owner' => new UserResource($this->owner),
+            'owner' => new OwnerResource($this->owner),
             'prices' => OrganizationPriceResource::collection($this->prices),
             'is_favorited' => $this->isUserFavorited(auth()->id()),
         ];

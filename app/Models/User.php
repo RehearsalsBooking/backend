@@ -14,6 +14,7 @@ use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Sanctum\PersonalAccessToken;
 
 /**
  * App\Models\User.
@@ -55,6 +56,16 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read int|null $invites_count
  * @property-read Collection|Organization[] $favoriteOrganizations
  * @property-read int|null $favorite_organizations_count
+ * @property-read Collection|PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @property string|null $public_email
+ * @property string|null $phone
+ * @property string|null $link
+ * @method static Builder|User whereLink($value)
+ * @method static Builder|User wherePhone($value)
+ * @method static Builder|User wherePublicEmail($value)
+ * @property string|null $avatar
+ * @method static Builder|User whereAvatar($value)
  */
 class User extends Authenticatable
 {
@@ -64,9 +75,7 @@ class User extends Authenticatable
     /**
      * @var array
      */
-    protected $fillable = [
-        'name', 'email', 'password',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * @var array
