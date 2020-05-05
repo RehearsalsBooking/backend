@@ -35,7 +35,14 @@ class AuthTest extends TestCase
         $response = $this->post(route('login'), $this->credentials);
 
         $response->assertOk();
-        $this->assertAuthenticatedAs($this->user, 'web');
+
+        $token = $response->json('token');
+
+        $response = $this->get(route('me'), ['Authorization' => 'Bearer '.$token]);
+
+        $response->assertOk();
+
+        $this->assertEquals($this->user->id, $response->json('data.id'));
     }
 
     /** @test */
@@ -50,7 +57,7 @@ class AuthTest extends TestCase
             'email' => 'unknown@email.com',
             'password' => $this->credentials['password'],
         ])->assertStatus(Response::HTTP_UNAUTHORIZED);
-        $this->assertGuest('web');
+        $this->assertGuest();
     }
 
     /** @test */
@@ -70,14 +77,12 @@ class AuthTest extends TestCase
     /** @test */
     public function user_can_logout(): void
     {
-        $this->actingAs($this->user);
+        $token = $this->user->createToken('some token')->plainTextToken;
 
-        $this->assertAuthenticated('web');
-
-        $response = $this->json('post', route('logout'));
+        $response = $this->json('post', route('logout'), [], ['Authorization' => 'Bearer '.$token]);
 
         $response->assertNoContent();
 
-        $this->assertGuest('web');
+        $this->assertEquals(0, $this->user->tokens()->count());
     }
 }

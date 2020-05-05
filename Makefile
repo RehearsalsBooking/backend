@@ -48,8 +48,9 @@ stop-all: ## Stop all containers
 	$(docker_compose_bin) --file "$(docker_compose_yml)" down
 
 stop-db: ## Stop db container
-	$(docker_bin) stop \db-backend-rehearsals
-	$(docker_bin) rm \db-backend-rehearsals
+	$(docker_bin) stop db-backend-rehearsals
+	$(docker_bin) rm db-backend-rehearsals
+	$(docker_bin) rm docker_db_1
 
 # Check whether the environment file exists
 check-environment:

@@ -6,6 +6,7 @@ use App\Http\Resources\Users\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -28,12 +29,12 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
-        if (! auth()->attempt($credentials)) {
+        /** @var User $user */
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
             return response()->json('Неверные данные для авторизации', 401);
         }
-
-        /** @var User $user */
-        $user = auth()->user();
 
         return response()->json([
             'user' => new UserResource($user),
@@ -58,7 +59,9 @@ class AuthController extends Controller
      */
     public function logout(): JsonResponse
     {
-        auth('web')->logout();
+        /** @var User $user */
+        $user = auth()->user();
+        $user->tokens()->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
