@@ -32,7 +32,7 @@ class AuthController extends Controller
         /** @var User $user */
         $user = User::where('email', $credentials['email'])->first();
 
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             return response()->json('Неверные данные для авторизации', 401);
         }
 
