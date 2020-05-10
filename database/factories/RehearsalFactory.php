@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Rehearsal::class, static function (Faker $faker) {
     $startsAt = Carbon::create(
-        2019,
+        2020,
         $faker->numberBetween(1, 12),
         $faker->numberBetween(1, 20),
         $faker->numberBetween(8, 20),
