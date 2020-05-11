@@ -164,5 +164,4 @@ class PricesTest extends TestCase
             ],
         ]);
     }
-
 }

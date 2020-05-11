@@ -46,6 +46,7 @@ class GetOrganizationPriceRequest extends FormRequest
             Carbon::parse($this->get('starts_at'))->setSeconds(0),
             Carbon::parse($this->get('ends_at'))->setSeconds(0)
         );
+
         return $rehearsalPrice();
     }
 

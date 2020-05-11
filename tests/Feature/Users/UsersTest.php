@@ -47,6 +47,7 @@ class UsersTest extends TestCase
             if ($a['id'] === $b['id']) {
                 return 0;
             }
+
             return ($a['id'] < $b['id']) ? -1 : 1;
         };
         usort($fetchedBands, $comparingFunction);
