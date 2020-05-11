@@ -70,7 +70,13 @@ class RehearsalsTest extends TestCase
 
         $this->assertEquals($attendeesCount, $rehearsal->attendees()->count());
         $this->assertInstanceOf(User::class, $rehearsal->attendees->first());
-        $this->assertEquals($attendees->pluck('id'), $rehearsal->attendees->pluck('id'));
+
+        $expectedAttendeesIds = $attendees->pluck('id')->toArray();
+        $actualAttendeesIds = $rehearsal->attendees->pluck('id')->toArray();
+        $this->assertEquals(
+            sort($expectedAttendeesIds),
+            sort($actualAttendeesIds)
+        );
     }
 
     /** @test */

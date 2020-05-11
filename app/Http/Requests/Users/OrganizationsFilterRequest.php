@@ -29,7 +29,7 @@ class OrganizationsFilterRequest extends FilterRequest
         $filters = parent::getFilters();
 
         if ($this->filteringByAvailableTime()) {
-            return array_merge(
+            $filters = array_merge(
                 $filters,
                 [
                     'available_time' => [
@@ -40,7 +40,22 @@ class OrganizationsFilterRequest extends FilterRequest
             );
         }
 
+        if (auth()->check()) {
+            $filters = array_merge($filters, ['notBanned' => auth()->id()]);
+        }
+
         return $filters;
+    }
+
+    /**
+     * @param  int  $userId
+     */
+    protected function notBanned(int $userId): void
+    {
+        $this->builder->whereDoesntHave(
+            'bannedUsers',
+            fn(Builder $query) => $query->where('user_id', $userId)
+        );
     }
 
     /**
@@ -81,7 +96,7 @@ class OrganizationsFilterRequest extends FilterRequest
         if ($isApplied && auth()->check()) {
             $this->builder->whereHas(
                 'favoritedUsers',
-                fn (Builder $query) => $query->where('user_id', auth()->id())
+                fn(Builder $query) => $query->where('user_id', auth()->id())
             );
         }
     }
