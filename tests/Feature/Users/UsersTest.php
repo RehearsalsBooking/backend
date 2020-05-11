@@ -21,6 +21,7 @@ class UsersTest extends TestCase
     public function user_gets_correct_info_about_his_bands_when_he_fetches_info_about_himself(): void
     {
         $adminnedBand = $this->createBandForUser($this->user);
+        $adminnedBand->addMember($this->user->id);
         $participatingBand = $this->createBand();
         $participatingBand->addMember($this->user->id);
 

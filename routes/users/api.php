@@ -4,6 +4,7 @@ use App\Http\Controllers\Users\BandMembersController;
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\FavoriteOrganizationsController;
 use App\Http\Controllers\Users\InvitesController;
+use App\Http\Controllers\Users\OrganizationPricesController;
 use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\RehearsalsController;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,10 @@ Route::name('organizations.')->prefix('organizations')->group(static function ()
     Route::get('/{organization}', [OrganizationsController::class, 'show'])
         ->where('organization', '[0-9]+')
         ->name('show');
+
+    Route::get('/{organization}/price', [OrganizationPricesController::class, 'index'])
+        ->where('organization', '[0-9]+')
+        ->name('price');
 });
 
 Route::name('favorite-organizations.')

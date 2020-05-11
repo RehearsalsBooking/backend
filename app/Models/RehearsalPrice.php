@@ -67,7 +67,7 @@ class RehearsalPrice
      * @return float|int
      * @throws PriceCalculationException
      */
-    public function __invoke()
+    public function __invoke(): float
     {
         $dayOfWeekStart = $this->start->dayOfWeek;
         $dayOfWeekEnd = $this->end->dayOfWeek;

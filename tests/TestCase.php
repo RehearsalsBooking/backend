@@ -76,15 +76,11 @@ abstract class TestCase extends BaseTestCase
      */
     protected function createBandForUser(User $user): Band
     {
-        $band = factory(Band::class)->create(
+        return factory(Band::class)->create(
             [
                 'admin_id' => $user->id,
             ]
         );
-
-        $band->addMember($user->id);
-
-        return $band;
     }
 
     /**

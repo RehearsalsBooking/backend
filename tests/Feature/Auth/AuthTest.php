@@ -69,7 +69,7 @@ class AuthTest extends TestCase
         $response->assertOk();
 
         $this->assertEquals(
-            (new UserResource($this->user))->toArray(null),
+            (new UserResource($this->user))->toResponse(null)->getData(true)['data'],
             $response->json('data')
         );
     }
