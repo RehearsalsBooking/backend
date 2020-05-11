@@ -8,14 +8,12 @@ use Carbon\Carbon;
 use Illuminate\Http\Response;
 
 /**
- * Trait ValidatesRehearsalTime
+ * Trait ValidatesRehearsalTime.
  *
  * This mess was created in an attempt to avoid test duplication.
  * I need to validate rehearsal time when rehearsal is creating and when
  * just calculating rehearsal price. And validation logic is absolutely the same
  * for both endpoints
- *
- * @package Tests\Feature\Rehearsals\Booking
  */
 trait ValidatesRehearsalTime
 {
