@@ -35,6 +35,7 @@ class OrganizationPolicy
         if ($user === null) {
             return true;
         }
-        return !$organization->isUserBanned($user->id);
+
+        return ! $organization->isUserBanned($user->id);
     }
 }
