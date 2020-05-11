@@ -2,16 +2,16 @@
 
 namespace App\Http\Resources\Users;
 
-use App\Models\User;
+use App\Models\Band;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class UserResource.
+ * Class BandResource.
  *
- * @mixin User
+ * @mixin Band
  */
-class UserResource extends JsonResource
+class BandForUserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -24,8 +24,7 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'avatar' => $this->avatar,
-            'bands' => BandForUserResource::collection($this->bands),
+            'is_admin' => $this->admin_id === auth()->id(),
         ];
     }
 }
