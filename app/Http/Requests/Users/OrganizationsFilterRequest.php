@@ -54,7 +54,7 @@ class OrganizationsFilterRequest extends FilterRequest
     {
         $this->builder->whereDoesntHave(
             'bannedUsers',
-            fn(Builder $query) => $query->where('user_id', $userId)
+            fn (Builder $query) => $query->where('user_id', $userId)
         );
     }
 
@@ -96,7 +96,7 @@ class OrganizationsFilterRequest extends FilterRequest
         if ($isApplied && auth()->check()) {
             $this->builder->whereHas(
                 'favoritedUsers',
-                fn(Builder $query) => $query->where('user_id', auth()->id())
+                fn (Builder $query) => $query->where('user_id', auth()->id())
             );
         }
     }
