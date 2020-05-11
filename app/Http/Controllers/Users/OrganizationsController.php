@@ -24,7 +24,7 @@ class OrganizationsController extends Controller
                 ->when(
                     auth()->check(),
                     fn (Builder $query) => $query->withCount([
-                        'favoritedUsers' => fn (Builder $query) => $query->where('user_id', auth()->id())
+                        'favoritedUsers' => fn (Builder $query) => $query->where('user_id', auth()->id()),
                     ])
                 )
                 ->get()
