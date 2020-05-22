@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\Organization\OrganizationEquipment
+ * App\Models\Organization\OrganizationEquipment.
  *
  * @property int $id
  * @property string $item_description

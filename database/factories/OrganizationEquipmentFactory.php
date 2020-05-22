@@ -12,6 +12,6 @@ $factory->define(OrganizationEquipment::class, static function (Faker $faker) {
         'item_description' => $faker->word,
         'model' => implode(' ', $faker->words(2)),
         'photo' => 'https://picsum.photos/300/200',
-        'organization_id' => static fn() => factory(Organization::class)->create()->id,
+        'organization_id' => static fn () => factory(Organization::class)->create()->id,
     ];
 });
