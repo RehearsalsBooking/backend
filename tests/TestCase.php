@@ -297,12 +297,15 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param  User  $user
-     * @param  Organization  $organization
+     * @param  User|null  $user
+     * @param  Organization|null  $organization
      * @return Rehearsal
      */
-    protected function createRehearsalForUserInFuture(User $user, Organization $organization): Rehearsal
+    protected function createRehearsalForUserInFuture(?User $user = null, ?Organization $organization = null): Rehearsal
     {
+        $user ??= $this->createUser();
+        $organization ??= $this->createOrganization();
+
         return factory(Rehearsal::class)->create(
             [
                 'user_id' => $user->id,

@@ -10,8 +10,10 @@ use App\Http\Requests\Users\RehearsalsFilterClientRequest;
 use App\Http\Requests\Users\RescheduleRehearsalRequest;
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
+use DB;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -24,9 +26,21 @@ class RehearsalsController extends Controller
      */
     public function index(RehearsalsFilterClientRequest $filter): AnonymousResourceCollection
     {
-        $rehearsals = Rehearsal::filter($filter)->orderBy('id')->get();
+        $rehearsalsQuery = Rehearsal::filter($filter)->orderBy('id');
 
-        return RehearsalResource::collection($rehearsals);
+        $rehearsalsQuery->when(auth()->check(), static function (Builder $query) {
+            $userId = auth()->id();
+            return $query->addSelect(
+                [
+                    'is_participant' => DB::table('rehearsal_user')
+                        ->selectRaw('true::boolean')
+                        ->whereRaw('rehearsal_id = rehearsals.id')
+                        ->whereRaw("user_id=$userId")
+                ]
+            );
+        });
+
+        return RehearsalResource::collection($rehearsalsQuery->get());
     }
 
     /**

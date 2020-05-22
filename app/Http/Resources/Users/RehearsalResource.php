@@ -22,8 +22,9 @@ class RehearsalResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'starts_at' => $this->time->from()->toDateTimeString(),
-            'ends_at' => $this->time->to()->toDateTimeString(),
+            'starts_at' => optional($this->time->from())->toDateTimeString(),
+            'ends_at' => optional($this->time->to())->toDateTimeString(),
+            'is_participant' => $this->is_participant ?? false,
         ];
     }
 }
