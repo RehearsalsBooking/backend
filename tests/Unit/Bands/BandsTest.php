@@ -42,14 +42,18 @@ class BandsTest extends TestCase
         $rockBand->members()->attach($rockBandMembers->pluck('id')->toArray());
         $rapBand->members()->attach($rapBandMembers->pluck('id')->toArray());
 
+        $expectedBandMembers = $rockBandMembers->pluck('id')->toArray();
+        $actualBandMembers = $rockBand->members->pluck('id')->toArray();
         $this->assertEquals(
-            $rockBandMembers->pluck('id'),
-            $rockBand->members->pluck('id')
+            sort($expectedBandMembers),
+            sort($actualBandMembers)
         );
 
+        $expectedBandMembers = $rapBandMembers->pluck('id')->toArray();
+        $actualBandMembers = $rapBand->members->pluck('id')->toArray();
         $this->assertEquals(
-            $rapBandMembers->pluck('id'),
-            $rapBand->members->pluck('id')
+            sort($expectedBandMembers),
+            sort($actualBandMembers)
         );
     }
 
