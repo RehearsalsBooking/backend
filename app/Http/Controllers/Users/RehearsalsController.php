@@ -30,12 +30,13 @@ class RehearsalsController extends Controller
 
         $rehearsalsQuery->when(auth()->check(), static function (Builder $query) {
             $userId = auth()->id();
+
             return $query->addSelect(
                 [
                     'is_participant' => DB::table('rehearsal_user')
                         ->selectRaw('true::boolean')
                         ->whereRaw('rehearsal_id = rehearsals.id')
-                        ->whereRaw("user_id=$userId")
+                        ->whereRaw("user_id=$userId"),
                 ]
             );
         });
