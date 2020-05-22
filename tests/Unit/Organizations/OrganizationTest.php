@@ -3,6 +3,7 @@
 namespace Tests\Unit\Organizations;
 
 use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationEquipment;
 use App\Models\Organization\OrganizationPrice;
 use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
@@ -82,6 +83,19 @@ class OrganizationTest extends TestCase
 
         $this->assertEquals($this->organization->favoritedUsers()->count(), $favoritedUsers->count());
         $this->assertInstanceOf(User::class, $this->organization->favoritedUsers->first());
+    }
+
+    /** @test */
+    public function organization_has_many_equipment_items(): void
+    {
+        $equipmentCount = 5;
+
+        factory(OrganizationEquipment::class, $equipmentCount)->create([
+            'organization_id' => $this->organization->id,
+        ]);
+
+        $this->assertEquals($equipmentCount, $this->organization->equipment()->count());
+        $this->assertInstanceOf(OrganizationEquipment::class, $this->organization->equipment->first());
     }
 
     protected function setUp(): void
