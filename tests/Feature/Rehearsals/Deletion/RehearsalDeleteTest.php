@@ -57,9 +57,11 @@ class RehearsalDeleteTest extends TestCase
         $rehearsal = $this->createRehearsalForBandInFuture($band);
         $rehearsal->registerBandMembersAsAttendees();
 
+        $expectedAttendeesIds = $rehearsalAttendees->pluck('id')->toArray();
+        $actualAttendeesIds = $rehearsal->attendees->pluck('id')->toArray();
         $this->assertEquals(
-            $rehearsalAttendees->pluck('id')->toArray(),
-            $rehearsal->attendees->pluck('id')->toArray()
+            sort($expectedAttendeesIds),
+            sort($actualAttendeesIds)
         );
 
         $this->actingAs($this->user);
