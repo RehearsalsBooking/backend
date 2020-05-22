@@ -25,7 +25,7 @@ class OrganizationEquipmentResource extends JsonResource
             'id' => $this->id,
             'item_description' => $this->item_description,
             'model' => $this->model,
-            'photo' => $this->photo
+            'photo' => $this->photo,
         ];
     }
 }
