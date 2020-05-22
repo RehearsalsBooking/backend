@@ -32,7 +32,7 @@ class OrganizationPricesController extends Controller
             return response()->json($request->getRehearsalPrice());
         } catch (InvalidRehearsalDurationException | PriceCalculationException $e) {
             return response()->json(
-                'Ошибка вычисления стоимости репетиции. Попробуйте выбрать другое время',
+                $e->getMessage(),
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }

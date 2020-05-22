@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class RehearsalPrice.
+ *
  * @property int $organizationId
  * @property Carbon $start
  * @property Carbon $end
@@ -40,9 +41,10 @@ class RehearsalPrice
 
     /**
      * RehearsalPrice constructor.
-     * @param int $organizationId
-     * @param Carbon $start
-     * @param Carbon $end
+     *
+     * @param  int  $organizationId
+     * @param  Carbon  $start
+     * @param  Carbon  $end
      * @throws InvalidRehearsalDurationException
      */
     public function __construct(int $organizationId, Carbon $start, Carbon $end)
@@ -101,9 +103,9 @@ class RehearsalPrice
     }
 
     /**
-     * @param int $day
-     * @param Carbon $start
-     * @param Carbon $end
+     * @param  int  $day
+     * @param  Carbon  $start
+     * @param  Carbon  $end
      * @return float|int
      * @throws PriceCalculationException
      */
@@ -151,7 +153,7 @@ class RehearsalPrice
     }
 
     /**
-     * @param int $day
+     * @param  int  $day
      * @param $timeStart
      * @param $timeEnd
      * @return OrganizationPrice[]|Collection
@@ -168,7 +170,7 @@ class RehearsalPrice
     /**
      * Transforms midnight time to 24:00 for correct queries.
      *
-     * @param string $time
+     * @param  string  $time
      * @return string
      */
     private function transformMidnight(string $time): string
@@ -178,9 +180,9 @@ class RehearsalPrice
     }
 
     /**
-     * @param string $timeStart
-     * @param string $timeEnd
-     * @param OrganizationPrice $price cost of one hour of rehearsal
+     * @param  string  $timeStart
+     * @param  string  $timeEnd
+     * @param  OrganizationPrice  $price  cost of one hour of rehearsal
      * @return float|int
      * @throws PriceCalculationException
      */

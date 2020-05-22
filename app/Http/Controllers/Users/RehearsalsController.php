@@ -62,14 +62,14 @@ class RehearsalsController extends Controller
         // because we have to provide a reason, why this action is forbidden
         // if moved to policy, response message will always be the same
         if ($organization->isUserBanned(auth()->id())) {
-            return response()->json('you are banned in this organization', Response::HTTP_FORBIDDEN);
+            return response()->json('Вы забанены в этой организации', Response::HTTP_FORBIDDEN);
         }
 
         if (! $organization->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
         )) {
-            return response()->json('Selected time is unavailable', Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json('Выбранное время занято', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         try {
@@ -94,7 +94,7 @@ class RehearsalsController extends Controller
             $request->get('ends_at'),
             $rehearsal
         )) {
-            return response()->json('Selected time is unavailable', Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json('Выбранное время занято', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         try {
