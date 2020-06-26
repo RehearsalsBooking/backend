@@ -54,6 +54,10 @@ class RehearsalPrice
         $this->end = $end;
         $this->uncalculatedMinutes = $end->diffInMinutes($start);
 
+        if ($this->isEndOfTheDay($end)) {
+            $this->uncalculatedMinutes++;
+        }
+
         if ($this->uncalculatedMinutes >= self::MINUTES_IN_ONE_DAY) {
             throw new InvalidRehearsalDurationException('Длительность репетиции не может превышать 24 часа');
         }
@@ -87,7 +91,7 @@ class RehearsalPrice
         $priceAtFirstDay = $this->calculatePriceForSingleDay(
             $dayOfWeekStart,
             $this->start,
-            $this->start->copy()->hours(24)->minute(0)
+            $this->start->copy()->hours(23)->minute(59)
         );
         $priceAtLastDay = $this->calculatePriceForSingleDay(
             $dayOfWeekEnd,
@@ -114,13 +118,13 @@ class RehearsalPrice
         $matchingPrices = $this->getMatchingPricesForPeriod(
             $day,
             $start->toTimeString(),
-            $this->transformMidnight($end->toTimeString())
+            $end->toTimeString()
         );
 
         if ($matchingPrices->count() === 1) {
             return $this->calculatePriceForPeriod(
                 $start->toTimeString(),
-                $this->transformMidnight($end->toTimeString()),
+                $end->toTimeString(),
                 $matchingPrices->first()
             );
         }
@@ -137,7 +141,7 @@ class RehearsalPrice
             } elseif ($index === $matchingPrices->count() - 1) {
                 $result += $this->calculatePriceForPeriod(
                     $price->time->from(),
-                    $this->transformMidnight($end->toTimeString()),
+                    $end->toTimeString(),
                     $price
                 );
             } else {
@@ -168,18 +172,6 @@ class RehearsalPrice
     }
 
     /**
-     * Transforms midnight time to 24:00 for correct queries.
-     *
-     * @param  string  $time
-     * @return string
-     */
-    private function transformMidnight(string $time): string
-    {
-        //TODO: issue 119
-        return $time === '00:00:00' ? '24:00:00' : $time;
-    }
-
-    /**
      * @param  string  $timeStart
      * @param  string  $timeEnd
      * @param  OrganizationPrice  $price  cost of one hour of rehearsal
@@ -188,14 +180,28 @@ class RehearsalPrice
      */
     private function calculatePriceForPeriod(string $timeStart, string $timeEnd, OrganizationPrice $price)
     {
-        if ($timeStart < $price->time->from() || $timeEnd > $this->transformMidnight($price->time->to())) {
+        if ($timeStart < $price->time->from() || $timeEnd > $price->time->to()) {
             throw new PriceCalculationException();
         }
         $periodStart = Carbon::createFromTimeString($timeStart);
         $periodEnd = Carbon::createFromTimeString($timeEnd);
         $delta = $periodEnd->diffInMinutes($periodStart);
+
+        if ($this->isEndOfTheDay($periodEnd)) {
+            $delta++;
+        }
+
         $this->uncalculatedMinutes -= $delta;
 
         return $delta * $price->price / 60;
+    }
+
+    /**
+     * @param  Carbon  $time
+     * @return bool
+     */
+    private function isEndOfTheDay(Carbon $time): bool
+    {
+        return $time->hour === 23 && $time->minute === 59;
     }
 }

@@ -75,8 +75,8 @@ class RehearsalPriceCalculationTest extends TestCase
     }
 
     /**
-     * @param int $hour
-     * @param int $minute
+     * @param  int  $hour
+     * @param  int  $minute
      * @return Carbon
      */
     private function getDateTimeAtMonday(int $hour, int $minute): Carbon
@@ -121,6 +121,32 @@ class RehearsalPriceCalculationTest extends TestCase
      * @throws InvalidRehearsalDurationException
      * @throws PriceCalculationException
      */
+    public function it_calculates_rehearsal_cost_till_the_end_of_the_day_correctly(): void
+    {
+        // prices at monday
+        // 10-14 100
+        // 14-20 200
+        // 20-00 300
+
+        $price = new RehearsalPrice(
+            $this->organization->id,
+            $this->getDateTimeAtMonday(22, 00),
+            $this->getDateTimeAtMonday(23, 59),
+        );
+        $this->assertEquals(300 * 2, $price());
+
+        $price = new RehearsalPrice(
+            $this->organization->id,
+            $this->getDateTimeAtMonday(22, 00),
+            $this->getDateTimeAtMonday(24, 00),
+        );
+        $this->assertEquals(300 * 2, $price());
+    }
+
+    /** @test
+     * @throws InvalidRehearsalDurationException
+     * @throws PriceCalculationException
+     */
     public function it_calculates_rehearsal_cost_at_multiple_periods_and_days_correctly(): void
     {
         // prices at monday
@@ -153,8 +179,8 @@ class RehearsalPriceCalculationTest extends TestCase
     }
 
     /**
-     * @param int $hour
-     * @param int $minute
+     * @param  int  $hour
+     * @param  int  $minute
      * @return Carbon
      */
     private function getDateTimeAtTuesday(int $hour, int $minute): Carbon
@@ -186,7 +212,7 @@ class RehearsalPriceCalculationTest extends TestCase
             [
                 'day' => 1,
                 'price' => 300,
-                'time' => new TimeRange('20:00', '24:00'),
+                'time' => new TimeRange('20:00', '23:59'),
             ],
         ]);
 
@@ -218,7 +244,7 @@ class RehearsalPriceCalculationTest extends TestCase
             [
                 'day' => 6,
                 'price' => 600,
-                'time' => new TimeRange('20:00', '24:00'),
+                'time' => new TimeRange('20:00', '23:59'),
             ],
         ]);
     }

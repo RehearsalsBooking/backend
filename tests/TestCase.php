@@ -185,7 +185,7 @@ abstract class TestCase extends BaseTestCase
     protected function createPricesForOrganization(
         Organization $organization,
         string $startsAt = '00:00',
-        string $endsAt = '24:00'
+        string $endsAt = '23:59'
     ): void {
         foreach (range(0, 6) as $dayOfWeek) {
             factory(OrganizationPrice::class)->create(
