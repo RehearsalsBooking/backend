@@ -56,8 +56,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder|Organization whereAvatar($value)
  * @property-read Collection|User[] $favoritedUsers
  * @property-read int|null $favorited_users_count
- * @property-read Collection|OrganizationEquipment[] $equipment
- * @property-read int|null $equipment_count
  */
 class Organization extends Model
 {
@@ -139,11 +137,6 @@ class Organization extends Model
     public function prices(): HasMany
     {
         return $this->hasMany(OrganizationPrice::class);
-    }
-
-    public function equipment(): HasMany
-    {
-        return $this->hasMany(OrganizationEquipment::class);
     }
 
     public function bannedUsers(): BelongsToMany
