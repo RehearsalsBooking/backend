@@ -27,7 +27,7 @@ class OrganizationDetailResource extends JsonResource
             'name' => $this->name,
             'address' => $this->address,
             'coordinates' => $this->coordinates,
-            'description' => $this->description,
+            'gear' => $this->gear,
             'avatar' => $this->avatar,
             'owner' => new OwnerResource($this->owner),
             'prices' => OrganizationPriceResource::collection($this->prices),

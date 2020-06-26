@@ -23,7 +23,7 @@ $factory->define(Organization::class, static function (Faker $faker) use ($maxLo
     return [
         'name' => $faker->word,
         'address' => $faker->address,
-        'description' => $faker->paragraph,
+        'gear' => $faker->paragraph,
         'coordinates' => "({$faker->latitude($minLat, $maxLat)},{$faker->longitude($minLon, $maxLon)})",
         'is_active' => true,
         'avatar' => 'https://picsum.photos/300/200',

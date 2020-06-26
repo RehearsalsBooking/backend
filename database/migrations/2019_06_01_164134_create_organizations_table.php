@@ -22,7 +22,7 @@ class CreateOrganizationsTable extends Migration
             // it's only needed for representation
             $table->string('coordinates')->nullable();
             $table->boolean('is_active')->default(false);
-            $table->text('description')->nullable();
+            $table->text('gear')->nullable();
             $table->unsignedInteger('owner_id');
             $table->string('avatar')->nullable();
             $table->timestamps();

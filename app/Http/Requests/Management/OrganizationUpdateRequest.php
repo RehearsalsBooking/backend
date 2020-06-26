@@ -29,7 +29,7 @@ class OrganizationUpdateRequest extends FormRequest
             'name' => $this->get('name'),
             'address' => $this->get('address'),
             'coordinates' => $this->get('coordinates'),
-            'description' => $this->get('description'),
+            'gear' => $this->get('gear'),
         ];
     }
 }

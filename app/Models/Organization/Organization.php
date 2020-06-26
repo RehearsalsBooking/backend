@@ -25,6 +25,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string $address
  * @property string|null $coordinates
+ * @property string|null $gear
+ * @property int $owner_id
+ * @property bool $is_active
+ * @property string|null $avatar
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @method static Builder|Organization newModelQuery()
@@ -36,26 +40,21 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder|Organization whereId($value)
  * @method static Builder|Organization whereName($value)
  * @method static Builder|Organization whereUpdatedAt($value)
- * @mixin Eloquent
+ * @method static Builder|Organization whereGear($value)
+ * @method static Builder|Organization whereOwnerId($value)
+ * @method static Builder|Organization whereIsActive($value)
+ * @method static Builder|Organization whereAvatar($value)
  * @property-read User $owner
- * @property-read Collection|WorkingDay[] $workingDays
- * @property string|null $description
- * @property int $owner_id
  * @property-read Collection|Rehearsal[] $rehearsals
  * @property-read int|null $rehearsals_count
- * @method static Builder|Organization whereDescription($value)
- * @method static Builder|Organization whereOwnerId($value)
- * @property bool $is_active
- * @method static Builder|Organization whereIsActive($value)
  * @property-read Collection|OrganizationPrice[] $prices
  * @property-read int|null $prices_count
  * @property-read Collection|User[] $bannedUsers
  * @property-read int|null $banned_users_count
  * @method static Builder filter(FilterRequest $filters)
- * @property string|null $avatar
- * @method static Builder|Organization whereAvatar($value)
  * @property-read Collection|User[] $favoritedUsers
  * @property-read int|null $favorited_users_count
+ * @mixin Eloquent
  */
 class Organization extends Model
 {
