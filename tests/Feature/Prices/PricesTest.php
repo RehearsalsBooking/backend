@@ -90,9 +90,10 @@ class PricesTest extends TestCase
     public function it_responds_with_validation_error_when_user_provided_time_when_organization_is_closed(): void
     {
         $organization = $this->createOrganization();
+
         $this->performTestWhenOrganizationIsClosed(
             'get',
-            route('organizations.price', $this->organization),
+            route('organizations.price', $organization),
             $organization,
         );
     }
@@ -103,9 +104,10 @@ class PricesTest extends TestCase
     public function it_responds_with_validation_error_when_user_provided_incorrect_rehearsal_duration(): void
     {
         $organization = $this->createOrganization();
+
         $this->performTestsWhenUserProvidedIncorrectRehearsalDuration(
             'get',
-            route('organizations.price', $this->organization),
+            route('organizations.price', $organization),
             $organization
         );
     }
@@ -119,7 +121,7 @@ class PricesTest extends TestCase
 
         $this->performTestsWhenUserProvidesRehearsalTimeLongerThan24Hours(
             'get',
-            route('organizations.price', $this->organization),
+            route('organizations.price', $organization),
             $organization,
         );
     }
@@ -131,7 +133,7 @@ class PricesTest extends TestCase
 
         $this->performTestsWhenUserSelectedUnavailableTime(
             'get',
-            route('organizations.price', $this->organization),
+            route('organizations.price', $organization),
             $organization,
         );
     }

@@ -75,125 +75,71 @@ class RehearsalPrice
      */
     public function __invoke(): float
     {
-        $dayOfWeekStart = $this->start->dayOfWeek;
-        $dayOfWeekEnd = $this->end->dayOfWeek;
-
-        if ($dayOfWeekEnd === $dayOfWeekStart) {
-            $result = $this->calculatePriceForSingleDay($dayOfWeekStart, $this->start, $this->end);
-
-            if ($this->uncalculatedMinutes !== 0) {
-                throw new PriceCalculationException();
-            }
-
-            return $result;
-        }
-
-        $priceAtFirstDay = $this->calculatePriceForSingleDay(
-            $dayOfWeekStart,
-            $this->start,
-            $this->start->copy()->hours(23)->minute(59)
-        );
-        $priceAtLastDay = $this->calculatePriceForSingleDay(
-            $dayOfWeekEnd,
-            $this->end->copy()->hours(0)->minute(0),
-            $this->end
-        );
+        $price = $this->isRehearsalDuringOneDay() ?
+            $this->calculatePriceForSingleDay($this->start->dayOfWeek, $this->start, $this->end) :
+            $this->calculatePriceForTwoDays();
 
         if ($this->uncalculatedMinutes !== 0) {
             throw new PriceCalculationException();
         }
 
-        return $priceAtFirstDay + $priceAtLastDay;
+        return $price;
     }
 
     /**
      * @param  int  $day
      * @param  Carbon  $start
      * @param  Carbon  $end
-     * @return float|int
+     * @return float
      * @throws PriceCalculationException
      */
-    private function calculatePriceForSingleDay(int $day, Carbon $start, Carbon $end)
+    private function calculatePriceForSingleDay(int $day, Carbon $start, Carbon $end): float
     {
-        $matchingPrices = $this->getMatchingPricesForPeriod(
-            $day,
-            $start->toTimeString(),
-            $end->toTimeString()
-        );
+        $matchingPrices = $this->getMatchingPricesForPeriod($day, $start, $end);
 
-        if ($matchingPrices->count() === 1) {
-            return $this->calculatePriceForPeriod(
-                $start->toTimeString(),
-                $end->toTimeString(),
-                $matchingPrices->first()
-            );
-        }
-
-        $result = 0;
-
-        foreach ($matchingPrices as $index => $price) {
-            if ($index === 0) {
-                $result += $this->calculatePriceForPeriod(
-                    $start->toTimeString(),
-                    $price->time->to(),
-                    $price
-                );
-            } elseif ($index === $matchingPrices->count() - 1) {
-                $result += $this->calculatePriceForPeriod(
-                    $price->time->from(),
-                    $end->toTimeString(),
-                    $price
-                );
-            } else {
-                $result += $this->calculatePriceForPeriod(
-                    $price->time->from(),
-                    $price->time->to(),
-                    $price
-                );
-            }
-        }
-
-        return $result;
+        return $matchingPrices->reduce(
+            fn(
+                float $result,
+                OrganizationPrice $price
+            ) => $result + $this->calculatePriceForPeriod($price->time->from(), $price->time->to(), $price->price),
+            0);
     }
 
     /**
      * @param  int  $day
-     * @param $timeStart
-     * @param $timeEnd
+     * @param  Carbon  $timeStart
+     * @param  Carbon  $timeEnd
      * @return OrganizationPrice[]|Collection
+     * @throws PriceCalculationException
      */
-    private function getMatchingPricesForPeriod(int $day, $timeStart, $timeEnd): Collection
+    private function getMatchingPricesForPeriod(int $day, Carbon $timeStart, Carbon $timeEnd): Collection
     {
-        return OrganizationPrice::where('organization_id', $this->organizationId)
+        $matchingPrices = OrganizationPrice::where('organization_id', $this->organizationId)
             ->where('day', $day)
             ->whereRaw('time && ?::timerange', [new TimeRange($timeStart, $timeEnd)])
             ->orderBy('time')
             ->get();
+
+        return $this->setPricesBoundaries($matchingPrices, $timeStart, $timeEnd);
     }
 
     /**
-     * @param  string  $timeStart
-     * @param  string  $timeEnd
-     * @param  OrganizationPrice  $price  cost of one hour of rehearsal
-     * @return float|int
-     * @throws PriceCalculationException
+     * @param  string  $from
+     * @param  string  $to
+     * @param  int  $price  cost of one hour of rehearsal
+     * @return float
      */
-    private function calculatePriceForPeriod(string $timeStart, string $timeEnd, OrganizationPrice $price)
+    private function calculatePriceForPeriod(string $from, string $to, int $price): float
     {
-        if ($timeStart < $price->time->from() || $timeEnd > $price->time->to()) {
-            throw new PriceCalculationException();
-        }
-        $periodStart = Carbon::createFromTimeString($timeStart);
-        $periodEnd = Carbon::createFromTimeString($timeEnd);
-        $delta = $periodEnd->diffInMinutes($periodStart);
+        $periodStart = Carbon::createFromTimeString($from);
+        $periodEnd = Carbon::createFromTimeString($to);
 
-        if ($this->isEndOfTheDay($periodEnd)) {
-            $delta++;
-        }
+        $delta = $periodEnd->diffInMinutes($periodStart);
+        $delta = $this->isEndOfTheDay($periodEnd) ? $delta + 1 : $delta;
 
         $this->uncalculatedMinutes -= $delta;
 
-        return $delta * $price->price / 60;
+        return $delta * $price / 60;
     }
 
     /**
@@ -203,5 +149,70 @@ class RehearsalPrice
     private function isEndOfTheDay(Carbon $time): bool
     {
         return $time->hour === 23 && $time->minute === 59;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isRehearsalDuringOneDay(): bool
+    {
+        return $this->start->dayOfWeek === $this->end->dayOfWeek;
+    }
+
+    /**
+     * @param  Collection  $matchingPrices
+     * @param  Carbon  $timeStart
+     * @param  Carbon  $timeEnd
+     * @return Collection
+     * @throws PriceCalculationException
+     */
+    private function setPricesBoundaries(Collection $matchingPrices, Carbon $timeStart, Carbon $timeEnd): Collection
+    {
+        if ($matchingPrices->isEmpty()) {
+            return $matchingPrices;
+        }
+
+        $this->checkBoundaries($matchingPrices, $timeStart, $timeEnd);
+
+        $matchingPrices->first()->time = new TimeRange($timeStart, $matchingPrices->first()->time->to());
+        $matchingPrices->last()->time = new TimeRange($matchingPrices->last()->time->from(), $timeEnd);
+
+        return $matchingPrices;
+    }
+
+    /**
+     * @return float
+     * @throws PriceCalculationException
+     */
+    private function calculatePriceForTwoDays(): float
+    {
+        $priceAtFirstDay = $this->calculatePriceForSingleDay(
+            $this->start->dayOfWeek,
+            $this->start,
+            $this->start->copy()->hours(23)->minute(59)
+        );
+
+        $priceAtLastDay = $this->calculatePriceForSingleDay(
+            $this->end->dayOfWeek,
+            $this->end->copy()->hours(0)->minute(0),
+            $this->end
+        );
+
+        return $priceAtFirstDay + $priceAtLastDay;
+    }
+
+    /**
+     * @param  Carbon  $timeStart
+     * @param  Collection  $matchingPrices
+     * @param  Carbon  $timeEnd
+     * @throws PriceCalculationException
+     */
+    private function checkBoundaries(Collection $matchingPrices, Carbon $timeStart, Carbon $timeEnd): void
+    {
+        if ($timeStart->toTimeString() < $matchingPrices->first()->time->from() ||
+            $timeEnd->toTimeString() > $matchingPrices->last()->time->to()
+        ) {
+            throw new PriceCalculationException();
+        }
     }
 }

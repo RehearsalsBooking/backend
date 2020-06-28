@@ -112,7 +112,7 @@ class Organization extends Model
     public function isTimeAvailable($startsAt, $endsAt, Rehearsal $rehearsal = null): bool
     {
         $query = $this->rehearsals()
-            ->whereRaw('time && ?::tsrange', [(new TimestampRange($startsAt, $endsAt))]);
+            ->whereRaw('time && ?::tsrange', [new TimestampRange($startsAt, $endsAt)]);
 
         // if rehearsal was passed as a parameter, then we want to determine if this rehearsal
         // is available for reschedule, so we must exclude it from query
