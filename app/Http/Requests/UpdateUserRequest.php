@@ -15,7 +15,7 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'public_email' => 'sometimes|email'
+            'public_email' => 'sometimes|email',
         ];
     }
 

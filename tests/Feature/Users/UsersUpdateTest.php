@@ -20,7 +20,7 @@ class UsersUpdateTest extends TestCase
             'name' => 'new name',
             'public_email' => 'new@mail.com',
             'phone' => 'new phone',
-            'link' => 'new link'
+            'link' => 'new link',
         ];
 
         $this->actingAs($this->user);
@@ -60,16 +60,16 @@ class UsersUpdateTest extends TestCase
         return [
             [
                 [
-                    'public_email' => 'some@email.com'
+                    'public_email' => 'some@email.com',
                 ],
-                'name'
+                'name',
             ],
             [
                 [
                     'name' => 'new name',
-                    'public_email' => 'incorrect mail'
+                    'public_email' => 'incorrect mail',
                 ],
-                'public_email'
+                'public_email',
             ],
         ];
     }
