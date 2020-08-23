@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Belamov\PostgresRange\Ranges\TimestampRange;
+use DB;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Carbon;
 
 /**
@@ -82,7 +84,7 @@ class Band extends Model
     }
 
     /**
-     * @param User|int $user
+     * @param  User|int  $user
      * @return Invite
      */
     public function invite($user): Invite
@@ -96,7 +98,7 @@ class Band extends Model
     }
 
     /**
-     * @param int $userId
+     * @param  int  $userId
      */
     public function addMember(int $userId): void
     {
@@ -113,7 +115,7 @@ class Band extends Model
     }
 
     /**
-     * @param int $userId
+     * @param  int  $userId
      */
     private function addUserToFutureRehearsals(int $userId): void
     {
@@ -123,7 +125,7 @@ class Band extends Model
     }
 
     /**
-     * @param int $memberId
+     * @param  int  $memberId
      */
     public function removeMember(int $memberId): void
     {
@@ -132,13 +134,20 @@ class Band extends Model
     }
 
     /**
-     * @param int $memberId
+     * @param  int  $memberId
      */
     private function removeUserFromFutureRehearsals(int $memberId): void
     {
-        $this->futureRehearsals->each(static function (Rehearsal $futureRehearsal) use ($memberId) {
-            $futureRehearsal->attendees()->detach($memberId);
-        });
+        DB::table('rehearsal_user')
+            ->where('rehearsal_user.user_id', $memberId)
+            ->join('rehearsals', function (JoinClause $join) {
+                $join->on('rehearsals.id', '=', 'rehearsal_user.rehearsal_id')
+                    ->whereRaw('time && ?', [
+                        new TimestampRange(Carbon::now(), null),
+                    ])
+                    ->where('band_id', $this->id);
+            })
+            ->delete();
     }
 
     public function cancelInvites(): void
@@ -158,7 +167,7 @@ class Band extends Model
     }
 
     /**
-     * @param int $memberId
+     * @param  int  $memberId
      * @return bool
      */
     public function hasMember(int $memberId): bool
