@@ -26,6 +26,7 @@ class BandsController extends Controller
         return DB::transaction(static function () use ($request) {
             $band = Band::create($request->getAttributes());
             $band->members()->attach(auth()->id());
+
             return new BandResource($band);
         });
     }
