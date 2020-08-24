@@ -59,7 +59,7 @@ class OrganizationBansController extends Controller
     {
         $this->authorize('manage', $organization);
 
-        if (!$ban->byOrganization($organization)) {
+        if (! $ban->byOrganization($organization)) {
             return response()->json(null, Response::HTTP_FORBIDDEN);
         }
 
