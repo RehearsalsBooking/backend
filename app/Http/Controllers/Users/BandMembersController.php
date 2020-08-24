@@ -7,14 +7,16 @@ use App\Models\Band;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Throwable;
 
 class BandMembersController extends Controller
 {
     /**
-     * @param Band $band
-     * @param int $memberId
+     * @param  Band  $band
+     * @param  int  $memberId
      * @return JsonResponse
      * @throws AuthorizationException
+     * @throws Throwable
      */
     public function delete(Band $band, int $memberId): JsonResponse
     {

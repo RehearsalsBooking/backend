@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Carbon;
+use Throwable;
 
 /**
  * App\Models\Band.
@@ -99,11 +100,14 @@ class Band extends Model
 
     /**
      * @param  int  $userId
+     * @throws Throwable
      */
     public function addMember(int $userId): void
     {
-        $this->members()->attach($userId);
-        $this->addUserToFutureRehearsals($userId);
+        DB::transaction(function () use ($userId) {
+            $this->members()->attach($userId);
+            $this->addUserToFutureRehearsals($userId);
+        });
     }
 
     /**
@@ -119,6 +123,7 @@ class Band extends Model
      */
     private function addUserToFutureRehearsals(int $userId): void
     {
+        //TODO: optimize query
         $this->futureRehearsals->each(static function (Rehearsal $futureRehearsal) use ($userId) {
             $futureRehearsal->attendees()->attach($userId);
         });
@@ -126,11 +131,14 @@ class Band extends Model
 
     /**
      * @param  int  $memberId
+     * @throws Throwable
      */
     public function removeMember(int $memberId): void
     {
-        $this->removeUserFromFutureRehearsals($memberId);
-        $this->members()->detach([$memberId]);
+        DB::transaction(function () use ($memberId) {
+            $this->removeUserFromFutureRehearsals($memberId);
+            $this->members()->detach([$memberId]);
+        });
     }
 
     /**

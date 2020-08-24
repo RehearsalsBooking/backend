@@ -7,33 +7,37 @@ use App\Http\Requests\Management\BanUserRequest;
 use App\Http\Resources\Management\OrganizationUserBanResource;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationUserBan;
+use DB;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Throwable;
 
 class OrganizationBansController extends Controller
 {
     /**
-     * @param BanUserRequest $request
-     * @param Organization $organization
+     * @param  BanUserRequest  $request
+     * @param  Organization  $organization
      * @return JsonResponse
      * @throws AuthorizationException
+     * @throws Throwable
      */
     public function create(BanUserRequest $request, Organization $organization): JsonResponse
     {
         $this->authorize('manage', $organization);
 
-        OrganizationUserBan::create($request->organizationUserBan());
-
-        $organization->deleteRehearsalsForUserInFuture($request->bannedUserId());
+        DB::transaction(static function () use ($organization, $request) {
+            OrganizationUserBan::create($request->organizationUserBan());
+            $organization->deleteRehearsalsForUserInFuture($request->bannedUserId());
+        });
 
         return response()->json('user successfully banned', Response::HTTP_CREATED);
     }
 
     /**
-     * @param Organization $organization
+     * @param  Organization  $organization
      * @return AnonymousResourceCollection
      * @throws AuthorizationException
      */
@@ -45,8 +49,8 @@ class OrganizationBansController extends Controller
     }
 
     /**
-     * @param Organization $organization
-     * @param OrganizationUserBan $ban
+     * @param  Organization  $organization
+     * @param  OrganizationUserBan  $ban
      * @return JsonResponse
      * @throws AuthorizationException
      * @throws Exception
@@ -55,7 +59,7 @@ class OrganizationBansController extends Controller
     {
         $this->authorize('manage', $organization);
 
-        if (! $ban->byOrganization($organization)) {
+        if (!$ban->byOrganization($organization)) {
             return response()->json(null, Response::HTTP_FORBIDDEN);
         }
 

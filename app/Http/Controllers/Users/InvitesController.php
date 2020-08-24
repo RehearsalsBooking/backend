@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Throwable;
 
 class InvitesController extends Controller
 {
@@ -39,9 +40,10 @@ class InvitesController extends Controller
     }
 
     /**
-     * @param Invite $invite
+     * @param  Invite  $invite
      * @return JsonResponse
      * @throws Exception
+     * @throws Throwable
      */
     public function accept(Invite $invite): JsonResponse
     {

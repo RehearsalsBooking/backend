@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use DB;
 use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Carbon;
+use Throwable;
 
 /**
  * App\Models\Invite.
@@ -45,12 +47,14 @@ class Invite extends Pivot
      * Adds invited user to band's members.
      *
      * @throws Exception
+     * @throws Throwable
      */
     public function accept(): void
     {
-        $this->band->addMember($this->user_id);
-
-        $this->delete();
+        DB::transaction(function () {
+            $this->band->addMember($this->user_id);
+            $this->delete();
+        });
     }
 
     /**
