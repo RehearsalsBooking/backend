@@ -1,19 +1,21 @@
 <?php
 
-/** @var Factory $factory */
+namespace Database\Factories;
 
 use App\Models\Band;
 use App\Models\Invite;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Invite::class, static function () {
-    return [
-        'user_id' => static function () {
-            return factory(User::class)->create()->id;
-        },
-        'band_id' => static function () {
-            return factory(Band::class)->create()->id;
-        },
-    ];
-});
+class InviteFactory extends Factory
+{
+    protected $model = Invite::class;
+
+    public function definition(): array
+    {
+        return [
+            'user_id' => User::factory(),
+            'band_id' => Band::factory(),
+        ];
+    }
+}

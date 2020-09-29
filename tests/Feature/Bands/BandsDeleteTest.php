@@ -23,8 +23,8 @@ class BandsDeleteTest extends TestCase
     {
         parent::setUp();
 
-        $this->bandOwner = factory(User::class)->create();
-        $this->band = factory(Band::class)->create([
+        $this->bandOwner = $this->createUser();
+        $this->band = $this->createBand([
             'admin_id' => $this->bandOwner->id,
         ]);
     }

@@ -16,7 +16,7 @@ class OrganizationsTest extends TestCase
     public function users_can_view_organizations(): void
     {
         $numberOfOrganizations = 5;
-        factory(Organization::class, $numberOfOrganizations)->create();
+        $this->createOrganizations($numberOfOrganizations);
 
         $this->assertCount($numberOfOrganizations, Organization::all());
 
@@ -47,11 +47,11 @@ class OrganizationsTest extends TestCase
         $numberOfActiveOrganizations = 3;
         $numberOfInactiveOrganizations = 2;
 
-        $activeOrganizations = factory(Organization::class, $numberOfActiveOrganizations)->create([
+        $activeOrganizations = $this->createOrganizations($numberOfActiveOrganizations, [
             'is_active' => true,
         ]);
 
-        factory(Organization::class, $numberOfInactiveOrganizations)->create([
+        $this->createOrganizations($numberOfInactiveOrganizations, [
             'is_active' => false,
         ]);
 

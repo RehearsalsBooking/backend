@@ -17,7 +17,7 @@ class RehearsalsTest extends TestCase
     /** @test */
     public function user_can_fetch_rehearsals(): void
     {
-        $rehearsals = factory(Rehearsal::class, 5)->create();
+        $rehearsals = Rehearsal::factory()->count(5)->create();
 
         $this->assertEquals(5, Rehearsal::count());
 

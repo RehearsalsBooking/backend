@@ -20,7 +20,7 @@ class RehearsalsTest extends TestCase
     {
         $organization = $this->createOrganization();
 
-        $rehearsal = factory(Rehearsal::class)->create(['organization_id' => $organization->id]);
+        $rehearsal = Rehearsal::factory()->create(['organization_id' => $organization->id]);
 
         $this->assertInstanceOf(Organization::class, $rehearsal->organization);
     }
@@ -29,7 +29,7 @@ class RehearsalsTest extends TestCase
     public function rehearsal_has_user_who_booked_this_rehearsal(): void
     {
         $user = $this->createUser();
-        $rehearsal = factory(Rehearsal::class)->create(['user_id' => $user->id]);
+        $rehearsal = Rehearsal::factory()->create(['user_id' => $user->id]);
 
         $this->assertInstanceOf(User::class, $rehearsal->user);
     }
@@ -57,9 +57,9 @@ class RehearsalsTest extends TestCase
     public function rehearsal_has_many_attendees(): void
     {
         Event::fake();
-        $rehearsal = factory(Rehearsal::class)->create();
+        $rehearsal = Rehearsal::factory()->create();
         $attendeesCount = 5;
-        $attendees = factory(User::class, $attendeesCount)->create()->each(static function ($attendee) use ($rehearsal
+        $attendees = User::factory()->count($attendeesCount)->create()->each(static function ($attendee) use ($rehearsal
         ) {
             DB::table('rehearsal_user')
                 ->insert([

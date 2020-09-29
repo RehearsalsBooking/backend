@@ -18,7 +18,7 @@ class OrganizationsFiltrationTest extends TestCase
         $organizationsNamesWithFoo = ['foo', 'foobar', 'barfoo', 'xfoobarx'];
 
         foreach ($organizationsNames as $organizationName) {
-            factory(Organization::class)->create(['name' => $organizationName]);
+            $this->createOrganization(['name' => $organizationName]);
         }
 
         $this->assertEquals(count($organizationsNames), Organization::count());

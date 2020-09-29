@@ -4,8 +4,10 @@ namespace App\Models\Organization;
 
 use Belamov\PostgresRange\Casts\TimeRangeCast;
 use Belamov\PostgresRange\Ranges\TimeRange;
+use Database\Factories\OrganizationPriceFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -34,6 +36,13 @@ use Illuminate\Support\Carbon;
  */
 class OrganizationPrice extends Model
 {
+    use HasFactory;
+
+    protected static function newFactory()
+    {
+        return OrganizationPriceFactory::new();
+    }
+
     protected $guarded = ['id'];
 
     protected $casts = [

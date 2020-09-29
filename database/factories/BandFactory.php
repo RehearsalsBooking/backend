@@ -1,17 +1,20 @@
 <?php
 
-/** @var Factory $factory */
+namespace Database\Factories;
 
 use App\Models\Band;
 use App\Models\User;
-use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Band::class, static function (Faker $faker) {
-    return [
-        'name' => implode(' ', $faker->words(2)),
-        'admin_id' => static function () {
-            return factory(User::class)->create()->id;
-        },
-    ];
-});
+class BandFactory extends Factory
+{
+    protected $model = Band::class;
+
+    public function definition(): array
+    {
+        return [
+            'name' => implode(' ', $this->faker->words(2)),
+            'admin_id' => User::factory(),
+        ];
+    }
+}

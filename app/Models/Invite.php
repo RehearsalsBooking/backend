@@ -6,6 +6,7 @@ use DB;
 use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Carbon;
@@ -32,6 +33,8 @@ use Throwable;
  */
 class Invite extends Pivot
 {
+    use HasFactory;
+
     public $incrementing = true;
     protected $table = 'band_user_invites';
 

@@ -3,8 +3,8 @@
 namespace Tests\Feature\Management\Organizations;
 
 use Carbon\CarbonImmutable;
+use Database\Seeders\RehearsalsForStatisticsSeeder;
 use Illuminate\Http\Response;
-use RehearsalsForStatisticsSeeder;
 use Tests\Feature\Management\ManagementTestCase;
 
 class OrganizationStatisticsTest extends ManagementTestCase

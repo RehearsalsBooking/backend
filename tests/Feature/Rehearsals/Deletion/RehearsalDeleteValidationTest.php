@@ -11,6 +11,7 @@ use Tests\TestCase;
 
 /**
  * Class RehearsalDeleteValidationTest.
+ *
  * @property $user User
  */
 class RehearsalDeleteValidationTest extends TestCase
@@ -31,7 +32,7 @@ class RehearsalDeleteValidationTest extends TestCase
     /** @test */
     public function user_cannot_delete_rehearsal_that_already_began(): void
     {
-        $rehearsal = factory(Rehearsal::class)->create([
+        $rehearsal = Rehearsal::factory()->create([
             'user_id' => $this->user->id,
             'time' => $this->getTimestampRange(Carbon::now()->subHour(), Carbon::now()->addHour()),
         ]);
@@ -46,7 +47,7 @@ class RehearsalDeleteValidationTest extends TestCase
     /** @test */
     public function user_cannot_delete_rehearsal_that_already_finished(): void
     {
-        $rehearsal = factory(Rehearsal::class)->create([
+        $rehearsal = Rehearsal::factory()->create([
             'user_id' => $this->user->id,
             'time' => $this->getTimestampRange(Carbon::now()->subHours(3), Carbon::now()->subHours(2)),
         ]);

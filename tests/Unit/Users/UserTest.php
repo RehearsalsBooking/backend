@@ -34,7 +34,7 @@ class UserTest extends TestCase
 
         $numberOfUsersBands = 5;
 
-        $usersBands = factory(Band::class, $numberOfUsersBands)->create([
+        $usersBands = Band::factory()->count($numberOfUsersBands)->create([
             'admin_id' => $user->id,
         ]);
 
@@ -52,13 +52,13 @@ class UserTest extends TestCase
         $guitarist = $this->createUser();
 
         /** @var Band $rockBand */
-        $rockBand = factory(Band::class)->create();
+        $rockBand = $this->createBand();
 
         /** @var Band $rapBand */
-        $rapBand = factory(Band::class)->create();
+        $rapBand = $this->createBand();
 
         /** @var Band $rapBand */
-        $popBand = factory(Band::class)->create();
+        $popBand = $this->createBand();
 
         $drummersBands = collect([$rockBand, $rapBand, $popBand]);
         $guitaristsBands = collect([$rockBand, $popBand]);
@@ -84,7 +84,7 @@ class UserTest extends TestCase
 
         $attendingRehearsalsCount = 5;
 
-        $rehearsals = factory(Rehearsal::class, $attendingRehearsalsCount)
+        $rehearsals = Rehearsal::factory()->count($attendingRehearsalsCount)
             ->create()
             ->each(static function ($rehearsal) use ($user) {
                 DB::table('rehearsal_user')
@@ -105,7 +105,7 @@ class UserTest extends TestCase
         $user = $this->createUser();
 
         $bandsThatInvitedUserCount = 3;
-        $bandsThatInvitedUser = factory(Band::class, $bandsThatInvitedUserCount)->create();
+        $bandsThatInvitedUser = Band::factory()->count($bandsThatInvitedUserCount)->create();
 
         $bandsThatInvitedUser->each(static function (Band $band) use ($user) {
             $band->invite($user);

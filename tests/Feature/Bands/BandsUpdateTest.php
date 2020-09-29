@@ -11,6 +11,7 @@ use Tests\TestCase;
 
 /**
  * Class BandsUpdateTest.
+ *
  * @property Band $band
  * @property User $bandOwner
  */
@@ -25,10 +26,8 @@ class BandsUpdateTest extends TestCase
     {
         parent::setUp();
 
-        $this->bandOwner = factory(User::class)->create();
-        $this->band = factory(Band::class)->create([
-            'admin_id' => $this->bandOwner->id,
-        ]);
+        $this->bandOwner = $this->createUser();
+        $this->band = $this->createBandForUser($this->bandOwner);
     }
 
     /** @test */

@@ -44,7 +44,7 @@ class OrganizationTest extends TestCase
     public function organization_has_prices(): void
     {
         foreach (range(0, 6) as $dayOfWeek) {
-            factory(OrganizationPrice::class)->create([
+            OrganizationPrice::factory()->create([
                 'organization_id' => $this->organization->id,
                 'day' => $dayOfWeek,
             ]);

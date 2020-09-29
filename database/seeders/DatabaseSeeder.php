@@ -2,6 +2,8 @@
 
 /** @noinspection PhpUnusedLocalVariableInspection */
 
+namespace Database\Seeders;
+
 use App\Models\Band;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationPrice;
@@ -71,12 +73,12 @@ class DatabaseSeeder extends Seeder
      */
     protected function createAdmins(int $count): \Illuminate\Support\Collection
     {
-        return factory(User::class, $count)->create()->push($this->createUserToLoginWith());
+        return User::factory()->count($count)->create()->push($this->createUserToLoginWith());
     }
 
     private function createUserToLoginWith(): User
     {
-        return factory(User::class)->create([
+        return User::factory()->create([
             'email' => 'belamov@belamov.com',
             'password' => bcrypt('password'),
         ]);
@@ -90,7 +92,7 @@ class DatabaseSeeder extends Seeder
     {
         $organizations = [];
         foreach (range(1, $count) as $_) {
-            $organizations[] = factory(Organization::class)->create(
+            $organizations[] = Organization::factory()->create(
                 [
                     'owner_id' => $this->admins->random()->id,
                 ]
@@ -106,14 +108,14 @@ class DatabaseSeeder extends Seeder
      */
     protected function createUsers(int $count): \Illuminate\Support\Collection
     {
-        return factory(User::class, $count)->create();
+        return User::factory()->count($count)->create();
     }
 
     protected function createPricesAndBansForOrganizations(): void
     {
         foreach (range(0, 6) as $dayOfWeek) {
             foreach ($this->organizations as $organization) {
-                factory(OrganizationPrice::class)->create(
+                OrganizationPrice::factory()->create(
                     [
                         'organization_id' => $organization->id,
                         'day' => $dayOfWeek,
@@ -121,7 +123,7 @@ class DatabaseSeeder extends Seeder
                         'price' => 200,
                     ]
                 );
-                factory(OrganizationPrice::class)->create(
+                OrganizationPrice::factory()->create(
                     [
                         'organization_id' => $organization->id,
                         'day' => $dayOfWeek,
@@ -152,7 +154,7 @@ class DatabaseSeeder extends Seeder
     {
         foreach (range(1, $count) as $_) {
             try {
-                $individualRehearsal = factory(Rehearsal::class)->create(
+                $individualRehearsal = Rehearsal::factory()->create(
                     [
                         'user_id' => $this->users->random()->id,
                         'organization_id' => $this->organizations->random()->id,
@@ -175,7 +177,7 @@ class DatabaseSeeder extends Seeder
      */
     protected function createBands(int $count)
     {
-        return factory(Band::class, $count)->create();
+        return Band::factory()->count($count)->create();
     }
 
     private function addMembersToBands(): void
@@ -206,7 +208,7 @@ class DatabaseSeeder extends Seeder
         $this->bands->each(function ($band) use ($count) {
             foreach (range(1, $count) as $_) {
                 try {
-                    factory(Rehearsal::class)->create([
+                    Rehearsal::factory()->create([
                         'organization_id' => $this->organizations->random()->id,
                         'user_id' => $band->admin_id,
                         'band_id' => $band->id,

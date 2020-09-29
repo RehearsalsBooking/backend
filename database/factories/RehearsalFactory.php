@@ -1,41 +1,45 @@
 <?php
 
-/** @var Factory $factory */
+namespace Database\Factories;
 
 use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
-use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Rehearsal::class, static function (Faker $faker) {
-    $startsAt = Carbon::create(
-        2020,
-        $faker->numberBetween(1, 12),
-        $faker->numberBetween(1, 20),
-        $faker->numberBetween(8, 20),
-        0,
-        0
-    );
+class RehearsalFactory extends Factory
+{
+    protected $model = Rehearsal::class;
 
-    $endsAt = $startsAt->copy()->addHours(2);
+    public function definition(): array
+    {
+        return [
+            'organization_id' => Organization::factory(),
+            'user_id' => User::factory(),
+            'is_confirmed' => true,
+            'time' => $this->getRehearsalTime(),
+            'price' => $this->faker->randomNumber(3),
+        ];
+    }
 
-    return [
-        'organization_id' => static function () {
-            return factory(Organization::class)->create()->id;
-        },
+    /**
+     * @return TimestampRange
+     */
+    private function getRehearsalTime(): TimestampRange
+    {
+        $startsAt = Carbon::create(
+            2020,
+            $this->faker->numberBetween(1, 12),
+            $this->faker->numberBetween(1, 20),
+            $this->faker->numberBetween(8, 20),
+            0,
+            0
+        );
 
-        'user_id' => static function () {
-            return factory(User::class)->create()->id;
-        },
+        $endsAt = $startsAt->copy()->addHours(2);
 
-        'is_confirmed' => true,
-        'time' => new TimestampRange(
-            $startsAt->toDateTimeString(),
-            $endsAt->toDateTimeString(),
-        ),
-        'price' => $faker->randomNumber(3),
-    ];
-});
+        return new TimestampRange($startsAt, $endsAt,);
+    }
+}

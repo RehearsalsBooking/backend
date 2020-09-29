@@ -64,7 +64,7 @@ class BandsTest extends TestCase
 
         $bandRehearsalsCount = 5;
 
-        $bandRehearsals = factory(Rehearsal::class, $bandRehearsalsCount)->create([
+        $bandRehearsals = Rehearsal::factory()->count($bandRehearsalsCount)->create([
             'band_id' => $band->id,
         ]);
 

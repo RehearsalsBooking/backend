@@ -172,21 +172,21 @@ trait ValidatesRehearsalTime
         $this->createPricesForOrganization($otherOrganization, '06:00', '16:00');
         $this->createPricesForOrganization($otherOrganization, '16:00', '22:00');
 
-        factory(Rehearsal::class)->create([
+        Rehearsal::factory()->create([
             'time' => $this->getTimestampRange(
                 $this->getDateTimeAt(9, 0),
                 $this->getDateTimeAt(11, 0),
             ),
             'organization_id' => $organization->id,
         ]);
-        factory(Rehearsal::class)->create([
+        Rehearsal::factory()->create([
             'time' => $this->getTimestampRange(
                 $this->getDateTimeAt(12, 0),
                 $this->getDateTimeAt(15, 0)
             ),
             'organization_id' => $organization->id,
         ]);
-        factory(Rehearsal::class)->create([
+        Rehearsal::factory()->create([
             'time' => $this->getTimestampRange(
                 $this->getDateTimeAt(11, 0),
                 $this->getDateTimeAt(12, 0)

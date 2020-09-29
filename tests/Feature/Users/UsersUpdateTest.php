@@ -78,6 +78,6 @@ class UsersUpdateTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = $this->createUser();
     }
 }

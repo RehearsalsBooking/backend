@@ -7,6 +7,7 @@ use DB;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -53,6 +54,7 @@ use Throwable;
 class Band extends Model
 {
     use SoftDeletes;
+    use HasFactory;
 
     protected $guarded = [
         'id',

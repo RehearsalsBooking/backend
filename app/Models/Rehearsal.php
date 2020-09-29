@@ -9,6 +9,7 @@ use Belamov\PostgresRange\Ranges\TimestampRange;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -51,6 +52,7 @@ use Illuminate\Support\Carbon;
 class Rehearsal extends Model
 {
     use Filterable;
+    use HasFactory;
 
     protected $guarded = ['id'];
 

@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use App\Models\User;
@@ -10,7 +12,7 @@ use Illuminate\Database\Seeder;
 class RehearsalsForStatisticsSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeders.
      *
      * @param  Organization  $organization
      * @param  CarbonInterface  $date
@@ -30,13 +32,13 @@ class RehearsalsForStatisticsSeeder extends Seeder
         int $price,
         int $perDay
     ): void {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         for ($i = 0; $i < $years; $i++) {
             for ($j = 0; $j < $months; $j++) {
                 for ($k = 0; $k < $days; $k++) {
                     for ($l = 0; $l < $perDay; $l++) {
-                        factory(Rehearsal::class)->create([
+                        Rehearsal::factory()->create([
                             'organization_id' => $organization->id,
                             'user_id' => $user->id,
                             'price' => $price,

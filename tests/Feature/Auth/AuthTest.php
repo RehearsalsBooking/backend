@@ -23,7 +23,7 @@ class AuthTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create([
+        $this->user = $this->createUser([
             'password' => bcrypt($this->credentials['password']),
             'email' => $this->credentials['email'],
         ]);
