@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateUserRequest;
-use App\Http\Resources\Users\OwnerResource;
+use App\Http\Resources\Users\UserResource;
 use App\Models\User;
 
 class UsersController extends Controller
@@ -12,9 +12,9 @@ class UsersController extends Controller
     {
         $user = tap(
             auth()->user(),
-            fn (User $user) => $user->update($request->getUserAttributes())
+            static fn(User $user) => $user->update($request->getUserAttributes())
         );
 
-        return response()->json(new OwnerResource($user->fresh()));
+        return response()->json(new UserResource($user->fresh()));
     }
 }

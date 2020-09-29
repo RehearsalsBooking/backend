@@ -25,7 +25,11 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'avatar' => $this->avatar,
-            'bands' => BandForUserResource::collection($this->bands),
+            'contacts' => [
+                'public_email' => $this->public_email,
+                'phone' => $this->phone,
+                'link' => $this->link,
+            ],
         ];
     }
 }

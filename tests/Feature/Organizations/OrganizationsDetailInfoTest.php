@@ -4,7 +4,7 @@ namespace Tests\Feature\Organizations;
 
 use App\Http\Resources\OrganizationPriceResource;
 use App\Http\Resources\Users\OrganizationDetailResource;
-use App\Http\Resources\Users\OwnerResource;
+use App\Http\Resources\Users\UserResource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -70,7 +70,7 @@ class OrganizationsDetailInfoTest extends TestCase
 
         $this->assertArrayHasKey('owner', $response->json('data'));
         $this->assertEquals(
-            (new OwnerResource($owner))->response()->getData(true)['data'],
+            (new UserResource($owner))->response()->getData(true)['data'],
             $response->json('data.owner')
         );
     }
