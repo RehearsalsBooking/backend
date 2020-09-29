@@ -23,7 +23,7 @@ class BandsFilterRequest extends FilterRequest
     {
         $this->builder->whereHas(
             'members',
-            fn(Builder $query) => $query->where('user_id', $memberId)
+            fn (Builder $query) => $query->where('user_id', $memberId)
         );
     }
 }
