@@ -50,6 +50,10 @@ Route::name('rehearsals.')->prefix('rehearsals')->group(static function () {
 });
 
 Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static function () {
+    Route::get('/', [BandsController::class, 'index'])
+        ->name('list')
+        ->withoutMiddleware('auth:sanctum');
+
     Route::post('/', [BandsController::class, 'create'])
         ->name('create');
 

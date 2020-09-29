@@ -2,14 +2,14 @@
 
 namespace App\Http\Requests\Management;
 
-use App\Http\Requests\Filters\RehearsalFilterRequest;
+use App\Http\Requests\Filters\RehearsalsFilterRequest;
 use App\Models\Organization\Organization;
 
 /**
  * Class RehearsalsFilterRequest
  * {@inheritdoc}
  */
-class RehearsalsFilterManagementRequest extends RehearsalFilterRequest
+class RehearsalsFilterManagementRequest extends RehearsalsFilterRequest
 {
     /**
      * @return Organization|null

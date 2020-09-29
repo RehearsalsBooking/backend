@@ -5,7 +5,7 @@ namespace App\Http\Requests\Filters;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Illuminate\Database\Eloquent\Builder;
 
-abstract class RehearsalFilterRequest extends FilterRequest
+abstract class RehearsalsFilterRequest extends FilterRequest
 {
     /**
      * @return array

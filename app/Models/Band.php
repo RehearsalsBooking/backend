@@ -55,6 +55,7 @@ class Band extends Model
 {
     use SoftDeletes;
     use HasFactory;
+    use Filterable;
 
     protected $guarded = [
         'id',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Filters\BandsFilterRequest;
 use App\Http\Requests\Users\CreateBandRequest;
 use App\Http\Requests\Users\UpdateBandRequest;
 use App\Http\Resources\Users\BandResource;
@@ -11,11 +12,25 @@ use DB;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Throwable;
 
 class BandsController extends Controller
 {
+    /**
+     * @param  BandsFilterRequest  $filter
+     * @return AnonymousResourceCollection
+     */
+    public function index(BandsFilterRequest $filter): AnonymousResourceCollection
+    {
+        $bands = Band::with(['members', 'admin'])
+            ->filter($filter)
+            ->get();
+
+        return BandResource::collection($bands);
+    }
+
     /**
      * @param  CreateBandRequest  $request
      * @return BandResource

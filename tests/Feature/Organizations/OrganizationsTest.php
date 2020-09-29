@@ -69,7 +69,7 @@ class OrganizationsTest extends TestCase
         $this->assertCount($numberOfActiveOrganizations, $data);
         $this->assertEquals(
             OrganizationResource::collection($activeOrganizations->sortBy('id'))->toArray(null),
-            $data
+            collect($data)->sortBy('id')->toArray()
         );
     }
 

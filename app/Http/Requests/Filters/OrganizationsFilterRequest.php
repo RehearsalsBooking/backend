@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Requests\Users;
+namespace App\Http\Requests\Filters;
 
-use App\Http\Requests\Filters\FilterRequest;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Illuminate\Database\Eloquent\Builder;
 

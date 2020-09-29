@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Users;
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Filters\RehearsalsFilterClientRequest;
 use App\Http\Requests\Users\CreateRehearsalRequest;
-use App\Http\Requests\Users\RehearsalsFilterClientRequest;
 use App\Http\Requests\Users\RescheduleRehearsalRequest;
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
@@ -65,7 +65,7 @@ class RehearsalsController extends Controller
             return response()->json('Вы забанены в этой организации', Response::HTTP_FORBIDDEN);
         }
 
-        if (! $organization->isTimeAvailable(
+        if (!$organization->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
         )) {
@@ -89,7 +89,7 @@ class RehearsalsController extends Controller
      */
     public function reschedule(RescheduleRehearsalRequest $request, Rehearsal $rehearsal)
     {
-        if (! $rehearsal->organization->isTimeAvailable(
+        if (!$rehearsal->organization->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
             $rehearsal

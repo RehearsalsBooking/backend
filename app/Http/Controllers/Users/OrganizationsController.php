@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Users\OrganizationsFilterRequest;
+use App\Http\Requests\Filters\OrganizationsFilterRequest;
 use App\Http\Resources\Users\OrganizationDetailResource;
 use App\Http\Resources\Users\OrganizationResource;
 use App\Models\Organization\Organization;
