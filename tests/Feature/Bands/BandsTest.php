@@ -60,5 +60,4 @@ class BandsTest extends TestCase
         $response = $this->json('get', route('bands.list', ['member_id' => 'text']));
         $response->assertJsonValidationErrors('member_id');
     }
-
 }
