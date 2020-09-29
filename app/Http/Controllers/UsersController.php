@@ -12,7 +12,7 @@ class UsersController extends Controller
     {
         $user = tap(
             auth()->user(),
-            static fn(User $user) => $user->update($request->getUserAttributes())
+            static fn (User $user) => $user->update($request->getUserAttributes())
         );
 
         return response()->json(new UserResource($user->fresh()));
