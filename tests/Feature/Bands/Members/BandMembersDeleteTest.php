@@ -10,6 +10,7 @@ use Tests\TestCase;
 
 /**
  * Class BandsRegistrationTest.
+ *
  * @property User $bandAdmin
  * @property Band $band
  */
@@ -37,8 +38,8 @@ class BandMembersDeleteTest extends TestCase
 
         $this->actingAs($this->bandAdmin);
 
-        self::assertEquals($bandMembersCount, $this->band->members()->count());
-        self::assertEquals(
+        $this->assertEquals($bandMembersCount, $this->band->members()->count());
+        $this->assertEquals(
             $bandMembers->pluck('id')->toArray(),
             $this->band->members->pluck('id')->toArray()
         );
@@ -49,8 +50,8 @@ class BandMembersDeleteTest extends TestCase
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
 
-        self::assertEquals($bandMembersCount - 1, $this->band->members()->count());
-        self::assertNotContains(
+        $this->assertEquals($bandMembersCount - 1, $this->band->members()->count());
+        $this->assertNotContains(
             $userIdToRemoveFromBand,
             $this->band->fresh(['members'])->pluck('id')->toArray()
         );
@@ -63,8 +64,8 @@ class BandMembersDeleteTest extends TestCase
         $bandMembers = $this->createUsers($bandMembersCount);
         $this->band->members()->saveMany($bandMembers);
 
-        self::assertEquals($bandMembersCount, $this->band->members()->count());
-        self::assertEquals(
+        $this->assertEquals($bandMembersCount, $this->band->members()->count());
+        $this->assertEquals(
             $bandMembers->pluck('id')->toArray(),
             $this->band->members->pluck('id')->toArray()
         );
@@ -73,12 +74,15 @@ class BandMembersDeleteTest extends TestCase
 
         $this->actingAs($userWhoIsLeavingBand);
 
-        $response = $this->json('delete', route('bands.members.delete', [$this->band->id, $userWhoIsLeavingBand->id]));
+        $response = $this->json(
+            'delete',
+            route('bands.members.delete', [$this->band->id, $userWhoIsLeavingBand->id])
+        );
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
 
-        self::assertEquals($bandMembersCount - 1, $this->band->members()->count());
-        self::assertNotContains(
+        $this->assertEquals($bandMembersCount - 1, $this->band->members()->count());
+        $this->assertNotContains(
             $userWhoIsLeavingBand->id,
             $this->band->fresh(['members'])->pluck('id')->toArray()
         );
@@ -100,60 +104,67 @@ class BandMembersDeleteTest extends TestCase
         $rehearsalInFuture = $this->createRehearsalForBandInFuture($this->band);
         $rehearsalInFutureForOtherBand = $this->createRehearsalForBandInFuture($someOtherBand);
 
-        self::assertEquals(
-            $bandMembers->pluck('id')->toArray(),
-            $rehearsalInPast->attendees->pluck('id')->toArray()
+        $this->assertEquals(
+            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $rehearsalInPast->attendees->sortBy('id')->pluck('id')->toArray()
         );
-        self::assertEquals(
-            $bandMembers->pluck('id')->toArray(),
-            $rehearsalInFuture->attendees->pluck('id')->toArray()
+        $this->assertEquals(
+            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $rehearsalInFuture->attendees->sortBy('id')->pluck('id')->toArray()
         );
-        self::assertEquals(
-            $bandMembers->pluck('id')->toArray(),
-            $rehearsalInFutureForOtherBand->attendees->pluck('id')->toArray()
+        $this->assertEquals(
+            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $rehearsalInFutureForOtherBand->attendees->sortBy('id')->pluck('id')->toArray()
         );
-        self::assertEquals(
-            $bandMembers->pluck('id')->toArray(),
-            $rehearsalInFutureForOtherBand->attendees->pluck('id')->toArray()
+        $this->assertEquals(
+            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $rehearsalInFutureForOtherBand->attendees->sortBy('id')->pluck('id')->toArray()
         );
 
         $userWhoIsLeavingBand = $this->band->members()->inRandomOrder()->first(['id']);
 
         $this->actingAs($userWhoIsLeavingBand);
 
-        $response = $this->json('delete', route('bands.members.delete', [$this->band->id, $userWhoIsLeavingBand->id]));
+        $response = $this->json(
+            'delete',
+            route('bands.members.delete', [$this->band->id, $userWhoIsLeavingBand->id])
+        );
         $response->assertStatus(Response::HTTP_NO_CONTENT);
 
-        self::assertEquals(
+        $this->assertEquals(
             $bandMembersCount,
             $rehearsalInPast->fresh(['attendees'])->attendees()->count()
         );
-        self::assertEquals(
-            $bandMembers->pluck('id')->toArray(),
-            $rehearsalInPast->fresh(['attendees'])->attendees->pluck('id')->toArray()
+        $this->assertEquals(
+            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $rehearsalInPast->fresh(['attendees'])->attendees->sortBy('id')->pluck('id')->toArray()
         );
-        self::assertEquals(
+        $this->assertEquals(
             $bandMembersCount,
             $rehearsalInPastForOtherBand->fresh(['attendees'])->attendees()->count()
         );
-        self::assertEquals(
-            $bandMembers->pluck('id')->toArray(),
-            $rehearsalInPastForOtherBand->fresh(['attendees'])->attendees->pluck('id')->toArray()
+        $this->assertEquals(
+            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $rehearsalInPastForOtherBand->fresh(['attendees'])
+                ->attendees
+                ->sortBy('id')
+                ->pluck('id')
+                ->toArray()
         );
 
-        self::assertEquals(
+        $this->assertEquals(
             $bandMembersCount - 1,
             $rehearsalInFuture->fresh(['attendees'])->attendees()->count()
         );
-        self::assertEquals(
+        $this->assertEquals(
             $bandMembersCount,
             $rehearsalInFutureForOtherBand->fresh(['attendees'])->attendees()->count()
         );
-        self::assertEquals(
-            $this->band->fresh(['members'])->members->pluck('id')->toArray(),
-            $rehearsalInFuture->fresh(['attendees'])->attendees->pluck('id')->toArray()
+        $this->assertEquals(
+            $this->band->fresh(['members'])->members->sortBy('id')->pluck('id')->toArray(),
+            $rehearsalInFuture->fresh(['attendees'])->attendees->sortBy('id')->pluck('id')->toArray()
         );
-        self::assertNotContains(
+        $this->assertNotContains(
             $userWhoIsLeavingBand->id,
             $rehearsalInFuture->fresh(['attendees'])->attendees->pluck('id')->toArray()
         );
