@@ -26,7 +26,7 @@ class OrganizationFactory extends Factory
     /**
      * restrict random coordinates of organizations to be
      * in 5km radius of (57.144179, 65.553132) (somewhere in my city)
-     * https://stackoverflow.com/questions/3067530/how-can-i-get-minimum-and-maximum-latitude-and-longitude-using-current-location
+     * https://stackoverflow.com/questions/3067530/how-can-i-get-minimum-and-maximum-latitude-and-longitude-using-current-location.
      *
      * @return string
      */

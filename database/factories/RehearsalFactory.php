@@ -40,6 +40,6 @@ class RehearsalFactory extends Factory
 
         $endsAt = $startsAt->copy()->addHours(2);
 
-        return new TimestampRange($startsAt, $endsAt,);
+        return new TimestampRange($startsAt, $endsAt, );
     }
 }
