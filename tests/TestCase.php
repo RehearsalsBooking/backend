@@ -262,7 +262,7 @@ abstract class TestCase extends BaseTestCase
     protected function createRehearsalsForOrganization(
         Organization $organization,
         int $amount = 1
-    ): Rehearsal|Collection {
+    ): Rehearsal | Collection {
         $rehearsals = [];
         foreach (range(1, $amount) as $index) {
             $rehearsals[] = Rehearsal::factory()->create(

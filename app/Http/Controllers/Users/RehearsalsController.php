@@ -39,7 +39,7 @@ class RehearsalsController extends Controller
         return RehearsalResource::collection($rehearsalsQuery->get());
     }
 
-    public function create(CreateRehearsalRequest $request): RehearsalResource|JsonResponse
+    public function create(CreateRehearsalRequest $request): RehearsalResource | JsonResponse
     {
         $this->authorize(
             'create',
@@ -75,8 +75,8 @@ class RehearsalsController extends Controller
     public function reschedule(
         RescheduleRehearsalRequest $request,
         Rehearsal $rehearsal
-    ): RehearsalResource|JsonResponse {
-        if (!$rehearsal->organization->isTimeAvailable(
+    ): RehearsalResource | JsonResponse {
+        if (! $rehearsal->organization->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
             $rehearsal
