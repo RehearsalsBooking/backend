@@ -26,6 +26,7 @@ class CreateBandInviteRequest extends FormRequest
 
         /** @var User $user */
         $user = auth()->user();
+
         return $user->can('invite-members', $band);
     }
 
