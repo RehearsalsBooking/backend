@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * App\Models\Organization\Organization.
@@ -79,18 +80,11 @@ class Organization extends Model
         static::addGlobalScope(new OnlyActiveScope());
     }
 
-    /**
-     * @param  int|null  $userId
-     * @return bool
-     */
-    public function isUserFavorited(?int $userId): bool
+    public function isUserFavorited(int $userId): bool
     {
         return $this->favoritedUsers()->where('user_id', $userId)->exists();
     }
 
-    /**
-     * @return BelongsToMany
-     */
     public function favoritedUsers(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -101,23 +95,12 @@ class Organization extends Model
         );
     }
 
-    /**
-     * Owner of organization.
-     *
-     * @return BelongsTo
-     */
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    /**
-     * @param $startsAt
-     * @param $endsAt
-     * @param  Rehearsal|null  $rehearsal
-     * @return bool
-     */
-    public function isTimeAvailable($startsAt, $endsAt, Rehearsal $rehearsal = null): bool
+    public function isTimeAvailable(string $startsAt, string $endsAt, Rehearsal $rehearsal = null): bool
     {
         $query = $this->rehearsals()
             ->whereRaw('time && ?::tsrange', [new TimestampRange($startsAt, $endsAt)]);
@@ -131,11 +114,6 @@ class Organization extends Model
         return $query->doesntExist();
     }
 
-    /**
-     * Rehearsals of organization.
-     *
-     * @return HasMany
-     */
     public function rehearsals(): HasMany
     {
         return $this->hasMany(Rehearsal::class);
@@ -154,13 +132,7 @@ class Organization extends Model
             ->withTimestamps();
     }
 
-    /**
-     * @param $day
-     * @param $startsAt
-     * @param $endsAt
-     * @return bool
-     */
-    public function hasPriceAt($day, $startsAt, $endsAt): bool
+    public function hasPriceAt(int $day, string $startsAt, string $endsAt): bool
     {
         return OrganizationPrice::where('organization_id', $this->id)
             ->where('day', $day)
@@ -168,31 +140,27 @@ class Organization extends Model
             ->exists();
     }
 
-    /**
-     * @param  OrganizationPrice  $price
-     * @return bool
-     */
     public function hasPrice(OrganizationPrice $price): bool
     {
         return $this->prices->contains($price);
     }
 
-    /**
-     * @param  int  $userId
-     * @return bool
-     */
     public function isUserBanned(int $userId): bool
     {
         return $this->bannedUsers->contains($userId);
     }
 
-    /**
-     * @param $userId
-     */
-    public function deleteRehearsalsForUserInFuture($userId): void
+    public function deleteRehearsalsForUserInFuture(int $userId): void
     {
         $this->rehearsals()->whereRaw('time && ?', [new TimestampRange(Carbon::now(), null)])
             ->where('user_id', $userId)
             ->delete();
+    }
+
+    public function deleteAvatar(): void
+    {
+        if ($this->avatar) {
+            Storage::disk('public')->delete($this->avatar);
+        }
     }
 }

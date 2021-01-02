@@ -27,17 +27,11 @@ abstract class FilterRequest
 
     abstract protected function getRules(): array;
 
-    /**
-     * Applies filters from request to query.
-     *
-     * @param $builder
-     * @return Builder
-     */
     public function apply(Builder $builder): Builder
     {
         $this->builder = $builder;
         foreach ($this->getFilters() as $filter => $value) {
-            if (method_exists($this, $filter)) {
+            if (method_exists($this, (string) $filter)) {
                 $this->$filter($value);
             }
         }
@@ -45,11 +39,6 @@ abstract class FilterRequest
         return $this->builder;
     }
 
-    /**
-     * Returns filters from request.
-     *
-     * @return array
-     */
     protected function getFilters(): array
     {
         return $this->request->only(array_keys($this->getRules()));

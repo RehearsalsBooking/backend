@@ -50,12 +50,11 @@ class GetOrganizationPriceRequest extends FormRequest
         return $rehearsalPrice();
     }
 
-    /**
-     * @return Organization|object
-     */
-    public function getOrganization(): ?Organization
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    /** @noinspection NullPointerExceptionInspection */
+    public function getOrganization(): Organization
     {
-        /** @noinspection NullPointerExceptionInspection */
+        /** @phpstan-ignore-next-line */
         return $this->route()->parameter('organization');
     }
 }

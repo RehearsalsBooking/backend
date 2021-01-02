@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Management\OrganizationUpdateRequest;
 use App\Http\Resources\Management\OrganizationResource;
 use App\Models\Organization\Organization;
+use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 
 class OrganizationsController extends Controller
 {
@@ -17,7 +18,10 @@ class OrganizationsController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        return OrganizationResource::collection(auth()->user()->organizations()->withoutGlobalScopes()->get());
+        /** @var User $user */
+        $user = auth()->user();
+
+        return OrganizationResource::collection($user->organizations()->withoutGlobalScopes()->get());
     }
 
     /**
@@ -33,8 +37,11 @@ class OrganizationsController extends Controller
         $attributes = $request->getAttributes();
 
         if ($request->has('avatar')) {
-            Storage::disk('public')->delete($organization->avatar);
-            $attributes['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            $organization->deleteAvatar();
+
+            /** @var UploadedFile $uploadedFile */
+            $uploadedFile = $request->file('avatar');
+            $attributes['avatar'] = $uploadedFile->store('avatars', 'public');
         }
 
         $organization->update($attributes);

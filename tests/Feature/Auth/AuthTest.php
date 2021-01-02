@@ -53,6 +53,7 @@ class AuthTest extends TestCase
             'password' => 'some wrong password',
         ])->assertStatus(Response::HTTP_UNAUTHORIZED);
 
+        $this->withoutExceptionHandling();
         $this->post(route('login'), [
             'email' => 'unknown@email.com',
             'password' => $this->credentials['password'],

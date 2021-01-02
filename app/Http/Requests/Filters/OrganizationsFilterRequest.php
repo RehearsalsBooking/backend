@@ -7,9 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class OrganizationsFilterRequest extends FilterRequest
 {
-    /**
-     * @return array
-     */
     protected function getRules(): array
     {
         return [
@@ -20,9 +17,6 @@ class OrganizationsFilterRequest extends FilterRequest
         ];
     }
 
-    /**
-     * @return array
-     */
     protected function getFilters(): array
     {
         $filters = parent::getFilters();
@@ -46,9 +40,6 @@ class OrganizationsFilterRequest extends FilterRequest
         return $filters;
     }
 
-    /**
-     * @param  int  $userId
-     */
     protected function notBanned(int $userId): void
     {
         $this->builder->whereDoesntHave(
@@ -57,18 +48,12 @@ class OrganizationsFilterRequest extends FilterRequest
         );
     }
 
-    /**
-     * @return bool
-     */
     protected function filteringByAvailableTime(): bool
     {
         return $this->request->has('from') || $this->request->has('to');
     }
 
-    /**
-     * @param $boundaries
-     */
-    protected function available_time($boundaries): void
+    protected function available_time(array $boundaries): void
     {
         [$from, $to] = $boundaries;
 
@@ -79,17 +64,11 @@ class OrganizationsFilterRequest extends FilterRequest
         });
     }
 
-    /**
-     * @param  string  $name
-     */
     protected function name(string $name): void
     {
         $this->builder->where('name', 'like', "%$name%");
     }
 
-    /**
-     * @param  bool  $isApplied
-     */
     protected function favorite(bool $isApplied): void
     {
         if ($isApplied && auth()->check()) {

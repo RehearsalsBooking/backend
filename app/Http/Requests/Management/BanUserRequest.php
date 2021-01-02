@@ -26,6 +26,7 @@ class BanUserRequest extends FormRequest
     {
         /** @noinspection NullPointerExceptionInspection */
         return [
+            /** @phpstan-ignore-next-line  */
             'organization_id' => $this->route()->originalParameter('organization'),
             'user_id' => $this->get('user_id'),
             'comment' => $this->get('comment'),

@@ -25,6 +25,7 @@ class CheckRehearsalOwnership
     public function handle($request, Closure $next)
     {
         /** @var Rehearsal $rehearsal */
+        /** @phpstan-ignore-next-line  */
         $rehearsal = $request->route()->parameter('rehearsal');
 
         /** @var User $user */

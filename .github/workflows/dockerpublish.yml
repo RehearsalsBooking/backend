@@ -31,11 +31,29 @@ jobs:
           make build
           make test
 
+  # Run static analysis.
+  phpstan:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Run static analysis
+        run: |
+          make build
+          make phpstan
+
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
   push:
     # Ensure test job passes before pushing image.
-    needs: test
+    needs:
+      - test
+      - phpstan
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push'

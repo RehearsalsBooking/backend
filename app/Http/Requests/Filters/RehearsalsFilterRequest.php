@@ -7,9 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 abstract class RehearsalsFilterRequest extends FilterRequest
 {
-    /**
-     * @return array
-     */
     protected function getRules(): array
     {
         return [
@@ -21,14 +18,8 @@ abstract class RehearsalsFilterRequest extends FilterRequest
         ];
     }
 
-    /**
-     * @return string
-     */
     abstract protected function organizationRequirement(): string;
 
-    /**
-     * @return array
-     */
     protected function getFilters(): array
     {
         $filters = parent::getFilters();
@@ -48,18 +39,12 @@ abstract class RehearsalsFilterRequest extends FilterRequest
         return $filters;
     }
 
-    /**
-     * @return bool
-     */
     protected function filteringByTime(): bool
     {
         return $this->request->has('from') || $this->request->has('to');
     }
 
-    /**
-     * @param $boundaries
-     */
-    protected function time($boundaries): void
+    protected function time(array $boundaries): void
     {
         [$from, $to] = $boundaries;
 
@@ -68,17 +53,11 @@ abstract class RehearsalsFilterRequest extends FilterRequest
         $this->builder->whereRaw('time <@ ?::tsrange', [$range]);
     }
 
-    /**
-     * @param  int  $organizationId
-     */
     protected function organization_id(int $organizationId): void
     {
         $this->builder->where('organization_id', $organizationId);
     }
 
-    /**
-     * @param  int  $userId
-     */
     protected function user_id(int $userId): void
     {
         // TODO: replace whereHas to whereIn(band_id and subquery) for better performance?
@@ -102,9 +81,6 @@ abstract class RehearsalsFilterRequest extends FilterRequest
             );
     }
 
-    /**
-     * @param  int  $bandId
-     */
     protected function band_id(int $bandId): void
     {
         $this->builder->where('band_id', $bandId);

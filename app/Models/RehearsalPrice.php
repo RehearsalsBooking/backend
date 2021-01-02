@@ -88,10 +88,14 @@ class RehearsalPrice
         $matchingPrices = $this->getMatchingPricesForPeriod($day, $start, $end);
 
         return $matchingPrices->reduce(
-            fn (
+            fn(
                 float $result,
                 OrganizationPrice $price
-            ) => $result + $this->calculatePriceForPeriod($price->time->from(), $price->time->to(), $price->price),
+            ) => $result + $this->calculatePriceForPeriod(
+                    $price->time->from() ?? '',
+                    $price->time->to() ?? '',
+                    $price->price
+                ),
             0);
     }
 
@@ -116,10 +120,10 @@ class RehearsalPrice
     /**
      * @param  string  $from
      * @param  string  $to
-     * @param  int  $price  cost of one hour of rehearsal
+     * @param  float  $price  cost of one hour of rehearsal
      * @return float
      */
-    private function calculatePriceForPeriod(string $from, string $to, int $price): float
+    private function calculatePriceForPeriod(string $from, string $to, float $price): float
     {
         $periodStart = Carbon::createFromTimeString($from);
         $periodEnd = Carbon::createFromTimeString($to);

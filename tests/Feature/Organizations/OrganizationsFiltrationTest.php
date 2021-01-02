@@ -63,10 +63,10 @@ class OrganizationsFiltrationTest extends TestCase
         $data = $response->json('data');
 
         $this->assertCount($favoritedOrganizations->count(), $data);
-        $fetchedOrganizationsIds = collect($data)->pluck('id')->toArray();
+        $fetchedOrganizationsIds = collect($data)->sortBy('id')->pluck('id')->toArray();
         $this->assertEquals(
             $fetchedOrganizationsIds,
-            $favoritedOrganizations->pluck('id')->toArray()
+            $favoritedOrganizations->sortBy('id')->pluck('id')->toArray()
         );
     }
 

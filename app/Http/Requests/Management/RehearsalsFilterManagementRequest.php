@@ -7,7 +7,6 @@ use App\Models\Organization\Organization;
 
 /**
  * Class RehearsalsFilterRequest
- * {@inheritdoc}
  */
 class RehearsalsFilterManagementRequest extends RehearsalsFilterRequest
 {
@@ -16,6 +15,7 @@ class RehearsalsFilterManagementRequest extends RehearsalsFilterRequest
      */
     public function organization(): ?Organization
     {
+        /** @phpstan-ignore-next-line  */
         return Organization::find($this->request->get('organization_id'));
     }
 

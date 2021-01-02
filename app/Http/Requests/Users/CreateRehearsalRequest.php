@@ -68,6 +68,7 @@ class CreateRehearsalRequest extends FormRequest
      */
     public function organization(): Organization
     {
+        /** @phpstan-ignore-next-line */
         return Organization::find($this->get('organization_id'));
     }
 }

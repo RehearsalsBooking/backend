@@ -26,6 +26,10 @@ class RehearsalPolicy
         if ($bandId !== null) {
             $band = Band::find($bandId);
 
+            if (!$band) {
+                return false;
+            }
+
             return $band->admin_id === $user->id;
         }
 
@@ -46,6 +50,10 @@ class RehearsalPolicy
     {
         if ($rehearsal->isIndividual()) {
             return $rehearsal->user_id === $user->id;
+        }
+
+        if (is_null($rehearsal->band)) {
+            return false;
         }
 
         return $rehearsal->band->admin_id === $user->id;

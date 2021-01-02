@@ -24,8 +24,8 @@ class RehearsalDetailedResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'starts_at' => $this->time->from()->toDateTimeString(),
-            'ends_at' => $this->time->to()->toDateTimeString(),
+            'starts_at' => $this->time->from()?->toDateTimeString(),
+            'ends_at' => $this->time->to()?->toDateTimeString(),
             'user' => new UserResource($this->user),
             'band' => new BandResource($this->band),
             'price' => $this->price,

@@ -51,7 +51,7 @@ class RehearsalsController extends Controller
         // keeping this check here instead of rehearsal policy
         // because we have to provide a reason, why this action is forbidden
         // if moved to policy, response message will always be the same
-        if ($organization->isUserBanned(auth()->id())) {
+        if ($organization->isUserBanned((int) auth()->id())) {
             return response()->json('Вы забанены в этой организации', Response::HTTP_FORBIDDEN);
         }
 

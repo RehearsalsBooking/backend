@@ -29,7 +29,6 @@ class AuthController extends Controller
     {
         $credentials = request(['email', 'password']);
 
-        /** @var User $user */
         $user = User::where('email', $credentials['email'])->first();
 
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {

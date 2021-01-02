@@ -38,7 +38,7 @@ class OrganizationPrice extends Model
 {
     use HasFactory;
 
-    protected static function newFactory()
+    protected static function newFactory(): OrganizationPriceFactory
     {
         return OrganizationPriceFactory::new();
     }

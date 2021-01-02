@@ -4,6 +4,7 @@ namespace App\Http\Requests\Users;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
+use App\Models\Rehearsal;
 use App\Models\RehearsalPrice;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
@@ -11,18 +12,18 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class RescheduleRehearsalRequest extends FormRequest
 {
-    /**
-     * @var object|string
-     */
-    private $rehearsal;
+    private Rehearsal $rehearsal;
 
     /**
-     * @return bool
+     * @noinspection PhpFieldAssignmentTypeMismatchInspection
+     * @noinspection NullPointerExceptionInspection
      */
     public function authorize(): bool
     {
+        /** @phpstan-ignore-next-line  */
         $this->rehearsal = $this->route()->parameter('rehearsal');
 
+        /** @phpstan-ignore-next-line  */
         return auth()->user()->can('reschedule', $this->rehearsal);
     }
 
