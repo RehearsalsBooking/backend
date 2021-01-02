@@ -6,7 +6,7 @@ use App\Http\Requests\Filters\RehearsalsFilterRequest;
 use App\Models\Organization\Organization;
 
 /**
- * Class RehearsalsFilterRequest
+ * Class RehearsalsFilterRequest.
  */
 class RehearsalsFilterManagementRequest extends RehearsalsFilterRequest
 {
