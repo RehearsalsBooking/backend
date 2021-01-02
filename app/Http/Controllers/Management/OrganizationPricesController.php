@@ -36,7 +36,7 @@ class OrganizationPricesController extends Controller
     public function create(
         CreateOrganizationPriceRequest $request,
         Organization $organization
-    ): JsonResponse|AnonymousResourceCollection {
+    ): JsonResponse | AnonymousResourceCollection {
         $this->authorize('manage', $organization);
 
         if ($organization->hasPriceAt(

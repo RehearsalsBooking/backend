@@ -12,7 +12,7 @@ class OrganizationStatistics
 
     public function __construct(protected Organization $organization, protected ?DateRange $interval)
     {
-        $this->setInterval = fn(Builder $query) => $query->whereRaw('time <@ ?', [$this->interval]);
+        $this->setInterval = fn (Builder $query) => $query->whereRaw('time <@ ?', [$this->interval]);
     }
 
     /**

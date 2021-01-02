@@ -70,7 +70,7 @@ class CreatePricesTest extends ManagementTestCase
      * @param array $data
      * @param string|array $invalidKey
      */
-    public function it_responds_with_422_when_manager_provided_invalid_data(array $data, string|array $invalidKey): void
+    public function it_responds_with_422_when_manager_provided_invalid_data(array $data, string | array $invalidKey): void
     {
         $this->assertEquals(5, $this->organization->prices()->count());
         $this->actingAs($this->manager);

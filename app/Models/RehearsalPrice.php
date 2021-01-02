@@ -45,7 +45,7 @@ class RehearsalPrice
         $this->uncalculatedMinutes = $end->diffInMinutes($start);
 
         if ($this->isEndOfTheDay($end)) {
-            ++$this->uncalculatedMinutes;
+            $this->uncalculatedMinutes++;
         }
 
         if ($this->uncalculatedMinutes >= self::MINUTES_IN_ONE_DAY) {
@@ -88,7 +88,7 @@ class RehearsalPrice
         $matchingPrices = $this->getMatchingPricesForPeriod($day, $start, $end);
 
         return $matchingPrices->reduce(
-            fn(
+            fn (
                 float $result,
                 OrganizationPrice $price
             ) => $result + $this->calculatePriceForPeriod($price->time->from(), $price->time->to(), $price->price),
