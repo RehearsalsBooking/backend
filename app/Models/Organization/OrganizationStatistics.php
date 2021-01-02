@@ -8,22 +8,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 class OrganizationStatistics
 {
-    protected Organization $organization;
-    protected ?DateRange $interval;
     protected Closure $setInterval;
 
-    /**
-     * OrganizationStatistics constructor.
-     *
-     * @param  Organization  $organization
-     * @param  DateRange|null  $interval
-     */
-    public function __construct(Organization $organization, ?DateRange $interval)
+    public function __construct(protected Organization $organization, protected ?DateRange $interval)
     {
-        $this->organization = $organization;
-        $this->interval = $interval;
-
-        $this->setInterval = fn (Builder $query) => $query->whereRaw('time <@ ?', [$this->interval]);
+        $this->setInterval = fn(Builder $query) => $query->whereRaw('time <@ ?', [$this->interval]);
     }
 
     /**

@@ -7,7 +7,7 @@ use App\Exceptions\User\PriceCalculationException;
 use App\Models\Organization\OrganizationPrice;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 /**
  * Class RehearsalPrice.
@@ -19,24 +19,14 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class RehearsalPrice
 {
-    /**
-     * @var int
-     */
-    private int $organizationId;
-    /**
-     * @var Carbon
-     */
-    private Carbon $start;
-    /**
-     * @var Carbon
-     */
-    private Carbon $end;
-    /**
-     * @var int
-     */
     private int $uncalculatedMinutes;
-
+    /**
+     * @var int
+     */
     private const MINUTES_IN_ONE_DAY = 60 * 24;
+    /**
+     * @var int
+     */
     private const MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES = 30;
 
     /**
@@ -47,15 +37,15 @@ class RehearsalPrice
      * @param  Carbon  $end
      * @throws InvalidRehearsalDurationException
      */
-    public function __construct(int $organizationId, Carbon $start, Carbon $end)
-    {
-        $this->organizationId = $organizationId;
-        $this->start = $start;
-        $this->end = $end;
+    public function __construct(
+        private int $organizationId,
+        private Carbon $start,
+        private Carbon $end
+    ) {
         $this->uncalculatedMinutes = $end->diffInMinutes($start);
 
         if ($this->isEndOfTheDay($end)) {
-            $this->uncalculatedMinutes++;
+            ++$this->uncalculatedMinutes;
         }
 
         if ($this->uncalculatedMinutes >= self::MINUTES_IN_ONE_DAY) {
@@ -70,7 +60,7 @@ class RehearsalPrice
     /**
      * Calculates price of rehearsal.
      *
-     * @return float|int
+     * @return float
      * @throws PriceCalculationException
      */
     public function __invoke(): float
@@ -98,7 +88,7 @@ class RehearsalPrice
         $matchingPrices = $this->getMatchingPricesForPeriod($day, $start, $end);
 
         return $matchingPrices->reduce(
-            fn (
+            fn(
                 float $result,
                 OrganizationPrice $price
             ) => $result + $this->calculatePriceForPeriod($price->time->from(), $price->time->to(), $price->price),

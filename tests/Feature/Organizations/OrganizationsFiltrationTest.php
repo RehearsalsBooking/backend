@@ -93,6 +93,7 @@ class OrganizationsFiltrationTest extends TestCase
         ]);
 
         $response->assertOk();
+
         $data = $response->json();
         // 9----11
         //             14----16

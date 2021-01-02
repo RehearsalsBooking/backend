@@ -123,6 +123,7 @@ class RehearsalsFilterTest extends TestCase
             'from' => $this->getDateTimeAt(13, 00),
         ]);
         $response->assertOk();
+
         $data = $response->json();
         // 9----11  12----14  16----18
         //             13-------------

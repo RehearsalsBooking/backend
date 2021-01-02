@@ -6,12 +6,9 @@ use Belamov\PostgresRange\Ranges\DateRange;
 
 class OrganizationStatisticsGrouped extends OrganizationStatistics
 {
-    protected string $groupInterval;
-
-    public function __construct(Organization $organization, ?DateRange $interval, string $groupInterval)
+    public function __construct(Organization $organization, ?DateRange $interval, protected string $groupInterval)
     {
         parent::__construct($organization, $interval);
-        $this->groupInterval = $groupInterval;
     }
 
     /**

@@ -17,7 +17,7 @@ class BandMembersDeleteAuthorizationTest extends TestCase
 {
     use RefreshDatabase;
 
-    private User $user;
+    private User $bandAdmin;
     private Band $band;
 
     protected function setUp(): void

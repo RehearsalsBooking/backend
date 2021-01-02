@@ -124,7 +124,7 @@ class Organization extends Model
 
         // if rehearsal was passed as a parameter, then we want to determine if this rehearsal
         // is available for reschedule, so we must exclude it from query
-        if ($rehearsal) {
+        if ($rehearsal !== null) {
             $query->where('id', '!=', $rehearsal->id);
         }
 

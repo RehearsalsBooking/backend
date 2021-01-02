@@ -52,7 +52,7 @@ class BandsUpdateTest extends TestCase
         $this->actingAs($this->bandOwner);
 
         $newBandData = [
-            'name' => 'band\'s new name',
+            'name' => "band's new name",
         ];
 
         $this->assertDatabaseMissing('bands', $newBandData);

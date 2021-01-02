@@ -53,7 +53,7 @@ class AttendeesRegistrationTest extends TestCase
         $parameters = $this->getRehearsalTime();
         $parameters['organization_id'] = $organization->id;
 
-        if ($band) {
+        if ($band !== null) {
             $parameters['band_id'] = $band->id;
         }
 
@@ -76,7 +76,7 @@ class AttendeesRegistrationTest extends TestCase
             'ends_at' => $rehearsal->time->to()->addHour()->toDateTimeString(),
         ];
 
-        if ($band) {
+        if ($band !== null) {
             $parameters['band_id'] = $band->id;
         }
 

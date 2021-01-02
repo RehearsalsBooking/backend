@@ -9,10 +9,25 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class OrganizationStatisticsTest extends ManagementTestCase
 {
+    /**
+     * @var int
+     */
     public const YEARS = 3;
+    /**
+     * @var int
+     */
     public const MONTHS = 5;
+    /**
+     * @var int
+     */
     public const DAYS = 2;
+    /**
+     * @var int
+     */
     public const PER_DAY = 2;
+    /**
+     * @var int
+     */
     public const PRICE = 100;
     protected CarbonImmutable $startingDate;
     private string $totalEndpoint = 'management.organizations.statistics.total';
@@ -113,6 +128,7 @@ class OrganizationStatisticsTest extends ManagementTestCase
         $this->actingAs($this->manager);
         $response = $this->json($this->httpVerb, route($this->totalEndpoint, $this->organization->id));
         $response->assertOk();
+
         $data = $response->json()[0];
 
         $expectedCountOfRehearsals = self::YEARS * self::MONTHS * self::DAYS * self::PER_DAY;
@@ -130,6 +146,7 @@ class OrganizationStatisticsTest extends ManagementTestCase
             ['from' => $this->startingDate, 'to' => $this->startingDate->clone()->addMonths(2)]
         );
         $response->assertOk();
+
         $data = $response->json()[0];
 
         $expectedCountOfRehearsals = 2 * self::DAYS * self::PER_DAY;
@@ -172,6 +189,7 @@ class OrganizationStatisticsTest extends ManagementTestCase
             ['interval' => 'day']
         );
         $response->assertOk();
+
         $data = $response->json();
         foreach ($data as $dayStatistics) {
             $this->assertEquals(self::PER_DAY, $dayStatistics['count']);
@@ -190,6 +208,7 @@ class OrganizationStatisticsTest extends ManagementTestCase
             ['interval' => 'month']
         );
         $response->assertOk();
+
         $data = $response->json();
         $expectedCount = self::PER_DAY * self::DAYS;
         foreach ($data as $dayStatistics) {
@@ -209,6 +228,7 @@ class OrganizationStatisticsTest extends ManagementTestCase
             ['interval' => 'year']
         );
         $response->assertOk();
+
         $data = $response->json();
         $expectedCount = self::PER_DAY * self::DAYS * self::MONTHS;
         foreach ($data as $dayStatistics) {
@@ -232,6 +252,7 @@ class OrganizationStatisticsTest extends ManagementTestCase
             ]
         );
         $response->assertOk();
+
         $data = $response->json();
         $this->assertCount(1, $data);
         $expectedCount = self::PER_DAY * self::DAYS * self::MONTHS;

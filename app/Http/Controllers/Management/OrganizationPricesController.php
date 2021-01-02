@@ -28,13 +28,15 @@ class OrganizationPricesController extends Controller
     }
 
     /**
-     * @param CreateOrganizationPriceRequest $request
-     * @param Organization $organization
+     * @param  CreateOrganizationPriceRequest  $request
+     * @param  Organization  $organization
      * @return JsonResponse|AnonymousResourceCollection
      * @throws AuthorizationException
      */
-    public function create(CreateOrganizationPriceRequest $request, Organization $organization)
-    {
+    public function create(
+        CreateOrganizationPriceRequest $request,
+        Organization $organization
+    ): JsonResponse|AnonymousResourceCollection {
         $this->authorize('manage', $organization);
 
         if ($organization->hasPriceAt(

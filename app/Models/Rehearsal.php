@@ -84,7 +84,7 @@ class Rehearsal extends Model
      */
     public function registerBandMembersAsAttendees(): void
     {
-        if ($this->band) {
+        if ($this->band !== null) {
             $bandMembers = $this->band->members;
             $this->attendees()->sync($bandMembers);
         }

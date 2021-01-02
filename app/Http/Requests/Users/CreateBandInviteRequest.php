@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Users;
 
 use App\Models\Band;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateBandInviteRequest extends FormRequest
@@ -17,12 +18,15 @@ class CreateBandInviteRequest extends FormRequest
         $band = Band::find($this->get('band_id'));
 
         // if we cant find band, let request pass authorization, it must fail in validation
-        if (! $band) {
+        if ($band === null) {
             return true;
         }
 
         // see band policy for rules
-        return auth()->user()->can('invite-members', $band);
+
+        /** @var User $user */
+        $user = auth()->user();
+        return $user->can('invite-members', $band);
     }
 
     /**

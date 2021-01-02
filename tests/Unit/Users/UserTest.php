@@ -51,13 +51,10 @@ class UserTest extends TestCase
         $drummer = $this->createUser();
         $guitarist = $this->createUser();
 
-        /** @var Band $rockBand */
         $rockBand = $this->createBand();
 
-        /** @var Band $rapBand */
         $rapBand = $this->createBand();
 
-        /** @var Band $rapBand */
         $popBand = $this->createBand();
 
         $drummersBands = collect([$rockBand, $rapBand, $popBand]);

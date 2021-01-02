@@ -12,7 +12,6 @@ use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
 use DB;
 use Exception;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -20,10 +19,6 @@ use Illuminate\Http\Response;
 
 class RehearsalsController extends Controller
 {
-    /**
-     * @param  RehearsalsFilterClientRequest  $filter
-     * @return AnonymousResourceCollection
-     */
     public function index(RehearsalsFilterClientRequest $filter): AnonymousResourceCollection
     {
         $rehearsalsQuery = Rehearsal::filter($filter)->orderBy('id');
@@ -44,12 +39,7 @@ class RehearsalsController extends Controller
         return RehearsalResource::collection($rehearsalsQuery->get());
     }
 
-    /**
-     * @param  CreateRehearsalRequest  $request
-     * @return RehearsalResource|JsonResponse
-     * @throws AuthorizationException
-     */
-    public function create(CreateRehearsalRequest $request)
+    public function create(CreateRehearsalRequest $request): RehearsalResource|JsonResponse
     {
         $this->authorize(
             'create',
@@ -82,14 +72,11 @@ class RehearsalsController extends Controller
         return new RehearsalResource($rehearsal);
     }
 
-    /**
-     * @param  RescheduleRehearsalRequest  $request
-     * @param  Rehearsal  $rehearsal
-     * @return RehearsalResource|JsonResponse
-     */
-    public function reschedule(RescheduleRehearsalRequest $request, Rehearsal $rehearsal)
-    {
-        if (! $rehearsal->organization->isTimeAvailable(
+    public function reschedule(
+        RescheduleRehearsalRequest $request,
+        Rehearsal $rehearsal
+    ): RehearsalResource|JsonResponse {
+        if (!$rehearsal->organization->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
             $rehearsal
@@ -116,7 +103,7 @@ class RehearsalsController extends Controller
         $this->authorize('delete', $rehearsal);
 
         if ($rehearsal->isInPast()) {
-            return response()->json('you can\'t delete rehearsal in the past', Response::HTTP_FORBIDDEN);
+            return response()->json("you can't delete rehearsal in the past", Response::HTTP_FORBIDDEN);
         }
 
         $rehearsal->delete();

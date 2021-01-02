@@ -31,6 +31,9 @@ update: check-environment ## Update dependencies
 test: check-environment ## Execute tests
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" vendor/bin/phpunit
 
+phpstan: check-environment ## Run phpstan
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" vendor/bin/phpstan analyse --memory-limit 0
+
 shell: check-environment ## Run shell environment in container
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash
 

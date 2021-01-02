@@ -87,11 +87,7 @@ class Band extends Model
         ]);
     }
 
-    /**
-     * @param  User|int  $user
-     * @return Invite
-     */
-    public function invite($user): Invite
+    public function invite(User|int $user): Invite
     {
         $userId = $user instanceof User ? $user->id : $user;
 
