@@ -88,7 +88,7 @@ class RehearsalPrice
         $matchingPrices = $this->getMatchingPricesForPeriod($day, $start, $end);
 
         return $matchingPrices->reduce(
-            fn(
+            fn (
                 float $result,
                 OrganizationPrice $price
             ) => $result + $this->calculatePriceForPeriod(

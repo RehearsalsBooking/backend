@@ -51,6 +51,7 @@ class GetOrganizationPriceRequest extends FormRequest
     }
 
     /** @noinspection PhpIncompatibleReturnTypeInspection */
+
     /** @noinspection NullPointerExceptionInspection */
     public function getOrganization(): Organization
     {
