@@ -13,6 +13,7 @@ use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,7 +23,7 @@ class DatabaseSeeder extends Seeder
     public const USERS_COUNT = 20;
     public const INDIVIDUAL_REHEARSALS_COUNT = 50;
     public const BANDS_COUNT = 10;
-    public const REHEARSALS_PER_BAND_COUNT = 500;
+    public const REHEARSALS_PER_BAND_COUNT = 100;
     public const BAND_MEMBERS_COUNT = 4;
     /**
      * @var User|User[]|Collection|Model|\Illuminate\Support\Collection|mixed
@@ -48,22 +49,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->command->info('creating admins');
         $this->admins = $this->createAdmins(self::ADMINS_COUNT);
 
+        $this->command->info('creating organizations');
         $this->organizations = $this->createOrganizations(self::ORGANIZATIONS_COUNT);
 
+        $this->command->info('creating users');
         $this->users = $this->createUsers(self::USERS_COUNT);
 
+        $this->command->info('creating prices and bands for organizations');
         $this->createPricesAndBansForOrganizations();
 
+        $this->command->info('creating individual rehearsals');
         $this->createIndividualRehearsals(self::INDIVIDUAL_REHEARSALS_COUNT);
 
+        $this->command->info('creating bands');
         $this->bands = $this->createBands(self::BANDS_COUNT);
 
+        $this->command->info('adding members to bands');
         $this->addMembersToBands();
 
+        $this->command->info('creating band invites');
         $this->createBandInvites();
 
+        $this->command->info('creating band rehearsals');
         $this->createBandRehearsals(self::REHEARSALS_PER_BAND_COUNT);
     }
 
@@ -138,7 +148,7 @@ class DatabaseSeeder extends Seeder
                         'user_id' => $this->users->random()->id,
                         'comment' => 'some reason to ban',
                     ]);
-                } catch (PDOException $e) {
+                } catch (PDOException | QueryException) {
                     // we may get already banned user
                     // in that case just continue creating
                     continue;
@@ -162,7 +172,7 @@ class DatabaseSeeder extends Seeder
                     ]
                 );
                 $individualRehearsal->registerUserAsAttendee();
-            } catch (PDOException $e) {
+            } catch (PDOException | QueryException) {
                 // because rehearsal time is completely random
                 // there is possible overlapping
                 // so we just continue creating, if that occurs
@@ -214,7 +224,7 @@ class DatabaseSeeder extends Seeder
                         'band_id' => $band->id,
                         'is_confirmed' => array_rand([true, false]),
                     ]);
-                } catch (PDOException $e) {
+                } catch (PDOException | QueryException) {
                     // because rehearsal time is completely random
                     // there is possible overlapping
                     // so we just continue creating, if that occurs
