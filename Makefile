@@ -23,16 +23,16 @@ help:  ## Display this help
 
 build: check-environment ## Build container and install dependencies
 	$(docker_compose_bin) --file "$(docker_compose_yml)" build
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run -u $(user_id) "$(php_container_name)" composer install
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run -u $(user_id) -e XDEBUG_MODE=off "$(php_container_name)" composer install
 
 update: check-environment ## Update dependencies
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" composer update
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) -e XDEBUG_MODE=off "$(php_container_name)" composer update
 
 test: check-environment ## Execute tests
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" vendor/bin/phpunit
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" vendor/bin/phpunit
 
 phpstan: check-environment ## Run phpstan
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" vendor/bin/phpstan analyse --memory-limit 0
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" vendor/bin/phpstan analyse --memory-limit 0
 
 shell: check-environment ## Run shell environment in container
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash
