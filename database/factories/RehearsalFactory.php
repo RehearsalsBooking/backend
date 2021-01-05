@@ -30,8 +30,8 @@ class RehearsalFactory extends Factory
     private function getRehearsalTime(): TimestampRange
     {
         $startsAt = Carbon::create(
-            2020,
-            $this->faker->numberBetween(1, 12),
+            date("Y"),
+            $this->faker->numberBetween(date("m"), 12),
             $this->faker->numberBetween(1, 20),
             $this->faker->numberBetween(8, 20),
             0,
