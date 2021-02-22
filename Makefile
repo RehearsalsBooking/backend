@@ -34,6 +34,8 @@ test: check-environment ## Execute tests
 phpstan: check-environment ## Run phpstan
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" vendor/bin/phpstan analyse --memory-limit 0
 
+check: check-environment test phpstan ## Run tests and phpstan
+
 shell: check-environment ## Run shell environment in container
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash
 
