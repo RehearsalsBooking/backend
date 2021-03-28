@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
      * @var Band|Band[]|Collection|Model|mixed
      */
     private $bands;
+    private User $userToLoginWith;
 
     /**
      * Seed the application's database.
@@ -88,7 +89,7 @@ class DatabaseSeeder extends Seeder
 
     private function createUserToLoginWith(): User
     {
-        return User::factory()->create([
+        return $this->userToLoginWith = User::factory()->create([
             'email' => 'belamov@belamov.com',
             'password' => bcrypt('password'),
         ]);
@@ -118,7 +119,7 @@ class DatabaseSeeder extends Seeder
      */
     protected function createUsers(int $count): \Illuminate\Support\Collection
     {
-        return User::factory()->count($count)->create();
+        return User::factory()->count($count)->create()->push($this->userToLoginWith);
     }
 
     protected function createPricesAndBansForOrganizations(): void
@@ -187,7 +188,17 @@ class DatabaseSeeder extends Seeder
      */
     protected function createBands(int $count)
     {
-        return Band::factory()->count($count)->create();
+        $bands = collect();
+
+        $bandForLoggedInUser = Band::factory()->create(['admin_id'=>$this->userToLoginWith->id]);
+        $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
+        $bands->push($bandForLoggedInUser);
+
+        $bandForLoggedInUser = Band::factory()->create(['admin_id'=>$this->userToLoginWith->id]);
+        $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
+        $bands->push($bandForLoggedInUser);
+
+        return $bands->merge(Band::factory()->count($count)->create());
     }
 
     private function addMembersToBands(): void
