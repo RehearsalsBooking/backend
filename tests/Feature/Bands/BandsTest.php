@@ -31,6 +31,20 @@ class BandsTest extends TestCase
         $this->assertCount($bandsCount, $response->json('data'));
     }
 
+    /** @test */
+    public function it_fetches_correct_band_members_count(): void
+    {
+        $band = $this->createBand();
+        $band->addMember($this->createUser()->id);
+        $band->addMember($this->createUser()->id);
+
+        $this->assertEquals(2, $band->fresh()->members()->count());
+        $response = $this->get(route('bands.list'));
+        $response->assertOk();
+        $this->assertCount(1, $response->json('data'));
+        $this->assertEquals(2, $response->json('data.0.members_count'));
+    }
+
     /** @test
      * @throws Throwable
      */

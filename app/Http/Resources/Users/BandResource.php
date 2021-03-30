@@ -23,8 +23,7 @@ class BandResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'admin' => new UserResource($this->admin),
-            'members' => UserResource::collection($this->members),
+            'members_count' => $this->members_count,
         ];
     }
 }

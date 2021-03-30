@@ -18,14 +18,10 @@ use Throwable;
 
 class BandsController extends Controller
 {
-    /**
-     * @param  BandsFilterRequest  $filter
-     * @return AnonymousResourceCollection
-     */
     public function index(BandsFilterRequest $filter): AnonymousResourceCollection
     {
-        $bands = Band::with(['members', 'admin'])
-            ->filter($filter)
+        $bands = Band::filter($filter)
+            ->withCount('members')
             ->get();
 
         return BandResource::collection($bands);
