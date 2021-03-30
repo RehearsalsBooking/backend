@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
 /**
- * App\Models\BandGenre
+ * App\Models\BandGenre.
  *
  * @property int $id
  * @property string $name
@@ -45,5 +45,4 @@ class BandGenre extends Model
             'band_id'
         );
     }
-
 }

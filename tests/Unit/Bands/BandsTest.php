@@ -122,5 +122,4 @@ class BandsTest extends TestCase
         $this->assertEquals(2, $band->fresh()->genres()->count());
         $this->assertEquals([$rockGenre->id, $rapGenre->id], $band->genres->pluck('id')->toArray());
     }
-
 }

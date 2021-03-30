@@ -214,7 +214,7 @@ class DatabaseSeeder extends Seeder
     private function addMembersToBands(): void
     {
         $this->bands->each(
-            fn(Band $band) => $band->members()->sync(
+            fn (Band $band) => $band->members()->sync(
                 $this->users->random(self::BAND_MEMBERS_COUNT)->pluck('id')
             )
         );
