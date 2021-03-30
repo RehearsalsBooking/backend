@@ -25,7 +25,7 @@ class BandResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'members_count' => $this->members_count,
-            'genres' => BandGenreResource::collection($this->genres)
+            'genres' => BandGenreResource::collection($this->genres),
         ];
     }
 }
