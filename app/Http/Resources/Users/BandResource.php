@@ -8,6 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Class BandResource.
+ *
  * @mixin Band
  */
 class BandResource extends JsonResource
@@ -15,7 +16,7 @@ class BandResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request): array
@@ -24,6 +25,7 @@ class BandResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'members_count' => $this->members_count,
+            'genres' => BandGenreResource::collection($this->genres)
         ];
     }
 }

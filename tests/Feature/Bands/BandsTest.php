@@ -45,6 +45,22 @@ class BandsTest extends TestCase
         $this->assertEquals(2, $response->json('data.0.members_count'));
     }
 
+    /** @test */
+    public function it_fetches_band_genres(): void
+    {
+        $band = $this->createBand();
+        $bandGenres = collect([$this->createGenre(), $this->createGenre()]);
+        $band->genres()->attach($bandGenres->pluck('id'));
+
+        $this->assertEquals(2, $band->fresh()->genres()->count());
+        $response = $this->get(route('bands.list'));
+        $response->assertOk();
+        $this->assertCount(1, $response->json('data'));
+        $fetchedGenres = $response->json('data.0.genres');
+        $this->assertCount(2, $fetchedGenres);
+        $this->assertEquals($bandGenres->pluck('id'), collect($fetchedGenres)->pluck('id'));
+    }
+
     /** @test
      * @throws Throwable
      */

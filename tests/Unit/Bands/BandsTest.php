@@ -107,4 +107,20 @@ class BandsTest extends TestCase
         $this->assertEquals([$rehearsalInFuture->id], $band->futureRehearsals->pluck('id')->toArray());
         $this->assertEquals(1, $band->futureRehearsals()->count());
     }
+
+    /** @test */
+    public function band_has_genres(): void
+    {
+        $band = $this->createBand();
+
+        $rockGenre = $this->createGenre();
+        $rapGenre = $this->createGenre();
+
+        $band->genres()->attach($rockGenre);
+        $band->genres()->attach($rapGenre);
+
+        $this->assertEquals(2, $band->fresh()->genres()->count());
+        $this->assertEquals([$rockGenre->id, $rapGenre->id], $band->genres->pluck('id')->toArray());
+    }
+
 }

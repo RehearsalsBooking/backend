@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Requests\Filters\FilterRequest;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use DB;
 use Eloquent;
@@ -50,6 +51,9 @@ use Throwable;
  * @method static Builder|Band whereDeletedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Band withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Band withoutTrashed()
+ * @property-read Collection|BandGenre[] $genres
+ * @property-read int|null $genres_count
+ * @method static Builder|Band filter(FilterRequest $filters)
  */
 class Band extends Model
 {
@@ -61,25 +65,16 @@ class Band extends Model
         'id',
     ];
 
-    /**
-     * @return BelongsTo
-     */
     public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * @return HasMany
-     */
     public function rehearsals(): HasMany
     {
         return $this->hasMany(Rehearsal::class);
     }
 
-    /**
-     * @return HasMany
-     */
     public function futureRehearsals(): HasMany
     {
         return $this->hasMany(Rehearsal::class)->whereRaw('time && ?', [
@@ -87,7 +82,17 @@ class Band extends Model
         ]);
     }
 
-    public function invite(User | int $user): Invite
+    public function genres(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            BandGenre::class,
+            'bands_genres',
+            'band_id',
+            'genre_id'
+        );
+    }
+
+    public function invite(User|int $user): Invite
     {
         $userId = $user instanceof User ? $user->id : $user;
 
@@ -109,17 +114,11 @@ class Band extends Model
         });
     }
 
-    /**
-     * @return BelongsToMany
-     */
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }
 
-    /**
-     * @param  int  $userId
-     */
     private function addUserToFutureRehearsals(int $userId): void
     {
         //TODO: optimize query
@@ -140,9 +139,6 @@ class Band extends Model
         });
     }
 
-    /**
-     * @param  int  $memberId
-     */
     private function removeUserFromFutureRehearsals(int $memberId): void
     {
         DB::table('rehearsal_user')
@@ -162,9 +158,6 @@ class Band extends Model
         $this->invitedUsers()->delete();
     }
 
-    /**
-     * @return BelongsToMany
-     */
     public function invitedUsers(): BelongsToMany
     {
         return $this
@@ -173,10 +166,6 @@ class Band extends Model
             ->using(Invite::class);
     }
 
-    /**
-     * @param  int  $memberId
-     * @return bool
-     */
     public function hasMember(int $memberId): bool
     {
         return $this->members->contains($memberId);

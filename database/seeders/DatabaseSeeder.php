@@ -5,6 +5,7 @@
 namespace Database\Seeders;
 
 use App\Models\Band;
+use App\Models\BandGenre;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationPrice;
 use App\Models\Organization\OrganizationUserBan;
@@ -190,21 +191,30 @@ class DatabaseSeeder extends Seeder
     {
         $bands = collect();
 
-        $bandForLoggedInUser = Band::factory()->create(['admin_id'=>$this->userToLoginWith->id]);
+        $bandForLoggedInUser = Band::factory()
+            ->has(BandGenre::factory()->count(3), 'genres')
+            ->create(['admin_id' => $this->userToLoginWith->id]);
         $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
         $bands->push($bandForLoggedInUser);
 
-        $bandForLoggedInUser = Band::factory()->create(['admin_id'=>$this->userToLoginWith->id]);
+        $bandForLoggedInUser = Band::factory()
+            ->has(BandGenre::factory()->count(3), 'genres')
+            ->create(['admin_id' => $this->userToLoginWith->id]);
         $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
         $bands->push($bandForLoggedInUser);
 
-        return $bands->merge(Band::factory()->count($count)->create());
+        return $bands->merge(
+            Band::factory()
+                ->has(BandGenre::factory()->count(3), 'genres')
+                ->count($count)
+                ->create()
+        );
     }
 
     private function addMembersToBands(): void
     {
         $this->bands->each(
-            fn (Band $band) => $band->members()->sync(
+            fn(Band $band) => $band->members()->sync(
                 $this->users->random(self::BAND_MEMBERS_COUNT)->pluck('id')
             )
         );

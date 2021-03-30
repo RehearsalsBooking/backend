@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Models\Band;
+use App\Models\BandGenre;
 use App\Models\Invite;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationPrice;
@@ -356,5 +357,10 @@ abstract class TestCase extends BaseTestCase
                 ),
             ]
         );
+    }
+
+    protected function createGenre(): BandGenre
+    {
+        return BandGenre::factory()->create();
     }
 }

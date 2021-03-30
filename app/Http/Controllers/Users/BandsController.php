@@ -21,6 +21,7 @@ class BandsController extends Controller
     public function index(BandsFilterRequest $filter): AnonymousResourceCollection
     {
         $bands = Band::filter($filter)
+            ->with('genres')
             ->withCount('members')
             ->get();
 

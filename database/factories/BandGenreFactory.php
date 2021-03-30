@@ -2,19 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Band;
-use App\Models\User;
+use App\Models\BandGenre;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class BandFactory extends Factory
+class BandGenreFactory extends Factory
 {
-    protected $model = Band::class;
+    protected $model = BandGenre::class;
 
     public function definition(): array
     {
         return [
             'name' => $this->faker->words(2, true),
-            'admin_id' => User::factory(),
         ];
     }
 }
