@@ -17,6 +17,7 @@ class CreateBandsTable extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('admin_id');
+            $table->text('bio')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

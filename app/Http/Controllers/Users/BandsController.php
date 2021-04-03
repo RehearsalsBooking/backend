@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Filters\BandsFilterRequest;
 use App\Http\Requests\Users\CreateBandRequest;
 use App\Http\Requests\Users\UpdateBandRequest;
+use App\Http\Resources\Users\BandDetailedResource;
 use App\Http\Resources\Users\BandResource;
 use App\Models\Band;
 use DB;
@@ -26,6 +27,11 @@ class BandsController extends Controller
             ->get();
 
         return BandResource::collection($bands);
+    }
+
+    public function show(Band $band): BandDetailedResource
+    {
+        return new BandDetailedResource($band);
     }
 
     /**

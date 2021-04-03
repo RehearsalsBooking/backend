@@ -61,6 +61,11 @@ Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static
         ->where('band', '[0-9]+')
         ->name('update');
 
+    Route::get('/{band}', [BandsController::class, 'show'])
+        ->where('band', '[0-9]+')
+        ->name('show')
+        ->withoutMiddleware('auth:sanctum');
+
     Route::delete('/{band}', [BandsController::class, 'delete'])
         ->where('band', '[0-9]+')
         ->name('delete');

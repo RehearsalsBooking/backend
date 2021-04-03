@@ -54,6 +54,8 @@ use Throwable;
  * @property-read Collection|BandGenre[] $genres
  * @property-read int|null $genres_count
  * @method static Builder|Band filter(FilterRequest $filters)
+ * @property string|null $bio
+ * @method static Builder|Band whereBio($value)
  */
 class Band extends Model
 {
