@@ -72,6 +72,9 @@ class DatabaseSeeder extends Seeder
         $this->command->info('adding members to bands');
         $this->addMembersToBands();
 
+        $this->command->info('creating bands for logged in user');
+        $this->createBandsForLoggedInUser();
+
         $this->command->info('creating band invites');
         $this->createBandInvites();
 
@@ -189,26 +192,10 @@ class DatabaseSeeder extends Seeder
      */
     protected function createBands(int $count)
     {
-        $bands = collect();
-
-        $bandForLoggedInUser = Band::factory()
-            ->has(BandGenre::factory()->count(3), 'genres')
-            ->create(['admin_id' => $this->userToLoginWith->id]);
-        $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
-        $bands->push($bandForLoggedInUser);
-
-        $bandForLoggedInUser = Band::factory()
-            ->has(BandGenre::factory()->count(3), 'genres')
-            ->create(['admin_id' => $this->userToLoginWith->id]);
-        $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
-        $bands->push($bandForLoggedInUser);
-
-        return $bands->merge(
-            Band::factory()
+        return Band::factory()
                 ->has(BandGenre::factory()->count(3), 'genres')
                 ->count($count)
-                ->create()
-        );
+                ->create();
     }
 
     private function addMembersToBands(): void
@@ -253,5 +240,18 @@ class DatabaseSeeder extends Seeder
                 }
             }
         });
+    }
+
+    private function createBandsForLoggedInUser(): void
+    {
+        $bandForLoggedInUser = Band::factory()
+            ->has(BandGenre::factory()->count(3), 'genres')
+            ->create(['admin_id' => $this->userToLoginWith->id]);
+        $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
+
+        $bandForLoggedInUser = Band::factory()
+            ->has(BandGenre::factory()->count(3), 'genres')
+            ->create(['admin_id' => $this->userToLoginWith->id]);
+        $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
     }
 }
