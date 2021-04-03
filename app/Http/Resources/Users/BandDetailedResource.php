@@ -21,7 +21,7 @@ class BandDetailedResource extends JsonResource
             'bio' => $this->bio,
             'members' => UserResource::collection($this->members),
             'genres' => BandGenreResource::collection($this->genres),
-            'is_admin' => $userId === $adminId
+            'is_admin' => $userId === $adminId,
         ];
     }
 }
