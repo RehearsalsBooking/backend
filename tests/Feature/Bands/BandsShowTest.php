@@ -29,6 +29,22 @@ class BandsShowTest extends TestCase
     }
 
     /** @test */
+    public function it_indicates_that_current_user_is_admin(): void
+    {
+        $bandAdmin = $this->createUser();
+        $band = $this->createBand(['admin_id' => $bandAdmin->id]);
+
+        $response = $this->json('get', route('bands.show', $band));
+        $this->assertFalse($response->json('data.is_admin'));
+
+        $response = $this->actingAs($this->createUser())->json('get', route('bands.show', $band));
+        $this->assertFalse($response->json('data.is_admin'));
+
+        $response = $this->actingAs($bandAdmin)->json('get', route('bands.show', $band));
+        $this->assertTrue($response->json('data.is_admin'));
+    }
+
+    /** @test */
     public function it_responds_with_404_when_unknown_band_is_given(): void
     {
         $this->json('get', route('bands.show', 1000))
