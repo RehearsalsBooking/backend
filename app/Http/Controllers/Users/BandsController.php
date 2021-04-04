@@ -57,7 +57,7 @@ class BandsController extends Controller
      */
     public function update(UpdateBandRequest $request, Band $band): BandResource
     {
-        $this->authorize('update', $band);
+        $this->authorize('manage', $band);
 
         $band->update($request->getUpdatedBandAttributes());
 
@@ -73,7 +73,7 @@ class BandsController extends Controller
      */
     public function delete(Band $band): JsonResponse
     {
-        $this->authorize('delete', $band);
+        $this->authorize('manage', $band);
 
         DB::transaction(static function () use ($band) {
             $band->cancelInvites();
