@@ -12,11 +12,15 @@ class BandResource extends JsonResource
 {
     public function toArray($request): array
     {
+        $userId = optional(auth())->id();
+        $adminId = $this->admin_id;
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'members_count' => $this->members_count,
             'genres' => BandGenreResource::collection($this->genres),
+            'is_admin' => $userId === $adminId,
         ];
     }
 }
