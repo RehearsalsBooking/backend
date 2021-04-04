@@ -8,11 +8,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
-/**
- * Class BandsMembersInviteTest.
- * @property User $bandAdmin
- * @property Band $band
- */
 class InviteTest extends TestCase
 {
     use RefreshDatabase;
@@ -33,6 +28,7 @@ class InviteTest extends TestCase
         $this->actingAs($this->bandAdmin);
 
         $invitedUser = $this->createUser();
+        $role = 'guitarist';
 
         $this->assertEquals(0, $this->band->invitedUsers()->count());
         $this->assertEquals(0, $invitedUser->invites()->count());
@@ -43,6 +39,7 @@ class InviteTest extends TestCase
             [
                 'band_id' => $this->band->id,
                 'user_id' => $invitedUser->id,
+                'role' => $role
             ]
         );
 
@@ -58,6 +55,7 @@ class InviteTest extends TestCase
             collect([$this->band])->pluck('id'),
             $invitedUser->fresh()->invites->pluck('id')
         );
+        $this->assertEquals($role, $this->band->fresh()->invitedUsers->first()->pivot->role);
     }
 
     /** @test */

@@ -6,17 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateBandUserInvitesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up(): void
     {
         Schema::create('band_user_invites', static function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('band_id');
             $table->unsignedBigInteger('user_id');
+            $table->string('role')->nullable();
             $table->timestamps();
 
             $table->foreign('band_id')->references('id')->on('bands')->onDelete('cascade');
@@ -24,11 +20,6 @@ class CreateBandUserInvitesTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down(): void
     {
     }

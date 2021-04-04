@@ -8,11 +8,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CreateBandInviteRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize(): bool
     {
         $band = Band::find($this->get('band_id'));
@@ -30,27 +25,21 @@ class CreateBandInviteRequest extends FormRequest
         return $user->can('invite-members', $band);
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
             'band_id' => 'required|exists:bands,id',
             'user_id' => 'required|exists:users,id',
+            'role' => 'sometimes|string',
         ];
     }
 
-    /**
-     * @return array
-     */
     public function inviteParams(): array
     {
         return [
             'user_id' => $this->get('user_id'),
             'band_id' => $this->get('band_id'),
+            'role' => $this->get('role'),
         ];
     }
 }

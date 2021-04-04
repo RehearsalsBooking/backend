@@ -30,6 +30,8 @@ use Throwable;
  * @method static Builder|Invite whereUserId($value)
  * @mixin Eloquent
  * @property-read Band $band
+ * @property string|null $role
+ * @method static Builder|Invite whereRole($value)
  */
 class Invite extends Pivot
 {
@@ -55,7 +57,7 @@ class Invite extends Pivot
     public function accept(): void
     {
         DB::transaction(function () {
-            $this->band->addMember($this->user_id);
+            $this->band->addMember($this->user_id, $this->role);
             $this->delete();
         });
     }

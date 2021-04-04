@@ -94,7 +94,7 @@ class Band extends Model
         );
     }
 
-    public function invite(User | int $user): Invite
+    public function invite(User|int $user): Invite
     {
         $userId = $user instanceof User ? $user->id : $user;
 
@@ -106,19 +106,22 @@ class Band extends Model
 
     /**
      * @param  int  $userId
+     * @param  string|null  $role
      * @throws Throwable
      */
-    public function addMember(int $userId): void
+    public function addMember(int $userId, ?string $role = null): void
     {
-        DB::transaction(function () use ($userId) {
-            $this->members()->attach($userId);
+        DB::transaction(function () use ($role, $userId) {
+            $this->members()->attach($userId, ['role' => $role]);
             $this->addUserToFutureRehearsals($userId);
         });
     }
 
     public function members(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)
+            ->withPivot('role')
+            ->withTimestamps();
     }
 
     private function addUserToFutureRehearsals(int $userId): void
@@ -164,6 +167,7 @@ class Band extends Model
     {
         return $this
             ->belongsToMany(User::class, 'band_user_invites')
+            ->withPivot('role')
             ->withTimestamps()
             ->using(Invite::class);
     }
