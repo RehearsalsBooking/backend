@@ -8,12 +8,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
-/**
- * Class BandsRegistrationTest.
- *
- * @property User $bandAdmin
- * @property Band $band
- */
 class BandMembersDeleteTest extends TestCase
 {
     use RefreshDatabase;
@@ -27,6 +21,21 @@ class BandMembersDeleteTest extends TestCase
 
         $this->bandAdmin = $this->createUser();
         $this->band = $this->createBandForUser($this->bandAdmin);
+    }
+
+    /** @test */
+    public function only_band_admin_can_delete_member(): void
+    {
+        $bandMember = $this->createUser();
+        $this->band->members()->attach($bandMember->id);
+        $this->json(
+            'delete',
+            route('bands.members.delete', [$this->band->id, $bandMember->id])
+        )->assertUnauthorized();
+        $this->actingAs($this->createUser())->json(
+            'delete',
+            route('bands.members.delete', [$this->band->id, $bandMember->id])
+        )->assertForbidden();
     }
 
     /** @test */

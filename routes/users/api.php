@@ -92,4 +92,8 @@ Route::name('bands.members.')->prefix('bands/{band}/members')->middleware('auth:
     Route::delete('/{memberId}', [BandMembersController::class, 'delete'])
         ->where('band', '[0-9]+')
         ->name('delete');
+
+    Route::patch('/{memberId}', [BandMembersController::class, 'update'])
+        ->where('band', '[0-9]+')
+        ->name('update');
 });
