@@ -39,7 +39,7 @@ class InviteTest extends TestCase
             [
                 'band_id' => $this->band->id,
                 'user_id' => $invitedUser->id,
-                'role' => $role
+                'role' => $role,
             ]
         );
 

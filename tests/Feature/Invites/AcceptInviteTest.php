@@ -2,9 +2,7 @@
 
 namespace Tests\Feature\Invites;
 
-use App\Models\Band;
 use App\Models\Invite;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -65,7 +63,7 @@ class AcceptInviteTest extends TestCase
         $invite = $this->createInvite([
             'user_id' => $user->id,
             'band_id' => $band->id,
-            'role' => $role
+            'role' => $role,
         ]);
 
         $this->assertEquals(1, Invite::count());
