@@ -6,20 +6,23 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBandRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
-            'name' => 'required',
+            'name' => 'sometimes|string',
+            'bio' => 'sometimes|string',
+            'genres' => 'sometimes|array',
+            'genres.*' => 'integer|exists:band_genres,id',
         ];
     }
 
     public function getUpdatedBandAttributes(): array
     {
-        return $this->only(['name']);
+        return $this->only(['name', 'bio']);
+    }
+
+    public function getBandGenres()
+    {
+        return $this->get('genres');
     }
 }

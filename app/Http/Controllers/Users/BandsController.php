@@ -36,32 +36,34 @@ class BandsController extends Controller
 
     /**
      * @param  CreateBandRequest  $request
-     * @return BandResource
+     * @return mixed
      * @throws Throwable
      */
-    public function create(CreateBandRequest $request): BandResource
+    public function create(CreateBandRequest $request)
     {
         return DB::transaction(static function () use ($request) {
             $band = Band::create($request->getAttributes());
             $band->members()->attach(auth()->id());
+            $band->genres()->sync($request->getBandGenres());
 
-            return new BandResource($band);
+            return new BandDetailedResource($band);
         });
     }
 
     /**
      * @param  UpdateBandRequest  $request
      * @param  Band  $band
-     * @return BandResource
+     * @return BandDetailedResource
      * @throws AuthorizationException
      */
-    public function update(UpdateBandRequest $request, Band $band): BandResource
+    public function update(UpdateBandRequest $request, Band $band): BandDetailedResource
     {
         $this->authorize('manage', $band);
 
         $band->update($request->getUpdatedBandAttributes());
+        $band->genres()->sync($request->getBandGenres());
 
-        return new BandResource($band);
+        return new BandDetailedResource($band);
     }
 
     /**

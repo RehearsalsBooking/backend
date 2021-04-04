@@ -2,17 +2,13 @@
 
 namespace Tests\Feature\Bands;
 
-use App\Http\Resources\Users\BandResource;
+use App\Http\Resources\Users\BandDetailedResource;
 use App\Models\Band;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
-/**
- * Class BandsRegistrationTest.
- * @property User $user
- */
 class BandsRegistrationTest extends TestCase
 {
     use RefreshDatabase;
@@ -39,11 +35,16 @@ class BandsRegistrationTest extends TestCase
 
         $this->assertEquals(0, Band::count());
 
+        $genres = collect([$this->createGenre(), $this->createGenre()]);
         $newBandAttributes = [
-            'name' => 'some new band name',
+            'name' => "band's new name",
+            'bio' => 'new bio',
         ];
 
-        $response = $this->json('post', route('bands.create'), $newBandAttributes);
+        $response = $this->json('post', route('bands.create'), array_merge(
+            $newBandAttributes,
+            ['genres' => $genres->pluck('id')->toArray()]
+        ));
 
         $response->assertStatus(Response::HTTP_CREATED);
 
@@ -53,7 +54,21 @@ class BandsRegistrationTest extends TestCase
         $newBand = Band::first();
 
         $this->assertEquals(
-            (new BandResource($newBand))->response()->getData(true),
+            $newBand->name,
+            $newBandAttributes['name']
+        );
+        $this->assertEquals(
+            $newBand->bio,
+            $newBandAttributes['bio']
+        );
+
+        $this->assertEquals(
+            $newBand->genres->pluck('id')->toArray(),
+            $genres->pluck('id')->toArray()
+        );
+
+        $this->assertEquals(
+            (new BandDetailedResource($newBand))->response()->getData(true),
             $response->json()
         );
     }
@@ -83,6 +98,24 @@ class BandsRegistrationTest extends TestCase
         $this->json('post', route('bands.create'))
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors('name');
+    }
+
+    /** @test */
+    public function it_responds_with_422_when_unknown_genre_id_is_provided(): void
+    {
+        $unknownGenreId = 999;
+
+        $this->assertDatabaseMissing('band_genres', ['id' => $unknownGenreId]);
+
+        $this->actingAs($this->user)->json(
+            'post',
+            route('bands.create'),
+            [
+                'name' => 'some name',
+                'genres' => [$unknownGenreId]
+            ]
+        )
+            ->assertJsonValidationErrors('genres.0');
     }
 
     /** @test */

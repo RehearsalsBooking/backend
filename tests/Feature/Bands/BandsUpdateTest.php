@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Bands;
 
-use App\Http\Resources\Users\BandResource;
+use App\Http\Resources\Users\BandDetailedResource;
 use App\Models\Band;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -47,17 +47,23 @@ class BandsUpdateTest extends TestCase
     }
 
     /** @test */
-    public function admin_of_a_band_can_update_its_name(): void
+    public function admin_of_a_band_can_update_band(): void
     {
         $this->actingAs($this->bandOwner);
 
+        $newGenres = collect([$this->createGenre(), $this->createGenre()]);
         $newBandData = [
             'name' => "band's new name",
+            'bio' => 'new bio',
         ];
 
         $this->assertDatabaseMissing('bands', $newBandData);
 
-        $response = $this->json('put', route('bands.update', $this->band), $newBandData);
+        $response = $this->json(
+            'put',
+            route('bands.update', $this->band),
+            array_merge($newBandData, ['genres' => $newGenres->pluck('id')->toArray()])
+        );
 
         $response->assertOk();
 
@@ -67,10 +73,51 @@ class BandsUpdateTest extends TestCase
             $this->band->fresh()->name,
             $newBandData['name']
         );
+        $this->assertEquals(
+            $this->band->fresh()->bio,
+            $newBandData['bio']
+        );
 
         $this->assertEquals(
-            (new BandResource($this->band->fresh()))->response()->getData(true),
+            $this->band->fresh()->genres->pluck('id')->toArray(),
+            $newGenres->pluck('id')->toArray()
+        );
+
+        $this->assertEquals(
+            (new BandDetailedResource($this->band->fresh()))->response()->getData(true),
             $response->json()
         );
+    }
+
+    /** @test */
+    public function it_responds_with_422_when_unknown_genre_id_is_provided(): void
+    {
+        $unknownGenreId = 999;
+
+        $this->assertDatabaseMissing('band_genres', ['id' => $unknownGenreId]);
+
+        $this->actingAs($this->bandOwner)->json(
+            'put',
+            route('bands.update', $this->band),
+            ['genres' => [$unknownGenreId]]
+        )
+            ->assertJsonValidationErrors('genres.0');
+    }
+
+    /** @test */
+    public function name_cannot_be_null(): void
+    {
+        $this->actingAs($this->bandOwner)->json(
+            'put',
+            route('bands.update', $this->band),
+            ['name' => null]
+        )
+            ->assertJsonValidationErrors('name');
+        $this->actingAs($this->bandOwner)->json(
+            'put',
+            route('bands.update', $this->band),
+            ['name' => '']
+        )
+            ->assertJsonValidationErrors('name');
     }
 }
