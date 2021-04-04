@@ -21,7 +21,7 @@ class UpdateBandRequest extends FormRequest
         return $this->only(['name', 'bio']);
     }
 
-    public function getBandGenres()
+    public function getBandGenres(): mixed
     {
         return $this->get('genres');
     }

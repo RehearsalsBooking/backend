@@ -123,7 +123,7 @@ class BandsRegistrationTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $this->json('post', route('bands.create'), ['name' => 'band name']);
+        $this->json('post', route('bands.create'), ['name' => 'band name'])->assertCreated();
 
         $createdBand = Band::first();
 

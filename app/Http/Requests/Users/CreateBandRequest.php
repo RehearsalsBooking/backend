@@ -25,7 +25,7 @@ class CreateBandRequest extends FormRequest
         ];
     }
 
-    public function getBandGenres()
+    public function getBandGenres(): mixed
     {
         return $this->get('genres');
     }
