@@ -112,7 +112,7 @@ class BandsRegistrationTest extends TestCase
             route('bands.create'),
             [
                 'name' => 'some name',
-                'genres' => [$unknownGenreId]
+                'genres' => [$unknownGenreId],
             ]
         )
             ->assertJsonValidationErrors('genres.0');
