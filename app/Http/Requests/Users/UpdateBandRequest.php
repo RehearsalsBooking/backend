@@ -12,7 +12,7 @@ class UpdateBandRequest extends FormRequest
             'name' => 'sometimes|string',
             'bio' => 'sometimes|string',
             'genres' => 'sometimes|array',
-            'genres.*' => 'integer|exists:band_genres,id',
+            'genres.*' => 'integer|exists:genres,id',
         ];
     }
 

@@ -105,7 +105,7 @@ class BandsRegistrationTest extends TestCase
     {
         $unknownGenreId = 999;
 
-        $this->assertDatabaseMissing('band_genres', ['id' => $unknownGenreId]);
+        $this->assertDatabaseMissing('genres', ['id' => $unknownGenreId]);
 
         $this->actingAs($this->user)->json(
             'post',

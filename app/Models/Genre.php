@@ -19,16 +19,16 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Collection|Band[] $bands
  * @property-read int|null $bands_count
- * @method static Builder|BandGenre newModelQuery()
- * @method static Builder|BandGenre newQuery()
- * @method static Builder|BandGenre query()
- * @method static Builder|BandGenre whereCreatedAt($value)
- * @method static Builder|BandGenre whereId($value)
- * @method static Builder|BandGenre whereName($value)
- * @method static Builder|BandGenre whereUpdatedAt($value)
+ * @method static Builder|Genre newModelQuery()
+ * @method static Builder|Genre newQuery()
+ * @method static Builder|Genre query()
+ * @method static Builder|Genre whereCreatedAt($value)
+ * @method static Builder|Genre whereId($value)
+ * @method static Builder|Genre whereName($value)
+ * @method static Builder|Genre whereUpdatedAt($value)
  * @mixin Eloquent
  */
-class BandGenre extends Model
+class Genre extends Model
 {
     use HasFactory;
 

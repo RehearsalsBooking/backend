@@ -3,6 +3,7 @@
 use App\Http\Controllers\Users\BandMembersController;
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\FavoriteOrganizationsController;
+use App\Http\Controllers\Users\GenresController;
 use App\Http\Controllers\Users\InvitesController;
 use App\Http\Controllers\Users\OrganizationPricesController;
 use App\Http\Controllers\Users\OrganizationsController;
@@ -97,3 +98,5 @@ Route::name('bands.members.')->prefix('bands/{band}/members')->middleware('auth:
         ->where('band', '[0-9]+')
         ->name('update');
 });
+
+Route::get('genres', [GenresController::class, 'index'])->name('genres.index');

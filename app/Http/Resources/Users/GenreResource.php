@@ -2,13 +2,13 @@
 
 namespace App\Http\Resources\Users;
 
-use App\Models\BandGenre;
+use App\Models\Genre;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin BandGenre
+ * @mixin Genre
  */
-class BandGenreResource extends JsonResource
+class GenreResource extends JsonResource
 {
     public function toArray($request): array
     {

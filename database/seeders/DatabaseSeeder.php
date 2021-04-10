@@ -5,7 +5,7 @@
 namespace Database\Seeders;
 
 use App\Models\Band;
-use App\Models\BandGenre;
+use App\Models\Genre;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationPrice;
 use App\Models\Organization\OrganizationUserBan;
@@ -193,7 +193,7 @@ class DatabaseSeeder extends Seeder
     protected function createBands(int $count)
     {
         return Band::factory()
-                ->has(BandGenre::factory()->count(3), 'genres')
+                ->has(Genre::factory()->count(3), 'genres')
                 ->count($count)
                 ->create();
     }
@@ -245,12 +245,12 @@ class DatabaseSeeder extends Seeder
     private function createBandsForLoggedInUser(): void
     {
         $bandForLoggedInUser = Band::factory()
-            ->has(BandGenre::factory()->count(3), 'genres')
+            ->has(Genre::factory()->count(3), 'genres')
             ->create(['admin_id' => $this->userToLoginWith->id]);
         $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
 
         $bandForLoggedInUser = Band::factory()
-            ->has(BandGenre::factory()->count(3), 'genres')
+            ->has(Genre::factory()->count(3), 'genres')
             ->create(['admin_id' => $this->userToLoginWith->id]);
         $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
     }

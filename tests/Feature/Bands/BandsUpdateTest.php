@@ -94,7 +94,7 @@ class BandsUpdateTest extends TestCase
     {
         $unknownGenreId = 999;
 
-        $this->assertDatabaseMissing('band_genres', ['id' => $unknownGenreId]);
+        $this->assertDatabaseMissing('genres', ['id' => $unknownGenreId]);
 
         $this->actingAs($this->bandOwner)->json(
             'put',

@@ -51,7 +51,7 @@ use Throwable;
  * @method static Builder|Band whereDeletedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Band withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Band withoutTrashed()
- * @property-read Collection|BandGenre[] $genres
+ * @property-read Collection|Genre[] $genres
  * @property-read int|null $genres_count
  * @method static Builder|Band filter(FilterRequest $filters)
  * @property string|null $bio
@@ -87,7 +87,7 @@ class Band extends Model
     public function genres(): BelongsToMany
     {
         return $this->belongsToMany(
-            BandGenre::class,
+            Genre::class,
             'bands_genres',
             'band_id',
             'genre_id'
