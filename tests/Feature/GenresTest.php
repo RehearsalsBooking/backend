@@ -24,5 +24,4 @@ class GenresTest extends TestCase
             $response->json()
         );
     }
-
 }

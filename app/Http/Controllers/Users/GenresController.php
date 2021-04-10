@@ -13,5 +13,4 @@ class GenresController extends Controller
     {
         return GenreResource::collection(Genre::all());
     }
-
 }
