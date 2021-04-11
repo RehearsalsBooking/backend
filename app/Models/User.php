@@ -74,29 +74,17 @@ class User extends Authenticatable
     use Notifiable;
     use HasFactory;
 
-    /**
-     * @var array
-     */
     protected $guarded = ['id'];
 
-    /**
-     * @var array
-     */
     protected $hidden = [
         'password', 'remember_token',
     ];
 
-    /**
-     * @return HasMany
-     */
     public function organizations(): HasMany
     {
         return $this->hasMany(Organization::class, 'owner_id');
     }
 
-    /**
-     * @return BelongsToMany
-     */
     public function favoriteOrganizations(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -107,39 +95,21 @@ class User extends Authenticatable
         );
     }
 
-    /**
-     * Bands that user is admin of.
-     *
-     * @return HasMany
-     */
     public function createdBands(): HasMany
     {
         return $this->hasMany(Band::class, 'admin_id');
     }
 
-    /**
-     * Bands that user is member of.
-     *
-     * @return BelongsToMany
-     */
     public function bands(): BelongsToMany
     {
         return $this->belongsToMany(Band::class);
     }
 
-    /**
-     * @return BelongsToMany
-     */
     public function rehearsals(): BelongsToMany
     {
         return $this->belongsToMany(Rehearsal::class);
     }
 
-    /**
-     * Returns bands that invited user to join.
-     *
-     * @return BelongsToMany
-     */
     public function invites(): BelongsToMany
     {
         return $this

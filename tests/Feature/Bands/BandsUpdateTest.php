@@ -90,6 +90,44 @@ class BandsUpdateTest extends TestCase
     }
 
     /** @test */
+    public function admin_of_a_band_can_assign_new_band_admin(): void
+    {
+        $this->actingAs($this->bandOwner);
+
+        $newBandAdmin = $this->createUser();
+        $this->band->addMember($newBandAdmin->id);
+
+        $response = $this->json(
+            'put',
+            route('bands.update', $this->band),
+            [
+                'admin_id' => $newBandAdmin->id,
+            ]
+        );
+        $response->assertOk();
+
+        $this->band = $this->band->fresh();
+        $this->assertEquals($newBandAdmin->id, $this->band->admin_id);
+        $this->assertEquals(0, $this->bandOwner->createdBands()->count());
+    }
+
+    /** @test */
+    public function admin_of_a_band_can_choose_new_band_admin_only_from_existing_members(): void
+    {
+        $this->actingAs($this->bandOwner);
+
+        $newBandAdmin = $this->createUser();
+
+        $this->json(
+            'put',
+            route('bands.update', $this->band),
+            [
+                'admin_id' => $newBandAdmin->id,
+            ]
+        )->assertJsonValidationErrors(['admin_id']);
+    }
+
+    /** @test */
     public function it_responds_with_422_when_unknown_genre_id_is_provided(): void
     {
         $unknownGenreId = 999;
