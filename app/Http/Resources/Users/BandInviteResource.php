@@ -16,7 +16,7 @@ class BandInviteResource extends JsonResource
             'id' => $this->id,
             'user' => new UserResource($this->user),
             'role' => $this->role,
-            'invited_at' => $this->created_at
+            'invited_at' => $this->created_at,
         ];
     }
 }
