@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Users\BandInvitesController;
 use App\Http\Controllers\Users\BandMembersController;
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\FavoriteOrganizationsController;
@@ -70,6 +71,10 @@ Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static
     Route::delete('/{band}', [BandsController::class, 'delete'])
         ->where('band', '[0-9]+')
         ->name('delete');
+
+    Route::get('/{band}/invites', [BandInvitesController::class, 'index'])
+        ->where('band', '[0-9]+')
+        ->name('invites');
 });
 
 Route::name('invites.')->prefix('invites')->middleware('auth:sanctum')->group(static function () {

@@ -32,6 +32,7 @@ use Throwable;
  * @property-read Band $band
  * @property string|null $role
  * @method static Builder|Invite whereRole($value)
+ * @property-read User $user
  */
 class Invite extends Pivot
 {
@@ -40,12 +41,14 @@ class Invite extends Pivot
     public $incrementing = true;
     protected $table = 'band_user_invites';
 
-    /**
-     * @return BelongsTo
-     */
     public function band(): BelongsTo
     {
         return $this->belongsTo(Band::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**
