@@ -20,7 +20,7 @@ class UpdateBandRequest extends FormRequest
                 'sometimes',
                 'integer',
                 'exists:users,id',
-                new UserIsMemberOfBand($band)
+                new UserIsMemberOfBand($band),
             ],
             'bio' => 'sometimes|string',
             'genres' => 'sometimes|array',
