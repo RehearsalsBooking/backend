@@ -178,4 +178,25 @@ class BandMembersDeleteTest extends TestCase
             $rehearsalInFuture->fresh(['attendees'])->attendees->pluck('id')->toArray()
         );
     }
+
+    /** @test */
+    public function admin_of_band_cannot_leave_or_be_removed_from_his_band(): void
+    {
+        $this->band->members()->attach($this->bandAdmin);
+
+        $this->assertEquals(1, $this->band->members()->count());
+        $this->assertEquals(
+            $this->bandAdmin->id,
+            $this->band->members->first()->id
+        );
+
+        $this->actingAs($this->bandAdmin);
+
+        $response = $this->json(
+            'delete',
+            route('bands.members.delete', [$this->band->id, $this->bandAdmin->id])
+        );
+
+        $response->assertForbidden();
+    }
 }

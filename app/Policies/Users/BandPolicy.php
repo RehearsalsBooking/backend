@@ -17,11 +17,17 @@ class BandPolicy
 
     public function removeMember(User $user, Band $band, int $memberId): bool
     {
+        // band admin cannot leave band
+        if ($memberId === $band->admin_id) {
+            return false;
+        }
+
         // user can leave the band
         if ($memberId === $user->id) {
             return true;
         }
 
+        //TODO: remove this validation logic from authorization
         if (! $band->hasMember($memberId)) {
             return false;
         }
