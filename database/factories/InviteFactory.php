@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Band;
 use App\Models\Invite;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class InviteFactory extends Factory
@@ -16,7 +15,7 @@ class InviteFactory extends Factory
         return [
             'email' => $this->faker->safeEmail,
             'band_id' => Band::factory(),
-            'status' => Invite::STATUS_SENT
+            'status' => Invite::STATUS_SENT,
         ];
     }
 }
