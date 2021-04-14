@@ -99,7 +99,7 @@ class Band extends Model
         return Invite::create([
             'email' => $email,
             'band_id' => $this->id,
-            'status' => Invite::STATUS_SENT
+            'status' => Invite::STATUS_SENT,
         ]);
     }
 

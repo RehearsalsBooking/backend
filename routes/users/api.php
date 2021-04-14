@@ -5,10 +5,10 @@ use App\Http\Controllers\Users\BandMembersController;
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\FavoriteOrganizationsController;
 use App\Http\Controllers\Users\GenresController;
-use App\Http\Controllers\Users\UserInvitesController;
 use App\Http\Controllers\Users\OrganizationPricesController;
 use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\RehearsalsController;
+use App\Http\Controllers\Users\UserInvitesController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('organizations.')->prefix('organizations')->group(static function () {
@@ -72,7 +72,7 @@ Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static
         ->where('band', '[0-9]+')
         ->name('delete');
 
-    Route::name('invites.')->prefix('/{band}/invites/')->where(['band'=> '[0-9]+'])->group(static function(){
+    Route::name('invites.')->prefix('/{band}/invites/')->where(['band'=> '[0-9]+'])->group(static function () {
         Route::get('/', [BandInvitesController::class, 'index'])
             ->name('index');
 
@@ -83,7 +83,6 @@ Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static
             ->where('invite', '[0-9]+')
             ->name('delete');
     });
-
 });
 
 Route::name('users.invites.')->prefix('invites')->middleware('auth:sanctum')->group(static function () {
