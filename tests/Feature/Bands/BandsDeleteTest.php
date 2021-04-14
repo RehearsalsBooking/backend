@@ -63,8 +63,8 @@ class BandsDeleteTest extends TestCase
     {
         $bandMembers = $this->createUsers(5);
         $this->band->members()->saveMany($bandMembers);
-        $invitedUser = $this->createUser();
-        $this->band->invite($invitedUser);
+        $invitedUserEmail = 'some@mail.com';
+        $this->band->invite($invitedUserEmail);
 
         $rehearsalInPast = $this->createRehearsalForBandInThePast($this->band);
         $rehearsalInPast->registerBandMembersAsAttendees();
@@ -72,7 +72,7 @@ class BandsDeleteTest extends TestCase
         $rehearsalInFuture = $this->createRehearsalForBandInFuture($this->band);
         $rehearsalInFuture->registerBandMembersAsAttendees();
 
-        $this->assertEquals(1, $this->band->invitedUsers()->count());
+        $this->assertEquals(1, $this->band->invites()->count());
 
         $this->assertEquals(2, $this->band->rehearsals()->count());
         $this->assertEquals(
@@ -92,7 +92,7 @@ class BandsDeleteTest extends TestCase
         $this->assertEquals(1, $this->band->rehearsals()->count());
         $this->assertDatabaseMissing('rehearsals', ['id' => $rehearsalInFuture->id]);
         $this->assertDatabaseMissing('rehearsal_user', ['rehearsal_id' => $rehearsalInFuture->id]);
-        $this->assertDatabaseMissing('band_user_invites', ['band_id' => $this->band->id]);
+        $this->assertDatabaseMissing('invites', ['band_id' => $this->band->id]);
         $this->assertDatabaseHas('rehearsal_user', ['rehearsal_id' => $rehearsalInPast->id]);
         $this->assertDatabaseHas('rehearsals', ['id' => $rehearsalInPast->id]);
         $this->assertEquals(0, $this->band->futureRehearsals()->count());
@@ -100,6 +100,6 @@ class BandsDeleteTest extends TestCase
             $bandMembers->pluck('id')->toArray(),
             $rehearsalInPast->fresh()->attendees->pluck('id')->toArray()
         );
-        $this->assertEquals(0, $this->band->invitedUsers()->count());
+        $this->assertEquals(0, $this->band->invites()->count());
     }
 }

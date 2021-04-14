@@ -5,7 +5,7 @@ use App\Http\Controllers\Users\BandMembersController;
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\FavoriteOrganizationsController;
 use App\Http\Controllers\Users\GenresController;
-use App\Http\Controllers\Users\InvitesController;
+use App\Http\Controllers\Users\UserInvitesController;
 use App\Http\Controllers\Users\OrganizationPricesController;
 use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\RehearsalsController;
@@ -72,24 +72,29 @@ Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static
         ->where('band', '[0-9]+')
         ->name('delete');
 
-    Route::get('/{band}/invites', [BandInvitesController::class, 'index'])
-        ->where('band', '[0-9]+')
-        ->name('invites');
+    Route::name('invites.')->prefix('/{band}/invites/')->where(['band'=> '[0-9]+'])->group(static function(){
+        Route::get('/', [BandInvitesController::class, 'index'])
+            ->name('index');
+
+        Route::post('/', [BandInvitesController::class, 'create'])
+            ->name('create');
+
+        Route::delete('/{invite}', [BandInvitesController::class, 'delete'])
+            ->where('invite', '[0-9]+')
+            ->name('delete');
+    });
+
 });
 
-Route::name('invites.')->prefix('invites')->middleware('auth:sanctum')->group(static function () {
-    Route::post('/', [InvitesController::class, 'create'])
-        ->name('create');
+Route::name('users.invites.')->prefix('invites')->middleware('auth:sanctum')->group(static function () {
+    Route::get('/', [UserInvitesController::class, 'index'])
+        ->name('index');
 
-    Route::delete('/{invite}', [InvitesController::class, 'delete'])
-        ->where('invite', '[0-9]+')
-        ->name('delete');
-
-    Route::post('/{invite}/accept', [InvitesController::class, 'accept'])
+    Route::post('/{invite}/accept', [UserInvitesController::class, 'accept'])
         ->where('invite', '[0-9]+')
         ->name('accept');
 
-    Route::post('/{invite}/decline', [InvitesController::class, 'decline'])
+    Route::post('/{invite}/decline', [UserInvitesController::class, 'decline'])
         ->where('invite', '[0-9]+')
         ->name('decline');
 });

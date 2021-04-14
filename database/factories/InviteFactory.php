@@ -14,8 +14,9 @@ class InviteFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'email' => $this->faker->safeEmail,
             'band_id' => Band::factory(),
+            'status' => Invite::STATUS_SENT
         ];
     }
 }

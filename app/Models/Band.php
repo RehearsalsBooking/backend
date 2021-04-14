@@ -40,8 +40,6 @@ use Throwable;
  * @property-read int|null $members_count
  * @property-read Collection|Rehearsal[] $rehearsals
  * @property-read int|null $rehearsals_count
- * @property-read Collection|User[] $invitedUsers
- * @property-read int|null $invited_users_count
  * @property-read Collection|Rehearsal[] $futureRehearsals
  * @property-read int|null $future_rehearsals_count
  * @property Carbon|null $deleted_at
@@ -56,6 +54,8 @@ use Throwable;
  * @method static Builder|Band filter(FilterRequest $filters)
  * @property string|null $bio
  * @method static Builder|Band whereBio($value)
+ * @property-read Collection|Invite[] $invites
+ * @property-read int|null $invites_count
  */
 class Band extends Model
 {
@@ -94,13 +94,12 @@ class Band extends Model
         );
     }
 
-    public function invite(User | int $user): Invite
+    public function invite(string $email): Invite
     {
-        $userId = $user instanceof User ? $user->id : $user;
-
         return Invite::create([
-            'user_id' => $userId,
+            'email' => $email,
             'band_id' => $this->id,
+            'status' => Invite::STATUS_SENT
         ]);
     }
 
@@ -160,16 +159,12 @@ class Band extends Model
 
     public function cancelInvites(): void
     {
-        $this->invitedUsers()->delete();
+        $this->invites()->delete();
     }
 
-    public function invitedUsers(): BelongsToMany
+    public function invites(): HasMany
     {
-        return $this
-            ->belongsToMany(User::class, 'band_user_invites')
-            ->withPivot('role')
-            ->withTimestamps()
-            ->using(Invite::class);
+        return $this->hasMany(Invite::class);
     }
 
     public function hasMember(int $memberId): bool

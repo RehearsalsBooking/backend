@@ -3,6 +3,7 @@
 namespace Tests\Unit\Users;
 
 use App\Models\Band;
+use App\Models\Invite;
 use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use DB;
@@ -105,12 +106,12 @@ class UserTest extends TestCase
         $bandsThatInvitedUser = Band::factory()->count($bandsThatInvitedUserCount)->create();
 
         $bandsThatInvitedUser->each(static function (Band $band) use ($user) {
-            $band->invite($user);
+            $band->invite($user->email);
         });
 
         $this->assertEquals($bandsThatInvitedUserCount, $user->invites()->count());
-        $this->assertInstanceOf(Band::class, $user->invites->first());
-        $this->assertEquals($bandsThatInvitedUser->pluck('id'), $user->invites->pluck('id'));
+        $this->assertInstanceOf(Invite::class, $user->invites->first());
+        $this->assertEquals($bandsThatInvitedUser->pluck('id'), $user->invites->pluck('band_id'));
     }
 
     /** @test */

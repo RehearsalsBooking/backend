@@ -16,14 +16,14 @@ class BandInvitesTest extends TestCase
         $bandManager = $this->createUser();
         $band = $this->createBandForUser($bandManager);
 
-        $invitedUser = $this->createUser();
-        $invite = $band->invite($invitedUser);
+        $invitedUserEmail = 'some@email.com';
+        $invite = $band->invite($invitedUserEmail);
 
-        $this->createBand()->invite($invitedUser);
+        $this->createBand()->invite($invitedUserEmail);
 
-        $this->assertDatabaseCount('band_user_invites', 2);
+        $this->assertDatabaseCount('invites', 2);
 
-        $response = $this->actingAs($bandManager)->json('get', route('bands.invites', [$band]));
+        $response = $this->actingAs($bandManager)->json('get', route('bands.invites.index', [$band]));
         $response->assertOk();
         $this->assertCount(1, $response->json());
         $this->assertEquals(
@@ -35,10 +35,10 @@ class BandInvitesTest extends TestCase
     /** @test */
     public function only_band_admin_can_fetch_band_invites(): void
     {
-        $this->json('get', route('bands.invites', [$this->createBand()]))
+        $this->json('get', route('bands.invites.index', [$this->createBand()]))
             ->assertUnauthorized();
         $this->actingAs($this->createUser())
-            ->json('get', route('bands.invites', [$this->createBand()]))
+            ->json('get', route('bands.invites.index', [$this->createBand()]))
             ->assertForbidden();
     }
 }

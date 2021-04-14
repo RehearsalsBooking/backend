@@ -217,12 +217,12 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param  array  $parameters
+     * @param  array  $attributes
      * @return Invite
      */
-    protected function createInvite(array $parameters = []): Invite
+    protected function createInvite(array $attributes = []): Invite
     {
-        return Invite::factory()->create($parameters);
+        return Invite::factory()->create($attributes);
     }
 
     /**

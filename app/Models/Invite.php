@@ -7,8 +7,8 @@ use Eloquent;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Carbon;
 use Throwable;
 
@@ -17,7 +17,6 @@ use Throwable;
  *
  * @property int $id
  * @property int $band_id
- * @property int $user_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @method static Builder|Invite newModelQuery()
@@ -27,28 +26,28 @@ use Throwable;
  * @method static Builder|Invite whereCreatedAt($value)
  * @method static Builder|Invite whereId($value)
  * @method static Builder|Invite whereUpdatedAt($value)
- * @method static Builder|Invite whereUserId($value)
  * @mixin Eloquent
  * @property-read Band $band
  * @property string|null $role
  * @method static Builder|Invite whereRole($value)
- * @property-read User $user
+ * @property string $email
+ * @property int $status
+ * @method static Builder|Invite whereEmail($value)
+ * @method static Builder|Invite whereStatus($value)
  */
-class Invite extends Pivot
+class Invite extends Model
 {
     use HasFactory;
 
-    public $incrementing = true;
-    protected $table = 'band_user_invites';
+    public const STATUS_SENT = 1;
+    public const STATUS_ACCEPTED = 2;
+    public const STATUS_DECLINED = 2;
+
+    protected $guarded = ['id'];
 
     public function band(): BelongsTo
     {
         return $this->belongsTo(Band::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 
     /**
@@ -57,11 +56,11 @@ class Invite extends Pivot
      * @throws Exception
      * @throws Throwable
      */
-    public function accept(): void
+    public function accept(User $user): void
     {
-        DB::transaction(function () {
-            $this->band->addMember($this->user_id, $this->role);
-            $this->delete();
+        DB::transaction(function () use ($user) {
+            $this->band->addMember($user->id, $this->role);
+            $this->update(['status' => self::STATUS_ACCEPTED]);
         });
     }
 
@@ -70,6 +69,6 @@ class Invite extends Pivot
      */
     public function decline(): void
     {
-        $this->delete();
+        $this->update(['status' => self::STATUS_DECLINED]);
     }
 }

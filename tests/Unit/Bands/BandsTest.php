@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Bands;
 
+use App\Models\Invite;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -88,12 +89,12 @@ class BandsTest extends TestCase
         $invitedUsers = $this->createUsers($invitedUsersCount);
 
         $invitedUsers->each(static function (User $user) use ($band) {
-            $band->invite($user);
+            $band->invite($user->email);
         });
 
-        $this->assertEquals($invitedUsersCount, $band->invitedUsers()->count());
-        $this->assertInstanceOf(User::class, $band->invitedUsers->first());
-        $this->assertEquals($invitedUsers->pluck('id'), $band->invitedUsers->pluck('id'));
+        $this->assertEquals($invitedUsersCount, $band->invites()->count());
+        $this->assertInstanceOf(Invite::class, $band->invites->first());
+        $this->assertEquals($invitedUsers->pluck('email'), $band->invites->pluck('email'));
     }
 
     /** @test */

@@ -10,33 +10,23 @@ class InvitePolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * @param User $user
-     * @param Invite $invite
-     * @return bool
-     */
     public function accept(User $user, Invite $invite): bool
     {
-        return $user->id === $invite->user_id;
+        return $this->isInviteForUser($invite, $user);
     }
 
-    /**
-     * @param User $user
-     * @param Invite $invite
-     * @return bool
-     */
     public function decline(User $user, Invite $invite): bool
     {
-        return $user->id === $invite->user_id;
+        return $this->isInviteForUser($invite, $user);
     }
 
-    /**
-     * @param User $user
-     * @param Invite $invite
-     * @return bool
-     */
     public function cancel(User $user, Invite $invite): bool
     {
         return $user->id === $invite->band->admin_id;
+    }
+
+    protected function isInviteForUser(Invite $invite, User $user): bool
+    {
+        return $user->email === $invite->email;
     }
 }

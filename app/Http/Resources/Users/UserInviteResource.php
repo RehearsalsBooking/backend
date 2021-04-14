@@ -8,13 +8,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @mixin Invite
  */
-class BandInviteResource extends JsonResource
+class UserInviteResource extends JsonResource
 {
     public function toArray($request): array
     {
         return [
             'id' => $this->id,
-            'email' => $this->email,
+            'band' => new BandResource($this->band),
             'role' => $this->role,
             'invited_at' => $this->created_at,
         ];

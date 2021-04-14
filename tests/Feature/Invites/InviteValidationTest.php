@@ -8,11 +8,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
-/**
- * Class BandsMembersInviteTest.
- * @property User $bandAdmin
- * @property Band $band
- */
 class InviteValidationTest extends TestCase
 {
     use RefreshDatabase;
@@ -35,7 +30,7 @@ class InviteValidationTest extends TestCase
 
         $this->json(
             'post',
-            route('invites.create'),
+            route('bands.invites.create', [$this->band]),
             [
                 'band_id' => 1000,
                 'user_id' => $user->id,
@@ -44,7 +39,7 @@ class InviteValidationTest extends TestCase
 
         $this->json(
             'post',
-            route('invites.create'),
+            route('bands.invites.create', [$this->band]),
             [
                 'band_id' => $this->band->id,
                 'user_id' => 10000,
@@ -53,7 +48,7 @@ class InviteValidationTest extends TestCase
 
         $this->json(
             'delete',
-            route('invites.delete', 1000)
+            route('bands.invites.delete', [$this->band, 1000])
         )->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

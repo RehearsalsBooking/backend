@@ -110,11 +110,8 @@ class User extends Authenticatable
         return $this->belongsToMany(Rehearsal::class);
     }
 
-    public function invites(): BelongsToMany
+    public function invites(): HasMany
     {
-        return $this
-            ->belongsToMany(Band::class, 'band_user_invites')
-            ->withTimestamps()
-            ->using(Invite::class);
+        return $this->hasMany(Invite::class, 'email', 'email');
     }
 }
