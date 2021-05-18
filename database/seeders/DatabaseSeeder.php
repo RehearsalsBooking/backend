@@ -193,15 +193,15 @@ class DatabaseSeeder extends Seeder
     protected function createBands(int $count)
     {
         return Band::factory()
-                ->has(Genre::factory()->count(3), 'genres')
-                ->count($count)
-                ->create();
+            ->has(Genre::factory()->count(3), 'genres')
+            ->count($count)
+            ->create();
     }
 
     private function addMembersToBands(): void
     {
         $this->bands->each(
-            fn (Band $band) => $band->members()->sync(
+            fn(Band $band) => $band->members()->sync(
                 $this->users->random(self::BAND_MEMBERS_COUNT)->pluck('id')
             )
         );
@@ -214,6 +214,7 @@ class DatabaseSeeder extends Seeder
                 $this->users
                     ->whereNotIn('id', $band->members->fresh()->pluck('id')->toArray())
                     ->random()
+                    ->email
             );
         }
     }
