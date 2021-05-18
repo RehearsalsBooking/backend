@@ -11,7 +11,7 @@ class CreateBandInviteRequest extends FormRequest
     {
         return [
             'email' => 'required|email',
-            'role' => 'sometimes|string',
+            'role' => 'nullable|string',
         ];
     }
 

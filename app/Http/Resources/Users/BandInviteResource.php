@@ -17,6 +17,7 @@ class BandInviteResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role,
             'invited_at' => $this->created_at,
+            'status' => $this->status
         ];
     }
 }
