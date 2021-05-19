@@ -29,9 +29,9 @@ class BandMembersDeleteAuthorizationTest extends TestCase
     }
 
     /** @test */
-    public function unauthenticated_user_cannot_delete_a_band(): void
+    public function unauthenticated_user_cannot_delete_a_band_member(): void
     {
-        $this->json('delete', route('bands.members.delete', [1, 1]))->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $this->json('delete', route('bands.members.delete', [1, 1]))->assertUnauthorized();
     }
 
     /** @test */
@@ -44,7 +44,7 @@ class BandMembersDeleteAuthorizationTest extends TestCase
         $this->actingAs($this->createUser());
 
         $this->json('delete', route('bands.members.delete', [$this->band->id, $userIdToRemoveFromBand]))
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
     }
 
     /** @test */
@@ -60,6 +60,42 @@ class BandMembersDeleteAuthorizationTest extends TestCase
         $this->actingAs($adminOfAnotherBand);
 
         $this->json('delete', route('bands.members.delete', [$anotherBand->id, $userIdToRemoveFromBand]))
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function only_band_admin_can_delete_member(): void
+    {
+        $bandMember = $this->createUser();
+        $this->band->members()->attach($bandMember->id);
+        $this->json(
+            'delete',
+            route('bands.members.delete', [$this->band->id, $bandMember->id])
+        )->assertUnauthorized();
+        $this->actingAs($this->createUser())->json(
+            'delete',
+            route('bands.members.delete', [$this->band->id, $bandMember->id])
+        )->assertForbidden();
+    }
+
+    /** @test */
+    public function admin_of_band_cannot_leave_or_be_removed_from_his_band(): void
+    {
+        $this->band->members()->attach($this->bandAdmin);
+
+        $this->assertEquals(1, $this->band->members()->count());
+        $this->assertEquals(
+            $this->bandAdmin->id,
+            $this->band->members->first()->id
+        );
+
+        $this->actingAs($this->bandAdmin);
+
+        $response = $this->json(
+            'delete',
+            route('bands.members.delete', [$this->band->id, $this->bandAdmin->id])
+        );
+
+        $response->assertForbidden();
     }
 }
