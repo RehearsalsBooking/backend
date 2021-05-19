@@ -60,8 +60,8 @@ class BandInvitesTest extends TestCase
         $response = $this->actingAs($bandManager)->json('get', route('bands.invites.index', [$band]), [
             'status' => [
                 Invite::STATUS_PENDING,
-                Invite::STATUS_ACCEPTED
-            ]
+                Invite::STATUS_ACCEPTED,
+            ],
         ]);
         $response->assertOk();
         $this->assertCount(2, $response->json('data'));
