@@ -16,7 +16,7 @@ class InvitesFilterRequest extends FilterRequest
                 'array',
             ],
             'status.*' => [
-                Rule::in([Invite::STATUS_ACCEPTED, Invite::STATUS_REJECTED, Invite::STATUS_PENDING])
+                Rule::in([Invite::STATUS_ACCEPTED, Invite::STATUS_REJECTED, Invite::STATUS_PENDING]),
             ],
         ];
     }
