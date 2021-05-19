@@ -15,7 +15,7 @@ class InviteFactory extends Factory
         return [
             'email' => $this->faker->safeEmail,
             'band_id' => Band::factory(),
-            'status' => Invite::STATUS_SENT,
+            'status' => Invite::STATUS_PENDING,
         ];
     }
 }

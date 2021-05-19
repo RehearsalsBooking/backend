@@ -38,10 +38,11 @@ use Throwable;
 class Invite extends Model
 {
     use HasFactory;
+    use Filterable;
 
-    public const STATUS_SENT = 1;
+    public const STATUS_PENDING = 1;
     public const STATUS_ACCEPTED = 2;
-    public const STATUS_DECLINED = 2;
+    public const STATUS_REJECTED = 3;
 
     protected $guarded = ['id'];
 
@@ -69,6 +70,6 @@ class Invite extends Model
      */
     public function decline(): void
     {
-        $this->update(['status' => self::STATUS_DECLINED]);
+        $this->update(['status' => self::STATUS_REJECTED]);
     }
 }

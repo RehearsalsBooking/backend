@@ -20,7 +20,7 @@ class CreateBandInviteRequest extends FormRequest
         return [
             'email' => $this->get('email'),
             'role' => $this->get('role'),
-            'status' => Invite::STATUS_SENT,
+            'status' => Invite::STATUS_PENDING,
         ];
     }
 

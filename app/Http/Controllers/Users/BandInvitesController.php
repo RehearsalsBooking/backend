@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Filters\InvitesFilterRequest;
 use App\Http\Requests\Users\CreateBandInviteRequest;
 use App\Http\Resources\Users\BandInviteResource;
 use App\Mail\NewInvite;
@@ -19,11 +20,11 @@ class BandInvitesController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function index(Band $band): AnonymousResourceCollection
+    public function index(InvitesFilterRequest $filter, Band $band): AnonymousResourceCollection
     {
         $this->authorize('manage', $band);
 
-        $invites = Invite::query()->where('band_id', $band->id)->get();
+        $invites = Invite::query()->where('band_id', $band->id)->filter($filter)->get();
 
         return BandInviteResource::collection($invites);
     }

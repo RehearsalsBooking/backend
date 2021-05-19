@@ -83,7 +83,7 @@ class DeclineInviteTest extends TestCase
         $response->assertOk();
 
         $this->assertEquals(1, Invite::count());
-        $this->assertDatabaseHas('invites', ['email' => $user->email, 'status' => Invite::STATUS_DECLINED]);
+        $this->assertDatabaseHas('invites', ['email' => $user->email, 'status' => Invite::STATUS_REJECTED]);
 
         $this->assertEquals(0, $user->bands()->count());
         $this->assertEquals(0, $band->members()->count());
