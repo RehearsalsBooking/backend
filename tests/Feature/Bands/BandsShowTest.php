@@ -18,9 +18,6 @@ class BandsShowTest extends TestCase
     public function it_fetches_single_band(): void
     {
         $band = $this->createBand();
-        $bandMember = $this->createUser();
-        $role = 'guitarist';
-        $band->addMember($bandMember->id, $role);
 
         $response = $this->json('get', route('bands.show', $band));
         $response->assertOk();
@@ -29,9 +26,6 @@ class BandsShowTest extends TestCase
             (new BandDetailedResource($band))->response()->getData(true)['data'],
             $response->json('data')
         );
-        $this->assertEquals($role, $response->json('data.members.0.role'));
-        $this->assertEquals($bandMember->id, $response->json('data.members.0.id'));
-        $this->assertNotNull($response->json('data.members.0.joined_at'));
     }
 
     /** @test */

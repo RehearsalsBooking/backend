@@ -72,7 +72,7 @@ Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static
         ->where('band', '[0-9]+')
         ->name('delete');
 
-    Route::name('invites.')->prefix('/{band}/invites/')->where(['band'=> '[0-9]+'])->group(static function () {
+    Route::name('invites.')->prefix('/{band}/invites/')->where(['band' => '[0-9]+'])->group(static function () {
         Route::get('/', [BandInvitesController::class, 'index'])
             ->name('index');
 
@@ -98,12 +98,18 @@ Route::name('users.invites.')->prefix('invites')->middleware('auth:sanctum')->gr
         ->name('decline');
 });
 
-Route::name('bands.members.')->prefix('bands/{band}/members')->middleware('auth:sanctum')->group(static function () {
+Route::name('bands.members.')->prefix('bands/{band}/members')->group(static function () {
+    Route::get('/', [BandMembersController::class, 'index'])
+        ->where('band', '[0-9]+')
+        ->name('index');
+
     Route::delete('/{memberId}', [BandMembersController::class, 'delete'])
+        ->middleware('auth:sanctum')
         ->where('band', '[0-9]+')
         ->name('delete');
 
     Route::patch('/{memberId}', [BandMembersController::class, 'update'])
+        ->middleware('auth:sanctum')
         ->where('band', '[0-9]+')
         ->name('update');
 });
