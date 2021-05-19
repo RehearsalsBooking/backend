@@ -5,7 +5,6 @@ namespace Tests\Feature\Bands\Members;
 use App\Models\Band;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Response;
 use Tests\TestCase;
 
 /**
