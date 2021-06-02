@@ -325,11 +325,13 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * @param  User  $user
-     * @param  Organization  $organization
+     * @param  Organization|null  $organization
      * @return Rehearsal
      */
-    protected function createRehearsalForUserInPast(User $user, Organization $organization): Rehearsal
+    protected function createRehearsalForUserInPast(User $user, Organization $organization = null): Rehearsal
     {
+        $organization ??= $this->createOrganization();
+
         return Rehearsal::factory()->create(
             [
                 'user_id' => $user->id,

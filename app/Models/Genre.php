@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\GenreFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -27,6 +28,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Genre whereName($value)
  * @method static Builder|Genre whereUpdatedAt($value)
  * @mixin Eloquent
+ * @method static GenreFactory factory(...$parameters)
  */
 class Genre extends Model
 {

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Http\Requests\Filters\FilterRequest;
+use Database\Factories\InviteFactory;
 use DB;
 use Eloquent;
 use Exception;
@@ -34,6 +36,8 @@ use Throwable;
  * @property int $status
  * @method static Builder|Invite whereEmail($value)
  * @method static Builder|Invite whereStatus($value)
+ * @method static InviteFactory factory(...$parameters)
+ * @method static Builder|Invite filter(FilterRequest $filters)
  */
 class Invite extends Model
 {

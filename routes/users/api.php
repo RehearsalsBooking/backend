@@ -10,6 +10,7 @@ use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\RehearsalsController;
 use App\Http\Controllers\Users\UserInvitesController;
 use App\Http\Controllers\Users\UsersController;
+use App\Http\Controllers\Users\UserStatisticsController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('organizations.')->prefix('organizations')->group(static function () {
@@ -119,4 +120,5 @@ Route::get('genres', [GenresController::class, 'index'])->name('genres.index');
 
 Route::name('users.')->prefix('/users')->group(function () {
     Route::get('/{user}', [UsersController::class, 'show'])->name('show');
+    Route::get('/{user}/statistics', [UserStatisticsController::class, 'index'])->name('statistics');
 });

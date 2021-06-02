@@ -6,6 +6,7 @@ use App\Http\Requests\Filters\FilterRequest;
 use App\Models\Organization\Organization;
 use Belamov\PostgresRange\Casts\TimestampRangeCast;
 use Belamov\PostgresRange\Ranges\TimestampRange;
+use Database\Factories\RehearsalFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -48,6 +49,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Rehearsal wherePrice($value)
  * @property TimestampRange $time
  * @method static Builder|Rehearsal whereTime($value)
+ * @method static Builder|Rehearsal completed()
+ * @method static RehearsalFactory factory(...$parameters)
  */
 class Rehearsal extends Model
 {
@@ -79,9 +82,6 @@ class Rehearsal extends Model
         $this->registerUserAsAttendee();
     }
 
-    /**
-     *  Adds all of this rehearsals band members as attendees.
-     */
     public function registerBandMembersAsAttendees(): void
     {
         if ($this->band !== null) {
@@ -90,59 +90,44 @@ class Rehearsal extends Model
         }
     }
 
-    /**
-     * @return BelongsToMany
-     */
     public function attendees(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }
 
-    /**
-     *  Adds user who booked this rehearsal as attendee.
-     */
     public function registerUserAsAttendee(): void
     {
         $this->attendees()->attach($this->user_id);
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function band(): BelongsTo
     {
         return $this->belongsTo(Band::class);
     }
 
-    /**
-     * @return bool
-     */
     public function isIndividual(): bool
     {
         return $this->band_id === null;
     }
 
-    /**
-     * @return bool
-     */
     public function isInPast(): bool
     {
         return $this->time->from() < Carbon::now();
+    }
+
+    public function scopeCompleted(Builder $builder): Builder
+    {
+        $tillNow = new TimestampRange(null, now(), '(', ')');
+        return $builder->whereRaw("{$tillNow->forSql()} @> time");
     }
 }

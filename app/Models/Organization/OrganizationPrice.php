@@ -33,6 +33,7 @@ use Illuminate\Support\Carbon;
  * @mixin Eloquent
  * @property TimeRange $time
  * @method static Builder|OrganizationPrice whereTime($value)
+ * @method static OrganizationPriceFactory factory(...$parameters)
  */
 class OrganizationPrice extends Model
 {

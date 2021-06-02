@@ -58,6 +58,7 @@ use Illuminate\Support\Facades\Storage;
  * @property-read Collection|User[] $favoritedUsers
  * @property-read int|null $favorited_users_count
  * @mixin Eloquent
+ * @method static OrganizationFactory factory(...$parameters)
  */
 class Organization extends Model
 {

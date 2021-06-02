@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Organization\Organization;
+use Database\Factories\UserFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -67,6 +68,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @method static Builder|User wherePublicEmail($value)
  * @property string|null $avatar
  * @method static Builder|User whereAvatar($value)
+ * @method static UserFactory factory(...$parameters)
  */
 class User extends Authenticatable
 {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Http\Requests\Filters\FilterRequest;
 use Belamov\PostgresRange\Ranges\TimestampRange;
+use Database\Factories\BandFactory;
 use DB;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -56,6 +57,7 @@ use Throwable;
  * @method static Builder|Band whereBio($value)
  * @property-read Collection|Invite[] $invites
  * @property-read int|null $invites_count
+ * @method static BandFactory factory(...$parameters)
  */
 class Band extends Model
 {
