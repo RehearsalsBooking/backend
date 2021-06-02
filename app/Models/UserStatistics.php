@@ -54,6 +54,4 @@ class UserStatistics
             ->where('user_id', $this->user->id)
             ->count();
     }
-
-
 }

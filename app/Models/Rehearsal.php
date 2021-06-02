@@ -128,6 +128,7 @@ class Rehearsal extends Model
     public function scopeCompleted(Builder $builder): Builder
     {
         $tillNow = new TimestampRange(null, now(), '(', ')');
+
         return $builder->whereRaw("{$tillNow->forSql()} @> time");
     }
 }
