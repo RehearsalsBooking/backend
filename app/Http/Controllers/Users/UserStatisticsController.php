@@ -12,6 +12,7 @@ class UserStatisticsController extends Controller
     public function index(User $user): JsonResponse
     {
         $statistics = new UserStatistics($user);
+
         return response()->json($statistics->get());
     }
 }
