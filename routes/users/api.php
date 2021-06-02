@@ -9,6 +9,7 @@ use App\Http\Controllers\Users\OrganizationPricesController;
 use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\RehearsalsController;
 use App\Http\Controllers\Users\UserInvitesController;
+use App\Http\Controllers\Users\UsersController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('organizations.')->prefix('organizations')->group(static function () {
@@ -115,3 +116,7 @@ Route::name('bands.members.')->prefix('bands/{band}/members')->group(static func
 });
 
 Route::get('genres', [GenresController::class, 'index'])->name('genres.index');
+
+Route::name('users.')->prefix('/users')->group(function () {
+    Route::get('/{user}', [UsersController::class, 'show'])->name('show');
+});
