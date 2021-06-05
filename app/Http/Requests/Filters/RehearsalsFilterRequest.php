@@ -15,6 +15,7 @@ abstract class RehearsalsFilterRequest extends FilterRequest
             'organization_id' => "{$this->organizationRequirement()}|numeric|exists:organizations,id",
             'user_id' => 'sometimes|numeric|exists:users,id',
             'band_id' => 'sometimes|numeric|exists:bands,id',
+            'limit' => 'sometimes|numeric'
         ];
     }
 
@@ -60,29 +61,19 @@ abstract class RehearsalsFilterRequest extends FilterRequest
 
     protected function user_id(int $userId): void
     {
-        // TODO: replace whereHas to whereIn(band_id and subquery) for better performance?
-        // select *
-        // from "rehearsals"
-        // where "user_id" = ?
-        //   or exists(select *
-        //             from "bands"
-        //             where "rehearsals"."band_id" = "bands"."id"
-        //               and exists(select *
-        //                          from "users"
-        //                                   inner join "band_user" on "users"."id" = "band_user"."user_id"
-        //                          where "bands"."id" = "band_user"."band_id"
-        //                            and "id" = ?)
-        //               and "bands"."deleted_at" is null)
-        $this->builder
-            ->where('user_id', $userId)
-            ->orwhereHas(
-                'band.members',
-                fn (Builder $query) => $query->where('id', $userId)
-            );
+        $this->builder->whereHas(
+            'attendees',
+            fn(Builder $query) => $query->where('id', $userId)
+        );
     }
 
     protected function band_id(int $bandId): void
     {
         $this->builder->where('band_id', $bandId);
+    }
+
+    protected function limit(int $limit): void
+    {
+        $this->builder->limit($limit);
     }
 }

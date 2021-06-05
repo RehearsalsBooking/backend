@@ -11,10 +11,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
-/**
- * Class RehearsalsFilterTest.
- * @property Organization $organization
- */
 class RehearsalsFilterTest extends TestCase
 {
     use RefreshDatabase;
@@ -209,11 +205,13 @@ class RehearsalsFilterTest extends TestCase
     /**
      * @test
      * @dataProvider invalidFilterDataForDates
-     * @param array $data
-     * @param string $invalidKey
+     * @param  array  $data
+     * @param  string  $invalidKey
      */
-    public function it_responds_with_422_when_user_provided_invalid_data_for_filter_by_date_filter(array $data, string $invalidKey): void
-    {
+    public function it_responds_with_422_when_user_provided_invalid_data_for_filter_by_date_filter(
+        array $data,
+        string $invalidKey
+    ): void {
         $response = $this->json(
             'get',
             route('rehearsals.list'),
@@ -280,7 +278,8 @@ class RehearsalsFilterTest extends TestCase
     }
 
     /** @test */
-    public function when_client_fetches_rehearsals_of_user_he_also_receives_rehearsals_of_this_users_current_band(): void
+    public function when_client_fetches_rehearsals_of_user_he_also_receives_rehearsals_of_this_users_current_band(
+    ): void
     {
         $max = $this->createUser();
 
@@ -308,7 +307,9 @@ class RehearsalsFilterTest extends TestCase
 
         $this->assertCount(3, $maxesRehearsals['data']);
         $this->assertEquals(
-            RehearsalResource::collection(collect([$rehearsalForMaxesBand, $rehearsalForMaxesOtherBand, $rehearsalForMax]))->response()->getData(true),
+            RehearsalResource::collection(collect([
+                $rehearsalForMaxesBand, $rehearsalForMaxesOtherBand, $rehearsalForMax
+            ]))->response()->getData(true),
             $maxesRehearsals
         );
     }
@@ -325,6 +326,22 @@ class RehearsalsFilterTest extends TestCase
             ->json('get', route('rehearsals.list'), ['user_id' => 10000])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors('user_id');
+    }
+
+    /** @test */
+    public function it_limits_rehearsals(): void
+    {
+        $user = $this->createUser();
+        $this->createRehearsalForUser($user);
+        $this->createRehearsalForUser($user);
+        $this->createRehearsalForUser($user);
+
+        $limit = 2;
+
+        $response = $this->json('get', route('rehearsals.list'), ['limit' => $limit]);
+        $response->assertOk();
+
+        $this->assertCount($limit, $response->json('data'));
     }
 
     protected function setUp(): void
