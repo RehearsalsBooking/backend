@@ -33,4 +33,19 @@ class UserRehearsalsTest extends TestCase
             $data
         );
     }
+
+    /** @test */
+    public function it_orders_rehearsals_by_time(): void
+    {
+        $user = $this->createUser();
+        $secondRehearsal = $this->createRehearsal(18, 20, user: $user);
+        $firstRehearsal = $this->createRehearsal(9, 11, user: $user);
+
+        $response = $this->get(route('users.rehearsals', [$user]));
+        $response->assertOk();
+
+        $this->assertCount(2, $response->json('data'));
+        $this->assertEquals($firstRehearsal->id, $response->json('data.0.id'));
+        $this->assertEquals($secondRehearsal->id, $response->json('data.1.id'));
+    }
 }

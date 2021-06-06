@@ -21,6 +21,7 @@ class UserRehearsalsController extends Controller
             )
             ->filter($filter)
             ->with(['band', 'organization'])
+            ->orderBy('time')
             ->get();
 
         return RehearsalDetailedResource::collection($rehearsals);
