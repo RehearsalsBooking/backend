@@ -73,6 +73,22 @@ class AuthTest extends TestCase
             (new UserResource($this->user))->toResponse(null)->getData(true)['data'],
             $response->json('data')
         );
+        $this->assertEmpty($response->json('data.organizations'));
+    }
+
+    /** @test */
+    public function it_fetches_ids_of_organizations_which_user_can_manage(): void
+    {
+        $organization = $this->createOrganizationForUser($this->user);
+
+        $this->assertCount(1, $this->user->fresh()->organizations);
+
+        $this->actingAs($this->user);
+        $response = $this->get(route('me'));
+        $response->assertOk();
+
+        $this->assertCount(1, $response->json('data.organizations'));
+        $this->assertEquals($organization->id, $response->json('data.organizations.0'));
     }
 
     /** @test */

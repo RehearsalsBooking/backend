@@ -116,4 +116,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Invite::class, 'email', 'email');
     }
+
+    public function getManagedOrganizationsIds(): \Illuminate\Support\Collection
+    {
+        return $this->organizations()->pluck('id');
+    }
 }

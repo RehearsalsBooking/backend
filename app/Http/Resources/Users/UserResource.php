@@ -21,6 +21,7 @@ class UserResource extends JsonResource
                 'phone' => $this->phone,
                 'link' => $this->link,
             ],
+            'organizations' => $this->getManagedOrganizationsIds(),
         ];
     }
 }

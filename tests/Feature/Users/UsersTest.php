@@ -21,7 +21,7 @@ class UsersTest extends TestCase
         $response->assertOk();
 
         $this->assertEquals(
-            (new UserResource($user))->toArray(null),
+            (new UserResource($user))->response()->getData(true)['data'],
             $response->json('data')
         );
     }
