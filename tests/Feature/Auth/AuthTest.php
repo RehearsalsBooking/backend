@@ -6,7 +6,6 @@ use App\Http\Resources\Management\OrganizationResource;
 use App\Http\Resources\Users\UserResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
