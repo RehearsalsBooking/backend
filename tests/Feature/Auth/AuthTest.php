@@ -2,11 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Http\Resources\Management\OrganizationResource;
 use App\Http\Resources\Users\UserResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
@@ -74,23 +72,6 @@ class AuthTest extends TestCase
         $this->assertEquals(
             (new UserResource($this->user))->toResponse(null)->getData(true)['data'],
             $response->json('data')
-        );
-        $this->assertEmpty($response->json('data.organizations'));
-    }
-
-    /** @test */
-    public function it_fetches_ids_of_organizations_which_user_can_manage(): void
-    {
-        $organization = $this->createOrganizationForUser($this->user);
-
-        $this->assertCount(1, $this->user->fresh()->organizations);
-
-        $this->actingAs($this->user);
-        $response = $this->get(route('me'));
-        $response->assertOk();
-        $this->assertEquals(
-            (OrganizationResource::collection(collect([$organization])))->response()->getData(true)['data'],
-            $response->json('data.organizations')
         );
     }
 
