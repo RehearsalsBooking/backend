@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Users;
 
+use App\Http\Resources\Management\OrganizationResource;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,7 +22,7 @@ class UserResource extends JsonResource
                 'phone' => $this->phone,
                 'link' => $this->link,
             ],
-            'organizations' => $this->getManagedOrganizationsIds(),
+            'organizations' => OrganizationResource::collection($this->getManagedOrganizations()),
         ];
     }
 }

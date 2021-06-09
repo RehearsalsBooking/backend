@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Http\Resources\Management\OrganizationResource;
 use App\Http\Resources\Users\UserResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
@@ -86,9 +88,10 @@ class AuthTest extends TestCase
         $this->actingAs($this->user);
         $response = $this->get(route('me'));
         $response->assertOk();
-
-        $this->assertCount(1, $response->json('data.organizations'));
-        $this->assertEquals($organization->id, $response->json('data.organizations.0'));
+        $this->assertEquals(
+            (OrganizationResource::collection(collect([$organization])))->response()->getData(true)['data'],
+            $response->json('data.organizations')
+        );
     }
 
     /** @test */
