@@ -25,6 +25,16 @@ class OrganizationsController extends Controller
     }
 
     /**
+     * @throws AuthorizationException
+     */
+    public function show(Organization $organization): OrganizationResource
+    {
+        $this->authorize('manage', $organization);
+
+        return new OrganizationResource($organization);
+    }
+
+    /**
      * @param  OrganizationUpdateRequest  $request
      * @param  Organization  $organization
      * @return OrganizationResource

@@ -30,6 +30,8 @@ Route::prefix('organizations/')->name('organizations.')->group(static function (
         ->group(static function () {
             Route::put('/', [OrganizationsController::class, 'update'])->name('update');
 
+            Route::get('/', [OrganizationsController::class, 'show'])->name('show');
+
             Route::get(
                 '/statistics/total',
                 [OrganizationStatisticsController::class, 'total'],
