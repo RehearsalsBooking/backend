@@ -21,6 +21,6 @@ class OrganizationPolicy
             return true;
         }
 
-        return !$organization->isUserBanned($user->id);
+        return ! $organization->isUserBanned($user->id);
     }
 }
