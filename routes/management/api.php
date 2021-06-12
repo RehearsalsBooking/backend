@@ -9,18 +9,19 @@ use Illuminate\Support\Facades\Route;
 
 // auth middleware is applied at route service provider
 
-Route::middleware('check.rehearsal.ownership')->group(static function () {
-    Route::put('rehearsals/{rehearsal}/status', [RehearsalsController::class, 'update'])
-        ->where('rehearsal', '[0-9]+')
-        ->name('rehearsal.status.update');
 
-    Route::delete('rehearsals/{rehearsal}', [RehearsalsController::class, 'delete'])
+Route::prefix('rehearsals')->name('rehearsals.')->group(function () {
+    Route::get('', [RehearsalsController::class, 'index'])
+        ->name('list');
+
+    Route::put('/{rehearsal}/status', [RehearsalsController::class, 'update'])
         ->where('rehearsal', '[0-9]+')
-        ->name('rehearsal.delete');
+        ->name('status.update');
+
+    Route::delete('/{rehearsal}', [RehearsalsController::class, 'delete'])
+        ->where('rehearsal', '[0-9]+')
+        ->name('delete');
 });
-
-Route::get('rehearsals', [RehearsalsController::class, 'index'])
-    ->name('rehearsals.list');
 
 Route::prefix('organizations/')->name('organizations.')->group(static function () {
     Route::get('/', [OrganizationsController::class, 'index'])->name('list');

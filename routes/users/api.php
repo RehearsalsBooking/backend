@@ -43,9 +43,14 @@ Route::name('rehearsals.')->prefix('rehearsals')->group(static function () {
         ->name('create')
         ->middleware('auth:sanctum');
 
-    Route::put('/{rehearsal}', [RehearsalsController::class, 'reschedule'])
+    Route::get('/{rehearsal}', [RehearsalsController::class, 'show'])
+        ->middleware('auth:sanctum')
         ->where('rehearsal', '[0-9]+')
+        ->name('show');
+
+    Route::put('/{rehearsal}', [RehearsalsController::class, 'reschedule'])
         ->name('reschedule')
+        ->where('rehearsal', '[0-9]+')
         ->middleware('auth:sanctum');
 
     Route::delete('{rehearsal}', [RehearsalsController::class, 'delete'])

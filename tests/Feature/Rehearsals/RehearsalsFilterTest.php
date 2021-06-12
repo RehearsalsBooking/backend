@@ -15,10 +15,14 @@ class RehearsalsFilterTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @var Organization
-     */
     private Organization $organization;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Rehearsal::truncate();
+        $this->organization = $this->createOrganization();
+    }
 
     /** @test */
     public function user_can_fetch_rehearsals_of_organization(): void
@@ -279,7 +283,8 @@ class RehearsalsFilterTest extends TestCase
 
     /** @test */
     public function when_client_fetches_rehearsals_of_user_he_also_receives_rehearsals_of_this_users_current_band(
-    ): void {
+    ): void
+    {
         $max = $this->createUser();
 
         $maxesBand = $this->createBand();
@@ -341,12 +346,5 @@ class RehearsalsFilterTest extends TestCase
         $response->assertOk();
 
         $this->assertCount($limit, $response->json('data'));
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->organization = $this->createOrganization();
     }
 }

@@ -11,6 +11,12 @@ class RehearsalRescheduleTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Rehearsal::truncate();
+    }
+
     /** @test */
     public function user_can_reschedule_his_individual_rehearsal(): void
     {

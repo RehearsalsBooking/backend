@@ -7,7 +7,7 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class DeleteRehearsalTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.rehearsal.delete';
+    private string $endpoint = 'management.rehearsals.delete';
     private string $httpVerb = 'delete';
 
     /** @test */
@@ -28,9 +28,6 @@ class DeleteRehearsalTest extends ManagementTestCase
             1,
             2,
             $this->organization,
-            null,
-            false,
-            $ordinaryClient
         );
 
         $this->actingAs($ordinaryClient);

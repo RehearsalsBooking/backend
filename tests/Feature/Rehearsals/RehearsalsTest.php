@@ -14,6 +14,12 @@ class RehearsalsTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Rehearsal::truncate();
+    }
+
     /** @test */
     public function user_can_fetch_rehearsals(): void
     {

@@ -2,23 +2,29 @@
 
 namespace Tests\Feature\Management\Rehearsals;
 
-use App\Http\Resources\Management\RehearsalDetailedResource;
+use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
-/**
- * Class FetchRehearsalsTest
- * {@inheritdoc}
- *
- * @property Organization $anotherOrganization
- */
 class FetchRehearsalsTest extends ManagementTestCase
 {
     private string $endpoint = 'management.rehearsals.list';
     private string $httpVerb = 'get';
     private Organization $anotherOrganization;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // create two rehearsals for organization
+        $this->createRehearsalsForOrganization($this->organization, 2);
+
+        // create two rehearsals for another organization
+        $this->anotherOrganization = $this->createOrganization();
+        $this->createRehearsalsForOrganization($this->anotherOrganization, 2);
+    }
 
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void
@@ -84,25 +90,7 @@ class FetchRehearsalsTest extends ManagementTestCase
 
         $this->assertCount(2, $data);
         $this->assertEquals(
-            RehearsalDetailedResource::collection($this->organization->rehearsals()->paginate())->response()->getData(true)['data'],
-            $data
-        );
-    }
-
-    /** @test */
-    public function info_about_fetched_rehearsals_is_detailed(): void
-    {
-        $this->actingAs($this->manager);
-
-        $response = $this->json(
-            $this->httpVerb,
-            route($this->endpoint, ['organization_id' => $this->organization->id])
-        );
-
-        $data = $response->json('data');
-
-        $this->assertEquals(
-            RehearsalDetailedResource::collection($this->organization->rehearsals()->paginate())->response()->getData(true)['data'],
+            RehearsalResource::collection($this->organization->rehearsals()->paginate())->response()->getData(true)['data'],
             $data
         );
     }
@@ -142,17 +130,5 @@ class FetchRehearsalsTest extends ManagementTestCase
         )
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors('organization_id');
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // create two rehearsals for organization
-        $this->createRehearsalsForOrganization($this->organization, 2);
-
-        // create two rehearsals for another organization
-        $this->anotherOrganization = $this->createOrganization();
-        $this->createRehearsalsForOrganization($this->anotherOrganization, 2);
     }
 }

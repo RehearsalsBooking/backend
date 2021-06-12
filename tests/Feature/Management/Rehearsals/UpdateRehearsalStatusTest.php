@@ -8,7 +8,7 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class UpdateRehearsalStatusTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.rehearsal.status.update';
+    private string $endpoint = 'management.rehearsals.status.update';
     private string $httpVerb = 'put';
 
     /** @test */
@@ -29,17 +29,14 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
             1,
             2,
             $this->organization,
-            null,
-            false,
-            $ordinaryClient
         );
 
         $this->actingAs($ordinaryClient);
-        $this->json($this->httpVerb, route($this->endpoint, $rehearsal->id))
+        $this->json($this->httpVerb, route($this->endpoint, $rehearsal->id), ['is_confirmed'=>true])
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->actingAs($managerOfAnotherOrganization);
-        $this->json($this->httpVerb, route($this->endpoint, $rehearsal->id))
+        $this->json($this->httpVerb, route($this->endpoint, $rehearsal->id), ['is_confirmed'=>true])
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 

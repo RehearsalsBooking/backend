@@ -11,22 +11,12 @@ class RehearsalPolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Determine whether the user can book the rehearsal.
-     *
-     * User can book rehearsal on behalf of a band only if he is
-     * the admin of that band
-     *
-     * @param  User  $user
-     * @param  int|null  $bandId
-     * @return bool
-     */
     public function create(User $user, ?int $bandId): bool
     {
         if ($bandId !== null) {
             $band = Band::find($bandId);
 
-            if (! $band) {
+            if (!$band) {
                 return false;
             }
 
@@ -36,16 +26,6 @@ class RehearsalPolicy
         return true;
     }
 
-    /**
-     * Determine whether the user can reschedule the rehearsal.
-     *
-     * User can reschedule rehearsal on behalf of a band only if he is
-     * the admin of that band
-     *
-     * @param  User  $user
-     * @param  Rehearsal  $rehearsal
-     * @return bool
-     */
     public function reschedule(User $user, Rehearsal $rehearsal): bool
     {
         if ($rehearsal->isIndividual()) {
@@ -59,20 +39,29 @@ class RehearsalPolicy
         return $rehearsal->band->admin_id === $user->id;
     }
 
-    /**
-     * Determine whether the user can delete the rehearsal.
-     *
-     * @param  User  $user
-     * @param  Rehearsal  $rehearsal
-     * @return mixed
-     */
-    public function delete(User $user, Rehearsal $rehearsal)
+    public function manage(User $user, Rehearsal $rehearsal): bool
     {
         return
-            //user can delete rehearsal that he booked
+            //user who booked
             $user->id === $rehearsal->user_id
             ||
-            //admin of a band can delete rehearsal of band
-            optional($rehearsal->band)->admin_id === $user->id;
+            //admin of a band
+            optional($rehearsal->band)->admin_id === $user->id
+            ||
+            // manager of organization where rehearsal was booked
+            $rehearsal->organization->owner_id === $user->id;
+    }
+
+    public function seeFullInfo(User $user, Rehearsal $rehearsal): bool
+    {
+        return
+            //user who booked
+            $user->id === $rehearsal->user_id
+            ||
+            //any band member
+            optional($rehearsal->band)->hasMember($user->id)
+            ||
+            // manager of organization where rehearsal was booked
+            $rehearsal->organization->owner_id === $user->id;
     }
 }

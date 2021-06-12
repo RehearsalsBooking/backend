@@ -8,10 +8,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Filters\RehearsalsFilterClientRequest;
 use App\Http\Requests\Users\CreateRehearsalRequest;
 use App\Http\Requests\Users\RescheduleRehearsalRequest;
+use App\Http\Resources\Management\RehearsalDetailedResource;
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
 use DB;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -39,6 +41,20 @@ class RehearsalsController extends Controller
         return RehearsalResource::collection($rehearsalsQuery->get());
     }
 
+
+    /**
+     * @throws AuthorizationException
+     */
+    public function show(Rehearsal $rehearsal): RehearsalDetailedResource
+    {
+        $this->authorize('seeFullInfo', $rehearsal);
+
+        return new RehearsalDetailedResource($rehearsal);
+    }
+
+    /**
+     * @throws AuthorizationException
+     */
     public function create(CreateRehearsalRequest $request): RehearsalResource | JsonResponse
     {
         $this->authorize(
@@ -94,13 +110,11 @@ class RehearsalsController extends Controller
     }
 
     /**
-     * @param  Rehearsal  $rehearsal
-     * @return JsonResponse
      * @throws Exception
      */
     public function delete(Rehearsal $rehearsal): JsonResponse
     {
-        $this->authorize('delete', $rehearsal);
+        $this->authorize('manage', $rehearsal);
 
         if ($rehearsal->isInPast()) {
             return response()->json("you can't delete rehearsal in the past", Response::HTTP_FORBIDDEN);
