@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 
 // auth middleware is applied at route service provider
 
-
 Route::prefix('rehearsals')->name('rehearsals.')->group(function () {
     Route::get('', [RehearsalsController::class, 'index'])
         ->name('list');

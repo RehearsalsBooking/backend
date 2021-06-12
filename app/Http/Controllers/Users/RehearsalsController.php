@@ -41,7 +41,6 @@ class RehearsalsController extends Controller
         return RehearsalResource::collection($rehearsalsQuery->get());
     }
 
-
     /**
      * @throws AuthorizationException
      */
