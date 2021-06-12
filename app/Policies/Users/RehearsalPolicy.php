@@ -16,7 +16,7 @@ class RehearsalPolicy
         if ($bandId !== null) {
             $band = Band::find($bandId);
 
-            if (!$band) {
+            if (! $band) {
                 return false;
             }
 

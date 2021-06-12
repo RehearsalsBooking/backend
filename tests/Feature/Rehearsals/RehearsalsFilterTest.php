@@ -283,8 +283,7 @@ class RehearsalsFilterTest extends TestCase
 
     /** @test */
     public function when_client_fetches_rehearsals_of_user_he_also_receives_rehearsals_of_this_users_current_band(
-    ): void
-    {
+    ): void {
         $max = $this->createUser();
 
         $maxesBand = $this->createBand();
