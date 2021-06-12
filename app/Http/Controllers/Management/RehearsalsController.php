@@ -21,7 +21,7 @@ use Illuminate\Http\Response;
 class RehearsalsController extends Controller
 {
     /**
-     * @param RehearsalsFilterManagementRequest $filterRequest
+     * @param  RehearsalsFilterManagementRequest  $filterRequest
      * @return AnonymousResourceCollection
      * @throws AuthorizationException
      */
@@ -29,12 +29,18 @@ class RehearsalsController extends Controller
     {
         $this->authorize('manage', $filterRequest->organization());
 
-        return RehearsalDetailedResource::collection(Rehearsal::filter($filterRequest)->orderBy('id')->paginate());
+        $rehearsals = Rehearsal::query()
+            ->filter($filterRequest)
+            ->with(['user', 'band'])
+            ->orderBy('id')
+            ->get();
+
+        return RehearsalDetailedResource::collection($rehearsals);
     }
 
     /**
-     * @param Rehearsal $rehearsal
-     * @param UpdateRehearsalRequest $request
+     * @param  Rehearsal  $rehearsal
+     * @param  UpdateRehearsalRequest  $request
      * @return RehearsalDetailedResource
      */
     public function update(Rehearsal $rehearsal, UpdateRehearsalRequest $request): RehearsalDetailedResource
@@ -45,7 +51,7 @@ class RehearsalsController extends Controller
     }
 
     /**
-     * @param Rehearsal $rehearsal
+     * @param  Rehearsal  $rehearsal
      * @return JsonResponse
      * @throws Exception
      */
