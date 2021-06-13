@@ -23,10 +23,10 @@ help:  ## Display this help
 
 build: check-environment ## Build container and install dependencies
 	$(docker_compose_bin) --file "$(docker_compose_yml)" build
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run -u $(user_id) -e XDEBUG_MODE=off "$(php_container_name)" composer install
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run -e XDEBUG_MODE=off "$(php_container_name)" composer install
 
 update: check-environment ## Update dependencies
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) -e XDEBUG_MODE=off "$(php_container_name)" composer update
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" composer update
 
 test: check-environment ## Execute tests
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" /bin/bash -c "php artisan test --parallel"
@@ -34,7 +34,16 @@ test: check-environment ## Execute tests
 phpstan: check-environment ## Run phpstan
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" vendor/bin/phpstan analyse --memory-limit 0
 
-check: check-environment test phpstan ## Run tests and phpstan
+composer-validate: ## Validate composer file
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" composer validate --strict
+
+composer-require-check: ## Check soft dependencies
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" composer-require-checker check --config-file=composer-require-checker.json
+
+composer-unused: ## Check soft dependencies
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" composer-unused
+
+check: check-environment composer-validate test phpstan composer-require-check composer-unused ## Run tests and code analysis
 
 shell: check-environment ## Run shell environment in container
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash
