@@ -29,7 +29,7 @@ update: check-environment ## Update dependencies
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) -e XDEBUG_MODE=off "$(php_container_name)" composer update
 
 test: check-environment ## Execute tests
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" /bin/bash -c "php artisan test --parallel --processes=2 --recreate-databases"
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" /bin/bash -c "php artisan test --parallel"
 
 phpstan: check-environment ## Run phpstan
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" vendor/bin/phpstan analyse --memory-limit 0
