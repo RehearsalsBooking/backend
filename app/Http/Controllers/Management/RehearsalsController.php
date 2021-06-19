@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Management;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Management\RehearsalsFilterManagementRequest;
+use App\Http\Requests\Filters\RehearsalsFilterRequest;
 use App\Http\Requests\Management\UpdateRehearsalRequest;
-use App\Http\Resources\Management\RehearsalDetailedResource;
-use App\Http\Resources\Users\RehearsalResource;
+use App\Http\Resources\RehearsalDetailedResource;
+use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -23,16 +23,18 @@ class RehearsalsController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function index(RehearsalsFilterManagementRequest $filterRequest): AnonymousResourceCollection
-    {
-        $this->authorize('manage', $filterRequest->organization());
+    public function index(
+        Organization $organization,
+        RehearsalsFilterRequest $filterRequest
+    ): AnonymousResourceCollection {
+        $this->authorize('manage', $organization);
 
-        $rehearsals = Rehearsal::query()
+        $rehearsals = $organization->rehearsals()
             ->filter($filterRequest)
             ->orderBy('id')
             ->get();
 
-        return RehearsalResource::collection($rehearsals);
+        return RehearsalDetailedResource::collection($rehearsals);
     }
 
     /**

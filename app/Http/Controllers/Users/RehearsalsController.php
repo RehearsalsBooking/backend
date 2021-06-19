@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Users;
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Filters\RehearsalsFilterClientRequest;
+use App\Http\Requests\Filters\RehearsalsFilterRequest;
 use App\Http\Requests\Users\CreateRehearsalRequest;
 use App\Http\Requests\Users\RescheduleRehearsalRequest;
-use App\Http\Resources\Management\RehearsalDetailedResource;
+use App\Http\Resources\RehearsalDetailedResource;
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
 use DB;
@@ -21,7 +21,7 @@ use Illuminate\Http\Response;
 
 class RehearsalsController extends Controller
 {
-    public function index(RehearsalsFilterClientRequest $filter): AnonymousResourceCollection
+    public function index(RehearsalsFilterRequest $filter): AnonymousResourceCollection
     {
         $rehearsalsQuery = Rehearsal::filter($filter)->orderBy('id');
 

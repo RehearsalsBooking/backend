@@ -5,21 +5,19 @@ namespace App\Http\Requests\Filters;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Illuminate\Database\Eloquent\Builder;
 
-abstract class RehearsalsFilterRequest extends FilterRequest
+class RehearsalsFilterRequest extends FilterRequest
 {
     protected function getRules(): array
     {
         return [
             'from' => 'sometimes|date',
             'to' => 'sometimes|date|after:from',
-            'organization_id' => "{$this->organizationRequirement()}|numeric|exists:organizations,id",
+            'organization_id' => "sometimes|numeric|exists:organizations,id",
             'user_id' => 'sometimes|numeric|exists:users,id',
             'band_id' => 'sometimes|numeric|exists:bands,id',
             'limit' => 'sometimes|numeric'
         ];
     }
-
-    abstract protected function organizationRequirement(): string;
 
     protected function getFilters(): array
     {

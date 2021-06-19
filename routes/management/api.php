@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Route;
 // auth middleware is applied at route service provider
 
 Route::prefix('rehearsals')->name('rehearsals.')->group(function () {
-    Route::get('', [RehearsalsController::class, 'index'])
-        ->name('list');
-
     Route::put('/{rehearsal}/status', [RehearsalsController::class, 'update'])
         ->where('rehearsal', '[0-9]+')
         ->name('status.update');
@@ -61,5 +58,8 @@ Route::prefix('organizations/')->name('organizations.')->group(static function (
                     ->where('ban', '[0-9]+');
                 Route::get('', [OrganizationBansController::class, 'index'])->name('list');
             });
+
+            Route::get('/rehearsals', [RehearsalsController::class, 'index'])
+                ->name('rehearsals');
         });
 });

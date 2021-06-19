@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Filters\RehearsalsFilterClientRequest;
+use App\Http\Requests\Filters\RehearsalsFilterRequest;
 use App\Http\Resources\RehearsalDetailedResource;
 use App\Models\Rehearsal;
 use App\Models\User;
@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserRehearsalsController extends Controller
 {
-    public function index(User $user, RehearsalsFilterClientRequest $filter): AnonymousResourceCollection
+    public function index(User $user, RehearsalsFilterRequest $filter): AnonymousResourceCollection
     {
         $rehearsals = Rehearsal::query()
             ->whereHas(

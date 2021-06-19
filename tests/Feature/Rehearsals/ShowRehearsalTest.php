@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Rehearsals;
 
-use App\Http\Resources\Management\RehearsalDetailedResource;
+use App\Http\Resources\RehearsalDetailedResource;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

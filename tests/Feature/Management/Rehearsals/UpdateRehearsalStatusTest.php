@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Management\Rehearsals;
 
-use App\Http\Resources\Management\RehearsalDetailedResource;
+use App\Http\Resources\RehearsalDetailedResource;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 

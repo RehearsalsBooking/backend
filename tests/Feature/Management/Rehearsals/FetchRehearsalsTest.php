@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Management\Rehearsals;
 
-use App\Http\Resources\Users\RehearsalResource;
+use App\Http\Resources\RehearsalDetailedResource;
 use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use Illuminate\Http\Response;
@@ -10,7 +10,7 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class FetchRehearsalsTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.rehearsals.list';
+    private string $endpoint = 'management.organizations.rehearsals';
     private string $httpVerb = 'get';
     private Organization $anotherOrganization;
 
@@ -52,24 +52,22 @@ class FetchRehearsalsTest extends ManagementTestCase
         );
 
         $this->actingAs($ordinaryClient);
-        $this->json($this->httpVerb, route($this->endpoint, ['organization_id' => $this->organization->id]))
+        $this->json($this->httpVerb, route($this->endpoint, [$this->organization]))
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->actingAs($managerOfAnotherOrganization);
-        $this->json($this->httpVerb, route($this->endpoint, ['organization_id' => $this->organization->id]))
+        $this->json($this->httpVerb, route($this->endpoint, $this->organization))
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     /** @test */
-    public function it_responds_with_422_when_unknown_rehearsal_is_given(): void
+    public function it_responds_with_404_when_unknown_organization_is_given(): void
     {
         $this->actingAs($this->manager);
         $this->json($this->httpVerb, route($this->endpoint, 1000))
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('organization_id');
+            ->assertStatus(Response::HTTP_NOT_FOUND);
         $this->json($this->httpVerb, route($this->endpoint, 'some text'))
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('organization_id');
+            ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
     /** @test */
@@ -82,7 +80,7 @@ class FetchRehearsalsTest extends ManagementTestCase
 
         $response = $this->json(
             $this->httpVerb,
-            route($this->endpoint, ['organization_id' => $this->organization->id])
+            route($this->endpoint, $this->organization)
         );
         $response->assertStatus(Response::HTTP_OK);
 
@@ -90,45 +88,32 @@ class FetchRehearsalsTest extends ManagementTestCase
 
         $this->assertCount(2, $data);
         $this->assertEquals(
-            RehearsalResource::collection($this->organization->rehearsals()->paginate())->response()->getData(true)['data'],
+            RehearsalDetailedResource::collection($this->organization->rehearsals()->paginate())->response()->getData(true)['data'],
             $data
         );
     }
 
     /** @test */
-    public function parameter_organization_id_is_required(): void
+    public function it_responds_with_forbidden_error_when_manager_tries_to_fetch_another_organizations_rehearsals(
+    ): void
     {
         $this->actingAs($this->manager);
         $this->json(
             $this->httpVerb,
-            route($this->endpoint)
-        )
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('organization_id');
-    }
-
-    /** @test */
-    public function it_responds_with_forbidden_error_when_manager_tries_to_fetch_another_organizations_rehearsals(): void
-    {
-        $this->actingAs($this->manager);
-        $this->json(
-            $this->httpVerb,
-            route($this->endpoint, ['organization_id' => $this->anotherOrganization->id])
+            route($this->endpoint, $this->anotherOrganization)
         )
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->json(
             $this->httpVerb,
-            route($this->endpoint, ['organization_id' => 'some_id'])
+            route($this->endpoint, 'some_id')
         )
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('organization_id');
+            ->assertStatus(Response::HTTP_NOT_FOUND);
 
         $this->json(
             $this->httpVerb,
-            route($this->endpoint, ['organization_id' => 1000000])
+            route($this->endpoint, 'organization_id')
         )
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('organization_id');
+            ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

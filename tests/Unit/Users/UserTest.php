@@ -65,13 +65,13 @@ class UserTest extends TestCase
         $guitarist->bands()->attach($guitaristsBands->pluck('id'));
 
         $this->assertEquals(
-            $drummersBands->pluck('id'),
-            $drummer->bands->pluck('id')
+            $drummersBands->pluck('id')->sort(),
+            $drummer->bands->pluck('id')->sort()
         );
 
         $this->assertEquals(
-            $guitaristsBands->pluck('id'),
-            $guitarist->bands->pluck('id')
+            $guitaristsBands->pluck('id')->sort(),
+            $guitarist->bands->pluck('id')->sort()
         );
     }
 
