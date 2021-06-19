@@ -31,7 +31,7 @@ class RehearsalsController extends Controller
 
         $rehearsals = $organization->rehearsals()
             ->filter($filterRequest)
-            ->orderBy('id')
+            ->orderBy('time')
             ->get();
 
         return RehearsalDetailedResource::collection($rehearsals);
