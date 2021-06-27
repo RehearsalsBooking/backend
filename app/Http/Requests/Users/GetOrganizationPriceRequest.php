@@ -5,6 +5,7 @@ namespace App\Http\Requests\Users;
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Models\Organization\Organization;
+use App\Models\Rehearsal;
 use App\Models\RehearsalPrice;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
@@ -57,5 +58,13 @@ class GetOrganizationPriceRequest extends FormRequest
     {
         /** @phpstan-ignore-next-line */
         return $this->route()->parameter('organization');
+    }
+
+    public function getReschedulingRehearsal(): ?Rehearsal
+    {
+        if (!$this->has('rehearsal_id')) {
+            return null;
+        }
+        return Rehearsal::firstWhere('id', $this->get('rehearsal_id'));
     }
 }

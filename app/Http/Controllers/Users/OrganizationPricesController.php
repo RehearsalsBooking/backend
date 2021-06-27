@@ -19,9 +19,10 @@ class OrganizationPricesController extends Controller
      */
     public function index(GetOrganizationPriceRequest $request, Organization $organization): JsonResponse
     {
-        if (! $organization->isTimeAvailable(
+        if (!$organization->isTimeAvailable(
             $request->get('starts_at'),
-            $request->get('ends_at')
+            $request->get('ends_at'),
+            $request->getReschedulingRehearsal()
         )) {
             return response()->json(
                 'Выбранное время занято.',
