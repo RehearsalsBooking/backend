@@ -46,9 +46,13 @@ Route::prefix('organizations/')->name('organizations.')->group(static function (
                 Route::post('/', [OrganizationPricesController::class, 'create'])
                     ->name('create');
 
-                Route::delete('{price}', [OrganizationPricesController::class, 'delete'])
+                Route::delete('{price:id}', [OrganizationPricesController::class, 'delete'])
                     ->where('price', '[0-9]+')
                     ->name('delete');
+
+                Route::put('{price:id}', [OrganizationPricesController::class, 'update'])
+                    ->where('price', '[0-9]+')
+                    ->name('update');
             });
 
             Route::prefix('bans')->name('bans.')->group(static function () {

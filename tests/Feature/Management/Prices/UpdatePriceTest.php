@@ -5,10 +5,10 @@ namespace Tests\Feature\Management\Prices;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
-class DeletePricesTest extends ManagementTestCase
+class UpdatePriceTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.organizations.prices.delete';
-    private string $httpVerb = 'delete';
+    private string $endpoint = 'management.organizations.prices.update';
+    private string $httpVerb = 'put';
 
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void
@@ -31,20 +31,22 @@ class DeletePricesTest extends ManagementTestCase
 
         $this->json(
             $this->httpVerb,
-            route($this->endpoint, [$this->organization->id, $priceId])
+            route($this->endpoint, [$this->organization->id, $priceId]),
+            ['price' => 1]
         )
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->actingAs($managerOfAnotherOrganization);
         $this->json(
             $this->httpVerb,
-            route($this->endpoint, [$this->organization->id, $priceId])
+            route($this->endpoint, [$this->organization->id, $priceId]),
+            ['price' => 1]
         )
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     /** @test */
-    public function deleting_price_should_be_owned_by_organization(): void
+    public function updated_price_should_be_owned_by_organization(): void
     {
         $managerOfAnotherOrganization = $this->createUser();
         $anotherOrganization = $this->createOrganizationForUser($managerOfAnotherOrganization);
@@ -77,24 +79,59 @@ class DeletePricesTest extends ManagementTestCase
     }
 
     /** @test */
-    public function manager_of_organization_can_delete_price_entry_of_his_organization(): void
+    public function it_requires_correct_new_price(): void
+    {
+        $price = $this->organization->prices()->where('day', 1)->first()->id;
+
+        $endpoint = route($this->endpoint, [$this->organization->id, $price]);
+
+        $this->actingAs($this->manager);
+
+        $this->json($this->httpVerb, $endpoint)
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('price');
+
+        $this->json(
+            $this->httpVerb,
+            $endpoint,
+            ['price' => 'new price']
+        )
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('price');
+
+        $this->json(
+            $this->httpVerb,
+            $endpoint,
+            ['price' => -100]
+        )
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('price');
+    }
+
+    /** @test */
+    public function manager_of_organization_can_update_price_entry_of_his_organization(): void
     {
         $this->assertEquals(5, $this->organization->prices()->count());
 
-        $priceId = $this->organization->prices()->where('day', 1)->first()->id;
+        $price = $this->organization->prices()->where('day', 1)->first();
+
+        $newPrice = $price->price + 100;
 
         $this->actingAs($this->manager);
 
         $response = $this->json(
             $this->httpVerb,
-            route($this->endpoint, [$this->organization->id, $priceId])
+            route($this->endpoint, [$this->organization->id, $price->id]),
+            ['price' => $newPrice]
         );
-        $response->assertStatus(Response::HTTP_NO_CONTENT);
+        $response->assertOk();
 
-        $this->assertEquals(4, $this->organization->prices()->count());
+        $this->assertEquals(5, $this->organization->prices()->count());
         $this->assertDatabaseMissing('organization_prices', [
             'day' => 1,
             'organization_id' => $this->organization->id,
+            'price' => $price->price
         ]);
+        $this->assertEquals($newPrice, $price->fresh()->price);
     }
 }

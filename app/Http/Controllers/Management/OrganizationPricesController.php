@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Management;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Management\CreateOrganizationPriceRequest;
+use App\Http\Requests\Management\UpdateOrganizationPriceRequest;
 use App\Http\Resources\OrganizationPriceResource;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationPrice;
@@ -16,8 +17,6 @@ use Illuminate\Http\Response;
 class OrganizationPricesController extends Controller
 {
     /**
-     * @param Organization $organization
-     * @return AnonymousResourceCollection
      * @throws AuthorizationException
      */
     public function index(Organization $organization): AnonymousResourceCollection
@@ -28,15 +27,12 @@ class OrganizationPricesController extends Controller
     }
 
     /**
-     * @param  CreateOrganizationPriceRequest  $request
-     * @param  Organization  $organization
-     * @return JsonResponse|AnonymousResourceCollection
      * @throws AuthorizationException
      */
     public function create(
         CreateOrganizationPriceRequest $request,
         Organization $organization
-    ): JsonResponse | AnonymousResourceCollection {
+    ): JsonResponse|AnonymousResourceCollection {
         $this->authorize('manage', $organization);
 
         if ($organization->hasPriceAt(
@@ -44,12 +40,13 @@ class OrganizationPricesController extends Controller
             $request->get('starts_at'),
             $request->get('ends_at')
         )) {
+            $errorMessage = 'this price entry intersects with other prices';
             return response()->json([
-                'message' => 'this price entry intersects with other prices',
+                'message' => ''.$errorMessage.'',
                 'errors' => [
-                    'day' => 'this price entry intersects with other prices',
-                    'starts_at' => 'this price entry intersects with other prices',
-                    'ends_at' => 'this price entry intersects with other prices',
+                    'day' => $errorMessage,
+                    'starts_at' => $errorMessage,
+                    'ends_at' => $errorMessage,
                 ],
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -62,19 +59,27 @@ class OrganizationPricesController extends Controller
     }
 
     /**
-     * @param Organization $organization
-     * @param OrganizationPrice $price
-     * @return JsonResponse
+     * @throws AuthorizationException
+     */
+    public function update(
+        UpdateOrganizationPriceRequest $request,
+        Organization $organization,
+        OrganizationPrice $price
+    ): OrganizationPriceResource {
+        $this->authorize('manage', $organization);
+
+        $price->update($request->getAttributes());
+
+        return new OrganizationPriceResource($price);
+    }
+
+    /**
      * @throws AuthorizationException
      * @throws Exception
      */
     public function delete(Organization $organization, OrganizationPrice $price): JsonResponse
     {
         $this->authorize('manage', $organization);
-
-        if (! $organization->hasPrice($price)) {
-            return response()->json(null, Response::HTTP_FORBIDDEN);
-        }
 
         $price->delete();
 

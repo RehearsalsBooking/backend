@@ -7,11 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CreateOrganizationPriceRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -35,9 +30,6 @@ class CreateOrganizationPriceRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array
-     */
     public function getAttributes(): array
     {
         return [
