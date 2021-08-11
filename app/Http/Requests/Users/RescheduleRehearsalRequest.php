@@ -23,15 +23,9 @@ class RescheduleRehearsalRequest extends FormRequest
         /** @phpstan-ignore-next-line  */
         $this->rehearsal = $this->route()->parameter('rehearsal');
 
-        /** @phpstan-ignore-next-line  */
-        return auth()->user()->can('reschedule', $this->rehearsal);
+        return $this->user()->can('reschedule', $this->rehearsal);
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -69,7 +63,6 @@ class RescheduleRehearsalRequest extends FormRequest
                 Carbon::parse($this->get('ends_at'))->setSeconds(0)->toDateTimeString()
             ),
             'user_id' => auth()->id(),
-            'is_confirmed' => false,
             'price' => $rehearsalPrice(),
         ];
     }

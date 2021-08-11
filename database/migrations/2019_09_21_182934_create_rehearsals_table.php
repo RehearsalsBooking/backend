@@ -18,7 +18,7 @@ class CreateRehearsalsTable extends Migration
             $table->unsignedBigInteger('organization_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('band_id')->nullable();
-            $table->boolean('is_confirmed')->default(false);
+            $table->boolean('is_paid')->default(false);
             $table->decimal('price');
             $table->timestampRange('time');
             $table->timestamps();

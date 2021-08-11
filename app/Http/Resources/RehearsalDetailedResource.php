@@ -24,7 +24,7 @@ class RehearsalDetailedResource extends JsonResource
             'band' => new BandResource($this->band),
             'organization' => new OrganizationResource($this->organization),
             'price' => $this->price,
-            'is_confirmed' => $this->is_confirmed,
+            'is_paid' => $this->is_paid,
         ];
     }
 }

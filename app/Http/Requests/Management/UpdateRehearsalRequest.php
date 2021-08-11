@@ -14,7 +14,7 @@ class UpdateRehearsalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'is_confirmed' => 'required|boolean',
+            'is_paid' => 'required|boolean',
         ];
     }
 
@@ -23,6 +23,6 @@ class UpdateRehearsalRequest extends FormRequest
      */
     public function getStatusAttribute(): array
     {
-        return ['is_confirmed' => $this->get('is_confirmed')];
+        return ['is_paid' => $this->get('is_paid')];
     }
 }

@@ -13,6 +13,8 @@ use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Routing\Middleware\ThrottleRequests;
@@ -71,11 +73,7 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    /**
-     * @param  User  $user
-     * @return Band
-     */
-    protected function createBandForUser(User $user): Band
+    protected function createBandForUser(User $user): Model|EloquentCollection|Band
     {
         return Band::factory()->create(
             [
@@ -84,24 +82,11 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    /**
-     * @param  array  $attributes
-     * @return Band
-     */
-    protected function createBand(array $attributes = []): Band
+    protected function createBand(array $attributes = []): Model|EloquentCollection|Band
     {
         return Band::factory()->create($attributes);
     }
 
-    /**
-     * @param $startsAt
-     * @param $endsAt
-     * @param  Organization|null  $organization
-     * @param  Band|null  $band
-     * @param  bool  $isConfirmed
-     * @param  User|null  $user
-     * @return mixed
-     */
     protected function createRehearsal(
         $startsAt,
         $endsAt,
@@ -109,7 +94,7 @@ abstract class TestCase extends BaseTestCase
         Band $band = null,
         bool $isConfirmed = false,
         User $user = null
-    ): Rehearsal {
+    ): EloquentCollection|Model|Rehearsal {
         $user ??= $this->createUser();
         $organization ??= $this->createOrganization();
 
@@ -123,68 +108,41 @@ abstract class TestCase extends BaseTestCase
                 ),
                 'organization_id' => $organization->id,
                 'band_id' => optional($band)->id,
-                'is_confirmed' => $isConfirmed,
+                'is_paid' => $isConfirmed,
                 'user_id' => $user->id,
             ]
         );
     }
 
-    /**
-     * @param  array  $attributes
-     * @return User
-     */
-    protected function createUser(array $attributes = []): User
+    protected function createUser(array $attributes = []): EloquentCollection|Model|User
     {
         return User::factory()->create($attributes);
     }
 
-    /**
-     * @param  array  $attributes
-     * @return Organization
-     */
-    protected function createOrganization(array $attributes = []): Organization
+    protected function createOrganization(array $attributes = []): EloquentCollection|Model|Organization
     {
         return Organization::factory()->create($attributes);
     }
 
-    /**
-     * @param $hour
-     * @param $minute
-     * @return string
-     */
     protected function getDateTimeAt($hour, $minute): string
     {
         return Carbon::now()->addDay()->setHour($hour)->setMinute($minute)->setSeconds(0)->toDateTimeString();
     }
 
-    /**
-     * @param  array  $attributes
-     * @param  int  $count
-     * @return Organization[]|Collection
-     */
     protected function createOrganizations(int $count = 1, array $attributes = []): Collection
     {
         return Organization::factory()->count($count)->create($attributes);
     }
 
-    /**
-     * @param  User  $user
-     * @param  array  $params
-     * @return Organization
-     */
-    protected function createOrganizationForUser(User $user, array $params = []): Organization
+    protected function createOrganizationForUser(User $user, array $params = []): EloquentCollection|Model|Organization
     {
+        /** @var Organization $organization */
         $organization = Organization::factory()->create(array_merge($params, ['owner_id' => $user->id]));
         $this->createPricesForOrganization($organization);
 
         return $organization;
     }
 
-    /**
-     * @param  Organization  $organization
-     * @param  string  $startsAt
-     * @param  string  $endsAt
-     */
     protected function createPricesForOrganization(
         Organization $organization,
         string $startsAt = '00:00',
@@ -201,9 +159,6 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    /**
-     * @return array
-     */
     protected function getRehearsalTime(): array
     {
         $rehearsalStart = Carbon::now()->addHour()->setMinutes(30)->setSeconds(0);
@@ -216,20 +171,12 @@ abstract class TestCase extends BaseTestCase
         ];
     }
 
-    /**
-     * @param  array  $attributes
-     * @return Invite
-     */
-    protected function createInvite(array $attributes = []): Invite
+    protected function createInvite(array $attributes = []): EloquentCollection|Model|Invite
     {
         return Invite::factory()->create($attributes);
     }
 
-    /**
-     * @param  User  $user
-     * @return Rehearsal
-     */
-    protected function createRehearsalForUser(User $user): Rehearsal
+    protected function createRehearsalForUser(User $user): EloquentCollection|Model|Rehearsal
     {
         return Rehearsal::factory()->create(
             [
@@ -242,11 +189,6 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    /**
-     * @param $start
-     * @param $end
-     * @return TimestampRange
-     */
     protected function getTimestampRange($start, $end): TimestampRange
     {
         return new TimestampRange(
@@ -255,15 +197,10 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    /**
-     * @param  Organization  $organization
-     * @param  int  $amount
-     * @return Rehearsal|Collection
-     */
     protected function createRehearsalsForOrganization(
         Organization $organization,
         int $amount = 1
-    ): Rehearsal | Collection {
+    ): Rehearsal|Collection {
         $rehearsals = [];
         foreach (range(1, $amount) as $index) {
             $rehearsals[] = Rehearsal::factory()->create(
@@ -280,13 +217,10 @@ abstract class TestCase extends BaseTestCase
         return collect($rehearsals);
     }
 
-    /**
-     * @param  Band  $band
-     * @param  User|null  $user
-     * @return Rehearsal
-     */
-    protected function createRehearsalForBandInFuture(Band $band, ?User $user = null): Rehearsal
-    {
+    protected function createRehearsalForBandInFuture(
+        Band $band,
+        ?User $user = null
+    ): EloquentCollection|Model|Rehearsal {
         $user ??= $this->createUser();
 
         return Rehearsal::factory()->create(
@@ -301,13 +235,10 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    /**
-     * @param  User|null  $user
-     * @param  Organization|null  $organization
-     * @return Rehearsal
-     */
-    protected function createRehearsalForUserInFuture(?User $user = null, ?Organization $organization = null): Rehearsal
-    {
+    protected function createRehearsalForUserInFuture(
+        ?User $user = null,
+        ?Organization $organization = null
+    ): EloquentCollection|Model|Rehearsal {
         $user ??= $this->createUser();
         $organization ??= $this->createOrganization();
 
@@ -323,13 +254,10 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    /**
-     * @param  User  $user
-     * @param  Organization|null  $organization
-     * @return Rehearsal
-     */
-    protected function createRehearsalForUserInPast(User $user, Organization $organization = null): Rehearsal
-    {
+    protected function createRehearsalForUserInPast(
+        User $user,
+        Organization $organization = null
+    ): EloquentCollection|Model|Rehearsal {
         $organization ??= $this->createOrganization();
 
         return Rehearsal::factory()->create(
@@ -344,11 +272,7 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    /**
-     * @param  Band  $band
-     * @return Rehearsal
-     */
-    protected function createRehearsalForBandInThePast(Band $band): Rehearsal
+    protected function createRehearsalForBandInThePast(Band $band): EloquentCollection|Model|Rehearsal
     {
         return Rehearsal::factory()->create(
             [
@@ -361,7 +285,7 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    protected function createGenre(): Genre
+    protected function createGenre(): EloquentCollection|Model|Genre
     {
         return Genre::factory()->create();
     }

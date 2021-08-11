@@ -121,7 +121,7 @@ class RehearsalsBookingTest extends TestCase
 
         $createdRehearsal = Rehearsal::first();
 
-        $this->assertFalse($createdRehearsal->is_confirmed);
+        $this->assertFalse($createdRehearsal->is_paid);
     }
 
     /** @test */

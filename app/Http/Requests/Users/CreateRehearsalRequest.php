@@ -56,7 +56,7 @@ class CreateRehearsalRequest extends FormRequest
                 Carbon::parse($this->get('ends_at'))->setSeconds(0)->toDateTimeString(),
             ),
             'user_id' => auth()->id(),
-            'is_confirmed' => false,
+            'is_paid' => false,
             'band_id' => $this->get('band_id'),
             'organization_id' => $this->get('organization_id'),
             'price' => $rehearsalPrice(),

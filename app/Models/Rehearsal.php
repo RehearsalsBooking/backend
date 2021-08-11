@@ -38,7 +38,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Rehearsal whereUserId($value)
  * @mixin Eloquent
  * @method static Builder|Rehearsal filter(FilterRequest $filters)
- * @property bool $is_confirmed
+ * @property bool $is_paid
  * @method static Builder|Rehearsal whereIsConfirmed($value)
  * @property int|null $band_id
  * @property-read Band|null $band
@@ -60,7 +60,7 @@ class Rehearsal extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'is_confirmed' => 'boolean',
+        'is_paid' => 'boolean',
         'time' => TimestampRangeCast::class,
     ];
 

@@ -32,11 +32,11 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
         );
 
         $this->actingAs($ordinaryClient);
-        $this->json($this->httpVerb, route($this->endpoint, $rehearsal->id), ['is_confirmed'=>true])
+        $this->json($this->httpVerb, route($this->endpoint, $rehearsal->id), ['is_paid' => true])
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->actingAs($managerOfAnotherOrganization);
-        $this->json($this->httpVerb, route($this->endpoint, $rehearsal->id), ['is_confirmed'=>true])
+        $this->json($this->httpVerb, route($this->endpoint, $rehearsal->id), ['is_paid' => true])
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
@@ -80,27 +80,27 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
         return [
             [
                 [
-                    'is_confirmed' => 'not boolean',
+                    'is_paid' => 'not boolean',
                 ],
-                'is_confirmed',
+                'is_paid',
             ],
             [
                 [
-                    'is_confirmed' => 11,
+                    'is_paid' => 11,
                 ],
-                'is_confirmed',
+                'is_paid',
             ],
             [
                 [
-                    'is_confirmed' => null,
+                    'is_paid' => null,
                 ],
-                'is_confirmed',
+                'is_paid',
             ],
             [
                 [
                     'confirmed' => true,
                 ],
-                'is_confirmed',
+                'is_paid',
             ],
         ];
     }
@@ -110,20 +110,20 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
     {
         $rehearsal = $this->createRehearsal(1, 2, $this->organization);
 
-        $this->assertFalse($rehearsal->is_confirmed);
+        $this->assertFalse($rehearsal->is_paid);
 
         $this->actingAs($this->manager);
 
         $response = $this->json(
             $this->httpVerb,
             route($this->endpoint, $rehearsal->id),
-            ['is_confirmed' => true]
+            ['is_paid' => true]
         );
         $response->assertStatus(Response::HTTP_OK);
 
         $rehearsal = $rehearsal->fresh();
 
-        $this->assertTrue($rehearsal->is_confirmed);
+        $this->assertTrue($rehearsal->is_paid);
         $this->assertEquals(
             (new RehearsalDetailedResource($rehearsal))->response()->getData(true),
             $response->json()
@@ -132,13 +132,13 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
         $response = $this->json(
             $this->httpVerb,
             route($this->endpoint, $rehearsal->id),
-            ['is_confirmed' => false]
+            ['is_paid' => false]
         );
         $response->assertStatus(Response::HTTP_OK);
 
         $rehearsal = $rehearsal->fresh();
 
-        $this->assertFalse($rehearsal->is_confirmed);
+        $this->assertFalse($rehearsal->is_paid);
         $this->assertEquals(
             (new RehearsalDetailedResource($rehearsal))->response()->getData(true),
             $response->json()

@@ -30,26 +30,21 @@ class DatabaseSeeder extends Seeder
     /**
      * @var User|User[]|Collection|Model|\Illuminate\Support\Collection|mixed
      */
-    private $admins;
+    private mixed $admins;
     /**
      * @var Collection|Model|mixed
      */
-    private $organizations;
+    private mixed $organizations;
     /**
      * @var User|User[]|Collection|Model|\Illuminate\Support\Collection|mixed
      */
-    private $users;
+    private mixed $users;
     /**
      * @var Band|Band[]|Collection|Model|mixed
      */
-    private $bands;
-    private User $userToLoginWith;
+    private mixed $bands;
+    private mixed $userToLoginWith;
 
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
     public function run(): void
     {
         $this->command->info('creating admins');
@@ -83,16 +78,12 @@ class DatabaseSeeder extends Seeder
         $this->createBandRehearsals(self::REHEARSALS_PER_BAND_COUNT);
     }
 
-    /**
-     * @param  int  $count
-     * @return User|User[]|Collection|Model|mixed
-     */
     protected function createAdmins(int $count): \Illuminate\Support\Collection
     {
         return User::factory()->count($count)->create()->push($this->createUserToLoginWith());
     }
 
-    private function createUserToLoginWith(): User
+    private function createUserToLoginWith(): Collection|Model|User
     {
         return $this->userToLoginWith = User::factory()->create([
             'email' => 'belamov@belamov.com',
@@ -100,28 +91,20 @@ class DatabaseSeeder extends Seeder
         ]);
     }
 
-    /**
-     * @param  int  $count
-     * @return Collection|Model|mixed
-     */
-    protected function createOrganizations(int $count)
+    protected function createOrganizations(int $count): \Illuminate\Support\Collection
     {
-        $organizations = [];
+        $createdOrganizations = [];
         foreach (range(1, $count) as $_) {
-            $organizations[] = Organization::factory()->create(
+            $createdOrganizations[] = Organization::factory()->create(
                 [
                     'owner_id' => $this->admins->random()->id,
                 ]
             );
         }
 
-        return collect($organizations);
+        return collect($createdOrganizations);
     }
 
-    /**
-     * @param  int  $count
-     * @return User|User[]|Collection|Model|mixed
-     */
     protected function createUsers(int $count): \Illuminate\Support\Collection
     {
         return User::factory()->count($count)->create()->push($this->userToLoginWith);
@@ -163,10 +146,7 @@ class DatabaseSeeder extends Seeder
         }
     }
 
-    /**
-     * @param $count
-     */
-    protected function createIndividualRehearsals($count): void
+    protected function createIndividualRehearsals(int $count): void
     {
         foreach (range(1, $count) as $_) {
             try {
@@ -174,7 +154,7 @@ class DatabaseSeeder extends Seeder
                     [
                         'user_id' => $this->users->random()->id,
                         'organization_id' => $this->organizations->random()->id,
-                        'is_confirmed' => array_rand([true, false]),
+                        'is_paid' => array_rand([true, false]),
                     ]
                 );
                 $individualRehearsal->registerUserAsAttendee();
@@ -187,11 +167,7 @@ class DatabaseSeeder extends Seeder
         }
     }
 
-    /**
-     * @param  int  $count
-     * @return Band|Band[]|Collection|Model|mixed
-     */
-    protected function createBands(int $count)
+    protected function createBands(int $count): Model|Collection
     {
         return Band::factory()
             ->has(Genre::factory()->count(3), 'genres')
@@ -234,7 +210,7 @@ class DatabaseSeeder extends Seeder
                         'organization_id' => $this->organizations->random()->id,
                         'user_id' => $band->admin_id,
                         'band_id' => $band->id,
-                        'is_confirmed' => array_rand([true, false]),
+                        'is_paid' => array_rand([true, false]),
                     ]);
                 } catch (PDOException | QueryException) {
                     // because rehearsal time is completely random

@@ -18,7 +18,7 @@ class RehearsalFactory extends Factory
         return [
             'organization_id' => Organization::factory(),
             'user_id' => User::factory(),
-            'is_confirmed' => true,
+            'is_paid' => true,
             'time' => $this->getRehearsalTime(),
             'price' => $this->faker->randomNumber(3),
         ];

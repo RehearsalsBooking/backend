@@ -96,16 +96,25 @@ class RehearsalRescheduleTest extends TestCase
     }
 
     /** @test */
-    public function when_user_reschedules_rehearsal_its_status_is_set_to_unconfirmed(): void
+    public function when_user_reschedules_rehearsal_its_payment_status_is_not_changed(): void
     {
         $organization = $this->createOrganization();
         $this->createPricesForOrganization($organization);
+
 
         $user = $this->createUser();
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal(10, 12, $organization, null, true, $user);
+        $rehearsal = $this->createRehearsal(
+            startsAt: 10,
+            endsAt: 12,
+            organization: $organization,
+            isConfirmed: true,
+            user: $user
+        );
+
+        $this->assertTrue($rehearsal->is_paid);
 
         $newRehearsalStartTime = $rehearsal->time->from()->addHours(2);
         $newRehearsalEndTime = $rehearsal->time->to()->addHours(2);
@@ -123,6 +132,6 @@ class RehearsalRescheduleTest extends TestCase
 
         $createdRehearsal = Rehearsal::first();
 
-        $this->assertFalse($createdRehearsal->is_confirmed);
+        $this->assertTrue($createdRehearsal->is_paid);
     }
 }
