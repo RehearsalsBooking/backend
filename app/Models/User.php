@@ -17,6 +17,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * App\Models\User.
@@ -69,12 +72,15 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property string|null $avatar
  * @method static Builder|User whereAvatar($value)
  * @method static UserFactory factory(...$parameters)
+ * @property-read MediaCollection|Media[] $media
+ * @property-read int|null $media_count
  */
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
     use HasApiTokens;
     use Notifiable;
     use HasFactory;
+    use HasAvatar;
 
     protected $guarded = ['id'];
 
