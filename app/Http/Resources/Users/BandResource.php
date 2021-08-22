@@ -21,6 +21,7 @@ class BandResource extends JsonResource
             'members_count' => $this->members_count,
             'genres' => $this->whenLoaded('genres', GenreResource::collection($this->genres), []),
             'is_admin' => $userId === $adminId,
+            'avatar' => $this->getAvatarUrls(),
         ];
     }
 }

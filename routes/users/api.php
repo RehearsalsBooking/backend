@@ -71,6 +71,10 @@ Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static
         ->where('band', '[0-9]+')
         ->name('update');
 
+    Route::post('/{band}/avatar', [BandsController::class, 'avatar'])
+        ->where('band', '[0-9]+')
+        ->name('avatar');
+
     Route::get('/{band}', [BandsController::class, 'show'])
         ->where('band', '[0-9]+')
         ->name('show')

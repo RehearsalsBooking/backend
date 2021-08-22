@@ -20,7 +20,8 @@ class BandDetailedResource extends JsonResource
             'name' => $this->name,
             'bio' => $this->bio,
             'genres' => GenreResource::collection($this->genres),
-            'is_admin' => $userId === $adminId
+            'is_admin' => $userId === $adminId,
+            'avatar' => $this->getAvatarUrls(),
         ];
     }
 }

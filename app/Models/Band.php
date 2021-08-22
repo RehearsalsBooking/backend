@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Carbon;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
 /**
@@ -58,12 +61,15 @@ use Throwable;
  * @property-read Collection|Invite[] $invites
  * @property-read int|null $invites_count
  * @method static BandFactory factory(...$parameters)
+ * @property-read MediaCollection|Media[] $media
+ * @property-read int|null $media_count
  */
-class Band extends Model
+class Band extends Model implements HasMedia
 {
     use SoftDeletes;
     use HasFactory;
     use Filterable;
+    use HasAvatar;
 
     protected $guarded = [
         'id',

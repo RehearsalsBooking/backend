@@ -5,7 +5,7 @@ namespace App\Http\Requests\Management;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
 
-class UpdateOrganizationAvatarRequest extends FormRequest
+class UpdateAvatarRequest extends FormRequest
 {
     public function rules(): array
     {

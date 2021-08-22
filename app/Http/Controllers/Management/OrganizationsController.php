@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Management;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Management\OrganizationUpdateRequest;
-use App\Http\Requests\Management\UpdateOrganizationAvatarRequest;
+use App\Http\Requests\Management\UpdateAvatarRequest;
 use App\Http\Resources\Management\OrganizationResource;
 use App\Models\Organization\Organization;
 use App\Models\User;
@@ -52,14 +52,12 @@ class OrganizationsController extends Controller
      * @throws FileIsTooBig
      */
     public function avatar(
-        UpdateOrganizationAvatarRequest $request,
+        UpdateAvatarRequest $request,
         Organization $organization
     ): JsonResponse {
         $this->authorize('manage', $organization);
 
-        $file = $request->getAvatarFile();
-
-        $organization->updateAvatar($file);
+        $organization->updateAvatar($request->getAvatarFile());
 
         return response()->json($organization->getAvatarUrls());
     }
