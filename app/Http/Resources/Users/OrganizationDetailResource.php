@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Users;
 
+use App\Http\Resources\AvatarResource;
 use App\Http\Resources\OrganizationPriceResource;
 use App\Models\Organization\Organization;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -19,7 +20,7 @@ class OrganizationDetailResource extends JsonResource
             'address' => $this->address,
             'coordinates' => $this->coordinates,
             'gear' => $this->gear,
-            'avatar' => $this->avatar,
+            'avatar' => $this->getAvatarUrls(),
             'owner' => new UserResource($this->owner),
             'prices' => OrganizationPriceResource::collection($this->prices),
             'is_favorited' => $this->isUserFavorited((int) auth()->id()),

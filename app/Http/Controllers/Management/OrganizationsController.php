@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Management;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Management\OrganizationUpdateRequest;
+use App\Http\Requests\Management\UpdateOrganizationAvatarRequest;
 use App\Http\Resources\Management\OrganizationResource;
 use App\Models\Organization\Organization;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\UploadedFile;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 class OrganizationsController extends Controller
 {
@@ -57,5 +61,23 @@ class OrganizationsController extends Controller
         $organization->update($attributes);
 
         return new OrganizationResource($organization);
+    }
+
+    /**
+     * @throws AuthorizationException
+     * @throws FileDoesNotExist
+     * @throws FileIsTooBig
+     */
+    public function avatar(
+        UpdateOrganizationAvatarRequest $request,
+        Organization $organization
+    ): JsonResponse {
+        $this->authorize('manage', $organization);
+
+        $file = $request->getAvatarFile();
+
+        $organization->updateAvatar($file);
+
+        return response()->json($organization->getAvatarUrls());
     }
 }

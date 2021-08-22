@@ -51,6 +51,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Rehearsal whereTime($value)
  * @method static Builder|Rehearsal completed()
  * @method static RehearsalFactory factory(...$parameters)
+ * @method static Builder|Rehearsal whereIsPaid($value)
  */
 class Rehearsal extends Model
 {

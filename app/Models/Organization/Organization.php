@@ -5,6 +5,7 @@ namespace App\Models\Organization;
 use App\Http\Requests\Filters\FilterRequest;
 use App\Models\Filterable;
 use App\Models\GlobalScopes\OnlyActiveScope;
+use App\Models\HasAvatar;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimeRange;
@@ -20,6 +21,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * App\Models\Organization\Organization.
@@ -59,11 +63,14 @@ use Illuminate\Support\Facades\Storage;
  * @property-read int|null $favorited_users_count
  * @mixin Eloquent
  * @method static OrganizationFactory factory(...$parameters)
+ * @property-read MediaCollection|Media[] $media
+ * @property-read int|null $media_count
  */
-class Organization extends Model
+class Organization extends Model implements HasMedia
 {
     use Filterable;
     use HasFactory;
+    use HasAvatar;
 
     protected static function newFactory(): OrganizationFactory
     {

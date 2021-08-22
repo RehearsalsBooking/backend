@@ -39,6 +39,8 @@ Route::prefix('organizations/')->name('organizations.')->group(static function (
                 [OrganizationStatisticsController::class, 'grouped'],
             )->name('statistics.grouped');
 
+            Route::post('avatar', [OrganizationsController::class, 'avatar'])->name('avatar');
+
             Route::prefix('prices')->name('prices.')->group(static function () {
                 Route::get('/', [OrganizationPricesController::class, 'index'])
                     ->name('list');

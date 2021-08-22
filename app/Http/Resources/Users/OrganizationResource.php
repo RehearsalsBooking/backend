@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Users;
 
+use App\Http\Resources\AvatarResource;
 use App\Models\Organization\Organization;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,7 +18,7 @@ class OrganizationResource extends JsonResource
             'name' => $this->name,
             'address' => $this->address,
             'coordinates' => $this->coordinates,
-            'avatar' => $this->avatar,
+            'avatar' => $this->getAvatarUrls(),
             'is_favorited' => $this->favorited_users_count > 0,
         ];
     }
