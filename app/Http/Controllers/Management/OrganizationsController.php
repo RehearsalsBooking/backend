@@ -11,15 +11,11 @@ use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\UploadedFile;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 class OrganizationsController extends Controller
 {
-    /**
-     * @return AnonymousResourceCollection
-     */
     public function index(): AnonymousResourceCollection
     {
         /** @var User $user */
@@ -39,26 +35,13 @@ class OrganizationsController extends Controller
     }
 
     /**
-     * @param  OrganizationUpdateRequest  $request
-     * @param  Organization  $organization
-     * @return OrganizationResource
      * @throws AuthorizationException
      */
     public function update(OrganizationUpdateRequest $request, Organization $organization): OrganizationResource
     {
         $this->authorize('manage', $organization);
 
-        $attributes = $request->getAttributes();
-
-        if ($request->has('avatar')) {
-            $organization->deleteAvatar();
-
-            /** @var UploadedFile $uploadedFile */
-            $uploadedFile = $request->file('avatar');
-            $attributes['avatar'] = $uploadedFile->store('avatars', 'public');
-        }
-
-        $organization->update($attributes);
+        $organization->update($request->getAttributes());
 
         return new OrganizationResource($organization);
     }

@@ -4,8 +4,6 @@ namespace Tests\Feature\Management\Organizations;
 
 use App\Http\Resources\Management\OrganizationResource;
 use Illuminate\Http\Response;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Tests\Feature\Management\ManagementTestCase;
 
 class UpdateOrganizationTest extends ManagementTestCase
@@ -76,10 +74,7 @@ class UpdateOrganizationTest extends ManagementTestCase
     /** @test */
     public function manager_of_organization_can_update_his_organization(): void
     {
-        Storage::fake('public');
-
         $this->actingAs($this->manager);
-        $avatar = UploadedFile::fake()->image('avatar.png');
 
         $newOrganizationInfo = [
             'name' => 'new name',
@@ -91,7 +86,7 @@ class UpdateOrganizationTest extends ManagementTestCase
         $response = $this->json(
             $this->httpVerb,
             route($this->endpoint, $this->organization->id),
-            array_merge($newOrganizationInfo, ['avatar' => $avatar])
+            $newOrganizationInfo,
         );
         $response->assertStatus(Response::HTTP_OK);
 
@@ -99,54 +94,9 @@ class UpdateOrganizationTest extends ManagementTestCase
             'organizations',
             array_merge(['id' => $this->organization->id], $newOrganizationInfo)
         );
-        Storage::disk('public')->assertExists('avatars/'.$avatar->hashName());
         $this->assertEquals(
             (new OrganizationResource($this->organization->fresh()))->response()->getData(true),
             $response->json()
         );
-    }
-
-    /** @test */
-    public function when_manager_updates_avatar_old_avatar_file_is_deleted(): void
-    {
-        Storage::fake('public');
-
-        $this->actingAs($this->manager);
-
-        $avatar = UploadedFile::fake()->image('avatar.png');
-
-        $newOrganizationInfo = [
-            'name' => 'new name',
-            'address' => 'new address',
-            'avatar' => $avatar,
-        ];
-
-        $response = $this->json(
-            $this->httpVerb,
-            route($this->endpoint, $this->organization->id),
-            $newOrganizationInfo
-        );
-        $response->assertStatus(Response::HTTP_OK);
-
-        Storage::disk('public')->assertExists('avatars/'.$avatar->hashName());
-
-        //updating avatar
-        $newAvatar = UploadedFile::fake()->image('new_avatar.png');
-
-        $newOrganizationInfo = [
-            'name' => 'new name',
-            'address' => 'new address',
-            'avatar' => $newAvatar,
-        ];
-
-        $response = $this->json(
-            $this->httpVerb,
-            route($this->endpoint, $this->organization->id),
-            $newOrganizationInfo
-        );
-        $response->assertStatus(Response::HTTP_OK);
-
-        Storage::disk('public')->assertMissing('avatars/'.$avatar->hashName());
-        Storage::disk('public')->assertExists('avatars/'.$newAvatar->hashName());
     }
 }

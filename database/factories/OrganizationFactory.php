@@ -18,7 +18,6 @@ class OrganizationFactory extends Factory
             'gear' => $this->faker->paragraph,
             'coordinates' => $this->getOrganizationCoordinates(),
             'is_active' => true,
-            'avatar' => 'https://picsum.photos/300/200',
             'owner_id' => User::factory(),
         ];
     }
@@ -40,7 +39,6 @@ class OrganizationFactory extends Factory
         $minLon = $longitude - ($radiusInKM) / abs(cos($longitude / 180.0 * M_PI) * 111.12);
         $maxLon = $longitude + ($radiusInKM) / abs(cos($longitude / 180.0 * M_PI) * 111.12);
 
-        /** @noinspection PhpUndefinedMethodInspection */
         return "({$this->faker->latitude($minLat, $maxLat)},{$this->faker->longitude($minLon, $maxLon)})";
     }
 }

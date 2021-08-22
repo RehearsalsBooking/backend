@@ -24,7 +24,6 @@ class CreateOrganizationsTable extends Migration
             $table->boolean('is_active')->default(false);
             $table->text('gear')->nullable();
             $table->unsignedInteger('owner_id');
-            $table->string('avatar')->nullable();
             $table->timestamps();
 
             $table->foreign('owner_id')->references('id')->on('users');
