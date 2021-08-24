@@ -37,6 +37,9 @@ jobs:
     # Ensure check job passes before pushing image.
     needs:
       - check
+      
+    environment: 
+      name: development
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
