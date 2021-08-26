@@ -35,8 +35,8 @@ class BandsTest extends TestCase
     public function it_fetches_correct_band_members_count(): void
     {
         $band = $this->createBand();
-        $band->addMember($this->createUser()->id);
-        $band->addMember($this->createUser()->id);
+        $this->createBandMember($this->createUser(), $band);
+        $this->createBandMember($this->createUser(), $band);
 
         $this->assertEquals(2, $band->fresh()->members()->count());
         $response = $this->get(route('bands.list'));

@@ -3,13 +3,17 @@
 namespace Tests\Feature\Bands;
 
 use App\Models\Band;
+use App\Models\BandMember;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 /**
  * Class BandsUpdateTest.
+ *
  * @property User $bandOwner
  */
 class BandsDeleteTest extends TestCase
@@ -61,8 +65,7 @@ class BandsDeleteTest extends TestCase
     /** @test */
     public function when_band_is_deleted_all_its_future_rehearsals_with_attendees_and_invites_are_really_deleted(): void
     {
-        $bandMembers = $this->createUsers(5);
-        $this->band->members()->saveMany($bandMembers);
+        $bandMembers = $this->createBandMembers($this->band, 5);
         $invitedUserEmail = 'some@mail.com';
         $this->band->invite($invitedUserEmail);
 
@@ -76,11 +79,11 @@ class BandsDeleteTest extends TestCase
 
         $this->assertEquals(2, $this->band->rehearsals()->count());
         $this->assertEquals(
-            $bandMembers->pluck('id')->toArray(),
+            $this->band->members()->pluck('users.id')->toArray(),
             $rehearsalInPast->attendees->pluck('id')->toArray()
         );
         $this->assertEquals(
-            $bandMembers->pluck('id')->toArray(),
+            $this->band->members()->pluck('users.id')->toArray(),
             $rehearsalInFuture->attendees->pluck('id')->toArray()
         );
 

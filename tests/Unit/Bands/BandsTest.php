@@ -2,9 +2,13 @@
 
 namespace Tests\Unit\Bands;
 
+use App\Models\Band;
+use App\Models\BandMember;
 use App\Models\Invite;
 use App\Models\Rehearsal;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -37,21 +41,22 @@ class BandsTest extends TestCase
 
         $rapBand = $this->createBand();
 
-        $rockBandMembers = collect([$drummer, $guitarist, $vocalist]);
-        $rapBandMembers = collect([$drummer, $vocalist]);
+        $this->createBandMember($drummer, $rockBand);
+        $this->createBandMember($guitarist, $rockBand);
+        $this->createBandMember($vocalist, $rockBand);
 
-        $rockBand->members()->attach($rockBandMembers->pluck('id')->toArray());
-        $rapBand->members()->attach($rapBandMembers->pluck('id')->toArray());
+        $this->createBandMember($drummer, $rapBand);
+        $this->createBandMember($vocalist, $rapBand);
 
-        $expectedBandMembers = $rockBandMembers->pluck('id')->toArray();
-        $actualBandMembers = $rockBand->members->pluck('id')->toArray();
+        $expectedBandMembers = [$drummer->id, $guitarist->id, $vocalist->id];
+        $actualBandMembers = $rockBand->members->pluck('users.id')->toArray();
         $this->assertEquals(
             sort($expectedBandMembers),
             sort($actualBandMembers)
         );
 
-        $expectedBandMembers = $rapBandMembers->pluck('id')->toArray();
-        $actualBandMembers = $rapBand->members->pluck('id')->toArray();
+        $expectedBandMembers = [$drummer->id, $vocalist->id];
+        $actualBandMembers = $rapBand->members->pluck('users.id')->toArray();
         $this->assertEquals(
             sort($expectedBandMembers),
             sort($actualBandMembers)

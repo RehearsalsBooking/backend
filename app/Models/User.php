@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -108,9 +109,16 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Band::class, 'admin_id');
     }
 
-    public function bands(): BelongsToMany
+    public function bands(): HasManyThrough
     {
-        return $this->belongsToMany(Band::class);
+        return $this->hasManyThrough(
+            Band::class,
+            BandMember::class,
+            'user_id',
+            'id',
+            'id',
+            'band_id'
+        );
     }
 
     public function rehearsals(): BelongsToMany

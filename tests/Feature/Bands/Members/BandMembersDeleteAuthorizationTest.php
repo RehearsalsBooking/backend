@@ -9,6 +9,7 @@ use Tests\TestCase;
 
 /**
  * Class BandsRegistrationTest.
+ *
  * @property User $bandAdmin
  * @property Band $band
  */
@@ -36,9 +37,8 @@ class BandMembersDeleteAuthorizationTest extends TestCase
     /** @test */
     public function some_other_user_cannot_delete_member_of_a_band(): void
     {
-        $bandMembers = $this->createUsers(2);
-        $this->band->members()->saveMany($bandMembers);
-        $userIdToRemoveFromBand = $this->band->members()->inRandomOrder()->first(['id'])->id;
+        $this->createBandMembers($this->band, 2);
+        $userIdToRemoveFromBand = $this->band->members()->inRandomOrder()->first(['users.id'])->id;
 
         $this->actingAs($this->createUser());
 
@@ -49,9 +49,8 @@ class BandMembersDeleteAuthorizationTest extends TestCase
     /** @test */
     public function deleting_member_should_be_in_given_band(): void
     {
-        $bandMembers = $this->createUsers(2);
-        $this->band->members()->saveMany($bandMembers);
-        $userIdToRemoveFromBand = $this->band->members()->inRandomOrder()->first(['id'])->id;
+        $this->createBandMembers($this->band, 2);
+        $userIdToRemoveFromBand = $this->band->members()->inRandomOrder()->first(['users.id'])->id;
 
         $adminOfAnotherBand = $this->createUser();
         $anotherBand = $this->createBandForUser($adminOfAnotherBand);
@@ -66,7 +65,7 @@ class BandMembersDeleteAuthorizationTest extends TestCase
     public function only_band_admin_can_delete_member(): void
     {
         $bandMember = $this->createUser();
-        $this->band->members()->attach($bandMember->id);
+        $this->createBandMember($bandMember, $this->band);
         $this->json(
             'delete',
             route('bands.members.delete', [$this->band->id, $bandMember->id])
@@ -80,7 +79,8 @@ class BandMembersDeleteAuthorizationTest extends TestCase
     /** @test */
     public function admin_of_band_cannot_leave_or_be_removed_from_his_band(): void
     {
-        $this->band->members()->attach($this->bandAdmin);
+        $this->createBandMember($this->bandAdmin, $this->band);
+
 
         $this->assertEquals(1, $this->band->members()->count());
         $this->assertEquals(

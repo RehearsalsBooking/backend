@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Models\Band;
+use App\Models\BandMember;
 use App\Models\Genre;
 use App\Models\Invite;
 use App\Models\Organization\Organization;
@@ -19,6 +20,7 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Collection;
+use Tests\Feature\Bands\BandsDeleteTest;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -288,5 +290,22 @@ abstract class TestCase extends BaseTestCase
     protected function createGenre(): EloquentCollection|Model|Genre
     {
         return Genre::factory()->create();
+    }
+
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createBandMember(User $user, Band $band): BandMember
+    {
+        return BandMember::factory()->create([
+            'band_id' => $band->id,
+            'user_id' => $user->id,
+        ]);
+    }
+
+    protected function createBandMembers(Band $band, int $count = 1): Model|EloquentCollection
+    {
+        return BandMember::factory()->count($count)->create([
+            'band_id' => $band->id,
+            'user_id' => $this->createUser(),
+        ]);
     }
 }
