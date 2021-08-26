@@ -14,7 +14,7 @@ class UserStatisticsTest extends TestCase
     {
         $user = $this->createUser();
         $this->createRehearsalForUserInFuture($user);
-        $this->createRehearsal(startsAt: now()->subHour()->hour, endsAt: now()->addHour()->hour, user: $user);
+        $this->createRehearsal(startsAt: now()->setHour(10)->hour, endsAt: now()->setHour(11)->hour, user: $user);
         $this->createRehearsalForUserInPast($user);
         $this->createRehearsalForUserInPast($user);
 
