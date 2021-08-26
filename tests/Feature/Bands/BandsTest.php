@@ -64,7 +64,7 @@ class BandsTest extends TestCase
     /** @test
      * @throws Throwable
      */
-    public function users_can_filter_bands_by_member(): void
+    public function users_can_filter_bands_by_active_member(): void
     {
         $user = $this->createUser();
         $this->createBand();
@@ -78,7 +78,7 @@ class BandsTest extends TestCase
         $this->assertEquals(2, $user->bands()->withTrashedParents()->count());
         $this->assertEquals(3, Band::count());
 
-        $response = $this->get(route('bands.list', ['member_id' => $user->id]));
+        $response = $this->get(route('bands.list', ['active_member_id' => $user->id]));
 
         $response->assertOk();
 
@@ -88,10 +88,40 @@ class BandsTest extends TestCase
         $this->assertEquals($participatingBand->id, $fetchedBands[0]['id']);
     }
 
+    /** @test
+     * @throws Throwable
+     */
+    public function users_can_filter_bands_by_inactive_member(): void
+    {
+        $user = $this->createUser();
+        $this->createBand();
+        $participatingBand = $this->createBand();
+        $participatingBand->addMember($user->id);
+        $previouslyParticipatedBand = $this->createBand();
+        $removedMembership = $this->createBandMembership($user, $previouslyParticipatedBand);
+        $removedMembership->delete();
+
+        $this->assertEquals(1, $user->bands()->count());
+        $this->assertEquals(2, $user->bands()->withTrashedParents()->count());
+        $this->assertEquals(3, Band::count());
+
+        $response = $this->get(route('bands.list', ['inactive_member_id' => $user->id]));
+
+        $response->assertOk();
+
+        $fetchedBands = $response->json('data');
+
+        $this->assertCount(1, $fetchedBands);
+        $this->assertEquals($previouslyParticipatedBand->id, $fetchedBands[0]['id']);
+    }
+
     /** @test */
     public function member_id_in_bands_filter_may_be_only_integer(): void
     {
-        $response = $this->json('get', route('bands.list', ['member_id' => 'text']));
-        $response->assertJsonValidationErrors('member_id');
+        $response = $this->json('get', route('bands.list', ['active_member_id' => 'text']));
+        $response->assertJsonValidationErrors('active_member_id');
+
+        $response = $this->json('get', route('bands.list', ['inactive_member_id' => 'text']));
+        $response->assertJsonValidationErrors('inactive_member_id');
     }
 }

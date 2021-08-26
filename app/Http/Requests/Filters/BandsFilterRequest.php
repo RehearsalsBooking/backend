@@ -6,24 +6,28 @@ use Illuminate\Database\Eloquent\Builder;
 
 class BandsFilterRequest extends FilterRequest
 {
-    /**
-     * @return array
-     */
     protected function getRules(): array
     {
         return [
-            'member_id' => 'sometimes|integer',
+            'active_member_id' => 'sometimes|integer',
+            'inactive_member_id' => 'sometimes|integer',
         ];
     }
 
-    /**
-     * @param  int  $memberId
-     */
-    protected function member_id(int $memberId): void
+    protected function active_member_id(int $memberId): void
     {
         $this->builder->whereHas(
-            'members',
+            'memberships',
             fn(Builder $query) => $query->where('user_id', $memberId)
+        );
+    }
+
+    protected function inactive_member_id(int $memberId): void
+    {
+        $this->builder->whereHas(
+            'memberships',
+            /** @phpstan-ignore-next-line */
+            fn(Builder $query) => $query->onlyTrashed()->where('user_id', $memberId)
         );
     }
 }
