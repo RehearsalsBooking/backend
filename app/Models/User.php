@@ -113,7 +113,7 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasManyThrough(
             Band::class,
-            BandMember::class,
+            BandMembership::class,
             'user_id',
             'id',
             'id',

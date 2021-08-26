@@ -2,13 +2,9 @@
 
 namespace Tests\Unit\Bands;
 
-use App\Models\Band;
-use App\Models\BandMember;
 use App\Models\Invite;
 use App\Models\Rehearsal;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -41,12 +37,12 @@ class BandsTest extends TestCase
 
         $rapBand = $this->createBand();
 
-        $this->createBandMember($drummer, $rockBand);
-        $this->createBandMember($guitarist, $rockBand);
-        $this->createBandMember($vocalist, $rockBand);
+        $this->createBandMembership($drummer, $rockBand);
+        $this->createBandMembership($guitarist, $rockBand);
+        $this->createBandMembership($vocalist, $rockBand);
 
-        $this->createBandMember($drummer, $rapBand);
-        $this->createBandMember($vocalist, $rapBand);
+        $this->createBandMembership($drummer, $rapBand);
+        $this->createBandMembership($vocalist, $rapBand);
 
         $expectedBandMembers = [$drummer->id, $guitarist->id, $vocalist->id];
         $actualBandMembers = $rockBand->members->pluck('users.id')->toArray();

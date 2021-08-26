@@ -64,6 +64,8 @@ use Throwable;
  * @method static BandFactory factory(...$parameters)
  * @property-read MediaCollection|Media[] $media
  * @property-read int|null $media_count
+ * @property-read Collection|BandMembership[] $memberships
+ * @property-read int|null $memberships_count
  */
 class Band extends Model implements HasMedia
 {
@@ -118,7 +120,7 @@ class Band extends Model implements HasMedia
     public function addMember(int $userId, ?string $role = null): void
     {
         DB::transaction(function () use ($role, $userId) {
-            $this->membership()->create(['user_id' => $userId, 'role' => $role]);
+            $this->memberships()->create(['user_id' => $userId, 'role' => $role]);
             $this->addUserToFutureRehearsals($userId);
         });
     }
@@ -127,17 +129,17 @@ class Band extends Model implements HasMedia
     {
         return $this->hasManyThrough(
             User::class,
-            BandMember::class,
+            BandMembership::class,
             'band_id',
-            'id',
+            'users.id',
             'id',
             'user_id',
         );
     }
 
-    public function membership(): HasMany
+    public function memberships(): HasMany
     {
-        return $this->hasMany(BandMember::class);
+        return $this->hasMany(BandMembership::class);
     }
 
     private function addUserToFutureRehearsals(int $userId): void
@@ -149,14 +151,13 @@ class Band extends Model implements HasMedia
     }
 
     /**
-     * @param  int  $memberId
      * @throws Throwable
      */
-    public function removeMember(int $memberId): void
+    public function removeMembership(BandMembership $membership): void
     {
-        DB::transaction(function () use ($memberId) {
-            $this->removeUserFromFutureRehearsals($memberId);
-            $this->members()->detach([$memberId]);
+        DB::transaction(function () use ($membership) {
+            $this->removeUserFromFutureRehearsals($membership->user_id);
+            $membership->delete();
         });
     }
 

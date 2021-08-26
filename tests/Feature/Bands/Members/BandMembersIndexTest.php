@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Bands\Members;
 
+use App\Http\Resources\Users\BandMembershipResource;
 use App\Models\Band;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,7 +21,7 @@ class BandMembersIndexTest extends TestCase
     }
 
     /** @test */
-    public function it_fetches_band_members(): void
+    public function it_fetches_band_memberships(): void
     {
         $max = $this->createUser();
         $john = $this->createUser();
@@ -31,5 +32,9 @@ class BandMembersIndexTest extends TestCase
         $response->assertOk();
 
         $this->assertCount(2, $response->json('data'));
+        $this->assertEquals(
+            BandMembershipResource::collection($this->band->memberships)->response()->getData(true),
+            $response->json()
+        );
     }
 }

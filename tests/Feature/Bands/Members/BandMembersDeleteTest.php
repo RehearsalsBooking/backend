@@ -28,26 +28,28 @@ class BandMembersDeleteTest extends TestCase
     {
         $bandMembersCount = 5;
         $bandMembers = $this->createUsers($bandMembersCount);
-        $this->band->members()->saveMany($bandMembers);
+        foreach ($bandMembers as $bandMember) {
+            $this->band->addMember($bandMember->id);
+        }
 
         $this->actingAs($this->bandAdmin);
 
-        $this->assertEquals($bandMembersCount, $this->band->members()->count());
+        $this->assertEquals($bandMembersCount, $this->band->memberships()->count());
         $this->assertEquals(
             $bandMembers->pluck('id')->toArray(),
-            $this->band->members->pluck('id')->toArray()
+            $this->band->memberships()->pluck('user_id')->toArray()
         );
 
-        $userIdToRemoveFromBand = $this->band->members()->inRandomOrder()->first(['id'])->id;
+        $bandMembershipIdToDelete = $this->band->memberships()->inRandomOrder()->first(['id'])->id;
 
-        $response = $this->json('delete', route('bands.members.delete', [$this->band->id, $userIdToRemoveFromBand]));
+        $response = $this->json('delete', route('bands.members.delete', [$this->band->id, $bandMembershipIdToDelete]));
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
 
-        $this->assertEquals($bandMembersCount - 1, $this->band->members()->count());
+        $this->assertEquals($bandMembersCount - 1, $this->band->memberships()->count());
         $this->assertNotContains(
-            $userIdToRemoveFromBand,
-            $this->band->fresh(['members'])->pluck('id')->toArray()
+            $bandMembershipIdToDelete,
+            $this->band->memberships()->pluck('id')->toArray()
         );
     }
 
@@ -56,29 +58,31 @@ class BandMembersDeleteTest extends TestCase
     {
         $bandMembersCount = 5;
         $bandMembers = $this->createUsers($bandMembersCount);
-        $this->band->members()->saveMany($bandMembers);
+        $bandMembers->each(function (User $user) {
+            $this->band->addMember($user->id);
+        });
 
         $this->assertEquals($bandMembersCount, $this->band->members()->count());
         $this->assertEquals(
             $bandMembers->pluck('id')->toArray(),
-            $this->band->members->pluck('id')->toArray()
+            $this->band->memberships()->pluck('user_id')->toArray()
         );
 
-        $userWhoIsLeavingBand = $this->band->members()->inRandomOrder()->first(['id']);
+        $membershipOfUserWhoIsLeavingBand = $this->band->memberships()->inRandomOrder()->first();
 
-        $this->actingAs($userWhoIsLeavingBand);
+        $this->actingAs($membershipOfUserWhoIsLeavingBand->user);
 
         $response = $this->json(
             'delete',
-            route('bands.members.delete', [$this->band->id, $userWhoIsLeavingBand->id])
+            route('bands.members.delete', [$this->band->id, $membershipOfUserWhoIsLeavingBand->id])
         );
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
 
         $this->assertEquals($bandMembersCount - 1, $this->band->members()->count());
         $this->assertNotContains(
-            $userWhoIsLeavingBand->id,
-            $this->band->fresh(['members'])->pluck('id')->toArray()
+            $membershipOfUserWhoIsLeavingBand->id,
+            $this->band->fresh(['memberships'])->pluck('id')->toArray()
         );
     }
 
@@ -89,8 +93,12 @@ class BandMembersDeleteTest extends TestCase
         $bandMembers = $this->createUsers($bandMembersCount);
 
         $someOtherBand = $this->createBand();
-        $this->band->members()->saveMany($bandMembers);
-        $someOtherBand->members()->saveMany($bandMembers);
+        $bandMembers->each(function (User $user) {
+            $this->band->addMember($user->id);
+        });
+        $bandMembers->each(function (User $user) use ($someOtherBand) {
+            $someOtherBand->addMember($user->id);
+        });
 
         $rehearsalInPast = $this->createRehearsalForBandInThePast($this->band);
         $rehearsalInPastForOtherBand = $this->createRehearsalForBandInThePast($someOtherBand);
@@ -115,13 +123,13 @@ class BandMembersDeleteTest extends TestCase
             $rehearsalInFutureForOtherBand->attendees->sortBy('id')->pluck('id')->toArray()
         );
 
-        $userWhoIsLeavingBand = $this->band->members()->inRandomOrder()->first(['id']);
+        $membershipOfUserWhoIsLeavingBand = $this->band->memberships()->inRandomOrder()->first();
 
-        $this->actingAs($userWhoIsLeavingBand);
+        $this->actingAs($membershipOfUserWhoIsLeavingBand->user);
 
         $response = $this->json(
             'delete',
-            route('bands.members.delete', [$this->band->id, $userWhoIsLeavingBand->id])
+            route('bands.members.delete', [$this->band->id, $membershipOfUserWhoIsLeavingBand->id])
         );
         $response->assertStatus(Response::HTTP_NO_CONTENT);
 
@@ -159,7 +167,7 @@ class BandMembersDeleteTest extends TestCase
             $rehearsalInFuture->fresh(['attendees'])->attendees->sortBy('id')->pluck('id')->toArray()
         );
         $this->assertNotContains(
-            $userWhoIsLeavingBand->id,
+            $membershipOfUserWhoIsLeavingBand->user_id,
             $rehearsalInFuture->fresh(['attendees'])->attendees->pluck('id')->toArray()
         );
     }

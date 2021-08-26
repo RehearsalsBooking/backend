@@ -52,7 +52,9 @@ class RehearsalDeleteTest extends TestCase
     {
         $band = $this->createBandForUser($this->user);
         $rehearsalAttendees = $this->createUsers(5);
-        $band->members()->saveMany($rehearsalAttendees);
+        $rehearsalAttendees->each(function (User $user) use ($band) {
+            $band->addMember($user->id);
+        });
 
         $rehearsal = $this->createRehearsalForBandInFuture($band);
         $rehearsal->registerBandMembersAsAttendees();

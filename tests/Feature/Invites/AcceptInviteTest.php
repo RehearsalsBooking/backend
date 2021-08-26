@@ -69,7 +69,7 @@ class AcceptInviteTest extends TestCase
         $this->assertEquals(1, Invite::count());
         $this->assertDatabaseHas('invites', ['email' => $user->email]);
         $this->assertEquals(0, $user->bands()->count());
-        $this->assertEquals(0, $band->members()->count());
+        $this->assertEquals(0, $band->memberships()->count());
 
         $this->actingAs($user);
 
@@ -81,7 +81,7 @@ class AcceptInviteTest extends TestCase
         $this->assertEquals($band->id, $user->bands->first()->id);
         $this->assertEquals(1, $band->members()->count());
         $this->assertEquals($user->id, $band->members()->first()->id);
-        $this->assertEquals($role, $band->fresh()->members->first()->pivot->role);
+        $this->assertEquals($role, $band->fresh()->memberships->first()->role);
 
         $this->assertEquals(1, Invite::count());
         $this->assertDatabaseHas('invites', ['email' => $user->email, 'status' => Invite::STATUS_ACCEPTED]);

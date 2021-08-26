@@ -3,10 +3,7 @@
 namespace Tests\Feature\Bands;
 
 use App\Models\Band;
-use App\Models\BandMember;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -101,7 +98,7 @@ class BandsDeleteTest extends TestCase
         $this->assertEquals(0, $this->band->futureRehearsals()->count());
         $this->assertEquals(
             $bandMembers->pluck('id')->toArray(),
-            $rehearsalInPast->fresh()->attendees->pluck('id')->toArray()
+            $rehearsalInPast->fresh()->attendees()->pluck('id')->toArray()
         );
         $this->assertEquals(0, $this->band->invites()->count());
     }

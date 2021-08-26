@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\BandMember;
+use App\Models\BandMembership;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class BandMemberFactory extends Factory
+class BandMembershipFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = BandMember::class;
+    protected $model = BandMembership::class;
 
     /**
      * Define the model's default state.

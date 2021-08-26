@@ -89,7 +89,8 @@ class AttendeesRegistrationTest extends TestCase
 
     /** @test */
     public function when_user_books_and_reschedules_rehearsal_for_band_then_all_band_members_become_this_rehearsals_attendees(
-    ): void {
+    ): void
+    {
         $user = $this->createUser();
 
         $this->actingAs($user);
@@ -102,7 +103,9 @@ class AttendeesRegistrationTest extends TestCase
         $bandMembersCount = 5;
         $bandMembers = $this->createUsers($bandMembersCount - 1)->merge([$user]);
 
-        $band->members()->attach($bandMembers);
+        $bandMembers->each(function (User $user) use ($band) {
+            $band->addMember($user->id);
+        });
 
         $this->assertEquals(0, $user->rehearsals()->count());
         $this->assertEquals(0, Rehearsal::count());
@@ -157,7 +160,9 @@ class AttendeesRegistrationTest extends TestCase
         $bandMembersCount = 5;
         $bandMembers = $this->createUsers($bandMembersCount - 1)->merge([$user]);
 
-        $band->members()->attach($bandMembers);
+        $bandMembers->each(function (User $user) use ($band) {
+            $band->addMember($user->id);
+        });
 
         $this->bookRehearsal($organization, $band);
 

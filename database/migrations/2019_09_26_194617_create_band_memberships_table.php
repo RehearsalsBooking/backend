@@ -6,20 +6,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBandUserTable extends Migration
+class CreateBandMembershipsTable extends Migration
 {
     public function up(): void
     {
-        Schema::create('band_members', static function (Blueprint $table) {
+        Schema::create('band_memberships', static function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Band::class, 'band_id')->constrained();
             $table->foreignIdFor(User::class, 'user_id')->constrained();
             $table->string('role')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
-    }
-
-    public function down(): void
-    {
     }
 }

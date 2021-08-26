@@ -3,7 +3,7 @@
 namespace Tests;
 
 use App\Models\Band;
-use App\Models\BandMember;
+use App\Models\BandMembership;
 use App\Models\Genre;
 use App\Models\Invite;
 use App\Models\Organization\Organization;
@@ -20,7 +20,6 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Collection;
-use Tests\Feature\Bands\BandsDeleteTest;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -293,19 +292,22 @@ abstract class TestCase extends BaseTestCase
     }
 
     /** @noinspection PhpIncompatibleReturnTypeInspection */
-    protected function createBandMember(User $user, Band $band): BandMember
+    protected function createBandMembership(User $user, Band $band, ?string $role = null): BandMembership
     {
-        return BandMember::factory()->create([
+        return BandMembership::factory()->create([
             'band_id' => $band->id,
             'user_id' => $user->id,
+            'role' => $role,
         ]);
     }
 
-    protected function createBandMembers(Band $band, int $count = 1): Model|EloquentCollection
+    protected function createBandMembers(Band $band, int $count = 1): Collection
     {
-        return BandMember::factory()->count($count)->create([
-            'band_id' => $band->id,
-            'user_id' => $this->createUser(),
-        ]);
+        $members = $this->createUsers($count);
+        $members->each(function (User $user) use ($band) {
+            $this->createBandMembership($user, $band);
+        });
+
+        return $members;
     }
 }

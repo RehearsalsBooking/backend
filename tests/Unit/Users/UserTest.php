@@ -58,11 +58,11 @@ class UserTest extends TestCase
 
         $popBand = $this->createBand();
 
-        $this->createBandMember($drummer, $rapBand);
-        $this->createBandMember($drummer, $popBand);
+        $this->createBandMembership($drummer, $rapBand);
+        $this->createBandMembership($drummer, $popBand);
         $drummersBands = [$rapBand->id, $popBand->id];
 
-        $this->createBandMember($guitarist, $popBand);
+        $this->createBandMembership($guitarist, $popBand);
         $guitaristsBands = [$popBand->id];
 
         $this->assertEquals(

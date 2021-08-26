@@ -28,30 +28,30 @@ class BandMembersUpdateTest extends TestCase
     {
         $bandMember = $this->createUser();
         $oldRole = 'old role';
-        $this->band->addMember($bandMember->id, $oldRole);
+        $membership = $this->createBandMembership($bandMember, $this->band, $oldRole);
 
         $this->actingAs($this->bandAdmin);
 
-        $this->assertEquals(1, $this->band->members()->count());
+        $this->assertEquals(1, $this->band->memberships()->count());
         $this->assertEquals(
             $oldRole,
-            $this->band->members->first()->pivot->role
+            $this->band->fresh()->memberships->first()->role
         );
 
         $newRole = 'new role';
 
         $response = $this->json(
             'patch',
-            route('bands.members.update', [$this->band->id, $bandMember->id]),
+            route('bands.members.update', [$this->band->id, $membership->id]),
             ['role' => $newRole]
         );
 
         $response->assertStatus(Response::HTTP_OK);
-        $this->assertEquals(1, $this->band->members()->count());
-        $this->assertEquals($bandMember->id, $this->band->members->first()->id);
+        $this->assertEquals(1, $this->band->memberships()->count());
+        $this->assertEquals($bandMember->id, $this->band->memberships->first()->user_id);
         $this->assertEquals(
             $newRole,
-            $this->band->fresh()->members->first()->pivot->role
+            $this->band->fresh()->memberships->first()->role
         );
     }
 
@@ -59,15 +59,15 @@ class BandMembersUpdateTest extends TestCase
     public function only_band_admin_can_update_member_role(): void
     {
         $bandMember = $this->createUser();
-        $this->band->members()->attach($bandMember->id);
+        $membership = $this->createBandMembership($bandMember, $this->band);
         $this->json(
             'patch',
-            route('bands.members.update', [$this->band->id, $bandMember->id]),
+            route('bands.members.update', [$this->band->id, $membership->id]),
             ['role' => 'role']
         )->assertUnauthorized();
         $this->actingAs($this->createUser())->json(
             'patch',
-            route('bands.members.update', [$this->band->id, $bandMember->id]),
+            route('bands.members.update', [$this->band->id, $membership->id]),
             ['role' => 'role']
         )->assertForbidden();
     }
@@ -76,10 +76,10 @@ class BandMembersUpdateTest extends TestCase
     public function it_requires_role_parameter(): void
     {
         $bandMember = $this->createUser();
-        $this->band->members()->attach($bandMember->id);
+        $membership = $this->createBandMembership($bandMember, $this->band);
         $this->actingAs($this->bandAdmin)->json(
             'patch',
-            route('bands.members.update', [$this->band->id, $bandMember->id])
+            route('bands.members.update', [$this->band->id, $membership->id])
         )->assertJsonValidationErrors('role');
     }
 }
