@@ -35,8 +35,8 @@ class BandsTest extends TestCase
     public function it_fetches_correct_band_members_count(): void
     {
         $band = $this->createBand();
-        $band->addMember($this->createUser()->id);
-        $band->addMember($this->createUser()->id);
+        $this->createBandMembership($this->createUser(), $band);
+        $this->createBandMembership($this->createUser(), $band);
 
         $this->assertEquals(2, $band->fresh()->members()->count());
         $response = $this->get(route('bands.list'));
@@ -70,9 +70,13 @@ class BandsTest extends TestCase
         $this->createBand();
         $participatingBand = $this->createBand();
         $participatingBand->addMember($user->id);
+        $previouslyParticipatedBand = $this->createBand();
+        $removedMembership = $this->createBandMembership($user, $previouslyParticipatedBand);
+        $removedMembership->delete();
 
         $this->assertEquals(1, $user->bands()->count());
-        $this->assertEquals(2, Band::count());
+        $this->assertEquals(2, $user->bands()->withTrashedParents()->count());
+        $this->assertEquals(3, Band::count());
 
         $response = $this->get(route('bands.list', ['member_id' => $user->id]));
 

@@ -14,7 +14,7 @@ class UserStatistics
         $this->user = $user;
     }
 
-    //TODO: optimize - instead of 4 queries make only one (see issue #201)
+    //TODO: optimize - instead of 4 queries make only one (see issue RB-12)
     public function get(): array
     {
         return [
@@ -40,7 +40,7 @@ class UserStatistics
 
     private function getRoles(): array
     {
-        return DB::table('band_user')
+        return DB::table('band_memberships')
             ->select('role')
             ->distinct()
             ->where('user_id', $this->user->id)
@@ -50,8 +50,6 @@ class UserStatistics
 
     private function getBandsCount(): int
     {
-        return DB::table('band_user')
-            ->where('user_id', $this->user->id)
-            ->count();
+        return $this->user->bands()->count();
     }
 }

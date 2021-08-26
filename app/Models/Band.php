@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Carbon;
@@ -63,6 +64,8 @@ use Throwable;
  * @method static BandFactory factory(...$parameters)
  * @property-read MediaCollection|Media[] $media
  * @property-read int|null $media_count
+ * @property-read Collection|BandMembership[] $memberships
+ * @property-read int|null $memberships_count
  */
 class Band extends Model implements HasMedia
 {
@@ -112,23 +115,31 @@ class Band extends Model implements HasMedia
     }
 
     /**
-     * @param  int  $userId
-     * @param  string|null  $role
      * @throws Throwable
      */
     public function addMember(int $userId, ?string $role = null): void
     {
         DB::transaction(function () use ($role, $userId) {
-            $this->members()->attach($userId, ['role' => $role]);
+            $this->memberships()->create(['user_id' => $userId, 'role' => $role]);
             $this->addUserToFutureRehearsals($userId);
         });
     }
 
-    public function members(): BelongsToMany
+    public function members(): HasManyThrough
     {
-        return $this->belongsToMany(User::class)
-            ->withPivot('role')
-            ->withTimestamps();
+        return $this->hasManyThrough(
+            User::class,
+            BandMembership::class,
+            'band_id',
+            'users.id',
+            'id',
+            'user_id',
+        );
+    }
+
+    public function memberships(): HasMany
+    {
+        return $this->hasMany(BandMembership::class);
     }
 
     private function addUserToFutureRehearsals(int $userId): void
@@ -140,14 +151,13 @@ class Band extends Model implements HasMedia
     }
 
     /**
-     * @param  int  $memberId
      * @throws Throwable
      */
-    public function removeMember(int $memberId): void
+    public function removeMembership(BandMembership $membership): void
     {
-        DB::transaction(function () use ($memberId) {
-            $this->removeUserFromFutureRehearsals($memberId);
-            $this->members()->detach([$memberId]);
+        DB::transaction(function () use ($membership) {
+            $this->removeUserFromFutureRehearsals($membership->user_id);
+            $membership->delete();
         });
     }
 

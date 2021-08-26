@@ -9,6 +9,7 @@ use Tests\TestCase;
 
 /**
  * Class BandsRegistrationTest.
+ *
  * @property User $bandAdmin
  * @property Band $band
  */
@@ -36,29 +37,27 @@ class BandMembersDeleteAuthorizationTest extends TestCase
     /** @test */
     public function some_other_user_cannot_delete_member_of_a_band(): void
     {
-        $bandMembers = $this->createUsers(2);
-        $this->band->members()->saveMany($bandMembers);
-        $userIdToRemoveFromBand = $this->band->members()->inRandomOrder()->first(['id'])->id;
+        $this->createBandMembers($this->band, 2);
+        $membershipToRemoveFromBand = $this->band->memberships()->inRandomOrder()->first()->id;
 
         $this->actingAs($this->createUser());
 
-        $this->json('delete', route('bands.members.delete', [$this->band->id, $userIdToRemoveFromBand]))
+        $this->json('delete', route('bands.members.delete', [$this->band->id, $membershipToRemoveFromBand]))
             ->assertForbidden();
     }
 
     /** @test */
     public function deleting_member_should_be_in_given_band(): void
     {
-        $bandMembers = $this->createUsers(2);
-        $this->band->members()->saveMany($bandMembers);
-        $userIdToRemoveFromBand = $this->band->members()->inRandomOrder()->first(['id'])->id;
+        $this->createBandMembers($this->band, 2);
+        $membershipToRemoveFromBand = $this->band->memberships()->inRandomOrder()->first()->id;
 
         $adminOfAnotherBand = $this->createUser();
         $anotherBand = $this->createBandForUser($adminOfAnotherBand);
 
         $this->actingAs($adminOfAnotherBand);
 
-        $this->json('delete', route('bands.members.delete', [$anotherBand->id, $userIdToRemoveFromBand]))
+        $this->json('delete', route('bands.members.delete', [$anotherBand->id, $membershipToRemoveFromBand]))
             ->assertForbidden();
     }
 
@@ -66,23 +65,23 @@ class BandMembersDeleteAuthorizationTest extends TestCase
     public function only_band_admin_can_delete_member(): void
     {
         $bandMember = $this->createUser();
-        $this->band->members()->attach($bandMember->id);
+        $membership = $this->createBandMembership($bandMember, $this->band);
         $this->json(
             'delete',
-            route('bands.members.delete', [$this->band->id, $bandMember->id])
+            route('bands.members.delete', [$this->band->id, $membership->id])
         )->assertUnauthorized();
         $this->actingAs($this->createUser())->json(
             'delete',
-            route('bands.members.delete', [$this->band->id, $bandMember->id])
+            route('bands.members.delete', [$this->band->id, $membership->id])
         )->assertForbidden();
     }
 
     /** @test */
     public function admin_of_band_cannot_leave_or_be_removed_from_his_band(): void
     {
-        $this->band->members()->attach($this->bandAdmin);
+        $membership = $this->createBandMembership($this->bandAdmin, $this->band);
 
-        $this->assertEquals(1, $this->band->members()->count());
+        $this->assertEquals(1, $this->band->memberships()->count());
         $this->assertEquals(
             $this->bandAdmin->id,
             $this->band->members->first()->id
@@ -92,7 +91,7 @@ class BandMembersDeleteAuthorizationTest extends TestCase
 
         $response = $this->json(
             'delete',
-            route('bands.members.delete', [$this->band->id, $this->bandAdmin->id])
+            route('bands.members.delete', [$this->band->id, $membership])
         );
 
         $response->assertForbidden();

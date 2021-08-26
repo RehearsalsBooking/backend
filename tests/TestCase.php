@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Models\Band;
+use App\Models\BandMembership;
 use App\Models\Genre;
 use App\Models\Invite;
 use App\Models\Organization\Organization;
@@ -288,5 +289,25 @@ abstract class TestCase extends BaseTestCase
     protected function createGenre(): EloquentCollection|Model|Genre
     {
         return Genre::factory()->create();
+    }
+
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createBandMembership(User $user, Band $band, ?string $role = null): BandMembership
+    {
+        return BandMembership::factory()->create([
+            'band_id' => $band->id,
+            'user_id' => $user->id,
+            'role' => $role,
+        ]);
+    }
+
+    protected function createBandMembers(Band $band, int $count = 1): Collection
+    {
+        $members = $this->createUsers($count);
+        $members->each(function (User $user) use ($band) {
+            $this->createBandMembership($user, $band);
+        });
+
+        return $members;
     }
 }

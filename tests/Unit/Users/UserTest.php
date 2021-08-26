@@ -58,20 +58,21 @@ class UserTest extends TestCase
 
         $popBand = $this->createBand();
 
-        $drummersBands = collect([$rockBand, $rapBand, $popBand]);
-        $guitaristsBands = collect([$rockBand, $popBand]);
+        $this->createBandMembership($drummer, $rapBand);
+        $this->createBandMembership($drummer, $popBand);
+        $drummersBands = [$rapBand->id, $popBand->id];
 
-        $drummer->bands()->attach($drummersBands->pluck('id'));
-        $guitarist->bands()->attach($guitaristsBands->pluck('id'));
+        $this->createBandMembership($guitarist, $popBand);
+        $guitaristsBands = [$popBand->id];
 
         $this->assertEquals(
-            $drummersBands->pluck('id')->sort(),
-            $drummer->bands->pluck('id')->sort()
+            $drummersBands,
+            $drummer->bands()->pluck('bands.id')->toArray()
         );
 
         $this->assertEquals(
-            $guitaristsBands->pluck('id')->sort(),
-            $guitarist->bands->pluck('id')->sort()
+            $guitaristsBands,
+            $guitarist->bands()->pluck('bands.id')->toArray()
         );
     }
 

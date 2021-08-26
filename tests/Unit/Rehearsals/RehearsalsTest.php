@@ -96,7 +96,10 @@ class RehearsalsTest extends TestCase
         $band = $this->createBandForUser($user);
 
         $bandMembers = $this->createUsers(4)->push($user);
-        $band->members()->sync($bandMembers);
+
+        $bandMembers->each(function (User $user) use ($band) {
+            $band->addMember($user->id);
+        });
 
         $rehearsal = $this->createRehearsalForBandInFuture($band, $user);
 

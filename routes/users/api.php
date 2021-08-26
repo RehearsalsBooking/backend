@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Users\BandInvitesController;
-use App\Http\Controllers\Users\BandMembersController;
+use App\Http\Controllers\Users\BandMembershipsController;
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\FavoriteOrganizationsController;
 use App\Http\Controllers\Users\GenresController;
@@ -111,16 +111,16 @@ Route::name('users.invites.')->prefix('invites')->middleware('auth:sanctum')->gr
 });
 
 Route::name('bands.members.')->prefix('bands/{band}/members')->group(static function () {
-    Route::get('/', [BandMembersController::class, 'index'])
+    Route::get('/', [BandMembershipsController::class, 'index'])
         ->where('band', '[0-9]+')
         ->name('index');
 
-    Route::delete('/{memberId}', [BandMembersController::class, 'delete'])
+    Route::delete('/{membership}', [BandMembershipsController::class, 'delete'])
         ->middleware('auth:sanctum')
         ->where('band', '[0-9]+')
         ->name('delete');
 
-    Route::patch('/{memberId}', [BandMembersController::class, 'update'])
+    Route::patch('/{membership}', [BandMembershipsController::class, 'update'])
         ->middleware('auth:sanctum')
         ->where('band', '[0-9]+')
         ->name('update');

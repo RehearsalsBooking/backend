@@ -37,21 +37,22 @@ class BandsTest extends TestCase
 
         $rapBand = $this->createBand();
 
-        $rockBandMembers = collect([$drummer, $guitarist, $vocalist]);
-        $rapBandMembers = collect([$drummer, $vocalist]);
+        $this->createBandMembership($drummer, $rockBand);
+        $this->createBandMembership($guitarist, $rockBand);
+        $this->createBandMembership($vocalist, $rockBand);
 
-        $rockBand->members()->attach($rockBandMembers->pluck('id')->toArray());
-        $rapBand->members()->attach($rapBandMembers->pluck('id')->toArray());
+        $this->createBandMembership($drummer, $rapBand);
+        $this->createBandMembership($vocalist, $rapBand);
 
-        $expectedBandMembers = $rockBandMembers->pluck('id')->toArray();
-        $actualBandMembers = $rockBand->members->pluck('id')->toArray();
+        $expectedBandMembers = [$drummer->id, $guitarist->id, $vocalist->id];
+        $actualBandMembers = $rockBand->members->pluck('users.id')->toArray();
         $this->assertEquals(
             sort($expectedBandMembers),
             sort($actualBandMembers)
         );
 
-        $expectedBandMembers = $rapBandMembers->pluck('id')->toArray();
-        $actualBandMembers = $rapBand->members->pluck('id')->toArray();
+        $expectedBandMembers = [$drummer->id, $vocalist->id];
+        $actualBandMembers = $rapBand->members->pluck('users.id')->toArray();
         $this->assertEquals(
             sort($expectedBandMembers),
             sort($actualBandMembers)

@@ -3,6 +3,7 @@
 namespace App\Policies\Users;
 
 use App\Models\Band;
+use App\Models\BandMembership;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -15,21 +16,20 @@ class BandPolicy
         return $this->isUserIsBandAdmin($band, $user);
     }
 
-    public function removeMember(User $user, Band $band, int $memberId): bool
+    public function removeMember(User $user, Band $band, BandMembership $membership): bool
     {
         // band admin cannot leave band
-        if ($memberId === $band->admin_id) {
+        if ($membership->user_id === $band->admin_id) {
             return false;
         }
 
+        // band should have membership
+        if ($membership->band_id !== $band->id) {
+            return false;
+        }
         // user can leave the band
-        if ($memberId === $user->id) {
+        if ($membership->user_id === $user->id) {
             return true;
-        }
-
-        //TODO: remove this validation logic from authorization
-        if (! $band->hasMember($memberId)) {
-            return false;
         }
 
         return $this->isUserIsBandAdmin($band, $user);

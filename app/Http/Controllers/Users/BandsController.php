@@ -44,7 +44,7 @@ class BandsController extends Controller
     {
         return DB::transaction(static function () use ($request): BandDetailedResource {
             $band = Band::create($request->getAttributes());
-            $band->members()->attach(auth()->id());
+            $band->memberships()->create(['user_id' => auth()->id()]);
             $band->genres()->sync($request->getBandGenres());
 
             return new BandDetailedResource($band);
