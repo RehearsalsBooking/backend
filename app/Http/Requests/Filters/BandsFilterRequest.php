@@ -11,6 +11,7 @@ class BandsFilterRequest extends FilterRequest
         return [
             'active_member_id' => 'sometimes|integer',
             'inactive_member_id' => 'sometimes|integer',
+            'only_managed' => 'sometimes|boolean'
         ];
     }
 
@@ -29,5 +30,14 @@ class BandsFilterRequest extends FilterRequest
             /** @phpstan-ignore-next-line */
             fn(Builder $query) => $query->onlyTrashed()->where('user_id', $memberId)
         );
+    }
+
+    protected function only_managed(bool $onlyManaged): void
+    {
+        if (!$onlyManaged) {
+            return;
+        }
+
+        $this->builder->where('admin_id', auth()->id());
     }
 }

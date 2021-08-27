@@ -124,4 +124,33 @@ class BandsTest extends TestCase
         $response = $this->json('get', route('bands.list', ['inactive_member_id' => 'text']));
         $response->assertJsonValidationErrors('inactive_member_id');
     }
+
+
+    /** @test */
+    public function it_filters_out_bands_that_current_user_can_manage(): void
+    {
+        $bandManager = $this->createUser();
+        $managedBand = $this->createBandForUser($bandManager);
+
+        $this->createBand();
+        $bandThatUserIsMemberOf = $this->createBand();
+        $bandThatUserIsMemberOf->addMember($bandManager->id);
+
+        $this->assertEquals(3, Band::count());
+
+        $response = $this->get(route('bands.list', ['only_managed' => true]));
+        $response->assertOk();
+
+        $fetchedBands = $response->json('data');
+
+        $this->assertCount(0, $fetchedBands);
+
+        $response = $this->actingAs($bandManager)->get(route('bands.list', ['only_managed' => true]));
+        $response->assertOk();
+
+        $fetchedBands = $response->json('data');
+
+        $this->assertCount(1, $fetchedBands);
+        $this->assertEquals($managedBand->id, $fetchedBands[0]['id']);
+    }
 }
