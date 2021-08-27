@@ -117,10 +117,10 @@ class Band extends Model implements HasMedia
     /**
      * @throws Throwable
      */
-    public function addMember(int $userId, ?string $role = null): void
+    public function addMember(int $userId, ?array $roles = null): void
     {
-        DB::transaction(function () use ($role, $userId) {
-            $this->memberships()->create(['user_id' => $userId, 'role' => $role]);
+        DB::transaction(function () use ($roles, $userId) {
+            $this->memberships()->create(['user_id' => $userId, 'roles' => $roles]);
             $this->addUserToFutureRehearsals($userId);
         });
     }

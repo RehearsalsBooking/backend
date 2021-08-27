@@ -27,31 +27,31 @@ class BandMembersUpdateTest extends TestCase
     public function band_admin_can_update_members_role(): void
     {
         $bandMember = $this->createUser();
-        $oldRole = 'old role';
-        $membership = $this->createBandMembership($bandMember, $this->band, $oldRole);
+        $oldRoles = ['old role'];
+        $membership = $this->createBandMembership($bandMember, $this->band, $oldRoles);
 
         $this->actingAs($this->bandAdmin);
 
         $this->assertEquals(1, $this->band->memberships()->count());
         $this->assertEquals(
-            $oldRole,
-            $this->band->fresh()->memberships->first()->role
+            $oldRoles,
+            $this->band->fresh()->memberships->first()->roles
         );
 
-        $newRole = 'new role';
+        $newRoles = ['new role', 'new role 2'];
 
         $response = $this->json(
             'patch',
             route('bands.members.update', [$this->band->id, $membership->id]),
-            ['role' => $newRole]
+            ['roles' => $newRoles]
         );
 
         $response->assertStatus(Response::HTTP_OK);
         $this->assertEquals(1, $this->band->memberships()->count());
         $this->assertEquals($bandMember->id, $this->band->memberships->first()->user_id);
         $this->assertEquals(
-            $newRole,
-            $this->band->fresh()->memberships->first()->role
+            $newRoles,
+            $this->band->fresh()->memberships->first()->roles
         );
     }
 
@@ -63,12 +63,12 @@ class BandMembersUpdateTest extends TestCase
         $this->json(
             'patch',
             route('bands.members.update', [$this->band->id, $membership->id]),
-            ['role' => 'role']
+            ['roles' => ['role']]
         )->assertUnauthorized();
         $this->actingAs($this->createUser())->json(
             'patch',
             route('bands.members.update', [$this->band->id, $membership->id]),
-            ['role' => 'role']
+            ['roles' => ['roles']]
         )->assertForbidden();
     }
 
@@ -80,6 +80,6 @@ class BandMembersUpdateTest extends TestCase
         $this->actingAs($this->bandAdmin)->json(
             'patch',
             route('bands.members.update', [$this->band->id, $membership->id])
-        )->assertJsonValidationErrors('role');
+        )->assertJsonValidationErrors('roles');
     }
 }

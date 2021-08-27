@@ -15,7 +15,7 @@ class BandInviteResource extends JsonResource
         return [
             'id' => $this->id,
             'email' => $this->email,
-            'role' => $this->role,
+            'roles' => $this->roles,
             'invited_at' => $this->created_at,
             'status' => $this->status,
         ];

@@ -30,14 +30,14 @@ use Throwable;
  * @method static Builder|Invite whereUpdatedAt($value)
  * @mixin Eloquent
  * @property-read Band $band
- * @property string|null $role
- * @method static Builder|Invite whereRole($value)
  * @property string $email
  * @property int $status
  * @method static Builder|Invite whereEmail($value)
  * @method static Builder|Invite whereStatus($value)
  * @method static InviteFactory factory(...$parameters)
  * @method static Builder|Invite filter(FilterRequest $filters)
+ * @property array|null $roles
+ * @method static Builder|Invite whereRoles($value)
  */
 class Invite extends Model
 {
@@ -49,6 +49,10 @@ class Invite extends Model
     public const STATUS_REJECTED = 3;
 
     protected $guarded = ['id'];
+
+    protected $casts = [
+        'roles' => 'array'
+    ];
 
     public function band(): BelongsTo
     {
@@ -64,7 +68,7 @@ class Invite extends Model
     public function accept(User $user): void
     {
         DB::transaction(function () use ($user) {
-            $this->band->addMember($user->id, $this->role);
+            $this->band->addMember($user->id, $this->roles);
             $this->update(['status' => self::STATUS_ACCEPTED]);
         });
     }

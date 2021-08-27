@@ -9,12 +9,12 @@ class UpdateBandMemberRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'role' => 'required|string',
+            'roles' => 'required|array',
         ];
     }
 
-    public function getNewRole(): string
+    public function getNewRoles(): array
     {
-        return $this->get('role');
+        return $this->get('roles');
     }
 }

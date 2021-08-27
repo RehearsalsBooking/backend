@@ -15,7 +15,7 @@ class UserInviteResource extends JsonResource
         return [
             'id' => $this->id,
             'band' => new BandResource($this->band),
-            'role' => $this->role,
+            'roles' => $this->roles,
             'invited_at' => $this->created_at,
         ];
     }

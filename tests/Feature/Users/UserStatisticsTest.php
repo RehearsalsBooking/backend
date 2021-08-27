@@ -48,10 +48,10 @@ class UserStatisticsTest extends TestCase
         $roleVocal = 'vocal';
 
         $band = $this->createBand();
-        $band->addMember($user->id, $roleGuitarist);
+        $band->addMember($user->id, [$roleGuitarist]);
 
         $band = $this->createBand();
-        $band->addMember($user->id, $roleVocal);
+        $band->addMember($user->id, [$roleVocal, $roleGuitarist]);
 
         $response = $this->json('get', route('users.statistics', [$user]));
         $response->assertOk();

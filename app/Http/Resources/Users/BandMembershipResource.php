@@ -15,8 +15,8 @@ class BandMembershipResource extends JsonResource
         return [
             'id' => $this->id,
             'user' => new UserResource($this->user),
-            'joined_at' => $this->joined_at,
-            'role' => $this->role,
+            'joined_at' => $this->created_at,
+            'roles' => $this->roles,
         ];
     }
 }

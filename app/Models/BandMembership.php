@@ -17,7 +17,6 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $band_id
  * @property int $user_id
- * @property string|null $role
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -31,12 +30,13 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|BandMembership whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BandMembership whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BandMembership whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|BandMembership whereRole($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BandMembership whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BandMembership whereUserId($value)
  * @method static Builder|BandMembership withTrashed()
  * @method static Builder|BandMembership withoutTrashed()
  * @mixin Eloquent
+ * @property array|null $roles
+ * @method static \Illuminate\Database\Eloquent\Builder|BandMembership whereRoles($value)
  */
 class BandMembership extends Model
 {
@@ -44,6 +44,10 @@ class BandMembership extends Model
     use SoftDeletes;
 
     protected $guarded = ['id'];
+
+    protected $casts = [
+        'roles' => 'array'
+    ];
 
     public function user(): BelongsTo
     {

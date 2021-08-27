@@ -32,7 +32,7 @@ class BandsInviteTest extends TestCase
         $this->actingAs($this->bandAdmin);
 
         $invitedUser = $this->createUser();
-        $role = 'guitarist';
+        $roles = ['guitarist', 'vocal'];
 
         $this->assertEquals(0, $this->band->invites()->count());
         $this->assertEquals(0, $invitedUser->invites()->count());
@@ -43,7 +43,7 @@ class BandsInviteTest extends TestCase
             [
                 'band_id' => $this->band->id,
                 'email' => $invitedUser->email,
-                'role' => $role,
+                'roles' => $roles,
             ]
         );
 
@@ -55,7 +55,7 @@ class BandsInviteTest extends TestCase
             $invitedUser->invites->pluck('id'),
             $this->band->fresh()->invites->pluck('id')
         );
-        $this->assertEquals($role, $this->band->fresh()->invites->first()->role);
+        $this->assertEquals($roles, $this->band->fresh()->invites->first()->roles);
 
         Mail::assertQueued(NewInvite::class, function (NewInvite $mail) use ($invitedUser) {
             return $mail->hasTo($invitedUser->email);
@@ -70,7 +70,7 @@ class BandsInviteTest extends TestCase
         $this->actingAs($this->bandAdmin);
 
         $invitedUserEmail = 'some@mail.com';
-        $role = 'guitarist';
+        $role = ['guitarist'];
 
         $this->assertEquals(0, $this->band->invites()->count());
 
@@ -80,7 +80,7 @@ class BandsInviteTest extends TestCase
             [
                 'band_id' => $this->band->id,
                 'email' => $invitedUserEmail,
-                'role' => $role,
+                'roles' => $role,
             ]
         );
 
@@ -91,7 +91,7 @@ class BandsInviteTest extends TestCase
             $response->json('id'),
             $this->band->fresh()->invites->first()->id
         );
-        $this->assertEquals($role, $this->band->fresh()->invites->first()->role);
+        $this->assertEquals($role, $this->band->fresh()->invites->first()->roles);
         Mail::assertQueued(NewInvite::class, function (NewInvite $mail) use ($invitedUserEmail) {
             return $mail->hasTo($invitedUserEmail);
         });

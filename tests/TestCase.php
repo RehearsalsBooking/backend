@@ -292,12 +292,12 @@ abstract class TestCase extends BaseTestCase
     }
 
     /** @noinspection PhpIncompatibleReturnTypeInspection */
-    protected function createBandMembership(User $user, Band $band, ?string $role = null): BandMembership
+    protected function createBandMembership(User $user, Band $band, array $roles = []): BandMembership
     {
         return BandMembership::factory()->create([
             'band_id' => $band->id,
             'user_id' => $user->id,
-            'role' => $role,
+            'roles' => $roles,
         ]);
     }
 

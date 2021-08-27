@@ -41,10 +41,10 @@ class UserStatistics
     private function getRoles(): array
     {
         return DB::table('band_memberships')
-            ->select('role')
+            ->selectRaw('jsonb_array_elements_text(roles) as roles')
             ->distinct()
             ->where('user_id', $this->user->id)
-            ->pluck('role')
+            ->pluck('roles')
             ->toArray();
     }
 

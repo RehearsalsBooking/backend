@@ -11,7 +11,7 @@ class CreateBandInviteRequest extends FormRequest
     {
         return [
             'email' => 'required|email',
-            'role' => 'nullable|string',
+            'role' => 'nullable|array',
         ];
     }
 
@@ -19,7 +19,7 @@ class CreateBandInviteRequest extends FormRequest
     {
         return [
             'email' => $this->get('email'),
-            'role' => $this->get('role'),
+            'roles' => $this->get('roles'),
             'status' => Invite::STATUS_PENDING,
         ];
     }

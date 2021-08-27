@@ -45,7 +45,7 @@ class BandMembershipsController extends Controller
     ): AnonymousResourceCollection {
         $this->authorize('manage', [$band]);
 
-        $membership->update(['role' => $request->getNewRole()]);
+        $membership->update(['roles' => $request->getNewRoles()]);
 
         return BandMembershipResource::collection($band->members);
     }

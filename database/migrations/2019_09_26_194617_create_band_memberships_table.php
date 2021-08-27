@@ -14,7 +14,7 @@ class CreateBandMembershipsTable extends Migration
             $table->id();
             $table->foreignIdFor(Band::class, 'band_id')->constrained();
             $table->foreignIdFor(User::class, 'user_id')->constrained();
-            $table->string('role')->nullable();
+            $table->jsonb('roles')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

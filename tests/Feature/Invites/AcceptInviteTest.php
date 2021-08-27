@@ -58,12 +58,12 @@ class AcceptInviteTest extends TestCase
     {
         $user = $this->createUser();
         $band = $this->createBand();
-        $role = 'guitarist';
+        $roles = ['guitarist', 'vocal'];
 
         $invite = $this->createInvite([
             'email' => $user->email,
             'band_id' => $band->id,
-            'role' => $role,
+            'roles' => $roles,
         ]);
 
         $this->assertEquals(1, Invite::count());
@@ -81,7 +81,7 @@ class AcceptInviteTest extends TestCase
         $this->assertEquals($band->id, $user->bands->first()->id);
         $this->assertEquals(1, $band->members()->count());
         $this->assertEquals($user->id, $band->members()->first()->id);
-        $this->assertEquals($role, $band->fresh()->memberships->first()->role);
+        $this->assertEquals($roles, $band->fresh()->memberships->first()->roles);
 
         $this->assertEquals(1, Invite::count());
         $this->assertDatabaseHas('invites', ['email' => $user->email, 'status' => Invite::STATUS_ACCEPTED]);
@@ -109,6 +109,7 @@ class AcceptInviteTest extends TestCase
         $this->assertEquals(0, $bandsRehearsalInFuture->attendees()->count());
 
         $response = $this->json('post', route('users.invites.accept', $invite->id));
+        $response->assertOk();
 
         $this->assertEquals(0, $bandsRehearsalInPast->attendees()->count());
         $this->assertEquals(1, $bandsRehearsalInFuture->attendees()->count());
