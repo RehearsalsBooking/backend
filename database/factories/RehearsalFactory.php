@@ -31,8 +31,8 @@ class RehearsalFactory extends Factory
     {
         $startsAt = Carbon::create(
             date('Y'),
-            $this->faker->numberBetween(date('m'), 12),
-            $this->faker->numberBetween(1, 20),
+            $this->faker->numberBetween(max(date('m') - 1, 1), 12),
+            $this->faker->numberBetween(1, 25),
             $this->faker->numberBetween(8, 20),
             0,
             0
@@ -40,6 +40,6 @@ class RehearsalFactory extends Factory
 
         $endsAt = $startsAt->copy()->addHours(2);
 
-        return new TimestampRange($startsAt, $endsAt, );
+        return new TimestampRange($startsAt, $endsAt,);
     }
 }

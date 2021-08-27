@@ -21,7 +21,6 @@ use PDOException;
 class DatabaseSeeder extends Seeder
 {
     public const ADMINS_COUNT = 5;
-    public const ORGANIZATIONS_COUNT = 5;
     public const USERS_COUNT = 20;
     public const INDIVIDUAL_REHEARSALS_COUNT = 50;
     public const BANDS_COUNT = 10;
@@ -51,7 +50,7 @@ class DatabaseSeeder extends Seeder
         $this->admins = $this->createAdmins(self::ADMINS_COUNT);
 
         $this->command->info('creating organizations');
-        $this->organizations = $this->createOrganizations(self::ORGANIZATIONS_COUNT);
+        $this->organizations = $this->createOrganizations();
 
         $this->command->info('creating users');
         $this->users = $this->createUsers(self::USERS_COUNT);
@@ -91,13 +90,18 @@ class DatabaseSeeder extends Seeder
         ]);
     }
 
-    protected function createOrganizations(int $count): \Illuminate\Support\Collection
+    protected function createOrganizations(): \Illuminate\Support\Collection
     {
         $createdOrganizations = [];
-        foreach (range(1, $count) as $_) {
+        foreach ($this->admins as $admin) {
             $createdOrganizations[] = Organization::factory()->create(
                 [
-                    'owner_id' => $this->admins->random()->id,
+                    'owner_id' => $admin->id,
+                ]
+            );
+            $createdOrganizations[] = Organization::factory()->create(
+                [
+                    'owner_id' => $admin->id,
                 ]
             );
         }
@@ -179,9 +183,15 @@ class DatabaseSeeder extends Seeder
     {
         $this->bands->each(
             function (Band $band) {
-                $band->members()->sync(
-                    $this->users->random(self::BAND_MEMBERS_COUNT)->pluck('id')->merge($band->admin_id)
-                );
+                $this->users
+                    ->random(self::BAND_MEMBERS_COUNT)
+                    ->pluck('id')
+                    ->push($band->admin_id)
+                    ->each(
+                        function (int $userId) use ($band) {
+                            $band->addMember($userId);
+                        }
+                    );
             }
         );
     }
@@ -224,14 +234,19 @@ class DatabaseSeeder extends Seeder
 
     private function createBandsForLoggedInUser(): void
     {
-        $bandForLoggedInUser = Band::factory()
-            ->has(Genre::factory()->count(3), 'genres')
-            ->create(['admin_id' => $this->userToLoginWith->id]);
-        $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
-
-        $bandForLoggedInUser = Band::factory()
-            ->has(Genre::factory()->count(3), 'genres')
-            ->create(['admin_id' => $this->userToLoginWith->id]);
-        $bandForLoggedInUser->members()->sync([$this->userToLoginWith->id]);
+        foreach (range(1, 2) as $_) {
+            $bandForLoggedInUser = Band::factory()
+                ->has(Genre::factory()->count(3), 'genres')
+                ->create(['admin_id' => $this->userToLoginWith->id]);
+            $this->users
+                ->random(self::BAND_MEMBERS_COUNT)
+                ->pluck('id')
+                ->push($this->userToLoginWith->id)
+                ->each(
+                    function (int $userId) use ($bandForLoggedInUser) {
+                        $bandForLoggedInUser->addMember($userId);
+                    }
+                );
+        }
     }
 }
