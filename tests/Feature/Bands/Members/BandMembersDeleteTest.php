@@ -82,7 +82,7 @@ class BandMembersDeleteTest extends TestCase
         $this->assertEquals($bandMembersCount - 1, $this->band->members()->count());
         $this->assertNotContains(
             $membershipOfUserWhoIsLeavingBand->id,
-            $this->band->fresh(['memberships'])->pluck('id')->toArray()
+            $this->band->memberships()->pluck('id')->toArray()
         );
     }
 
