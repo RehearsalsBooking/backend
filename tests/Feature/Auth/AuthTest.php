@@ -24,25 +24,8 @@ class AuthTest extends TestCase
         parent::setUp();
 
         $this->user = $this->createUser([
-            'password' => bcrypt($this->credentials['password']),
             'email' => $this->credentials['email'],
         ]);
-    }
-
-    /** @test */
-    public function it_logins_users_with_correct_credentials(): void
-    {
-        $response = $this->post(route('login'), $this->credentials);
-
-        $response->assertOk();
-
-        $token = $response->json('token');
-
-        $response = $this->get(route('me'), ['Authorization' => 'Bearer '.$token]);
-
-        $response->assertOk();
-
-        $this->assertEquals($this->user->id, $response->json('data.id'));
     }
 
     /** @test */
