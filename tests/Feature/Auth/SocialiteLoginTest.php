@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Laravel\Socialite\Two\GoogleProvider;
 use Laravel\Socialite\Two\User;
+use SocialiteProviders\VKontakte\Provider;
 use Tests\TestCase;
 
 class SocialiteLoginTest extends TestCase
@@ -16,36 +17,64 @@ class SocialiteLoginTest extends TestCase
 
     private string $method = 'post';
 
-    private function mockSocialite(
+    private function mockSocialiteForGoogle(
         string $email = 'foo@bar.com',
         string $token = 'token',
         string $id = 'client_id'
     ): void {
         $socialiteUser = $this->createMock(User::class);
-        $socialiteUser->expects($this->any())
+        $socialiteUser
             ->method('getName')
             ->willReturn('name');
-        $socialiteUser->expects($this->any())
+        $socialiteUser
             ->method('getEmail')
             ->willReturn($email);
-        $socialiteUser->expects($this->any())
+        $socialiteUser
             ->method('getId')
             ->willReturn($id);
 
-        $provider = $this->createMock(GoogleProvider::class);
-        $provider->expects($this->any())
+        $googleProvider = $this->createMock(GoogleProvider::class);
+        $googleProvider
             ->method('userFromToken')
             ->willReturn($socialiteUser);
-        $provider->expects($this->any())
+        $googleProvider
             ->method('stateless')
-            ->willReturn($provider);
+            ->willReturn($googleProvider);
 
         $stub = $this->createMock(Socialite::class);
-        $stub->expects($this->any())
-            ->method('driver')
-            ->willReturn($provider);
+        $stub->method('driver')->with('google')->willReturn($googleProvider);
 
-        // Replace Socialite Instance with our mock
+        $this->app->instance(Socialite::class, $stub);
+    }
+
+    private function mockSocialiteForVK(
+        string $email = 'foo@bar.com',
+        string $token = 'token',
+        string $id = 'client_id'
+    ): void {
+        $socialiteUser = $this->createMock(User::class);
+        $socialiteUser
+            ->method('getName')
+            ->willReturn('name');
+        $socialiteUser
+            ->method('getEmail')
+            ->willReturn($email);
+        $socialiteUser
+            ->method('getId')
+            ->willReturn($id);
+
+        $vkProvider = $this->createMock(Provider::class);
+        $vkProvider
+            ->method('userFromToken')
+            ->willReturn($socialiteUser);
+        $vkProvider
+            ->method('stateless')
+            ->willReturn($vkProvider);
+
+
+        $stub = $this->createMock(Socialite::class);
+        $stub->method('driver')->with('vkontakte')->willReturn($vkProvider);
+
         $this->app->instance(Socialite::class, $stub);
     }
 
@@ -60,7 +89,7 @@ class SocialiteLoginTest extends TestCase
             'social_type' => 'google',
             'user_id' => $user->id,
         ]);
-        $this->mockSocialite(email: $user->email, id: $clientId);
+        $this->mockSocialiteForGoogle(email: $user->email, id: $clientId);
 
         $response = $this->json($this->method, route('socialite.login', 'google'), [
             'token' => 'some valid token',
@@ -86,11 +115,12 @@ class SocialiteLoginTest extends TestCase
 
         $this->assertEquals(0, LaravelUser::count());
         $this->assertEquals(0, UserOAuth::count());
-        $this->mockSocialite(email: $userEmail, id: $clientId);
+        $this->mockSocialiteForVK(email: $userEmail, id: $clientId);
 
-        $response = $this->json($this->method, route('socialite.login', 'google'), [
+        $response = $this->json($this->method, route('socialite.login', 'vkontakte'), [
             'token' => 'some valid token',
-            'provider' => 'google'
+            'provider' => 'vkontakte',
+            'email' => $userEmail
         ]);
         $response->assertOk();
 
@@ -107,5 +137,16 @@ class SocialiteLoginTest extends TestCase
         $response->assertOk();
 
         $this->assertEquals($createdUser->id, $response->json('data.id'));
+    }
+
+    /** @test */
+    public function it_requires_email_for_vkontakte_provider(): void
+    {
+        $this->mockSocialiteForVK();
+        $response = $this->json($this->method, route('socialite.login', 'google'), [
+            'token' => 'some valid token',
+            'provider' => 'vkontakte'
+        ]);
+        $response->assertJsonValidationErrors('email');
     }
 }
