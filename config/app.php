@@ -1,5 +1,7 @@
 <?php
 
+use SocialiteProviders\Manager\ServiceProvider;
+
 return [
 
     /*
@@ -165,6 +167,7 @@ return [
         /*
          * Package Service Providers...
          */
+        ServiceProvider::class,
 
         /*
          * Application Service Providers...
