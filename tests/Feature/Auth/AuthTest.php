@@ -5,7 +5,6 @@ namespace Tests\Feature\Auth;
 use App\Http\Resources\Users\UserResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -26,22 +25,6 @@ class AuthTest extends TestCase
         $this->user = $this->createUser([
             'email' => $this->credentials['email'],
         ]);
-    }
-
-    /** @test */
-    public function it_doesnt_login_user_with_invalid_credentials(): void
-    {
-        $this->post(route('login'), [
-            'email' => $this->credentials['email'],
-            'password' => 'some wrong password',
-        ])->assertStatus(Response::HTTP_UNAUTHORIZED);
-
-        $this->withoutExceptionHandling();
-        $this->post(route('login'), [
-            'email' => 'unknown@email.com',
-            'password' => $this->credentials['password'],
-        ])->assertStatus(Response::HTTP_UNAUTHORIZED);
-        $this->assertGuest();
     }
 
     /** @test */
