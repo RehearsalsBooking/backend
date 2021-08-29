@@ -14,7 +14,7 @@ class SocialiteLoginRequest extends FormRequest
             'provider' => [
                 'required',
                 'string',
-                Rule::in(['google', 'vk'])
+                Rule::in(['google', 'vkontakte'])
             ]
         ];
     }
