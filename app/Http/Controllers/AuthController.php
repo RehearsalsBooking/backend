@@ -16,7 +16,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:sanctum', ['except' => ['login']]);
+        $this->middleware('auth:sanctum', ['except' => ['test']]);
     }
 
     /**
@@ -41,5 +41,14 @@ class AuthController extends Controller
         $user->tokens()->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function test(): JsonResponse
+    {
+        $user = User::firstOrCreate(['email' => 'test@rehearsals.com'], ['name' => 'test user']);
+        return response()->json([
+            'user' => new UserResource($user),
+            'token' => $user->createToken('rehearsals-token')->plainTextToken,
+        ]);
     }
 }

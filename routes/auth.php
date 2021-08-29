@@ -8,3 +8,5 @@ Route::post('/login/social', [SocialiteLoginController::class, 'callback'])->nam
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('me', [AuthController::class, 'me'])->name('me');
 
+Route::post('/login/test', [AuthController::class, 'test'])->name('login.test');
+

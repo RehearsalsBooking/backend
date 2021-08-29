@@ -52,4 +52,18 @@ class AuthTest extends TestCase
 
         $this->assertEquals(0, $this->user->tokens()->count());
     }
+
+    /** @test */
+    public function it_logins_test_user(): void
+    {
+        $response = $this->json('post', route('login.test'));
+        $response->assertOk();
+        $token = $response->json('token');
+
+        $response = $this->get(route('me'), ['Authorization' => 'Bearer '.$token]);
+
+        $response->assertOk();
+
+        $this->assertEquals(User::where('email', 'test@rehearsals.com')->first()->id, $response->json('data.id'));
+    }
 }
