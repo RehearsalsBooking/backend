@@ -108,6 +108,37 @@ class SocialiteLoginTest extends TestCase
     }
 
     /** @test */
+    public function it_logins_user_when_he_provides_correct_token_from_another_oauth(): void
+    {
+        $user = $this->createUser();
+
+        $clientId = 'client id';
+        UserOAuth::create([
+            'social_id' => $clientId,
+            'social_type' => 'vkontakte',
+            'user_id' => $user->id,
+        ]);
+        $this->mockSocialiteForGoogle(email: $user->email, id: $clientId);
+
+        $response = $this->json($this->method, route('socialite.login', 'google'), [
+            'token' => 'some valid token',
+            'provider' => 'google'
+        ]);
+        $response->assertOk();
+
+        $this->assertEquals(1, LaravelUser::count());
+        $this->assertEquals($user->id, $response->json('user.id'));
+
+        $token = $response->json('token');
+
+        $response = $this->get(route('me'), ['Authorization' => 'Bearer '.$token]);
+
+        $response->assertOk();
+
+        $this->assertEquals($user->id, $response->json('data.id'));
+    }
+
+    /** @test */
     public function it_creates_user_who_has_not_logged_in_with_socialite_yet(): void
     {
         $clientId = 'client id';

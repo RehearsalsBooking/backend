@@ -55,10 +55,7 @@ class UserOAuth extends Model
         }
 
         return DB::transaction(function () use ($provider, $socialiteUser) {
-            $user = User::create([
-                'name' => $socialiteUser->getName(),
-                'email' => $socialiteUser->getEmail(),
-            ]);
+            $user = self::getOrCreateUserFromSocialite($socialiteUser);
             self::create([
                 'social_id' => $socialiteUser->getId(),
                 'social_type' => $provider,
@@ -66,6 +63,15 @@ class UserOAuth extends Model
             ]);
             return $user;
         });
+    }
+
+    protected static function getOrCreateUserFromSocialite(SocialiteUser $socialiteUser): User
+    {
+        $user = User::where('email', $socialiteUser->getEmail())->first();
+        return $user ?? User::create([
+                'email' => $socialiteUser->getEmail(),
+                'name' => $socialiteUser->getName()
+            ]);
     }
 
     public function user(): BelongsTo
