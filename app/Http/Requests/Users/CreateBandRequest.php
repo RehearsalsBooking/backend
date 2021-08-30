@@ -10,8 +10,8 @@ class CreateBandRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'bio' => 'sometimes|string',
-            'genres' => 'sometimes|array',
+            'bio' => 'nullable|string',
+            'genres' => 'sometimes|nullable|array',
             'genres.*' => 'integer|exists:genres,id',
         ];
     }

@@ -102,6 +102,7 @@ class BandsUpdateTest extends TestCase
             route('bands.update', $this->band),
             [
                 'admin_id' => $newBandAdmin->id,
+                'name' => $this->band->name,
             ]
         );
         $response->assertOk();

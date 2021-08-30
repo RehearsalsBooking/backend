@@ -14,7 +14,7 @@ class UpdateBandRequest extends FormRequest
         $band = $this->route('band');
 
         return [
-            'name' => 'sometimes|string',
+            'name' => 'required|string',
             'admin_id' => [
                 'bail',
                 'sometimes',
@@ -22,8 +22,8 @@ class UpdateBandRequest extends FormRequest
                 'exists:users,id',
                 new UserIsMemberOfBand($band),
             ],
-            'bio' => 'sometimes|string',
-            'genres' => 'sometimes|array',
+            'bio' => 'nullable|string',
+            'genres' => 'sometimes|nullable|array',
             'genres.*' => 'integer|exists:genres,id',
         ];
     }
