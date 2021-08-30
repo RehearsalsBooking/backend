@@ -3,6 +3,7 @@
 namespace Tests\Feature\Rehearsals\Booking\Attendees;
 
 use App\Models\Band;
+use App\Models\BandMembership;
 use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use App\Models\User;
@@ -88,7 +89,7 @@ class AttendeesRegistrationTest extends TestCase
     }
 
     /** @test */
-    public function when_user_books_and_reschedules_rehearsal_for_band_then_all_band_members_become_this_rehearsals_attendees(
+    public function when_user_books_and_reschedules_rehearsal_for_band_then_all_active_band_members_become_this_rehearsals_attendees(
     ): void
     {
         $user = $this->createUser();
@@ -103,9 +104,14 @@ class AttendeesRegistrationTest extends TestCase
         $bandMembersCount = 5;
         $bandMembers = $this->createUsers($bandMembersCount - 1)->merge([$user]);
 
+        $inactiveBandMember = $this->createUser();
+        $band->addMember($inactiveBandMember->id);
+        BandMembership::where('user_id', $inactiveBandMember->id)->delete();
+
         $bandMembers->each(function (User $user) use ($band) {
             $band->addMember($user->id);
         });
+        $this->assertEquals($bandMembersCount, $band->fresh()->members()->count());
 
         $this->assertEquals(0, $user->rehearsals()->count());
         $this->assertEquals(0, Rehearsal::count());
@@ -119,6 +125,7 @@ class AttendeesRegistrationTest extends TestCase
             $this->assertEquals(1, $bandMember->rehearsals()->count());
             $this->assertEquals($rehearsal->id, $bandMember->rehearsals->first()->id);
         });
+        $this->assertEquals(0, $inactiveBandMember->rehearsals()->count());
 
         $this->assertEquals($bandMembersCount, $rehearsal->attendees()->count());
         $this->assertEquals(
