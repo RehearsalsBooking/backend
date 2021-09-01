@@ -28,8 +28,8 @@ trait HasAvatar
     public function getAvatarUrls(): array
     {
         return [
-            'original' => $this->getFirstMediaUrl('avatar'),
-            'thumb' => $this->getFirstMediaUrl('avatar', 'thumb'),
+            'original' => optional($this->getFirstMedia('avatar'))->getFullUrl(),
+            'thumb' => optional($this->getFirstMedia('avatar', 'thumb'))->getFullUrl(),
         ];
     }
 
