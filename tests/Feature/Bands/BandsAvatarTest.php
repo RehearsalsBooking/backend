@@ -92,9 +92,12 @@ class BandsAvatarTest extends TestCase
         $this->assertArrayHasKey('original', $response->json('data.avatar'));
         $this->assertArrayHasKey('thumb', $response->json('data.avatar'));
 
-        $this->assertEquals($this->band->getFirstMediaUrl('avatar'), $response->json('data.avatar.original'));
         $this->assertEquals(
-            $this->band->getFirstMediaUrl('avatar', 'thumb'),
+            $this->band->getFirstMedia('avatar')->getFullUrl(),
+            $response->json('data.avatar.original')
+        );
+        $this->assertEquals(
+            $this->band->getFirstMedia('avatar')->getFullUrl('thumb'),
             $response->json('data.avatar.thumb')
         );
 
@@ -104,9 +107,12 @@ class BandsAvatarTest extends TestCase
         $this->assertArrayHasKey('original', $response->json('data.0.avatar'));
         $this->assertArrayHasKey('thumb', $response->json('data.0.avatar'));
 
-        $this->assertEquals($this->band->getFirstMediaUrl('avatar'), $response->json('data.0.avatar.original'));
         $this->assertEquals(
-            $this->band->getFirstMediaUrl('avatar', 'thumb'),
+            $this->band->getFirstMedia('avatar')->getFullUrl(),
+            $response->json('data.0.avatar.original')
+        );
+        $this->assertEquals(
+            $this->band->getFirstMedia('avatar')->getFullUrl('thumb'),
             $response->json('data.0.avatar.thumb')
         );
     }

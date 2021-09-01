@@ -27,9 +27,10 @@ trait HasAvatar
 
     public function getAvatarUrls(): array
     {
+        $avatar = $this->getFirstMedia('avatar');
         return [
-            'original' => optional($this->getFirstMedia('avatar'))->getFullUrl(),
-            'thumb' => optional($this->getFirstMedia('avatar', 'thumb'))->getFullUrl(),
+            'original' => optional($avatar)->getFullUrl(),
+            'thumb' => optional($avatar)->getFullUrl('thumb'),
         ];
     }
 

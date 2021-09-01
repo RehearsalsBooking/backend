@@ -84,9 +84,12 @@ class UsersAvatarTest extends TestCase
         $this->assertArrayHasKey('original', $response->json('data.avatar'));
         $this->assertArrayHasKey('thumb', $response->json('data.avatar'));
 
-        $this->assertEquals($this->user->getFirstMediaUrl('avatar'), $response->json('data.avatar.original'));
         $this->assertEquals(
-            $this->user->getFirstMediaUrl('avatar', 'thumb'),
+            $this->user->getFirstMedia('avatar')->getFullUrl(),
+            $response->json('data.avatar.original')
+        );
+        $this->assertEquals(
+            $this->user->getFirstMedia('avatar')->getFullUrl('thumb'),
             $response->json('data.avatar.thumb')
         );
 
@@ -96,9 +99,12 @@ class UsersAvatarTest extends TestCase
         $this->assertArrayHasKey('original', $response->json('data.avatar'));
         $this->assertArrayHasKey('thumb', $response->json('data.avatar'));
 
-        $this->assertEquals($this->user->getFirstMediaUrl('avatar'), $response->json('data.avatar.original'));
         $this->assertEquals(
-            $this->user->getFirstMediaUrl('avatar', 'thumb'),
+            $this->user->getFirstMedia('avatar')->getFullUrl(),
+            $response->json('data.avatar.original')
+        );
+        $this->assertEquals(
+            $this->user->getFirstMedia('avatar')->getFullUrl('thumb'),
             $response->json('data.avatar.thumb')
         );
     }
