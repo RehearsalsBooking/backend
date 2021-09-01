@@ -89,11 +89,11 @@ abstract class TestCase extends BaseTestCase
     }
 
     protected function createRehearsal(
-        $startsAt,
-        $endsAt,
+        int $startsAt = 10,
+        int $endsAt = 12,
         Organization $organization = null,
         Band $band = null,
-        bool $isConfirmed = false,
+        bool $isPaid = false,
         User $user = null
     ): EloquentCollection|Model|Rehearsal {
         $user ??= $this->createUser();
@@ -109,7 +109,7 @@ abstract class TestCase extends BaseTestCase
                 ),
                 'organization_id' => $organization->id,
                 'band_id' => optional($band)->id,
-                'is_paid' => $isConfirmed,
+                'is_paid' => $isPaid,
                 'user_id' => $user->id,
             ]
         );
@@ -219,10 +219,11 @@ abstract class TestCase extends BaseTestCase
     }
 
     protected function createRehearsalForBandInFuture(
-        Band $band,
+        Band $band = null,
         ?User $user = null
     ): EloquentCollection|Model|Rehearsal {
         $user ??= $this->createUser();
+        $band ??= $this->createBand();
 
         return Rehearsal::factory()->create(
             [

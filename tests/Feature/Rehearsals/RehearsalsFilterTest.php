@@ -96,6 +96,36 @@ class RehearsalsFilterTest extends TestCase
     }
 
     /** @test */
+    public function user_can_filter_rehearsals_by_multiple_bands(): void
+    {
+        Band::truncate();
+        $muse = $this->createBand();
+        $radiohead = $this->createBand();
+        $arcticMonkeys = $this->createBand();
+
+        $this->assertEquals(3, Band::count());
+
+        $museRehearsal = $this->createRehearsalForBandInFuture($muse);
+        $radioheadRehearsal = $this->createRehearsalForBandInThePast($radiohead);
+        $this->createRehearsalForBandInThePast($arcticMonkeys);
+
+        $this->assertEquals(3, Rehearsal::count());
+
+        $response = $this->json('get', route('rehearsals.list'), [
+            'band_ids' => [$muse->id, $radiohead->id],
+        ]);
+        $response->assertOk();
+
+        $data = $response->json();
+
+        $this->assertCount(2, $data['data']);
+        $this->assertEquals(
+            RehearsalResource::collection([$museRehearsal, $radioheadRehearsal])->response()->getData(true),
+            $data
+        );
+    }
+
+    /** @test */
     public function it_responds_with_404_when_client_provided_unknown_band(): void
     {
         $this
@@ -110,16 +140,15 @@ class RehearsalsFilterTest extends TestCase
     }
 
     /** @test */
-    public function user_can_filter_rehearsals_of_organization_by_date_range(): void
+    public function user_can_filter_rehearsals_by_date_range(): void
     {
-        $rehearsal9to11 = $this->createRehearsal(9, 11, $this->organization);
+        $rehearsal9to11 = $this->createRehearsal(9, 11);
 
-        $rehearsal12to14 = $this->createRehearsal(12, 14, $this->organization);
+        $rehearsal12to14 = $this->createRehearsal(12, 14);
 
-        $rehearsal16to18 = $this->createRehearsal(16, 18, $this->organization);
+        $rehearsal16to18 = $this->createRehearsal(16, 18);
 
         $response = $this->json('get', route('rehearsals.list'), [
-            'organization_id' => $this->organization->id,
             'from' => $this->getDateTimeAt(13, 00),
         ]);
         $response->assertOk();
@@ -134,7 +163,6 @@ class RehearsalsFilterTest extends TestCase
         );
 
         $response = $this->json('get', route('rehearsals.list'), [
-            'organization_id' => $this->organization->id,
             'from' => $this->getDateTimeAt(12, 00),
         ]);
         $response->assertOk();
@@ -148,7 +176,6 @@ class RehearsalsFilterTest extends TestCase
         );
 
         $response = $this->json('get', route('rehearsals.list'), [
-            'organization_id' => $this->organization->id,
             'to' => $this->getDateTimeAt(13, 00),
         ]);
         $response->assertOk();
@@ -162,7 +189,6 @@ class RehearsalsFilterTest extends TestCase
         );
 
         $response = $this->json('get', route('rehearsals.list'), [
-            'organization_id' => $this->organization->id,
             'to' => $this->getDateTimeAt(14, 00),
         ]);
         $response->assertOk();
@@ -176,7 +202,6 @@ class RehearsalsFilterTest extends TestCase
         );
 
         $response = $this->json('get', route('rehearsals.list'), [
-            'organization_id' => $this->organization->id,
             'from' => $this->getDateTimeAt(11, 30),
             'to' => $this->getDateTimeAt(16, 00),
         ]);
@@ -191,7 +216,6 @@ class RehearsalsFilterTest extends TestCase
         );
 
         $response = $this->json('get', route('rehearsals.list'), [
-            'organization_id' => $this->organization->id,
             'from' => $this->getDateTimeAt(10, 30),
             'to' => $this->getDateTimeAt(17, 00),
         ]);
@@ -283,7 +307,8 @@ class RehearsalsFilterTest extends TestCase
 
     /** @test */
     public function when_client_fetches_rehearsals_of_user_he_also_receives_rehearsals_of_this_users_current_band(
-    ): void {
+    ): void
+    {
         $max = $this->createUser();
 
         $maxesBand = $this->createBand();
@@ -345,5 +370,41 @@ class RehearsalsFilterTest extends TestCase
         $response->assertOk();
 
         $this->assertCount($limit, $response->json('data'));
+    }
+
+    /** @test */
+    public function it_filters_rehearsals_by_individual(): void
+    {
+        $individualRehearsal = $this->createRehearsal();
+        $bandRehearsal = $this->createRehearsalForBandInFuture();
+
+        $this->assertEquals(2, Rehearsal::count());
+
+        $response = $this->json('get', route('rehearsals.list'), ['is_individual' => true]);
+        $response->assertOk();
+        $this->assertCount(2, $response->json('data'));
+
+        $response = $this->json('get', route('rehearsals.list'), ['is_individual' => false]);
+        $response->assertOk();
+        $this->assertCount(1, $response->json('data'));
+        $this->assertEquals($bandRehearsal->id, $response->json('data.0.id'));
+    }
+
+    /** @test */
+    public function user_can_filter_out_only_unpaid_rehearsals(): void
+    {
+        $paidRehearsal = $this->createRehearsal(isPaid: true);
+        $unpaidRehearsal = $this->createRehearsal(isPaid: false);
+
+        $this->assertEquals(2, Rehearsal::count());
+
+        $response = $this->json('get', route('rehearsals.list'), ['only_unpaid' => false]);
+        $response->assertOk();
+        $this->assertCount(2, $response->json('data'));
+
+        $response = $this->json('get', route('rehearsals.list'), ['only_unpaid' => true]);
+        $response->assertOk();
+        $this->assertCount(1, $response->json('data'));
+        $this->assertEquals($unpaidRehearsal->id, $response->json('data.0.id'));
     }
 }

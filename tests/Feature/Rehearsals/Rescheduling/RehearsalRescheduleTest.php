@@ -110,7 +110,7 @@ class RehearsalRescheduleTest extends TestCase
             startsAt: 10,
             endsAt: 12,
             organization: $organization,
-            isConfirmed: true,
+            isPaid: true,
             user: $user
         );
 
