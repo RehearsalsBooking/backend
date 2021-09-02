@@ -9,6 +9,7 @@ use Laravel\Socialite\Contracts\Factory as Socialite;
 use Laravel\Socialite\Two\GoogleProvider;
 use Laravel\Socialite\Two\User;
 use SocialiteProviders\VKontakte\Provider;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Tests\TestCase;
 
 class SocialiteLoginTest extends TestCase
@@ -22,16 +23,7 @@ class SocialiteLoginTest extends TestCase
         string $token = 'token',
         string $id = 'client_id'
     ): void {
-        $socialiteUser = $this->createMock(User::class);
-        $socialiteUser
-            ->method('getName')
-            ->willReturn('name');
-        $socialiteUser
-            ->method('getEmail')
-            ->willReturn($email);
-        $socialiteUser
-            ->method('getId')
-            ->willReturn($id);
+        $socialiteUser = $this->mockSocialiteUser($email, $id);
 
         $googleProvider = $this->createMock(GoogleProvider::class);
         $googleProvider
@@ -52,16 +44,7 @@ class SocialiteLoginTest extends TestCase
         string $token = 'token',
         string $id = 'client_id'
     ): void {
-        $socialiteUser = $this->createMock(User::class);
-        $socialiteUser
-            ->method('getName')
-            ->willReturn('name');
-        $socialiteUser
-            ->method('getEmail')
-            ->willReturn($email);
-        $socialiteUser
-            ->method('getId')
-            ->willReturn($id);
+        $socialiteUser = $this->mockSocialiteUser($email, $id);
 
         $vkProvider = $this->createMock(Provider::class);
         $vkProvider
@@ -179,5 +162,44 @@ class SocialiteLoginTest extends TestCase
             'provider' => 'vkontakte'
         ]);
         $response->assertJsonValidationErrors('email');
+    }
+
+    /** @test */
+    public function it_saves_avatar(): void
+    {
+        $clientId = 'client id';
+        $userEmail = 'some@email.com';
+
+        $this->assertEquals(0, LaravelUser::count());
+        $this->assertEquals(0, Media::count());
+        $this->mockSocialiteForGoogle(email: $userEmail, id: $clientId);
+
+        $response = $this->json($this->method, route('socialite.login', 'vkontakte'), [
+            'token' => 'some valid token',
+            'provider' => 'google',
+        ]);
+        $response->assertOk();
+
+        $this->assertEquals(1, LaravelUser::count());
+        $createdUser = LaravelUser::first();
+        $this->assertNotNull($createdUser->getFirstMedia('avatar'));
+    }
+
+    private function mockSocialiteUser(string $email, string $id): mixed
+    {
+        $socialiteUser = $this->createMock(User::class);
+        $socialiteUser
+            ->method('getName')
+            ->willReturn('name');
+        $socialiteUser
+            ->method('getEmail')
+            ->willReturn($email);
+        $socialiteUser
+            ->method('getId')
+            ->willReturn($id);
+        $socialiteUser
+            ->method('getAvatar')
+            ->willReturn('https://via.placeholder.com/1');
+        return $socialiteUser;
     }
 }

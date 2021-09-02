@@ -68,10 +68,19 @@ class UserOAuth extends Model
     protected static function getOrCreateUserFromSocialite(SocialiteUser $socialiteUser): User
     {
         $user = User::where('email', $socialiteUser->getEmail())->first();
-        return $user ?? User::create([
-                'email' => $socialiteUser->getEmail(),
-                'name' => $socialiteUser->getName()
-            ]);
+        return $user ?? self::createUser($socialiteUser);
+    }
+
+    protected static function createUser(SocialiteUser $socialiteUser): User
+    {
+        $user = User::create([
+            'email' => $socialiteUser->getEmail(),
+            'name' => $socialiteUser->getName()
+        ]);
+
+        $user->updateAvatarFromUrl($socialiteUser->getAvatar());
+
+        return $user;
     }
 
     public function user(): BelongsTo

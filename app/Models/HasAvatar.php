@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Http\UploadedFile;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
@@ -42,6 +43,17 @@ trait HasAvatar
     {
         $this->addMedia($file)
             ->usingFileName($file->hashName())
+            ->toMediaCollection('avatar');
+    }
+
+    /**
+     * @throws FileDoesNotExist
+     * @throws FileIsTooBig
+     * @throws FileCannotBeAdded
+     */
+    public function updateAvatarFromUrl(string $url): void
+    {
+        $this->addMediaFromUrl($url)
             ->toMediaCollection('avatar');
     }
 }
