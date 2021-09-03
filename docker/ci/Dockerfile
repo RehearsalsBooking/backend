@@ -11,8 +11,11 @@ RUN mv composer-unused /usr/local/bin/composer-unused
 
 WORKDIR /app
 
-COPY ./ /app
+COPY composer.lock composer.lock
 
-RUN composer install --no-ansi --no-interaction --no-plugins --no-progress --optimize-autoloader
+RUN composer install --no-ansi --no-interaction --no-plugins --no-progress --optimize-autoloader && rm -rf /root/.composer
 
 RUN cp .env.example .env
+
+COPY ./ /app
+
