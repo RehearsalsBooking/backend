@@ -1,4 +1,4 @@
-FROM docker.pkg.github.com/rehearsalsbooking/backend/php-base:latest
+FROM ghcr.io/rehearsalsbooking/backend/php-base:latest
 
 WORKDIR /app
 COPY . /app

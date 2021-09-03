@@ -1,4 +1,4 @@
-FROM docker.pkg.github.com/rehearsalsbooking/backend/php-base:latest
+FROM ghcr.io/rehearsalsbooking/backend/php-base:latest
 
 # composer require checker
 RUN composer global require maglnet/composer-require-checker \
