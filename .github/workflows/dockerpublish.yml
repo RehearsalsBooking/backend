@@ -45,7 +45,6 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache-dev
           cache-to: type=local,dest=/tmp/.buildx-cache-dev-new,mode=max
           push: false
-          load: true
           builder: ${{ steps.buildx.outputs.name }}
 
       - name: Run checks
