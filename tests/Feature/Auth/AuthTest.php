@@ -30,6 +30,7 @@ class AuthTest extends TestCase
     /** @test */
     public function logged_in_user_can_fetch_info_about_himself(): void
     {
+        $this->assertFalse(true);
         $this->actingAs($this->user);
         $response = $this->get(route('me'));
 
