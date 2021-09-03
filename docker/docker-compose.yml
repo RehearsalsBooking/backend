@@ -5,9 +5,7 @@ services:
     image: backend
     build:
       context: ../
-      dockerfile: docker/dev/Dockerfile
-    volumes:
-      - ../:/app
+      dockerfile: docker/ci/Dockerfile
     depends_on:
       - db
 

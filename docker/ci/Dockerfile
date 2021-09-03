@@ -1,5 +1,7 @@
 FROM ghcr.io/rehearsalsbooking/backend/php-base:latest
 
+RUN cp .env.example .env
+
 WORKDIR /app
 COPY . /app
 
@@ -13,5 +15,3 @@ RUN composer global require maglnet/composer-require-checker \
 RUN curl -L https://github.com/icanhazstring/composer-unused/releases/latest/download/composer-unused.phar -o composer-unused
 RUN chmod a+x composer-unused
 RUN mv composer-unused /usr/local/bin/composer-unused
-
-RUN cp .env.example .env
