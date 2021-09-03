@@ -34,10 +34,8 @@ class BandsFilterRequest extends FilterRequest
 
     protected function only_managed(bool $onlyManaged): void
     {
-        if (!$onlyManaged) {
-            return;
+        if ($onlyManaged) {
+            $this->builder->where('admin_id', auth()->id());
         }
-
-        $this->builder->where('admin_id', auth()->id());
     }
 }

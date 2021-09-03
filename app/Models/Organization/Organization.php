@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -148,11 +147,6 @@ class Organization extends Model implements HasMedia
             ->exists();
     }
 
-    public function hasPrice(OrganizationPrice $price): bool
-    {
-        return $this->prices->contains($price);
-    }
-
     public function isUserBanned(int $userId): bool
     {
         return $this->bannedUsers->contains($userId);
@@ -163,12 +157,5 @@ class Organization extends Model implements HasMedia
         $this->rehearsals()->whereRaw('time && ?', [new TimestampRange(Carbon::now(), null)])
             ->where('user_id', $userId)
             ->delete();
-    }
-
-    public function deleteAvatar(): void
-    {
-        if ($this->avatar) {
-            Storage::disk('public')->delete($this->avatar);
-        }
     }
 }

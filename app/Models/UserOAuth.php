@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\InvalidUrl;
 use Throwable;
 
 /**
@@ -67,18 +71,22 @@ class UserOAuth extends Model
 
     protected static function getOrCreateUserFromSocialite(SocialiteUser $socialiteUser): User
     {
-        $user = User::where('email', $socialiteUser->getEmail())->first();
+        $user = User::query()->where('email', $socialiteUser->getEmail())->first();
         return $user ?? self::createUser($socialiteUser);
     }
 
     protected static function createUser(SocialiteUser $socialiteUser): User
     {
-        $user = User::create([
+        $user = User::query()->create([
             'email' => $socialiteUser->getEmail(),
             'name' => $socialiteUser->getName()
         ]);
 
-        $user->updateAvatarFromUrl($socialiteUser->getAvatar());
+        try {
+            $user->updateAvatarFromUrl($socialiteUser->getAvatar() ?? '');
+        } catch (FileDoesNotExist | FileIsTooBig | FileCannotBeAdded | InvalidUrl $e) {
+            // do nothing, user can manually update his avatar later
+        }
 
         return $user;
     }

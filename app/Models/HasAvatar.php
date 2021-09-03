@@ -7,6 +7,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\InvalidUrl;
 
 trait HasAvatar
 {
@@ -47,9 +48,10 @@ trait HasAvatar
     }
 
     /**
+     * @throws FileCannotBeAdded
      * @throws FileDoesNotExist
      * @throws FileIsTooBig
-     * @throws FileCannotBeAdded
+     * @throws InvalidUrl
      */
     public function updateAvatarFromUrl(string $url): void
     {

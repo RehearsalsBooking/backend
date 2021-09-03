@@ -20,11 +20,6 @@ class InvitePolicy
         return $this->isInviteForUser($invite, $user);
     }
 
-    public function cancel(User $user, Invite $invite): bool
-    {
-        return $user->id === $invite->band->admin_id;
-    }
-
     protected function isInviteForUser(Invite $invite, User $user): bool
     {
         return $user->email === $invite->email;
