@@ -9,9 +9,10 @@ RUN curl -L https://github.com/icanhazstring/composer-unused/releases/latest/dow
 RUN chmod a+x composer-unused
 RUN mv composer-unused /usr/local/bin/composer-unused
 
-RUN composer install --no-ansi --no-interaction --no-plugins --no-progress --optimize-autoloader
-
 WORKDIR /app
+
 COPY ./ /app
+
+RUN composer install --no-ansi --no-interaction --no-plugins --no-progress --optimize-autoloader
 
 RUN cp .env.example .env
