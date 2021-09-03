@@ -12,6 +12,7 @@ RUN mv composer-unused /usr/local/bin/composer-unused
 WORKDIR /app
 
 COPY composer.lock composer.lock
+COPY composer.json composer.json
 
 RUN composer install --no-ansi --no-interaction --no-plugins --no-progress --optimize-autoloader && rm -rf /root/.composer
 
