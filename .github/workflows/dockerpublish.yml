@@ -19,6 +19,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-dev
+          key: ${{ runner.os }}-buildx-dev-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-dev-
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -31,14 +39,23 @@ jobs:
         with:
           file: docker/ci/Dockerfile
           tags: ${{ env.IMAGE_NAME }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=local,src=/tmp/.buildx-cache-dev
+          cache-to: type=local,dest=/tmp/.buildx-cache-dev-new,mode=max
           push: false
           load: true
 
       - name: Run checks
         run: |
           make check
+
+      -
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache-dev
+          mv /tmp/.buildx-cache-dev-new /tmp/.buildx-cache-dev
 
   push:
 
@@ -58,6 +75,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-build-
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -74,6 +99,14 @@ jobs:
         with:
           file: docker/build/Dockerfile
           tags: ghcr.io/${{ env.IMAGE_REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=local,src=/tmp/.buildx-cache-build
+          cache-to: type=local,dest=/tmp/.buildx-cache-build-new,mode=max
           push: true
+
+      - # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache-build
+          mv /tmp/.buildx-cache-build-new /tmp/.buildx-cache-build
