@@ -1,9 +1,9 @@
 FROM ghcr.io/rehearsalsbooking/backend/php-base:latest
 
-RUN cp .env.example .env
-
 WORKDIR /app
-COPY . /app
+COPY ../../ /app
+
+RUN cp .env.example .env
 
 RUN composer install --no-ansi --no-interaction --no-plugins --no-progress --optimize-autoloader
 
