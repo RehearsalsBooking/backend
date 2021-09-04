@@ -1,0 +1,16 @@
+FROM ghcr.io/rehearsalsbooking/backend/php-base:latest
+
+COPY docker/production/php.ini-production "$PHP_INI_DIR/php.ini"
+
+WORKDIR /app
+
+COPY composer.lock composer.lock
+COPY composer.json composer.json
+COPY .env.example .env
+
+RUN composer install --no-ansi --no-interaction --no-plugins --no-progress --optimize-autoloader --no-scripts --no-autoloader --no-dev && \
+    rm -rf /root/.composer
+
+COPY . /app
+
+RUN composer dump-autoload --optimize
