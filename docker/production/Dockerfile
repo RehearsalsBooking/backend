@@ -14,3 +14,7 @@ RUN composer install --no-ansi --no-interaction --no-plugins --no-progress --opt
 COPY . /app
 
 RUN composer dump-autoload --optimize
+
+RUN usermod -u 1000 www-data
+
+EXPOSE 9000
