@@ -15,13 +15,6 @@ COPY . /app
 
 RUN composer dump-autoload --optimize
 
-# Add UID '1000' to www-data
-RUN apk add shadow && usermod -u 1000 www-data && groupmod -g 1000 www-data
-
-# Copy existing application directory permissions
-COPY --chown=www-data:www-data . /app
-
-# Change current user to www
-USER www-data
+RUN usermod -u 1000 www-data
 
 EXPOSE 9000
