@@ -8,7 +8,6 @@ use App\Models\Band;
 use App\Models\Genre;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationPrice;
-use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimeRange;
@@ -56,7 +55,7 @@ class DatabaseSeeder extends Seeder
         $this->users = $this->createUsers(self::USERS_COUNT);
 
         $this->command->info('creating prices and bands for organizations');
-        $this->createPricesAndBansForOrganizations();
+        $this->createPricesForOrganizations();
 
         $this->command->info('creating individual rehearsals');
         $this->createIndividualRehearsals(self::INDIVIDUAL_REHEARSALS_COUNT);
@@ -113,7 +112,7 @@ class DatabaseSeeder extends Seeder
         return User::factory()->count($count)->create()->push($this->userToLoginWith);
     }
 
-    protected function createPricesAndBansForOrganizations(): void
+    protected function createPricesForOrganizations(): void
     {
         foreach (range(0, 6) as $dayOfWeek) {
             foreach ($this->organizations as $organization) {
@@ -133,18 +132,6 @@ class DatabaseSeeder extends Seeder
                         'price' => 300,
                     ]
                 );
-
-                try {
-                    OrganizationUserBan::create([
-                        'organization_id' => $organization->id,
-                        'user_id' => $this->users->random()->id,
-                        'comment' => 'some reason to ban',
-                    ]);
-                } catch (PDOException | QueryException) {
-                    // we may get already banned user
-                    // in that case just continue creating
-                    continue;
-                }
             }
         }
     }
