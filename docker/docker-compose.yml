@@ -6,6 +6,8 @@ services:
     build:
       context: ../
       dockerfile: docker/ci/Dockerfile
+    volumes:
+      - ../:/app
     depends_on:
       - db
 
