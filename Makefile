@@ -24,6 +24,9 @@ help:  ## Display this help
 build: check-environment ## Build containers
 	$(docker_compose_bin) --file "$(docker_compose_yml)" build
 
+require: check-environment ## Build containers
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run -e XDEBUG_MODE=off "$(php_container_name)" composer require $(filter-out $@,$(MAKECMDGOALS))
+
 install: check-environment ## Install dependencies
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run -e XDEBUG_MODE=off "$(php_container_name)" composer install
 
