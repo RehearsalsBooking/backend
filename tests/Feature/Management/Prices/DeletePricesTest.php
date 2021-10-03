@@ -68,8 +68,8 @@ class DeletePricesTest extends ManagementTestCase
 
         $this->actingAs($this->manager);
 
-        $unknownPriceId = 1000;
-        $unknownOrganizationId = 1000;
+        $unknownPriceId = 10000;
+        $unknownOrganizationId = 10000;
 
         $this->assertEquals(0, OrganizationPrice::where('id', $unknownPriceId)->count());
         $this->assertEquals(0, Organization::where('id', $unknownOrganizationId)->count());
