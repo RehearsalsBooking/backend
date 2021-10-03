@@ -13,3 +13,5 @@ database.env
 docker/data
 
 /.php_cs.cache
+/infection.log
+/per-mutator.md

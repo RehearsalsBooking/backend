@@ -37,8 +37,8 @@
     "nunomaduro/collision": "^5",
     "nunomaduro/larastan": "^0.6.11",
     "phpunit/phpunit": "^9",
-    "rector/rector": "^0.9.3",
-    "roave/security-advisories": "dev-latest"
+    "roave/security-advisories": "dev-latest",
+    "infection/infection": "^0.25.3"
   },
   "config": {
     "optimize-autoloader": true,

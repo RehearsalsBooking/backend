@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/infection/infection/0.25.3/resources/schema.json",
+  "source": {
+    "directories": [
+      "app"
+    ],
+    "excludes": [
+      "Http/Requests",
+      "Http/Resources"
+    ]
+  },
+  "logs": {
+    "text": "infection.log",
+    "perMutator": "per-mutator.md"
+  },
+  "mutators": {
+    "@default": true,
+    "@function_signature": false
+  }
+}

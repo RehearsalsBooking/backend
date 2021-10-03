@@ -30,6 +30,9 @@ install: check-environment ## Install dependencies
 update: check-environment ## Update dependencies
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" composer update
 
+infection: check-environment ## Run infection
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=coverage "$(php_container_name)" vendor/bin/infection
+
 test: check-environment ## Execute tests
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" /bin/bash -c "php artisan test --parallel"
 

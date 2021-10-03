@@ -42,7 +42,7 @@ class OrganizationPricesController extends Controller
         )) {
             $errorMessage = 'this price entry intersects with other prices';
             return response()->json([
-                'message' => ''.$errorMessage.'',
+                'message' => $errorMessage,
                 'errors' => [
                     'day' => $errorMessage,
                     'starts_at' => $errorMessage,

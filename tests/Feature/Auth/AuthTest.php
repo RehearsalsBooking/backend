@@ -30,6 +30,8 @@ class AuthTest extends TestCase
     /** @test */
     public function logged_in_user_can_fetch_info_about_himself(): void
     {
+        $this->json('get', route('me'))->assertUnauthorized();
+
         $this->actingAs($this->user);
         $response = $this->get(route('me'));
 
@@ -44,6 +46,8 @@ class AuthTest extends TestCase
     /** @test */
     public function user_can_logout(): void
     {
+        $this->json('post', route('logout'))->assertUnauthorized();
+
         $token = $this->user->createToken('some token')->plainTextToken;
 
         $response = $this->json('post', route('logout'), [], ['Authorization' => 'Bearer '.$token]);
@@ -64,6 +68,12 @@ class AuthTest extends TestCase
 
         $response->assertOk();
 
-        $this->assertEquals(User::where('email', 'test@rehearsals.com')->first()->id, $response->json('data.id'));
+        $testUser = User::where('email', 'test@rehearsals.com')->first();
+
+        $this->assertEquals(
+            (new UserResource($testUser))->toResponse(null)->getData(true)['data'],
+            $response->json('data')
+        );
+        $this->assertEquals($testUser->id, $response->json('data.id'));
     }
 }
