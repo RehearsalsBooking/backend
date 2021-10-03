@@ -70,8 +70,8 @@ class DeletePricesTest extends ManagementTestCase
         $unknownPriceId = 1000;
         $unknownOrganizationId = 1000;
 
-        $this->assertEquals(0, OrganizationPrice::where('id', $unknownPriceId));
-        $this->assertEquals(0, Organization::where('id', $unknownOrganizationId));
+        $this->assertEquals(0, OrganizationPrice::where('id', $unknownPriceId)->count());
+        $this->assertEquals(0, Organization::where('id', $unknownOrganizationId)->count());
 
         $this->json($this->httpVerb, route($this->endpoint, [$this->organization->id, $unknownPriceId]))
             ->assertStatus(Response::HTTP_NOT_FOUND);
