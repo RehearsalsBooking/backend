@@ -1,5 +1,7 @@
 FROM ghcr.io/rehearsalsbooking/backend/php-base:latest
 
+RUN docker-php-ext-install opcache
+
 COPY docker/production/php.ini-production "$PHP_INI_DIR/php.ini"
 
 WORKDIR /app
