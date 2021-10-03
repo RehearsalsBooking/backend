@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Management\Prices;
 
+use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationPrice;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
