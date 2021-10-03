@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Management\Prices;
 
+use App\Models\Organization\OrganizationPrice;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
@@ -66,9 +67,15 @@ class DeletePricesTest extends ManagementTestCase
 
         $this->actingAs($this->manager);
 
-        $this->json($this->httpVerb, route($this->endpoint, [$this->organization->id, 1000]))
+        $unknownPriceId = 1000;
+        $unknownOrganizationId = 1000;
+
+        $this->assertEquals(0, OrganizationPrice::where('id', $unknownPriceId));
+        $this->assertEquals(0, Organization::where('id', $unknownOrganizationId));
+
+        $this->json($this->httpVerb, route($this->endpoint, [$this->organization->id, $unknownPriceId]))
             ->assertStatus(Response::HTTP_NOT_FOUND);
-        $this->json($this->httpVerb, route($this->endpoint, [1000, $priceId]))
+        $this->json($this->httpVerb, route($this->endpoint, [$unknownOrganizationId, $priceId]))
             ->assertStatus(Response::HTTP_NOT_FOUND);
         $this->json($this->httpVerb, route($this->endpoint, [$this->organization->id, 'some text']))
             ->assertStatus(Response::HTTP_NOT_FOUND);
