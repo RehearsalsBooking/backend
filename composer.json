@@ -51,7 +51,8 @@
       "dont-discover": []
     },
     "unused": [
-      "socialiteproviders/vkontakte"
+      "socialiteproviders/vkontakte",
+      "sentry/sentry-laravel"
     ]
   },
   "autoload": {
