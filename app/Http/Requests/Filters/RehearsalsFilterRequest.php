@@ -90,7 +90,7 @@ class RehearsalsFilterRequest extends FilterRequest
     {
         $filteredBandIds = array_filter(
             $bandIds,
-            static fn($filter) => !str_contains($filter, '*'),
+            static fn(string $filter) => !str_contains($filter, '*'),
             ARRAY_FILTER_USE_KEY
         );
         $this->builder->whereIn('band_id', $filteredBandIds);
