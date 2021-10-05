@@ -4,6 +4,7 @@ namespace Tests;
 
 use App\Models\Band;
 use App\Models\BandMembership;
+use App\Models\City;
 use App\Models\Genre;
 use App\Models\Invite;
 use App\Models\Organization\Organization;
@@ -310,5 +311,10 @@ abstract class TestCase extends BaseTestCase
         });
 
         return $members;
+    }
+
+    protected function createCity(): EloquentCollection|Model|City
+    {
+        return City::factory()->create();
     }
 }

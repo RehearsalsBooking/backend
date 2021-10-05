@@ -21,7 +21,9 @@ class OrganizationsController extends Controller
         /** @var User $user */
         $user = auth()->user();
 
-        return OrganizationResource::collection($user->organizations()->withoutGlobalScopes()->get());
+        return OrganizationResource::collection(
+            $user->organizations()->withoutGlobalScopes()->with('city')->get()
+        );
     }
 
     /**

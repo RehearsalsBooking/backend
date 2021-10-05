@@ -14,6 +14,7 @@ class OrganizationsFilterRequest extends FilterRequest
             'to' => 'sometimes|date|after:from',
             'name' => 'sometimes|string',
             'favorite' => 'sometimes|bool',
+            'city_id' => 'sometimes|int|exists:cities,id'
         ];
     }
 
@@ -44,7 +45,7 @@ class OrganizationsFilterRequest extends FilterRequest
     {
         $this->builder->whereDoesntHave(
             'bannedUsers',
-            fn (Builder $query) => $query->where('user_id', $userId)
+            fn(Builder $query) => $query->where('user_id', $userId)
         );
     }
 
@@ -74,8 +75,13 @@ class OrganizationsFilterRequest extends FilterRequest
         if ($isApplied && auth()->check()) {
             $this->builder->whereHas(
                 'favoritedUsers',
-                fn (Builder $query) => $query->where('user_id', auth()->id())
+                fn(Builder $query) => $query->where('user_id', auth()->id())
             );
         }
+    }
+
+    protected function city_id(int $cityId): void
+    {
+        $this->builder->where('city_id', $cityId);
     }
 }

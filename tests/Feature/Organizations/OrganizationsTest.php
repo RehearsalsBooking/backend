@@ -28,7 +28,7 @@ class OrganizationsTest extends TestCase
 
         $this->assertCount(5, $data);
         $this->assertEquals(
-            OrganizationResource::collection(Organization::all())->toArray(null),
+            OrganizationResource::collection(Organization::all())->response()->getData(true)['data'],
             $data
         );
     }
@@ -68,7 +68,7 @@ class OrganizationsTest extends TestCase
 
         $this->assertCount($numberOfActiveOrganizations, $data);
         $this->assertEquals(
-            OrganizationResource::collection($activeOrganizations->sortBy('id'))->toArray(null),
+            OrganizationResource::collection($activeOrganizations->sortBy('id'))->response()->getData(true)['data'],
             collect($data)->sortBy('id')->toArray()
         );
     }
@@ -124,7 +124,7 @@ class OrganizationsTest extends TestCase
 
         $this->assertCount(1, $data);
         $this->assertEquals(
-            OrganizationResource::collection(collect([$otherOrganization]))->toArray(null),
+            OrganizationResource::collection(collect([$otherOrganization]))->response()->getData(true)['data'],
             $data
         );
     }

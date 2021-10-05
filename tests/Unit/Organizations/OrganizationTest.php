@@ -90,7 +90,7 @@ class OrganizationTest extends TestCase
     /** @test */
     public function organization_belongs_to_city(): void
     {
-        $city = City::factory()->create();
+        $city = $this->createCity();
         $organization = $this->createOrganization(['city_id' => $city->id]);
 
         $this->assertInstanceOf(City::class, $organization->city);

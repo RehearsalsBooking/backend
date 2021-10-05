@@ -21,7 +21,7 @@ class UpdateOrganizationTest extends ManagementTestCase
     /** @test */
     public function it_responds_with_forbidden_error_when_endpoint_is_accessed_not_by_organization_owner(): void
     {
-        $data = ['name' => 'new name', 'address' => 'new address'];
+        $data = ['name' => 'new name', 'address' => 'new address', 'city_id' => $this->createCity()->id];
 
         $ordinaryClient = $this->createUser();
 
@@ -68,7 +68,7 @@ class UpdateOrganizationTest extends ManagementTestCase
 
         $response
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('name');
+            ->assertJsonValidationErrors(['name', 'city_id']);
     }
 
     /** @test */
@@ -81,6 +81,7 @@ class UpdateOrganizationTest extends ManagementTestCase
             'address' => 'new address',
             'coordinates' => 'new coordinates',
             'gear' => 'new gear',
+            'city_id' => $this->createCity()->id
         ];
 
         $response = $this->json(

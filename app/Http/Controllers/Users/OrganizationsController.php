@@ -23,10 +23,11 @@ class OrganizationsController extends Controller
             Organization::filter($request)
                 ->when(
                     auth()->check(),
-                    fn (Builder $query) => $query->withCount([
-                        'favoritedUsers' => fn (Builder $query) => $query->where('user_id', auth()->id()),
+                    fn(Builder $query) => $query->withCount([
+                        'favoritedUsers' => fn(Builder $query) => $query->where('user_id', auth()->id()),
                     ])
                 )
+                ->with(['city'])
                 ->get()
         );
     }

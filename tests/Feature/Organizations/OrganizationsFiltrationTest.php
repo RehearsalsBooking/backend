@@ -71,6 +71,24 @@ class OrganizationsFiltrationTest extends TestCase
     }
 
     /** @test */
+    public function users_can_filter_organizations_by_city(): void
+    {
+        $tyumen = $this->createCity();
+        $moscow = $this->createCity();
+
+        $orgInTyumen = $this->createOrganization(['city_id' => $tyumen->id]);
+        $this->createOrganization(['city_id' => $moscow->id]);
+
+        $this->assertEquals(2, Organization::count());
+
+        $response = $this->json('get', route('organizations.list'), ['city_id' => $tyumen->id]);
+        $response->assertOk();
+
+        $this->assertCount(1, $response->json('data'));
+        $this->assertEquals($orgInTyumen->id, $response->json('data.0.id'));
+    }
+
+    /** @test */
     public function users_can_filter_organizations_by_available_time(): void
     {
         $this->withoutExceptionHandling();
