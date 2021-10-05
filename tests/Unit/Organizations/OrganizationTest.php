@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Organizations;
 
-use App\Models\Organization\Organization;
+use App\Models\City;
 use App\Models\Organization\OrganizationPrice;
 use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
@@ -14,8 +14,6 @@ use Tests\TestCase;
 class OrganizationTest extends TestCase
 {
     use RefreshDatabase;
-
-    private Organization $organization;
 
     /** @test */
     public function organization_has_one_owner(): void
@@ -33,44 +31,48 @@ class OrganizationTest extends TestCase
     public function organization_has_rehearsals(): void
     {
         $rehearsalsCount = 5;
-        $this->createRehearsalsForOrganization($this->organization, $rehearsalsCount);
+        $organization = $this->createOrganization();
+        $this->createRehearsalsForOrganization($organization, $rehearsalsCount);
 
-        $this->assertInstanceOf(Collection::class, $this->organization->rehearsals);
-        $this->assertEquals($rehearsalsCount, $this->organization->rehearsals()->count());
-        $this->assertInstanceOf(Rehearsal::class, $this->organization->rehearsals->first());
+        $this->assertInstanceOf(Collection::class, $organization->rehearsals);
+        $this->assertEquals($rehearsalsCount, $organization->rehearsals()->count());
+        $this->assertInstanceOf(Rehearsal::class, $organization->rehearsals->first());
     }
 
     /** @test */
     public function organization_has_prices(): void
     {
+        $organization = $this->createOrganization();
         foreach (range(0, 6) as $dayOfWeek) {
             OrganizationPrice::factory()->create([
-                'organization_id' => $this->organization->id,
+                'organization_id' => $organization->id,
                 'day' => $dayOfWeek,
             ]);
         }
 
-        $this->assertInstanceOf(Collection::class, $this->organization->prices);
-        $this->assertEquals(7, $this->organization->prices()->count());
-        $this->assertInstanceOf(OrganizationPrice::class, $this->organization->prices->first());
+        $this->assertInstanceOf(Collection::class, $organization->prices);
+        $this->assertEquals(7, $organization->prices()->count());
+        $this->assertInstanceOf(OrganizationPrice::class, $organization->prices->first());
     }
 
     /** @test */
     public function organization_has_banned_users(): void
     {
+        $organization = $this->createOrganization();
+
         /** @noinspection PhpUnusedLocalVariableInspection */
         foreach (range(1, 5) as $_) {
             $user = $this->createUser();
             OrganizationUserBan::create([
-                'organization_id' => $this->organization->id,
+                'organization_id' => $organization->id,
                 'user_id' => $user->id,
                 'comment' => 'some reason to ban user',
             ]);
         }
 
-        $this->assertInstanceOf(Collection::class, $this->organization->bannedUsers);
-        $this->assertEquals(5, $this->organization->bannedUsers()->count());
-        $this->assertInstanceOf(User::class, $this->organization->bannedUsers->first());
+        $this->assertInstanceOf(Collection::class, $organization->bannedUsers);
+        $this->assertEquals(5, $organization->bannedUsers()->count());
+        $this->assertInstanceOf(User::class, $organization->bannedUsers->first());
     }
 
     /** @test */
@@ -78,15 +80,20 @@ class OrganizationTest extends TestCase
     {
         $favoritedUsers = $this->createUsers(3);
 
-        $this->organization->favoritedUsers()->sync($favoritedUsers->pluck('id')->toArray());
+        $organization = $this->createOrganization();
+        $organization->favoritedUsers()->sync($favoritedUsers->pluck('id')->toArray());
 
-        $this->assertEquals($this->organization->favoritedUsers()->count(), $favoritedUsers->count());
-        $this->assertInstanceOf(User::class, $this->organization->favoritedUsers->first());
+        $this->assertEquals($organization->favoritedUsers()->count(), $favoritedUsers->count());
+        $this->assertInstanceOf(User::class, $organization->favoritedUsers->first());
     }
 
-    protected function setUp(): void
+    /** @test */
+    public function organization_belongs_to_city(): void
     {
-        parent::setUp();
-        $this->organization = $this->createOrganization();
+        $city = City::factory()->create();
+        $organization = $this->createOrganization(['city_id' => $city->id]);
+
+        $this->assertInstanceOf(City::class, $organization->city);
+        $this->assertEquals($city->id, $organization->city->id);
     }
 }

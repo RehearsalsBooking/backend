@@ -5,6 +5,7 @@
 namespace Database\Seeders;
 
 use App\Models\Band;
+use App\Models\City;
 use App\Models\Genre;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationPrice;
@@ -19,6 +20,7 @@ use PDOException;
 
 class DatabaseSeeder extends Seeder
 {
+    public const CITIES_COUNT = 3;
     public const ADMINS_COUNT = 5;
     public const USERS_COUNT = 20;
     public const INDIVIDUAL_REHEARSALS_COUNT = 50;
@@ -42,11 +44,15 @@ class DatabaseSeeder extends Seeder
      */
     private mixed $bands;
     private mixed $userToLoginWith;
+    private Collection $cities;
 
     public function run(): void
     {
         $this->command->info('creating admins');
         $this->admins = $this->createAdmins(self::ADMINS_COUNT);
+
+        $this->command->info('creating cities');
+        $this->cities = $this->createCities();
 
         $this->command->info('creating organizations');
         $this->organizations = $this->createOrganizations();
@@ -92,14 +98,10 @@ class DatabaseSeeder extends Seeder
     {
         $createdOrganizations = [];
         foreach ($this->admins as $admin) {
-            $createdOrganizations[] = Organization::factory()->create(
+            $createdOrganizations[] = Organization::factory()->count(2)->create(
                 [
                     'owner_id' => $admin->id,
-                ]
-            );
-            $createdOrganizations[] = Organization::factory()->create(
-                [
-                    'owner_id' => $admin->id,
+                    'city_id' => $this->cities->random(1)->id
                 ]
             );
         }
@@ -234,5 +236,10 @@ class DatabaseSeeder extends Seeder
                     }
                 );
         }
+    }
+
+    private function createCities(): Collection
+    {
+        return City::factory()->count(self::CITIES_COUNT)->create();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models\Organization;
 
 use App\Http\Requests\Filters\FilterRequest;
+use App\Models\City;
 use App\Models\Filterable;
 use App\Models\GlobalScopes\OnlyActiveScope;
 use App\Models\HasAvatar;
@@ -64,6 +65,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static OrganizationFactory factory(...$parameters)
  * @property-read MediaCollection|Media[] $media
  * @property-read int|null $media_count
+ * @property int $city_id
+ * @property-read City $city
+ * @method static Builder|Organization whereCityId($value)
  */
 class Organization extends Model implements HasMedia
 {
@@ -137,6 +141,11 @@ class Organization extends Model implements HasMedia
             ->using(OrganizationUserBan::class)
             ->withPivot(['comment'])
             ->withTimestamps();
+    }
+
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
     }
 
     public function hasPriceAt(int $day, string $startsAt, string $endsAt): bool

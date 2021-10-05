@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\City;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,16 +19,12 @@ class CreateOrganizationsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('address');
-            // for now simple string is okay
-            // because i wont be querying this column
-            // it's only needed for representation
             $table->string('coordinates')->nullable();
             $table->boolean('is_active')->default(false);
             $table->text('gear')->nullable();
-            $table->unsignedInteger('owner_id');
+            $table->foreignIdFor(User::class, 'owner_id')->constrained('users');
+            $table->foreignIdFor(City::class)->constrained();
             $table->timestamps();
-
-            $table->foreign('owner_id')->references('id')->on('users');
         });
     }
 

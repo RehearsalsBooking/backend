@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\City;
 use App\Models\Organization\Organization;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -19,6 +20,7 @@ class OrganizationFactory extends Factory
             'coordinates' => $this->getOrganizationCoordinates(),
             'is_active' => true,
             'owner_id' => User::factory(),
+            'city_id' => City::factory()
         ];
     }
 
