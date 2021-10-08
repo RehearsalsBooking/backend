@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
      */
     private mixed $bands;
     private mixed $userToLoginWith;
-    private Collection $cities;
+    private \Illuminate\Support\Collection $cities;
 
     public function run(): void
     {
@@ -96,17 +96,17 @@ class DatabaseSeeder extends Seeder
 
     protected function createOrganizations(): \Illuminate\Support\Collection
     {
-        $createdOrganizations = [];
+        $createdOrganizations = collect();
         foreach ($this->admins as $admin) {
-            $createdOrganizations[] = Organization::factory()->count(2)->create(
+            $createdOrganizations->push(Organization::factory()->count(2)->create(
                 [
                     'owner_id' => $admin->id,
-                    'city_id' => $this->cities->random(1)->id
+                    'city_id' => $this->cities->random(1)->first()->id
                 ]
-            );
+            ));
         }
 
-        return collect($createdOrganizations);
+        return $createdOrganizations->flatten();
     }
 
     protected function createUsers(int $count): \Illuminate\Support\Collection
@@ -238,8 +238,8 @@ class DatabaseSeeder extends Seeder
         }
     }
 
-    private function createCities(): Collection
+    private function createCities(): \Illuminate\Support\Collection
     {
-        return City::factory()->count(self::CITIES_COUNT)->create();
+        return City::factory()->count(self::CITIES_COUNT)->create()->flatten();
     }
 }
