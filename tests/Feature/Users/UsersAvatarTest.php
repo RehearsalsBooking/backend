@@ -3,15 +3,12 @@
 namespace Tests\Feature\Users;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Storage;
 use Tests\TestCase;
 
 class UsersAvatarTest extends TestCase
 {
-    use RefreshDatabase;
-
     private User $user;
 
     /** @test */

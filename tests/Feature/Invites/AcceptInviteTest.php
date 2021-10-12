@@ -3,14 +3,11 @@
 namespace Tests\Feature\Invites;
 
 use App\Models\Invite;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class AcceptInviteTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function unauthorized_user_cannot_accept_invite_to_band(): void
     {

@@ -4,11 +4,8 @@ namespace Tests\Feature\Prices;
 
 use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
-use Belamov\PostgresRange\Ranges\StringifiesBoundariesFromDateTimeInterface;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Tests\Feature\Rehearsals\Booking\ValidatesRehearsalTime;
 use Tests\TestCase;
 
@@ -17,7 +14,6 @@ use Tests\TestCase;
  */
 class PricesTest extends TestCase
 {
-    use RefreshDatabase;
     use ValidatesRehearsalTime;
 
     private Organization $organization;

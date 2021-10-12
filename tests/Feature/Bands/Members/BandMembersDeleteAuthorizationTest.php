@@ -4,7 +4,6 @@ namespace Tests\Feature\Bands\Members;
 
 use App\Models\Band;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
@@ -15,8 +14,6 @@ use Tests\TestCase;
  */
 class BandMembersDeleteAuthorizationTest extends TestCase
 {
-    use RefreshDatabase;
-
     private User $bandAdmin;
     private Band $band;
 

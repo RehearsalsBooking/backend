@@ -5,7 +5,6 @@ namespace Tests\Feature\Invites;
 use App\Models\Band;
 use App\Models\Invite;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
@@ -17,8 +16,6 @@ use Tests\TestCase;
  */
 class DeclineInviteTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function unauthorized_user_cannot_decline_invite_to_band(): void
     {

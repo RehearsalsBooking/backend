@@ -5,13 +5,10 @@ namespace Tests\Feature\Organizations;
 use App\Http\Resources\OrganizationPriceResource;
 use App\Http\Resources\Users\OrganizationDetailResource;
 use App\Http\Resources\Users\UserResource;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class OrganizationsDetailInfoTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function users_can_view_detailed_information_about_organization(): void
     {

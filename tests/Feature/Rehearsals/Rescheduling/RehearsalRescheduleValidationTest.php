@@ -4,14 +4,11 @@ namespace Tests\Feature\Rehearsals\Rescheduling;
 
 use App\Models\Rehearsal;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class RehearsalRescheduleValidationTest extends TestCase
 {
-    use RefreshDatabase;
-
     /**
      * @test
      * @dataProvider getDataWithInvalidFormat

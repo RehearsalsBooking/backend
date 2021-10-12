@@ -5,7 +5,6 @@ namespace Tests\Feature\Rehearsals\Deletion;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
@@ -16,8 +15,6 @@ use Tests\TestCase;
  */
 class RehearsalDeleteValidationTest extends TestCase
 {
-    use RefreshDatabase;
-
     private User $user;
 
     /** @test */

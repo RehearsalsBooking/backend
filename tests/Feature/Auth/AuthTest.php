@@ -4,12 +4,10 @@ namespace Tests\Feature\Auth;
 
 use App\Http\Resources\Users\UserResource;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
-    use RefreshDatabase;
 
     private User $user;
 

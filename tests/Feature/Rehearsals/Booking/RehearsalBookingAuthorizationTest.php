@@ -2,14 +2,11 @@
 
 namespace Tests\Feature\Rehearsals\Booking;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class RehearsalBookingAuthorizationTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function unauthorized_user_cannot_book_a_rehearsal(): void
     {

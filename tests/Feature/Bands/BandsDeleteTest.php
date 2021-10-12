@@ -4,7 +4,6 @@ namespace Tests\Feature\Bands;
 
 use App\Models\Band;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
@@ -15,8 +14,6 @@ use Tests\TestCase;
  */
 class BandsDeleteTest extends TestCase
 {
-    use RefreshDatabase;
-
     private Band $band;
     private User $bandOwner;
 

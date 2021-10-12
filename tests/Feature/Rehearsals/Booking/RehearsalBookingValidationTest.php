@@ -3,13 +3,11 @@
 namespace Tests\Feature\Rehearsals\Booking;
 
 use App\Models\Rehearsal;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class RehearsalBookingValidationTest extends TestCase
 {
-    use RefreshDatabase;
     use ValidatesRehearsalTime;
 
     protected function setUp(): void

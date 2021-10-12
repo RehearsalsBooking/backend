@@ -4,13 +4,10 @@ namespace Tests\Feature\Organizations;
 
 use App\Http\Resources\Users\OrganizationResource;
 use App\Models\Organization\Organization;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class OrganizationsFiltrationTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function users_can_filter_organizations_by_name(): void
     {

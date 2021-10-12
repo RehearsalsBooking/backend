@@ -5,14 +5,11 @@ namespace Tests\Feature\Rehearsals\Booking;
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class RehearsalsBookingTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function user_can_book_individual_rehearsal(): void
     {

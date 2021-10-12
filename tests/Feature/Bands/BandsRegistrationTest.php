@@ -5,14 +5,11 @@ namespace Tests\Feature\Bands;
 use App\Http\Resources\Users\BandDetailedResource;
 use App\Models\Band;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class BandsRegistrationTest extends TestCase
 {
-    use RefreshDatabase;
-
     private User $user;
 
     protected function setUp(): void

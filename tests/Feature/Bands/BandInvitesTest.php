@@ -4,13 +4,10 @@ namespace Tests\Feature\Bands;
 
 use App\Http\Resources\Users\BandInviteResource;
 use App\Models\Invite;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class BandInvitesTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function it_fetches_band_invites(): void
     {

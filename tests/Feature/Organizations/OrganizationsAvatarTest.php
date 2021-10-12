@@ -4,15 +4,12 @@ namespace Tests\Feature\Organizations;
 
 use App\Models\Organization\Organization;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Storage;
 use Tests\TestCase;
 
 class OrganizationsAvatarTest extends TestCase
 {
-    use RefreshDatabase;
-
     private User $manager;
     private Organization $organization;
 

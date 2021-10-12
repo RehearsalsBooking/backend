@@ -5,15 +5,12 @@ namespace Tests\Feature\Invites;
 use App\Mail\NewInvite;
 use App\Models\Band;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Mail;
 use Tests\TestCase;
 
 class BandsInviteTest extends TestCase
 {
-    use RefreshDatabase;
-
     private User $bandAdmin;
     private Band $band;
 

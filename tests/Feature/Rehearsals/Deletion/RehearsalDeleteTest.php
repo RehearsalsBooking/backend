@@ -3,7 +3,6 @@
 namespace Tests\Feature\Rehearsals\Deletion;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
@@ -14,8 +13,6 @@ use Tests\TestCase;
  */
 class RehearsalDeleteTest extends TestCase
 {
-    use RefreshDatabase;
-
     private User $user;
 
     /** @test */

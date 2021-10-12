@@ -3,14 +3,11 @@
 namespace Tests\Feature\Users;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class UsersUpdateTest extends TestCase
 {
-    use RefreshDatabase;
-
     private User $user;
 
     /** @test */

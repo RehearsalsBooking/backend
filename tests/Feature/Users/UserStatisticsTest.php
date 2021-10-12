@@ -2,13 +2,10 @@
 
 namespace Tests\Feature\Users;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class UserStatisticsTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function it_fetches_correct_rehearsal_count(): void
     {

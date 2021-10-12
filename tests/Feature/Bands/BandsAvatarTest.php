@@ -4,15 +4,12 @@ namespace Tests\Feature\Bands;
 
 use App\Models\Band;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Storage;
 use Tests\TestCase;
 
 class BandsAvatarTest extends TestCase
 {
-    use RefreshDatabase;
-
     private User $manager;
     private Band $band;
 

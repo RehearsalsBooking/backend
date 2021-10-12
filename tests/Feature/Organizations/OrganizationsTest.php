@@ -4,14 +4,11 @@ namespace Tests\Feature\Organizations;
 
 use App\Http\Resources\Users\OrganizationResource;
 use App\Models\Organization\Organization;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class OrganizationsTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function users_can_view_organizations(): void
     {

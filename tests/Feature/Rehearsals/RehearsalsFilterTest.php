@@ -7,14 +7,11 @@ use App\Models\Band;
 use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class RehearsalsFilterTest extends TestCase
 {
-    use RefreshDatabase;
-
     private Organization $organization;
 
     protected function setUp(): void

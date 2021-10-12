@@ -7,14 +7,11 @@ use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use App\Models\User;
 use DB;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class RehearsalsTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function rehearsal_has_one_organization(): void
     {

@@ -4,7 +4,6 @@ namespace Tests\Feature\Bands;
 
 use App\Models\Band;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Throwable;
 
@@ -14,8 +13,6 @@ use Throwable;
  */
 class BandsTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function users_can_fetch_bands(): void
     {

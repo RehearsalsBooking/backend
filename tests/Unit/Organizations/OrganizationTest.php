@@ -7,14 +7,11 @@ use App\Models\Organization\OrganizationPrice;
 use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class OrganizationTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function organization_has_one_owner(): void
     {

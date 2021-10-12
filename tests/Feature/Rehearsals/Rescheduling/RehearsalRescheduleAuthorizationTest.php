@@ -2,14 +2,11 @@
 
 namespace Tests\Feature\Rehearsals\Rescheduling;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class RehearsalRescheduleAuthorizationTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function unauthorized_user_cannot_reschedule_a_rehearsal(): void
     {

@@ -4,7 +4,6 @@ namespace Tests\Feature\Management;
 
 use App\Models\Organization\Organization;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
@@ -15,8 +14,6 @@ use Tests\TestCase;
  */
 class ManagementTestCase extends TestCase
 {
-    use RefreshDatabase;
-
     protected User $manager;
     protected Organization $organization;
 

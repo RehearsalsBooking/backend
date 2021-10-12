@@ -4,7 +4,6 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User as LaravelUser;
 use App\Models\UserOAuth;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Laravel\Socialite\Two\GoogleProvider;
 use Laravel\Socialite\Two\User;
@@ -13,8 +12,6 @@ use Tests\TestCase;
 
 class SocialiteLoginTest extends TestCase
 {
-    use RefreshDatabase;
-
     private string $method = 'post';
 
     private function mockSocialiteForGoogle(

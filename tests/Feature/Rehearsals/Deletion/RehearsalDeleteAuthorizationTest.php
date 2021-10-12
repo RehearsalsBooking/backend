@@ -2,14 +2,11 @@
 
 namespace Tests\Feature\Rehearsals\Deletion;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class RehearsalDeleteAuthorizationTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function unauthorized_users_cant_make_request_to_delete_rehearsal(): void
     {

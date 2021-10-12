@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CitiesController;
 use App\Http\Controllers\Users\BandInvitesController;
 use App\Http\Controllers\Users\BandMembershipsController;
 use App\Http\Controllers\Users\BandsController;
@@ -127,6 +128,7 @@ Route::name('bands.members.')->prefix('bands/{band}/members')->group(static func
 });
 
 Route::get('genres', [GenresController::class, 'index'])->name('genres.index');
+Route::get('cities', [CitiesController::class, 'index'])->name('cities.index');
 
 Route::name('users.')->prefix('/users')->group(function () {
     Route::get('/{user}', [UsersController::class, 'show'])->name('show');

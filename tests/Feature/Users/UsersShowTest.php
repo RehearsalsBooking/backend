@@ -3,13 +3,10 @@
 namespace Tests\Feature\Users;
 
 use App\Http\Resources\Users\UserResource;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class UsersShowTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function it_fetches_user_info(): void
     {

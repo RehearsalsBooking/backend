@@ -3,14 +3,11 @@
 namespace Tests\Feature\Invites;
 
 use App\Models\Invite;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class UserInviteTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function unauthorized_user_cannot_fetch_his_invites(): void
     {

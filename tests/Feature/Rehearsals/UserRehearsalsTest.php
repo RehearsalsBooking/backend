@@ -4,13 +4,10 @@ namespace Tests\Feature\Rehearsals;
 
 use App\Http\Resources\RehearsalDetailedResource;
 use App\Models\Rehearsal;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class UserRehearsalsTest extends TestCase
 {
-    use RefreshDatabase;
-
     protected function setUp(): void
     {
         parent::setUp();

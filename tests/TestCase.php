@@ -17,6 +17,7 @@ use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Routing\Middleware\ThrottleRequests;
@@ -24,6 +25,7 @@ use Illuminate\Support\Collection;
 
 abstract class TestCase extends BaseTestCase
 {
+    use LazilyRefreshDatabase;
     use CreatesApplication;
     use WithFaker;
 

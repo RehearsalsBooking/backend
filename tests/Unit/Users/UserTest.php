@@ -8,13 +8,10 @@ use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use DB;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function user_can_have_organizations(): void
     {

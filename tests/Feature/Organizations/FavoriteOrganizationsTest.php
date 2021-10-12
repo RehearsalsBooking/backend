@@ -4,14 +4,11 @@ namespace Tests\Feature\Organizations;
 
 use App\Models\Organization\Organization;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class FavoriteOrganizationsTest extends TestCase
 {
-    use RefreshDatabase;
-
     private User $user;
     private Organization $organization;
 

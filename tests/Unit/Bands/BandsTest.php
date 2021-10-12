@@ -5,13 +5,10 @@ namespace Tests\Unit\Bands;
 use App\Models\Invite;
 use App\Models\Rehearsal;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class BandsTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function band_has_admin(): void
     {

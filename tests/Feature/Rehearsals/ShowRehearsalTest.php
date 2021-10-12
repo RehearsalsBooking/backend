@@ -5,14 +5,11 @@ namespace Tests\Feature\Rehearsals;
 use App\Http\Resources\RehearsalDetailedResource;
 use App\Models\Rehearsal;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class ShowRehearsalTest extends TestCase
 {
-    use RefreshDatabase;
-
     private string $endpoint = 'rehearsals.show';
     private string $httpVerb = 'get';
     private Rehearsal $rehearsal;

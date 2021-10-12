@@ -4,13 +4,10 @@ namespace Tests\Feature\Bands\Members;
 
 use App\Http\Resources\Users\BandMembershipResource;
 use App\Models\Band;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class BandMembersIndexTest extends TestCase
 {
-    use RefreshDatabase;
-
     private Band $band;
 
     protected function setUp(): void

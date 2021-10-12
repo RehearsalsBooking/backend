@@ -7,14 +7,11 @@ use App\Models\BandMembership;
 use App\Models\Organization\Organization;
 use App\Models\Rehearsal;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class AttendeesRegistrationTest extends TestCase
 {
-    use RefreshDatabase;
-
     /** @test */
     public function when_user_books_and_reschedules_individual_rehearsal_he_becomes_this_rehearsals_attendee(): void
     {
