@@ -13,16 +13,16 @@ class CreatePricesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('organization_prices', static function (Blueprint $table) {
+        Schema::create('organization_room_prices', static function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('day');
             $table->decimal('price');
-            $table->integer('organization_id');
+            $table->integer('organization_room_id');
             $table->timeRange('time');
             $table->timestamps();
 
-            $table->foreign('organization_id')->references('id')->on('organizations');
-            $table->excludeRangeOverlapping('time', 'organization_id', 'day');
+            $table->foreign('organization_room_id')->references('id')->on('organization_rooms');
+            $table->excludeRangeOverlapping('time', 'organization_room_id', 'day');
         });
     }
 

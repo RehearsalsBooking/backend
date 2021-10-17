@@ -2,13 +2,13 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Organization\OrganizationPrice;
+use App\Models\Organization\OrganizationRoomPrice;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin OrganizationPrice
+ * @mixin OrganizationRoomPrice
  */
-class OrganizationPriceResource extends JsonResource
+class RoomPriceResource extends JsonResource
 {
     public function toArray($request): array
     {

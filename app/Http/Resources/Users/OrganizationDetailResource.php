@@ -4,7 +4,7 @@ namespace App\Http\Resources\Users;
 
 use App\Http\Resources\AvatarResource;
 use App\Http\Resources\CityResource;
-use App\Http\Resources\OrganizationPriceResource;
+use App\Http\Resources\RoomPriceResource;
 use App\Models\Organization\Organization;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,7 +24,7 @@ class OrganizationDetailResource extends JsonResource
             'gear' => $this->gear,
             'avatar' => $this->getAvatarUrls(),
             'owner' => new UserResource($this->owner),
-            'prices' => OrganizationPriceResource::collection($this->prices),
+            'prices' => RoomPriceResource::collection($this->prices),
             'is_favorited' => $this->isUserFavorited((int) auth()->id()),
         ];
     }

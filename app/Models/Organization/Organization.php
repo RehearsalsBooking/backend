@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -54,7 +55,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property-read User $owner
  * @property-read Collection|Rehearsal[] $rehearsals
  * @property-read int|null $rehearsals_count
- * @property-read Collection|OrganizationPrice[] $prices
+ * @property-read Collection|OrganizationRoomPrice[] $prices
  * @property-read int|null $prices_count
  * @property-read Collection|User[] $bannedUsers
  * @property-read int|null $banned_users_count
@@ -137,9 +138,9 @@ class Organization extends Model implements HasMedia
         return $this->hasMany(Rehearsal::class);
     }
 
-    public function prices(): HasMany
+    public function prices(): HasManyThrough
     {
-        return $this->hasMany(OrganizationPrice::class);
+        return $this->hasManyThrough(OrganizationRoomPrice::class, OrganizationRoom::class);
     }
 
     public function bannedUsers(): BelongsToMany

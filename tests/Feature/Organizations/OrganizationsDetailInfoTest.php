@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Organizations;
 
-use App\Http\Resources\OrganizationPriceResource;
+use App\Http\Resources\RoomPriceResource;
 use App\Http\Resources\Users\OrganizationDetailResource;
 use App\Http\Resources\Users\UserResource;
 use Tests\TestCase;
@@ -50,7 +50,7 @@ class OrganizationsDetailInfoTest extends TestCase
 
         $this->assertArrayHasKey('prices', $response->json('data'));
         $this->assertEquals(
-            (OrganizationPriceResource::collection($organization->prices))->response()->getData(true)['data'],
+            (RoomPriceResource::collection($organization->prices))->response()->getData(true)['data'],
             $response->json('data.prices')
         );
     }

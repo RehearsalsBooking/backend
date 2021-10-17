@@ -5,7 +5,7 @@ namespace App\Http\Requests\Management;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateOrganizationPriceRequest extends FormRequest
+class CreateRoomPriceRequest extends FormRequest
 {
     public function rules(): array
     {

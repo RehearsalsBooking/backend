@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Management\Prices;
 
-use App\Http\Resources\OrganizationPriceResource;
+use App\Http\Resources\RoomPriceResource;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
@@ -60,7 +60,7 @@ class FetchPricesTest extends ManagementTestCase
 
         $this->assertCount(5, $response->json('data'));
         $this->assertEquals(
-            OrganizationPriceResource::collection($this->organization->prices)->response()->getData(true),
+            RoomPriceResource::collection($this->organization->prices)->response()->getData(true),
             $response->json()
         );
     }

@@ -11,18 +11,16 @@ use App\Models\User;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
-class OrganizationTest extends TestCase
+class OrganizationRoomTest extends TestCase
 {
     /** @test */
-    public function organization_has_one_owner(): void
+    public function room_belongs_to_organization(): void
     {
-        $user = $this->createUser();
+        $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
 
-        $organization = $this->createOrganization([
-            'owner_id' => $user->id,
-        ]);
-
-        $this->assertInstanceOf(User::class, $organization->owner);
+        $this->assertInstanceOf(Organization::class, $room->organization);
+        $this->assertEquals($organization, $room->organization);
     }
 
     /** @test */

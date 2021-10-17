@@ -3,13 +3,13 @@
 namespace Tests\Feature\Management\Prices;
 
 use App\Models\Organization\Organization;
-use App\Models\Organization\OrganizationPrice;
-use Illuminate\Http\Response;
+use App\Models\Organization\OrganizationRoomPrice;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
 class UpdatePriceTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.organizations.prices.update';
+    private string $endpoint = 'management.rooms.prices.update';
     private string $httpVerb = 'put';
 
     /** @test */
@@ -73,7 +73,7 @@ class UpdatePriceTest extends ManagementTestCase
         $unknownPriceId = 10000;
         $unknownOrganizationId = 10000;
 
-        $this->assertEquals(0, OrganizationPrice::where('id', $unknownPriceId)->count());
+        $this->assertEquals(0, OrganizationRoomPrice::where('id', $unknownPriceId)->count());
         $this->assertEquals(0, Organization::where('id', $unknownOrganizationId)->count());
 
         $this->json($this->httpVerb, route($this->endpoint, [$this->organization->id, $unknownPriceId]))
