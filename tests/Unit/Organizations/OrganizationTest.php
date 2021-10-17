@@ -4,6 +4,7 @@ namespace Tests\Unit\Organizations;
 
 use App\Models\City;
 use App\Models\Organization\OrganizationPrice;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
 use App\Models\User;
@@ -92,5 +93,24 @@ class OrganizationTest extends TestCase
 
         $this->assertInstanceOf(City::class, $organization->city);
         $this->assertEquals($city->id, $organization->city->id);
+    }
+
+    /** @test */
+    public function organization_has_multiple_rooms(): void
+    {
+        $organization = $this->createOrganization();
+
+        $lightRoom = $this->createOrganizationRoom($organization);
+        $darkRoom = $this->createOrganizationRoom($organization);
+
+        $organizationRooms = $organization->rooms;
+
+        $this->assertEquals(2, $organizationRooms->count());
+
+        $this->assertInstanceOf(OrganizationRoom::class, $organizationRooms[0]);
+        $this->assertEquals($lightRoom->id, $organizationRooms[0]->id);
+
+        $this->assertInstanceOf(OrganizationRoom::class, $organizationRooms[1]);
+        $this->assertEquals($darkRoom->id, $organizationRooms[1]->id);
     }
 }

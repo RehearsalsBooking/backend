@@ -68,6 +68,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property int $city_id
  * @property-read City $city
  * @method static Builder|Organization whereCityId($value)
+ * @property-read Collection|OrganizationRoom[] $rooms
+ * @property-read int|null $rooms_count
  */
 class Organization extends Model implements HasMedia
 {
@@ -109,6 +111,11 @@ class Organization extends Model implements HasMedia
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(OrganizationRoom::class);
     }
 
     public function isTimeAvailable(string $startsAt, string $endsAt, Rehearsal $rehearsal = null): bool

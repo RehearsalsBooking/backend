@@ -9,6 +9,7 @@ use App\Models\Genre;
 use App\Models\Invite;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationPrice;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
 use App\Models\User;
@@ -318,5 +319,12 @@ abstract class TestCase extends BaseTestCase
     protected function createCity(): EloquentCollection|Model|City
     {
         return City::factory()->create();
+    }
+
+    protected function createOrganizationRoom(?Organization $organization): Model|EloquentCollection|OrganizationRoom
+    {
+        return OrganizationRoom::factory()->create([
+            'organization_id' => $organization?->id,
+        ]);
     }
 }
