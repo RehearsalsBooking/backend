@@ -3,7 +3,7 @@
 namespace Tests\Feature\Management\Prices;
 
 use App\Models\Organization\Organization;
-use App\Models\Organization\OrganizationPrice;
+use App\Models\Organization\OrganizationRoomPrice;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
@@ -71,7 +71,7 @@ class DeletePricesTest extends ManagementTestCase
         $unknownPriceId = 10000;
         $unknownOrganizationId = 10000;
 
-        $this->assertEquals(0, OrganizationPrice::where('id', $unknownPriceId)->count());
+        $this->assertEquals(0, OrganizationRoomPrice::where('id', $unknownPriceId)->count());
         $this->assertEquals(0, Organization::where('id', $unknownOrganizationId)->count());
 
         $this->json($this->httpVerb, route($this->endpoint, [$this->organization->id, $unknownPriceId]))

@@ -8,7 +8,7 @@ use App\Models\Band;
 use App\Models\City;
 use App\Models\Genre;
 use App\Models\Organization\Organization;
-use App\Models\Organization\OrganizationPrice;
+use App\Models\Organization\OrganizationRoomPrice;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimeRange;
@@ -118,7 +118,7 @@ class DatabaseSeeder extends Seeder
     {
         foreach (range(0, 6) as $dayOfWeek) {
             foreach ($this->organizations as $organization) {
-                OrganizationPrice::factory()->create(
+                OrganizationRoomPrice::factory()->create(
                     [
                         'organization_id' => $organization->id,
                         'day' => $dayOfWeek,
@@ -126,7 +126,7 @@ class DatabaseSeeder extends Seeder
                         'price' => 200,
                     ]
                 );
-                OrganizationPrice::factory()->create(
+                OrganizationRoomPrice::factory()->create(
                     [
                         'organization_id' => $organization->id,
                         'day' => $dayOfWeek,

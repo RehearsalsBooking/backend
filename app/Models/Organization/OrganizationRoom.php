@@ -2,11 +2,14 @@
 
 namespace App\Models\Organization;
 
+use Belamov\PostgresRange\Ranges\TimeRange;
 use Database\Factories\OrganizationRoomFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -38,4 +41,23 @@ class OrganizationRoom extends Model
     {
         return OrganizationRoomFactory::new();
     }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class, 'organization_id');
+    }
+
+    public function prices(): HasMany
+    {
+        return $this->hasMany(OrganizationRoomPrice::class);
+    }
+
+    public function hasPriceAt(int $day, string $startsAt, string $endsAt): bool
+    {
+        return OrganizationRoomPrice::where('organization_room_id', $this->id)
+            ->where('day', $day)
+            ->whereRaw('time && ?::timerange', [new TimeRange($startsAt, $endsAt)])
+            ->exists();
+    }
+
 }

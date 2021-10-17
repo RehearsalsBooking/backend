@@ -8,7 +8,7 @@ use App\Models\City;
 use App\Models\Genre;
 use App\Models\Invite;
 use App\Models\Organization\Organization;
-use App\Models\Organization\OrganizationPrice;
+use App\Models\Organization\OrganizationRoomPrice;
 use App\Models\Organization\OrganizationRoom;
 use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
@@ -136,16 +136,19 @@ abstract class TestCase extends BaseTestCase
 
     protected function createOrganizations(int $count = 1, array $attributes = []): Collection
     {
-        return Organization::factory()->count($count)->create($attributes);
+        return Organization::factory()
+            ->count($count)
+            ->create($attributes)
+            ->each(
+                fn(Organization $organization) => OrganizationRoom::factory()->create([
+                    'organization_id' => $organization->id
+                ])
+            );
     }
 
     protected function createOrganizationForUser(User $user, array $params = []): EloquentCollection|Model|Organization
     {
-        /** @var Organization $organization */
-        $organization = Organization::factory()->create(array_merge($params, ['owner_id' => $user->id]));
-        $this->createPricesForOrganization($organization);
-
-        return $organization;
+        return Organization::factory()->create(array_merge($params, ['owner_id' => $user->id]));
     }
 
     protected function createPricesForOrganization(
@@ -153,15 +156,20 @@ abstract class TestCase extends BaseTestCase
         string $startsAt = '00:00',
         string $endsAt = '23:59'
     ): void {
-        foreach (range(0, 6) as $dayOfWeek) {
-            OrganizationPrice::factory()->create(
-                [
-                    'organization_id' => $organization->id,
-                    'day' => $dayOfWeek,
-                    'time' => new TimeRange($startsAt, $endsAt),
-                ]
-            );
-        }
+        $organization->rooms->each(
+            function (OrganizationRoom $room) use ($startsAt, $endsAt) {
+                foreach (range(0, 6) as $dayOfWeek) {
+                    OrganizationRoomPrice::factory()
+                        ->create(
+                            [
+                                'organization_room_id' => $room->id,
+                                'day' => $dayOfWeek,
+                                'time' => new TimeRange($startsAt, $endsAt),
+                            ]
+                        );
+                }
+            }
+        );
     }
 
     protected function getRehearsalTime(): array

@@ -5,8 +5,10 @@ namespace App\Providers;
 use App\Models\Band;
 use App\Models\Invite;
 use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
 use App\Policies\Management\OrganizationPolicy;
+use App\Policies\Management\OrganizationRoomPolicy;
 use App\Policies\Users\BandPolicy;
 use App\Policies\Users\InvitePolicy;
 use App\Policies\Users\RehearsalPolicy;
@@ -24,6 +26,7 @@ class AuthServiceProvider extends ServiceProvider
         Band::class => BandPolicy::class,
         Invite::class => InvitePolicy::class,
         Organization::class => OrganizationPolicy::class,
+        OrganizationRoom::class => OrganizationRoomPolicy::class
     ];
 
     /**
