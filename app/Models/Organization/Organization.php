@@ -119,20 +119,6 @@ class Organization extends Model implements HasMedia
         return $this->hasMany(OrganizationRoom::class);
     }
 
-    public function isTimeAvailable(string $startsAt, string $endsAt, Rehearsal $rehearsal = null): bool
-    {
-        $query = $this->rehearsals()
-            ->whereRaw('time && ?::tsrange', [new TimestampRange($startsAt, $endsAt)]);
-
-        // if rehearsal was passed as a parameter, then we want to determine if this rehearsal
-        // is available for reschedule, so we must exclude it from query
-        if ($rehearsal !== null) {
-            $query->where('id', '!=', $rehearsal->id);
-        }
-
-        return $query->doesntExist();
-    }
-
     public function rehearsals(): HasMany
     {
         return $this->hasMany(Rehearsal::class);

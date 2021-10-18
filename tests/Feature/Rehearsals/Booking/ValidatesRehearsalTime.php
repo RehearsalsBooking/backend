@@ -3,9 +3,10 @@
 namespace Tests\Feature\Rehearsals\Booking;
 
 use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
 use Carbon\Carbon;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Trait ValidatesRehearsalTime.
@@ -20,11 +21,11 @@ trait ValidatesRehearsalTime
     public function performTestWhenOrganizationIsClosed(
         string $method,
         string $endpoint,
-        Organization $organization,
+        OrganizationRoom $room,
         array $additionalParameters = []
     ): void {
-        $this->createPricesForOrganization($organization, '08:00', '16:00');
-        $this->createPricesForOrganization($organization, '16:00', '22:00');
+        $this->createPricesForOrganization($room->organization, '08:00', '16:00');
+        $this->createPricesForOrganization($room->organization, '16:00', '22:00');
 
         $paramsWhenOrganizationIsClosed = [
             array_merge(
@@ -80,10 +81,10 @@ trait ValidatesRehearsalTime
     public function performTestsWhenUserProvidedIncorrectRehearsalDuration(
         string $method,
         string $endpoint,
-        Organization $organization,
+        OrganizationRoom $room,
         array $additionalParameters = []
     ): void {
-        $this->createPricesForOrganization($organization);
+        $this->createPricesForOrganization($room->organization);
 
         $invalidRehearsalDuration = [
             array_merge(
@@ -131,10 +132,10 @@ trait ValidatesRehearsalTime
     public function performTestsWhenUserProvidesRehearsalTimeLongerThan24Hours(
         string $method,
         string $endpoint,
-        Organization $organization,
+        OrganizationRoom $room,
         array $additionalParameters = []
     ): void {
-        $this->createPricesForOrganization($organization);
+        $this->createPricesForOrganization($room->organization);
 
         $rehearsalStart = Carbon::now()->addDay()->setHour(6)->setMinute(0)->setSeconds(0);
         $rehearsalEnd = $rehearsalStart->copy()->addHours(24);
@@ -161,13 +162,14 @@ trait ValidatesRehearsalTime
     public function performTestsWhenUserSelectedUnavailableTime(
         string $method,
         string $endpoint,
-        Organization $organization,
+        OrganizationRoom $room,
         array $additionalParameters = []
     ): void {
-        $this->createPricesForOrganization($organization, '06:00', '16:00');
-        $this->createPricesForOrganization($organization, '16:00', '22:00');
+        $this->createPricesForOrganization($room->organization, '06:00', '16:00');
+        $this->createPricesForOrganization($room->organization, '16:00', '22:00');
 
         $otherOrganization = $this->createOrganization();
+        $otherRoom = $this->createOrganizationRoom($otherOrganization);
 
         $this->createPricesForOrganization($otherOrganization, '06:00', '16:00');
         $this->createPricesForOrganization($otherOrganization, '16:00', '22:00');

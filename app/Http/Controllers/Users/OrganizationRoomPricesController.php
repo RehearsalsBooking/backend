@@ -5,21 +5,22 @@ namespace App\Http\Controllers\Users;
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Users\GetOrganizationPriceRequest;
+use App\Http\Requests\Users\GetOrganizationRoomPriceRequest;
 use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
-class OrganizationPricesController extends Controller
+class OrganizationRoomPricesController extends Controller
 {
     /**
-     * @param  GetOrganizationPriceRequest  $request
-     * @param  Organization  $organization
+     * @param  GetOrganizationRoomPriceRequest  $request
+     * @param  OrganizationRoom  $room
      * @return JsonResponse
      */
-    public function index(GetOrganizationPriceRequest $request, Organization $organization): JsonResponse
+    public function index(GetOrganizationRoomPriceRequest $request, OrganizationRoom $room): JsonResponse
     {
-        if (!$organization->isTimeAvailable(
+        if (!$room->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
             $request->getReschedulingRehearsal()

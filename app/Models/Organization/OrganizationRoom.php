@@ -2,7 +2,9 @@
 
 namespace App\Models\Organization;
 
+use App\Models\Rehearsal;
 use Belamov\PostgresRange\Ranges\TimeRange;
+use Belamov\PostgresRange\Ranges\TimestampRange;
 use Database\Factories\OrganizationRoomFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -50,6 +52,20 @@ class OrganizationRoom extends Model
     public function prices(): HasMany
     {
         return $this->hasMany(OrganizationRoomPrice::class);
+    }
+
+    public function isTimeAvailable(string $startsAt, string $endsAt, Rehearsal $rehearsal = null): bool
+    {
+        $query = $this->organization->rehearsals()
+            ->whereRaw('time && ?::tsrange', [new TimestampRange($startsAt, $endsAt)]);
+
+        // if rehearsal was passed as a parameter, then we want to determine if this rehearsal
+        // is available for reschedule, so we must exclude it from query
+        if ($rehearsal !== null) {
+            $query->where('id', '!=', $rehearsal->id);
+        }
+
+        return $query->doesntExist();
     }
 
     public function hasPriceAt(int $day, string $startsAt, string $endsAt): bool
