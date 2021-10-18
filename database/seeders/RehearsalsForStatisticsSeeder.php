@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimestampRange;
@@ -11,20 +12,8 @@ use Illuminate\Database\Seeder;
 
 class RehearsalsForStatisticsSeeder extends Seeder
 {
-    /**
-     * Run the database seeders.
-     *
-     * @param  Organization  $organization
-     * @param  CarbonInterface  $date
-     * @param  int  $years
-     * @param  int  $months
-     * @param  int  $days
-     * @param  int  $price
-     * @param  int  $perDay
-     * @return void
-     */
     public function run(
-        Organization $organization,
+        OrganizationRoom $room,
         CarbonInterface $date,
         int $years,
         int $months,
@@ -39,7 +28,7 @@ class RehearsalsForStatisticsSeeder extends Seeder
                 for ($k = 0; $k < $days; $k++) {
                     for ($l = 0; $l < $perDay; $l++) {
                         Rehearsal::factory()->create([
-                            'organization_id' => $organization->id,
+                            'organization_room_id' => $room->id,
                             'user_id' => $user->id,
                             'price' => $price,
                             'time' => new TimestampRange($date, $date->clone()->addHour()),

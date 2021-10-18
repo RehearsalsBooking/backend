@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimestampRange;
@@ -16,7 +16,7 @@ class RehearsalFactory extends Factory
     public function definition(): array
     {
         return [
-            'organization_id' => Organization::factory(),
+            'organization_room_id' => OrganizationRoom::factory(),
             'user_id' => User::factory(),
             'is_paid' => true,
             'time' => $this->getRehearsalTime(),

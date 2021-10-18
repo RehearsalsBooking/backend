@@ -9,31 +9,30 @@ use Tests\Feature\Management\ManagementTestCase;
 
 class OrganizationStatisticsTest extends ManagementTestCase
 {
-    /**
-     * @var int
-     */
     public const YEARS = 3;
-    /**
-     * @var int
-     */
     public const MONTHS = 5;
-    /**
-     * @var int
-     */
     public const DAYS = 2;
-    /**
-     * @var int
-     */
     public const PER_DAY = 2;
-    /**
-     * @var int
-     */
     public const PRICE = 100;
     protected CarbonImmutable $startingDate;
     private string $totalEndpoint = 'management.organizations.statistics.total';
     private string $groupedEndpoint = 'management.organizations.statistics.grouped';
     private string $httpVerb = 'get';
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->startingDate = CarbonImmutable::create(2020, 1, 1, 10);
+        (new RehearsalsForStatisticsSeeder())->run(
+            $this->organizationRoom,
+            $this->startingDate,
+            self::YEARS,
+            self::MONTHS,
+            self::DAYS,
+            self::PRICE,
+            self::PER_DAY
+        );
+    }
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void
     {
@@ -260,20 +259,5 @@ class OrganizationStatisticsTest extends ManagementTestCase
             $this->assertEquals($expectedCount, $dayStatistics['count']);
             $this->assertEquals($expectedCount * self::PRICE, $dayStatistics['income']);
         }
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->startingDate = CarbonImmutable::create(2020, 1, 1, 10);
-        (new RehearsalsForStatisticsSeeder())->run(
-            $this->organization,
-            $this->startingDate,
-            self::YEARS,
-            self::MONTHS,
-            self::DAYS,
-            self::PRICE,
-            self::PER_DAY
-        );
     }
 }

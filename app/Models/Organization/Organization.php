@@ -119,9 +119,9 @@ class Organization extends Model implements HasMedia
         return $this->hasMany(OrganizationRoom::class);
     }
 
-    public function rehearsals(): HasMany
+    public function rehearsals(): HasManyThrough
     {
-        return $this->hasMany(Rehearsal::class);
+        return $this->hasManyThrough(Rehearsal::class, OrganizationRoom::class);
     }
 
     public function prices(): HasManyThrough

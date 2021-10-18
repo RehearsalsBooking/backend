@@ -54,6 +54,11 @@ class OrganizationRoom extends Model
         return $this->hasMany(OrganizationRoomPrice::class);
     }
 
+    public function rehearsals(): HasMany
+    {
+        return $this->hasMany(Rehearsal::class);
+    }
+
     public function isTimeAvailable(string $startsAt, string $endsAt, Rehearsal $rehearsal = null): bool
     {
         $query = $this->organization->rehearsals()

@@ -95,13 +95,13 @@ abstract class TestCase extends BaseTestCase
     protected function createRehearsal(
         int $startsAt = 10,
         int $endsAt = 12,
-        Organization $organization = null,
+        OrganizationRoom $room = null,
         Band $band = null,
         bool $isPaid = false,
         User $user = null
     ): EloquentCollection|Model|Rehearsal {
         $user ??= $this->createUser();
-        $organization ??= $this->createOrganization();
+        $room ??= $this->createOrganizationRoom();
 
         return Rehearsal::factory()->create(
             [
@@ -111,7 +111,7 @@ abstract class TestCase extends BaseTestCase
                     '[',
                     ')'
                 ),
-                'organization_id' => $organization->id,
+                'organization_room_id' => $room->id,
                 'band_id' => optional($band)->id,
                 'is_paid' => $isPaid,
                 'user_id' => $user->id,
