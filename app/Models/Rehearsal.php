@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Http\Requests\Filters\FilterRequest;
 use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use Belamov\PostgresRange\Casts\TimestampRangeCast;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Database\Factories\RehearsalFactory;
@@ -24,7 +25,7 @@ use Illuminate\Support\Carbon;
  * @property int $user_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Organization $organization
+ * @property-read OrganizationRoom $organizationRoom
  * @property-read User $user
  * @method static Builder|Rehearsal newModelQuery()
  * @method static Builder|Rehearsal newQuery()
@@ -103,9 +104,9 @@ class Rehearsal extends Model
         $this->attendees()->attach($this->user_id);
     }
 
-    public function organization(): BelongsTo
+    public function room(): BelongsTo
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(OrganizationRoom::class);
     }
 
     public function user(): BelongsTo

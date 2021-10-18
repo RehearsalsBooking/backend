@@ -23,6 +23,7 @@ class OrganizationStatistics
         return $this->organization->rehearsals()
             ->selectRaw('sum(price) as income, count(*) as count')
             ->when($this->interval !== null, $this->setInterval)
+            ->groupBy('organization_id')
             ->get()
             ->toArray();
     }

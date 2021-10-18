@@ -21,7 +21,7 @@ class OrganizationStatisticsGrouped extends OrganizationStatistics
             ->selectRaw('count(*) as count')
             ->selectRaw('sum(price) as income')
             ->when($this->interval !== null, $this->setInterval)
-            ->groupBy('x')
+            ->groupBy('x', 'organization_id')
             ->orderBy('x')
             ->get()
             ->toArray();

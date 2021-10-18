@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Management\Rehearsals;
 
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
 class DeleteRehearsalTest extends ManagementTestCase
@@ -27,7 +27,7 @@ class DeleteRehearsalTest extends ManagementTestCase
         $rehearsal = $this->createRehearsal(
             1,
             2,
-            $this->organization,
+            $this->organizationRoom,
         );
 
         $this->actingAs($ordinaryClient);
@@ -52,7 +52,7 @@ class DeleteRehearsalTest extends ManagementTestCase
     /** @test */
     public function manager_of_organization_can_delete_rehearsal_of_his_organization(): void
     {
-        $rehearsal = $this->createRehearsal(1, 2, $this->organization);
+        $rehearsal = $this->createRehearsal(1, 2, $this->organizationRoom);
 
         $this->assertEquals(1, $this->organization->rehearsals()->count());
 
