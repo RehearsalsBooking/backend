@@ -38,22 +38,6 @@ class OrganizationTest extends TestCase
     }
 
     /** @test */
-    public function organization_has_prices(): void
-    {
-        $organization = $this->createOrganization();
-        foreach (range(0, 6) as $dayOfWeek) {
-            OrganizationRoomPrice::factory()->create([
-                'organization_id' => $organization->id,
-                'day' => $dayOfWeek,
-            ]);
-        }
-
-        $this->assertInstanceOf(Collection::class, $organization->prices);
-        $this->assertEquals(7, $organization->prices()->count());
-        $this->assertInstanceOf(OrganizationRoomPrice::class, $organization->prices->first());
-    }
-
-    /** @test */
     public function organization_has_banned_users(): void
     {
         $organization = $this->createOrganization();

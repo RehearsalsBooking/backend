@@ -9,6 +9,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
@@ -50,4 +51,9 @@ class OrganizationRoomPrice extends Model
     protected $casts = [
         'time' => TimeRangeCast::class,
     ];
+
+    public function room(): BelongsTo
+    {
+        return $this->belongsTo(OrganizationRoom::class);
+    }
 }

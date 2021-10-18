@@ -12,7 +12,7 @@ class OrganizationPolicy
 
     public function manage(User $user, Organization $organization): bool
     {
-        return $user->organizations->contains($organization);
+        return $organization->owner_id === $user->id;
     }
 
     public function see(?User $user, Organization $organization): bool
@@ -21,6 +21,6 @@ class OrganizationPolicy
             return true;
         }
 
-        return ! $organization->isUserBanned($user->id);
+        return !$organization->isUserBanned($user->id);
     }
 }

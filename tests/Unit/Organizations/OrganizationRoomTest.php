@@ -3,11 +3,9 @@
 namespace Tests\Unit\Organizations;
 
 use App\Models\City;
+use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationRoomPrice;
 use App\Models\Organization\OrganizationRoom;
-use App\Models\Organization\OrganizationUserBan;
-use App\Models\Rehearsal;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
@@ -20,67 +18,7 @@ class OrganizationRoomTest extends TestCase
         $room = $this->createOrganizationRoom($organization);
 
         $this->assertInstanceOf(Organization::class, $room->organization);
-        $this->assertEquals($organization, $room->organization);
-    }
-
-    /** @test */
-    public function organization_has_rehearsals(): void
-    {
-        $rehearsalsCount = 5;
-        $organization = $this->createOrganization();
-        $this->createRehearsalsForOrganization($organization, $rehearsalsCount);
-
-        $this->assertInstanceOf(Collection::class, $organization->rehearsals);
-        $this->assertEquals($rehearsalsCount, $organization->rehearsals()->count());
-        $this->assertInstanceOf(Rehearsal::class, $organization->rehearsals->first());
-    }
-
-    /** @test */
-    public function organization_has_prices(): void
-    {
-        $organization = $this->createOrganization();
-        foreach (range(0, 6) as $dayOfWeek) {
-            OrganizationRoomPrice::factory()->create([
-                'organization_id' => $organization->id,
-                'day' => $dayOfWeek,
-            ]);
-        }
-
-        $this->assertInstanceOf(Collection::class, $organization->prices);
-        $this->assertEquals(7, $organization->prices()->count());
-        $this->assertInstanceOf(OrganizationRoomPrice::class, $organization->prices->first());
-    }
-
-    /** @test */
-    public function organization_has_banned_users(): void
-    {
-        $organization = $this->createOrganization();
-
-        /** @noinspection PhpUnusedLocalVariableInspection */
-        foreach (range(1, 5) as $_) {
-            $user = $this->createUser();
-            OrganizationUserBan::create([
-                'organization_id' => $organization->id,
-                'user_id' => $user->id,
-                'comment' => 'some reason to ban user',
-            ]);
-        }
-
-        $this->assertInstanceOf(Collection::class, $organization->bannedUsers);
-        $this->assertEquals(5, $organization->bannedUsers()->count());
-        $this->assertInstanceOf(User::class, $organization->bannedUsers->first());
-    }
-
-    /** @test */
-    public function organization_has_users_who_favorited_it(): void
-    {
-        $favoritedUsers = $this->createUsers(3);
-
-        $organization = $this->createOrganization();
-        $organization->favoritedUsers()->sync($favoritedUsers->pluck('id')->toArray());
-
-        $this->assertEquals($organization->favoritedUsers()->count(), $favoritedUsers->count());
-        $this->assertInstanceOf(User::class, $organization->favoritedUsers->first());
+        $this->assertEquals($organization->id, $room->organization->id);
     }
 
     /** @test */
@@ -110,5 +48,21 @@ class OrganizationRoomTest extends TestCase
 
         $this->assertInstanceOf(OrganizationRoom::class, $organizationRooms[1]);
         $this->assertEquals($darkRoom->id, $organizationRooms[1]->id);
+    }
+
+    /** @test */
+    public function room_has_prices(): void
+    {
+        $room = $this->createOrganizationRoom($this->createOrganization());
+        foreach (range(0, 6) as $dayOfWeek) {
+            OrganizationRoomPrice::factory()->create([
+                'organization_room_id' => $room->id,
+                'day' => $dayOfWeek,
+            ]);
+        }
+
+        $this->assertInstanceOf(Collection::class, $room->prices);
+        $this->assertEquals(7, $room->prices()->count());
+        $this->assertInstanceOf(OrganizationRoomPrice::class, $room->prices->first());
     }
 }
