@@ -9,7 +9,6 @@ docker_bin := $(shell command -v docker 2> /dev/null)
 docker_compose_bin := $(shell command -v docker-compose 2> /dev/null)
 docker_compose_yml := docker/docker-compose.yml
 user_id := $(shell id -u)
-ci_env := $(curl -s https://codecov.io/env)
 
 .PHONY : help pull build push login test clean \
          app-pull app app-push\
@@ -41,7 +40,7 @@ test: check-environment ## Execute tests
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" /bin/bash -c "php artisan test --parallel"
 
 check-ci: check-environment composer-validate phpstan composer-require-check composer-unused ## Execute tests in ci
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run $(ci_env) -e CI=true -e XDEBUG_MODE=coverage --rm  "$(php_container_name)" /bin/bash -c "php artisan test --parallel --coverage-clover=coverage.xml && codecov -t ${CODECOV_TOKEN}"
+	- $(docker_compose_bin) --file "$(docker_compose_yml)" run -e XDEBUG_MODE=coverage --rm  "$(php_container_name)" /bin/bash -c "php artisan test --parallel --coverage-clover=coverage.xml && codecov -t ${CODECOV_TOKEN}"
 
 phpstan: check-environment ## Run phpstan
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" vendor/bin/phpstan analyse --memory-limit 0
