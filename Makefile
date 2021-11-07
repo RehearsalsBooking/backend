@@ -53,6 +53,9 @@ composer-unused: ## Check soft dependencies
 
 check: check-environment composer-validate test phpstan composer-require-check composer-unused ## Run tests and code analysis
 
+codecov:
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" codecov
+
 shell: check-environment ## Run shell environment in container
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash
 
