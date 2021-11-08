@@ -14,11 +14,7 @@ class RehearsalPolicy
     public function create(User $user, ?int $bandId): bool
     {
         if ($bandId !== null) {
-            $band = Band::find($bandId);
-
-            if (! $band) {
-                return false;
-            }
+            $band = Band::findOrFail($bandId);
 
             return $band->admin_id === $user->id;
         }
@@ -32,11 +28,7 @@ class RehearsalPolicy
             return $rehearsal->user_id === $user->id;
         }
 
-        if (is_null($rehearsal->band)) {
-            return false;
-        }
-
-        return $rehearsal->band->admin_id === $user->id;
+        return optional($rehearsal->band)->admin_id === $user->id;
     }
 
     public function manage(User $user, Rehearsal $rehearsal): bool
