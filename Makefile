@@ -39,23 +39,8 @@ infection: check-environment ## Run infection
 test: check-environment ## Execute tests
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" /bin/bash -c "php artisan test --parallel"
 
-check-ci: check-environment composer-validate phpstan composer-require-check composer-unused export-ci-env ## Execute tests in ci
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run -e XDEBUG_MODE=coverage --rm "$(php_container_name)" /bin/bash -c "php artisan test --parallel --coverage-clover=coverage.xml && codecov -t ${CODECOV_TOKEN}"
-
-export-ci-env:
-	export CODECOV_ENV
-	export CODECOV_TOKEN
-	export CODECOV_URL
-	export CODECOV_SLUG
-	export VCS_COMMIT_ID
-	export VCS_BRANCH_NAME
-	export  VCS_PULL_REQUEST
-	export  VCS_SLUG
-	export VCS_TAG
-	export CI_BUILD_URL
-	export CI_BUILD_ID
-	export CI_JOB_ID
-	CI=true
+check-ci: check-environment composer-validate phpstan composer-require-check composer-unused ## Execute tests in ci
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run -e XDEBUG_MODE=coverage --rm "$(php_container_name)" /bin/bash -c "php artisan test --parallel --coverage-clover=/shared/coverage.xml && codecov -t ${CODECOV_TOKEN}"
 
 phpstan: check-environment ## Run phpstan
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" vendor/bin/phpstan analyse --memory-limit 0
