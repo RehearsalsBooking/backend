@@ -13,11 +13,6 @@ RUN curl -L https://github.com/icanhazstring/composer-unused/releases/latest/dow
 RUN chmod a+x composer-unused
 RUN mv composer-unused /usr/local/bin/composer-unused
 
-# codecov
-RUN curl -Os https://uploader.codecov.io/latest/alpine/codecov
-RUN chmod +x codecov
-RUN mv codecov /usr/local/bin/codecov
-
 WORKDIR /app
 
 COPY composer.lock composer.lock
