@@ -37,14 +37,4 @@ class Genre extends Model
     protected $guarded = [
         'id',
     ];
-
-    public function bands(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Band::class,
-            'bands_genres',
-            'genre_id',
-            'band_id'
-        );
-    }
 }

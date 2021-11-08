@@ -52,8 +52,9 @@ class UserStatisticsTest extends TestCase
 
         $response = $this->json('get', route('users.statistics', [$user]));
         $response->assertOk();
-
-        $this->assertEquals([$roleGuitarist, $roleVocal], $response->json('roles'));
+        $fetchedRoles = $response->json('roles');
+        $expectedRoles = [$roleGuitarist, $roleVocal];
+        $this->assertEquals(asort($expectedRoles), asort($fetchedRoles));
     }
 
     /** @test */

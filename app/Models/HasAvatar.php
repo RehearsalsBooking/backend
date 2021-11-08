@@ -55,7 +55,6 @@ trait HasAvatar
      */
     public function updateAvatarFromUrl(string $url): void
     {
-        $this->addMediaFromUrl($url)
-            ->toMediaCollection('avatar');
+        $this->addMediaFromUrl($url)->toMediaCollection('avatar');
     }
 }

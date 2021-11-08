@@ -50,8 +50,11 @@ jobs:
 
       - name: Run checks
         run: |
-          make docker_compose_yml=docker/docker-compose.ci.yml check
-
+          mkdir shared
+          make docker_compose_yml=docker/docker-compose.ci.yml check-ci
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov -t ${CODECOV_TOKEN}
       -
         # Temp fix
         # https://github.com/docker/build-push-action/issues/252

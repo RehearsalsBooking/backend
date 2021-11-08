@@ -8,6 +8,8 @@ services:
       dockerfile: docker/ci/Dockerfile
     depends_on:
       - db
+    volumes:
+      - ../shared:/shared
 
   db:
     image: postgres:latest
@@ -16,4 +18,4 @@ services:
       - POSTGRES_USER=rehearsals
       - POSTGRES_PASSWORD=rehearsals
     ports:
-      - 5432:5432
+      - "5432:5432"
