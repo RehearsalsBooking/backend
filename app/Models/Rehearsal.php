@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Http\Requests\Filters\FilterRequest;
-use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationRoom;
 use Belamov\PostgresRange\Casts\TimestampRangeCast;
 use Belamov\PostgresRange\Ranges\TimestampRange;
@@ -21,38 +20,35 @@ use Illuminate\Support\Carbon;
  * App\Models\Rehearsal.
  *
  * @property int $id
- * @property int $organization_id
  * @property int $user_id
+ * @property bool $is_paid
+ * @property float $price
+ * @property int|null $band_id
+ * @property TimestampRange $time
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read OrganizationRoom $organizationRoom
+ * @property-read OrganizationRoom $room
  * @property-read User $user
+ * @property-read Band|null $band
+ * @property-read Collection|User[] $attendees
+ * @property-read int|null $attendees_count
  * @method static Builder|Rehearsal newModelQuery()
  * @method static Builder|Rehearsal newQuery()
  * @method static Builder|Rehearsal query()
- * @method static Builder|Rehearsal whereCreatedAt($value)
- * @method static Builder|Rehearsal whereEndsAt($value)
- * @method static Builder|Rehearsal whereId($value)
- * @method static Builder|Rehearsal whereOrganizationId($value)
- * @method static Builder|Rehearsal whereStartsAt($value)
- * @method static Builder|Rehearsal whereUpdatedAt($value)
- * @method static Builder|Rehearsal whereUserId($value)
- * @mixin Eloquent
  * @method static Builder|Rehearsal filter(FilterRequest $filters)
- * @property bool $is_paid
- * @method static Builder|Rehearsal whereIsConfirmed($value)
- * @property int|null $band_id
- * @property-read Band|null $band
- * @method static Builder|Rehearsal whereBandId($value)
- * @property-read Collection|User[] $attendees
- * @property-read int|null $attendees_count
- * @property float $price
- * @method static Builder|Rehearsal wherePrice($value)
- * @property TimestampRange $time
- * @method static Builder|Rehearsal whereTime($value)
  * @method static Builder|Rehearsal completed()
  * @method static RehearsalFactory factory(...$parameters)
+ * @mixin Eloquent
+ * @property int $organization_room_id
+ * @method static Builder|Rehearsal whereBandId($value)
+ * @method static Builder|Rehearsal whereCreatedAt($value)
+ * @method static Builder|Rehearsal whereId($value)
  * @method static Builder|Rehearsal whereIsPaid($value)
+ * @method static Builder|Rehearsal whereOrganizationRoomId($value)
+ * @method static Builder|Rehearsal wherePrice($value)
+ * @method static Builder|Rehearsal whereTime($value)
+ * @method static Builder|Rehearsal whereUpdatedAt($value)
+ * @method static Builder|Rehearsal whereUserId($value)
  */
 class Rehearsal extends Model
 {
@@ -106,7 +102,7 @@ class Rehearsal extends Model
 
     public function room(): BelongsTo
     {
-        return $this->belongsTo(OrganizationRoom::class);
+        return $this->belongsTo(OrganizationRoom::class, 'organization_room_id');
     }
 
     public function user(): BelongsTo

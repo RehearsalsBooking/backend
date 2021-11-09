@@ -3,11 +3,13 @@
 namespace App\Models\Organization;
 
 use App\Models\Rehearsal;
+use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Database\Factories\OrganizationRoomFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,16 +24,21 @@ use Illuminate\Support\Carbon;
  * @property int $organization_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property Organization $organization
  * @method static OrganizationRoomFactory factory(...$parameters)
  * @method static Builder|OrganizationRoom newModelQuery()
  * @method static Builder|OrganizationRoom newQuery()
  * @method static Builder|OrganizationRoom query()
+ * @mixin Eloquent
+ * @property-read Collection|OrganizationRoomPrice[] $prices
+ * @property-read int|null $prices_count
+ * @property-read Collection|Rehearsal[] $rehearsals
+ * @property-read int|null $rehearsals_count
  * @method static Builder|OrganizationRoom whereCreatedAt($value)
  * @method static Builder|OrganizationRoom whereId($value)
  * @method static Builder|OrganizationRoom whereName($value)
  * @method static Builder|OrganizationRoom whereOrganizationId($value)
  * @method static Builder|OrganizationRoom whereUpdatedAt($value)
- * @mixin Eloquent
  */
 class OrganizationRoom extends Model
 {
@@ -61,7 +68,7 @@ class OrganizationRoom extends Model
 
     public function isTimeAvailable(string $startsAt, string $endsAt, Rehearsal $rehearsal = null): bool
     {
-        $query = $this->organization->rehearsals()
+        $query = $this->rehearsals()
             ->whereRaw('time && ?::tsrange', [new TimestampRange($startsAt, $endsAt)]);
 
         // if rehearsal was passed as a parameter, then we want to determine if this rehearsal
@@ -81,4 +88,8 @@ class OrganizationRoom extends Model
             ->exists();
     }
 
+    public function isUserBanned(int $userId): bool
+    {
+        return $this->organization->isUserBanned($userId);
+    }
 }

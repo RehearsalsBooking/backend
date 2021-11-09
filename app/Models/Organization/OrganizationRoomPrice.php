@@ -36,6 +36,9 @@ use Illuminate\Support\Carbon;
  * @property TimeRange $time
  * @method static Builder|OrganizationRoomPrice whereTime($value)
  * @method static OrganizationPriceFactory factory(...$parameters)
+ * @property int $organization_room_id
+ * @property-read \App\Models\Organization\OrganizationRoom $room
+ * @method static Builder|OrganizationRoomPrice whereOrganizationRoomId($value)
  */
 class OrganizationRoomPrice extends Model
 {

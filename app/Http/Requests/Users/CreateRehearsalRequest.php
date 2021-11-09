@@ -4,7 +4,7 @@ namespace App\Http\Requests\Users;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
-use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\RehearsalPrice;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
@@ -33,19 +33,18 @@ class CreateRehearsalRequest extends FormRequest
                 'after:starts_at',
             ],
             'band_id' => 'bail|numeric|exists:bands,id',
-            'organization_id' => 'bail|required|numeric|exists:organizations,id',
+            'organization_room_id' => 'bail|required|numeric|exists:organization_rooms,id',
         ];
     }
 
     /**
-     * @return array
      * @throws PriceCalculationException
      * @throws InvalidRehearsalDurationException
      */
     public function getAttributes(): array
     {
         $rehearsalPrice = new RehearsalPrice(
-            $this->get('organization_id'),
+            $this->get('organization_room_id'),
             Carbon::parse($this->get('starts_at'))->setSeconds(0),
             Carbon::parse($this->get('ends_at'))->setSeconds(0)
         );
@@ -58,17 +57,14 @@ class CreateRehearsalRequest extends FormRequest
             'user_id' => auth()->id(),
             'is_paid' => false,
             'band_id' => $this->get('band_id'),
-            'organization_id' => $this->get('organization_id'),
+            'organization_room_id' => $this->get('organization_room_id'),
             'price' => $rehearsalPrice(),
         ];
     }
 
-    /**
-     * @return Organization
-     */
-    public function organization(): Organization
+    public function room(): OrganizationRoom
     {
-        /** @phpstan-ignore-next-line */
-        return Organization::find($this->get('organization_id'));
+        /** @phpstan-ignore-next-line  */
+        return OrganizationRoom::find($this->get('organization_room_id'));
     }
 }

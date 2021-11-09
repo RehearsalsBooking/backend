@@ -4,6 +4,7 @@ namespace Tests\Feature\Management\Rehearsals;
 
 use App\Http\Resources\RehearsalDetailedResource;
 use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
 use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
@@ -13,17 +14,19 @@ class FetchRehearsalsTest extends ManagementTestCase
     private string $endpoint = 'management.organizations.rehearsals';
     private string $httpVerb = 'get';
     private Organization $anotherOrganization;
+    private OrganizationRoom $anotherOrganizationRoom;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         // create two rehearsals for organization
-        $this->createRehearsalsForOrganization($this->organization, 2);
+        $this->createRehearsalsForRoom($this->organizationRoom, 2);
 
         // create two rehearsals for another organization
         $this->anotherOrganization = $this->createOrganization();
-        $this->createRehearsalsForOrganization($this->anotherOrganization, 2);
+        $this->anotherOrganizationRoom = $this->createOrganizationRoom($this->anotherOrganization);
+        $this->createRehearsalsForRoom($this->anotherOrganizationRoom, 2);
     }
 
     /** @test */
@@ -45,7 +48,7 @@ class FetchRehearsalsTest extends ManagementTestCase
         $this->createRehearsal(
             1,
             2,
-            $this->organization,
+            $this->organizationRoom,
             null,
             false,
             $ordinaryClient

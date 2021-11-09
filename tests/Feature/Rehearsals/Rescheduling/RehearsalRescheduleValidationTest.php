@@ -18,6 +18,7 @@ class RehearsalRescheduleValidationTest extends TestCase
     public function it_responds_with_validation_error_when_user_provided_invalid_parameters($data, $keyWithError): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
 
         $this->createPricesForOrganization($organization, '08:00', '16:00');
         $this->createPricesForOrganization($organization, '16:00', '22:00');
@@ -26,7 +27,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal(9, 11, $organization, null, false, $user);
+        $rehearsal = $this->createRehearsal(9, 11, $room, null, false, $user);
 
         $response = $this->json(
             'put',
@@ -34,7 +35,7 @@ class RehearsalRescheduleValidationTest extends TestCase
             $data
         );
 
-        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertUnprocessable();
         $response->assertJsonValidationErrors($keyWithError);
     }
 
@@ -55,6 +56,7 @@ class RehearsalRescheduleValidationTest extends TestCase
     public function it_responds_with_validation_error_when_user_provided_time_when_organization_is_closed($data): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
 
         $this->createPricesForOrganization($organization, '08:00', '16:00');
         $this->createPricesForOrganization($organization, '16:00', '22:00');
@@ -63,7 +65,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal(9, 11, $organization, null, false, $user);
+        $rehearsal = $this->createRehearsal(9, 11, $room, null, false, $user);
 
         $response = $this->json(
             'put',
@@ -71,7 +73,7 @@ class RehearsalRescheduleValidationTest extends TestCase
             $data
         );
 
-        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertUnprocessable();
     }
 
     /**
@@ -80,6 +82,7 @@ class RehearsalRescheduleValidationTest extends TestCase
     public function it_responds_with_validation_error_when_user_changed_rehearsal_duration_to_more_than_24_hours(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
 
         $this->createPricesForOrganization($organization);
 
@@ -87,7 +90,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal(9, 11, $organization, null, false, $user);
+        $rehearsal = $this->createRehearsal(9, 11, $room, null, false, $user);
 
         $response = $this->json(
             'put',
@@ -97,7 +100,7 @@ class RehearsalRescheduleValidationTest extends TestCase
                 'ends_at' => $rehearsal->time->from()->copy()->addHours(24)->toDateTimeString(),
             ]
         );
-        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertUnprocessable();
     }
 
     /**
@@ -106,6 +109,7 @@ class RehearsalRescheduleValidationTest extends TestCase
     public function it_responds_with_validation_error_when_user_changed_rehearsal_duration_to_invalid_value(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
 
         $this->createPricesForOrganization($organization);
 
@@ -113,7 +117,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal(9, 11, $organization, null, false, $user);
+        $rehearsal = $this->createRehearsal(9, 11, $room, null, false, $user);
 
         $response = $this->json(
             'put',
@@ -123,13 +127,14 @@ class RehearsalRescheduleValidationTest extends TestCase
                 'ends_at' => $rehearsal->time->from()->copy()->addHours(2)->addMinutes(13)->toDateTimeString(),
             ]
         );
-        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertUnprocessable();
     }
 
     /** @test */
     public function it_responds_with_validation_error_when_user_selected_unavailable_time(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
 
         $this->createPricesForOrganization($organization, '06:00', '16:00');
         $this->createPricesForOrganization($organization, '16:00', '22:00');
@@ -138,9 +143,10 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal(20, 21, $organization, null, false, $user);
+        $rehearsal = $this->createRehearsal(20, 21, $room, null, false, $user);
 
         $otherOrganization = $this->createOrganization();
+        $otherRoom = $this->createOrganizationRoom($otherOrganization);
 
         $this->createPricesForOrganization($otherOrganization, '06:00', '16:00');
         $this->createPricesForOrganization($otherOrganization, '16:00', '22:00');
@@ -150,21 +156,21 @@ class RehearsalRescheduleValidationTest extends TestCase
                 $this->getDateTimeAt(9, 0),
                 $this->getDateTimeAt(11, 0)
             ),
-            'organization_id' => $organization->id,
+            'organization_room_id' => $room->id,
         ]);
         Rehearsal::factory()->create([
             'time' => $this->getTimestampRange(
                 $this->getDateTimeAt(12, 0),
                 $this->getDateTimeAt(15, 0)
             ),
-            'organization_id' => $organization->id,
+            'organization_room_id' => $room->id,
         ]);
         Rehearsal::factory()->create([
             'time' => $this->getTimestampRange(
                 $this->getDateTimeAt(11, 0),
                 $this->getDateTimeAt(12, 0)
             ),
-            'organization_id' => $otherOrganization->id,
+            'organization_room_id' => $otherRoom->id,
         ]);
 
         $unavailableTime = [
@@ -202,7 +208,7 @@ class RehearsalRescheduleValidationTest extends TestCase
                     'starts_at' => $rehearsalTime['starts_at'],
                     'ends_at' => $rehearsalTime['ends_at'],
                 ]
-            )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+            )->assertUnprocessable();
         }
 
         $this->json(
@@ -219,6 +225,7 @@ class RehearsalRescheduleValidationTest extends TestCase
     public function it_lets_user_reschedule_rehearsal_when_new_time_intersects_with_old_time(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
 
         $this->createPricesForOrganization($organization, '06:00', '16:00');
         $this->createPricesForOrganization($organization, '16:00', '22:00');
@@ -227,7 +234,7 @@ class RehearsalRescheduleValidationTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal(10, 12, $organization, null, false, $user);
+        $rehearsal = $this->createRehearsal(10, 12, $room, null, false, $user);
 
         $this->json(
             'put',

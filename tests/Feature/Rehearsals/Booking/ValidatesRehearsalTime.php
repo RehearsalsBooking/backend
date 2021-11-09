@@ -179,21 +179,21 @@ trait ValidatesRehearsalTime
                 $this->getDateTimeAt(9, 0),
                 $this->getDateTimeAt(11, 0),
             ),
-            'organization_id' => $organization->id,
+            'organization_room_id' => $room->id,
         ]);
         Rehearsal::factory()->create([
             'time' => $this->getTimestampRange(
                 $this->getDateTimeAt(12, 0),
                 $this->getDateTimeAt(15, 0)
             ),
-            'organization_id' => $organization->id,
+            'organization_room_id' => $room->id,
         ]);
         Rehearsal::factory()->create([
             'time' => $this->getTimestampRange(
                 $this->getDateTimeAt(11, 0),
                 $this->getDateTimeAt(12, 0)
             ),
-            'organization_id' => $otherOrganization->id,
+            'organization_room_id' => $otherRoom->id,
         ]);
 
         $unavailableTime = [

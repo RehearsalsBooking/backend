@@ -4,7 +4,6 @@ namespace Tests\Feature\Management\Prices;
 
 use App\Http\Resources\RoomPriceResource;
 use Belamov\PostgresRange\Ranges\TimeRange;
-use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
 class CreatePricesTest extends ManagementTestCase
@@ -16,7 +15,7 @@ class CreatePricesTest extends ManagementTestCase
     public function unauthorized_user_cannot_access_endpoint(): void
     {
         $this->json($this->httpVerb, route($this->endpoint, 1))
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+            ->assertUnauthorized();
     }
 
     /** @test */
@@ -38,7 +37,7 @@ class CreatePricesTest extends ManagementTestCase
                 'ends_at' => '18:00',
             ]
         )
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
 
         $this->actingAs($managerOfAnotherOrganization);
         $this->json(
@@ -51,7 +50,7 @@ class CreatePricesTest extends ManagementTestCase
                 'ends_at' => '18:00',
             ]
         )
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
     }
 
     /** @test */
@@ -59,9 +58,9 @@ class CreatePricesTest extends ManagementTestCase
     {
         $this->actingAs($this->manager);
         $this->json($this->httpVerb, route($this->endpoint, 1000))
-            ->assertStatus(Response::HTTP_NOT_FOUND);
+            ->assertNotFound();
         $this->json($this->httpVerb, route($this->endpoint, 'some text'))
-            ->assertStatus(Response::HTTP_NOT_FOUND);
+            ->assertNotFound();
     }
 
     /**
@@ -81,7 +80,7 @@ class CreatePricesTest extends ManagementTestCase
         );
 
         $response
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertUnprocessable()
             ->assertJsonValidationErrors($invalidKey);
 
         $this->assertArrayHasKey('message', $response->json());
@@ -221,7 +220,7 @@ class CreatePricesTest extends ManagementTestCase
                 'ends_at' => '24:00',
             ]
         );
-        $response->assertStatus(Response::HTTP_CREATED);
+        $response->assertCreated();
 
         $this->assertCount(6, $response->json('data'));
         $this->assertEquals(6, $this->organizationRoom->prices()->count());

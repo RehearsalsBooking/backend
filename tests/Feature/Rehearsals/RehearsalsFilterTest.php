@@ -5,6 +5,7 @@ namespace Tests\Feature\Rehearsals;
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Band;
 use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
@@ -13,19 +14,21 @@ use Tests\TestCase;
 class RehearsalsFilterTest extends TestCase
 {
     private Organization $organization;
+    private OrganizationRoom $room;
 
     protected function setUp(): void
     {
         parent::setUp();
         Rehearsal::truncate();
         $this->organization = $this->createOrganization();
+        $this->room = $this->createOrganizationRoom($this->organization);
     }
 
     /** @test */
     public function user_can_fetch_rehearsals_of_organization(): void
     {
-        $rehearsals = $this->createRehearsalsForOrganization($this->organization, 5);
-        $this->createRehearsalsForOrganization($this->createOrganization(), 5);
+        $rehearsals = $this->createRehearsalsForRoom($this->room, 5);
+        $this->createRehearsalsForRoom($this->createOrganizationRoom(), 5);
 
         $this->assertEquals(10, Rehearsal::count());
 
@@ -50,12 +53,12 @@ class RehearsalsFilterTest extends TestCase
     {
         $this
             ->json('get', route('rehearsals.list'), ['organization_id' => 'asd'])
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertUnprocessable()
             ->assertJsonValidationErrors('organization_id');
 
         $this
             ->json('get', route('rehearsals.list'), ['organization_id' => 10000])
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertUnprocessable()
             ->assertJsonValidationErrors('organization_id');
     }
 

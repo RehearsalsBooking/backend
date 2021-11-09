@@ -6,14 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Management\CreateRoomPriceRequest;
 use App\Http\Requests\Management\UpdateRoomPriceRequest;
 use App\Http\Resources\RoomPriceResource;
-use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationRoom;
 use App\Models\Organization\OrganizationRoomPrice;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Response;
 
 class RoomPricesController extends Controller
 {

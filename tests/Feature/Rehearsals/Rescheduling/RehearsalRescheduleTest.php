@@ -18,12 +18,13 @@ class RehearsalRescheduleTest extends TestCase
     public function user_can_reschedule_his_individual_rehearsal(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
         $this->createPricesForOrganization($organization);
         $user = $this->createUser();
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal(10, 12, $organization, null, false, $user);
+        $rehearsal = $this->createRehearsal(10, 12, $room, null, false, $user);
 
         $this->assertEquals(1, Rehearsal::count());
 
@@ -56,6 +57,7 @@ class RehearsalRescheduleTest extends TestCase
     public function user_can_reschedule_rehearsal_on_behalf_of_his_band(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
         $this->createPricesForOrganization($organization);
         $user = $this->createUser();
 
@@ -63,7 +65,7 @@ class RehearsalRescheduleTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal(10, 12, $organization, $band, false, $user);
+        $rehearsal = $this->createRehearsal(10, 12, $room, $band, false, $user);
 
         $this->assertEquals(1, Rehearsal::count());
 
@@ -96,6 +98,7 @@ class RehearsalRescheduleTest extends TestCase
     public function when_user_reschedules_rehearsal_its_payment_status_is_not_changed(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
         $this->createPricesForOrganization($organization);
 
 
@@ -104,9 +107,7 @@ class RehearsalRescheduleTest extends TestCase
         $this->actingAs($user);
 
         $rehearsal = $this->createRehearsal(
-            startsAt: 10,
-            endsAt: 12,
-            organization: $organization,
+            room: $room,
             isPaid: true,
             user: $user
         );

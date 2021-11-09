@@ -4,7 +4,7 @@ namespace Tests\Feature\Rehearsals\Booking\Attendees;
 
 use App\Models\Band;
 use App\Models\BandMembership;
-use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
 use App\Models\User;
 use Illuminate\Testing\TestResponse;
@@ -18,12 +18,13 @@ class AttendeesRegistrationTest extends TestCase
         $user = $this->createUser();
         $this->actingAs($user);
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
         $this->createPricesForOrganization($organization);
 
         $this->assertEquals(0, $user->rehearsals()->count());
         $this->assertEquals(0, Rehearsal::count());
 
-        $this->bookRehearsal($organization);
+        $this->bookRehearsal($room);
 
         $this->assertEquals(1, $user->rehearsals()->count());
         $this->assertEquals(1, Rehearsal::count());
@@ -41,15 +42,10 @@ class AttendeesRegistrationTest extends TestCase
         $this->assertEquals($user->id, $rehearsal->attendees->first()->id);
     }
 
-    /**
-     * @param  Organization  $organization
-     * @param  Band|null  $band
-     * @return void
-     */
-    protected function bookRehearsal(Organization $organization, Band $band = null): void
+    protected function bookRehearsal(OrganizationRoom $room, Band $band = null): void
     {
         $parameters = $this->getRehearsalTime();
-        $parameters['organization_id'] = $organization->id;
+        $parameters['organization_room_id'] = $room->id;
 
         if ($band !== null) {
             $parameters['band_id'] = $band->id;
@@ -59,7 +55,7 @@ class AttendeesRegistrationTest extends TestCase
             'post',
             route('rehearsals.create'),
             $parameters
-        );
+        )->assertCreated();
     }
 
     /**
@@ -94,6 +90,7 @@ class AttendeesRegistrationTest extends TestCase
         $this->actingAs($user);
 
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
         $this->createPricesForOrganization($organization);
 
         $band = $this->createBandForUser($user);
@@ -113,7 +110,7 @@ class AttendeesRegistrationTest extends TestCase
         $this->assertEquals(0, $user->rehearsals()->count());
         $this->assertEquals(0, Rehearsal::count());
 
-        $this->bookRehearsal($organization, $band);
+        $this->bookRehearsal($room, $band);
 
         $this->assertEquals(1, Rehearsal::count());
         $rehearsal = Rehearsal::first();
@@ -157,6 +154,7 @@ class AttendeesRegistrationTest extends TestCase
         $this->actingAs($user);
 
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
         $this->createPricesForOrganization($organization);
 
         $band = $this->createBandForUser($user);
@@ -168,7 +166,7 @@ class AttendeesRegistrationTest extends TestCase
             $band->addMember($user->id);
         });
 
-        $this->bookRehearsal($organization, $band);
+        $this->bookRehearsal($room, $band);
 
         $this->assertEquals(1, Rehearsal::count());
         $rehearsal = Rehearsal::first();

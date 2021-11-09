@@ -58,7 +58,10 @@ class RehearsalsFilterRequest extends FilterRequest
 
     protected function organization_id(int $organizationId): void
     {
-        $this->builder->where('organization_id', $organizationId);
+        $this->builder->whereHas(
+            'room',
+            fn(Builder $query) => $query->where('organization_id', $organizationId)
+        );
     }
 
     protected function user_id(int $userId): void

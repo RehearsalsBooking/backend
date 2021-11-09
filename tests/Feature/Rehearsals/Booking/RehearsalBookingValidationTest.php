@@ -21,16 +21,16 @@ class RehearsalBookingValidationTest extends TestCase
     public function it_responds_with_422_when_user_provided_unknown_organization_id(): void
     {
         $this->json('post', route('rehearsals.create'), [
-            'organization_id' => 10000,
+            'organization_room_id' => 10000,
         ])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('organization_id');
+            ->assertJsonValidationErrors('organization_room_id');
 
         $this->json('post', route('rehearsals.create'), [
-            'organization_id' => 'asd',
+            'organization_room_id' => 'asd',
         ])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('organization_id');
+            ->assertJsonValidationErrors('organization_room_id');
     }
 
     /** @test */
@@ -75,13 +75,14 @@ class RehearsalBookingValidationTest extends TestCase
     public function it_responds_with_validation_error_when_user_provided_time_when_organization_is_closed(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
         $this->performTestWhenOrganizationIsClosed(
             'post',
             route('rehearsals.create'),
-            $organization,
+            $room,
             ['organization_id' => $organization->id]
         );
-        $this->assertEquals(0, $organization->rehearsals()->count());
+        $this->assertEquals(0, $room->rehearsals()->count());
     }
 
     /**
@@ -90,13 +91,15 @@ class RehearsalBookingValidationTest extends TestCase
     public function it_responds_with_validation_error_when_user_provided_incorrect_rehearsal_duration(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
+
         $this->performTestsWhenUserProvidedIncorrectRehearsalDuration(
             'post',
             route('rehearsals.create'),
-            $organization,
-            ['organization_id' => $organization->id]
+            $room,
+            ['organization_id' => $room->id]
         );
-        $this->assertEquals(0, $organization->rehearsals()->count());
+        $this->assertEquals(0, $room->rehearsals()->count());
     }
 
     /**
@@ -105,26 +108,28 @@ class RehearsalBookingValidationTest extends TestCase
     public function it_responds_with_validation_error_when_user_tries_to_book_rehearsal_longer_than_24_hours(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
 
         $this->performTestsWhenUserProvidesRehearsalTimeLongerThan24Hours(
             'post',
             route('rehearsals.create'),
-            $organization,
-            ['organization_id' => $organization->id]
+            $room,
+            ['organization_id' => $room->id]
         );
-        $this->assertEquals(0, $organization->rehearsals()->count());
+        $this->assertEquals(0, $room->rehearsals()->count());
     }
 
     /** @test */
     public function it_responds_with_validation_error_when_user_selected_unavailable_time(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
 
         $this->performTestsWhenUserSelectedUnavailableTime(
             'post',
             route('rehearsals.create'),
-            $organization,
-            ['organization_id' => $organization->id]
+            $room,
+            ['organization_room_id' => $room->id]
         );
 
         $this->assertEquals(3, Rehearsal::count());
@@ -133,11 +138,11 @@ class RehearsalBookingValidationTest extends TestCase
             'post',
             route('rehearsals.create'),
             [
-                'organization_id' => $organization->id,
+                'organization_room_id' => $room->id,
                 'starts_at' => $this->getDateTimeAt(11, 00),
                 'ends_at' => $this->getDateTimeAt(12, 00),
             ]
-        )->assertStatus(Response::HTTP_CREATED);
+        )->assertCreated();
 
         $this->assertEquals(4, Rehearsal::count());
     }

@@ -19,17 +19,18 @@ class RehearsalBookingAuthorizationTest extends TestCase
     public function only_admin_of_a_band_can_book_rehearsal(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
         $band = $this->createBandForUser($this->createUser());
 
         $user = $this->createUser();
         $this->actingAs($user);
 
         $this->json('post', route('rehearsals.create'), [
-            'organization_id' => $organization->id,
+            'organization_room_id' => $room->id,
             'band_id' => $band->id,
             'starts_at' => $this->getDateTimeAt(12, 00),
             'ends_at' => $this->getDateTimeAt(13, 00),
         ])
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
     }
 }
