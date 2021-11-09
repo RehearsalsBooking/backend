@@ -61,16 +61,16 @@ class RehearsalsController extends Controller
             [Rehearsal::class, $request->get('band_id')]
         );
 
-        $organization = $request->organization();
+        $room = $request->room();
 
         // keeping this check here instead of rehearsal policy
         // because we have to provide a reason, why this action is forbidden
         // if moved to policy, response message will always be the same
-        if ($organization->isUserBanned((int) auth()->id())) {
+        if ($room->isUserBanned((int) auth()->id())) {
             return response()->json('Вы забанены в этой организации', Response::HTTP_FORBIDDEN);
         }
 
-        if (! $organization->isTimeAvailable(
+        if (! $room->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
         )) {
@@ -91,7 +91,7 @@ class RehearsalsController extends Controller
         RescheduleRehearsalRequest $request,
         Rehearsal $rehearsal
     ): RehearsalResource | JsonResponse {
-        if (! $rehearsal->organization->isTimeAvailable(
+        if (! $rehearsal->room->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
             $rehearsal

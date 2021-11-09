@@ -20,7 +20,7 @@ class UserRehearsalsController extends Controller
                 fn(Builder $query) => $query->where('id', $user->id)
             )
             ->filter($filter)
-            ->with(['band', 'organization'])
+            ->with(['band', 'room.organization'])
             ->orderBy('time')
             ->get();
 

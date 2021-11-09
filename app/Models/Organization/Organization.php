@@ -9,7 +9,6 @@ use App\Models\GlobalScopes\OnlyActiveScope;
 use App\Models\HasAvatar;
 use App\Models\Rehearsal;
 use App\Models\User;
-use Belamov\PostgresRange\Ranges\TimeRange;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
 use Database\Factories\OrganizationFactory;
@@ -140,14 +139,6 @@ class Organization extends Model implements HasMedia
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
-    }
-
-    public function hasPriceAt(int $day, string $startsAt, string $endsAt): bool
-    {
-        return OrganizationPrice::where('organization_id', $this->id)
-            ->where('day', $day)
-            ->whereRaw('time && ?::timerange', [new TimeRange($startsAt, $endsAt)])
-            ->exists();
     }
 
     public function isUserBanned(int $userId): bool

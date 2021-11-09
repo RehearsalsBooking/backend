@@ -26,18 +26,6 @@ class OrganizationTest extends TestCase
     }
 
     /** @test */
-    public function organization_has_rehearsals(): void
-    {
-        $rehearsalsCount = 5;
-        $organization = $this->createOrganization();
-        $this->createRehearsalsForOrganization($organization, $rehearsalsCount);
-
-        $this->assertInstanceOf(Collection::class, $organization->rehearsals);
-        $this->assertEquals($rehearsalsCount, $organization->rehearsals()->count());
-        $this->assertInstanceOf(Rehearsal::class, $organization->rehearsals->first());
-    }
-
-    /** @test */
     public function organization_has_banned_users(): void
     {
         $organization = $this->createOrganization();

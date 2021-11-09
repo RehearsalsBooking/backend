@@ -78,7 +78,8 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    protected function createBandForUser(User $user): Model|EloquentCollection|Band
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createBandForUser(User $user): Band
     {
         return Band::factory()->create(
             [
@@ -87,11 +88,13 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    protected function createBand(array $attributes = []): Model|EloquentCollection|Band
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createBand(array $attributes = []): Band
     {
         return Band::factory()->create($attributes);
     }
 
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
     protected function createRehearsal(
         int $startsAt = 10,
         int $endsAt = 12,
@@ -99,7 +102,7 @@ abstract class TestCase extends BaseTestCase
         Band $band = null,
         bool $isPaid = false,
         User $user = null
-    ): EloquentCollection|Model|Rehearsal {
+    ): Rehearsal {
         $user ??= $this->createUser();
         $room ??= $this->createOrganizationRoom();
 
@@ -119,12 +122,14 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    protected function createUser(array $attributes = []): EloquentCollection|Model|User
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createUser(array $attributes = []): User
     {
         return User::factory()->create($attributes);
     }
 
-    protected function createOrganization(array $attributes = []): EloquentCollection|Model|Organization
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createOrganization(array $attributes = []): Organization
     {
         return Organization::factory()->create($attributes);
     }
@@ -146,7 +151,8 @@ abstract class TestCase extends BaseTestCase
             );
     }
 
-    protected function createOrganizationForUser(User $user, array $params = []): EloquentCollection|Model|Organization
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createOrganizationForUser(User $user, array $params = []): Organization
     {
         return Organization::factory()->create(array_merge($params, ['owner_id' => $user->id]));
     }
@@ -184,12 +190,14 @@ abstract class TestCase extends BaseTestCase
         ];
     }
 
-    protected function createInvite(array $attributes = []): EloquentCollection|Model|Invite
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createInvite(array $attributes = []): Invite
     {
         return Invite::factory()->create($attributes);
     }
 
-    protected function createRehearsalForUser(User $user): EloquentCollection|Model|Rehearsal
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createRehearsalForUser(User $user): Rehearsal
     {
         return Rehearsal::factory()->create(
             [
@@ -210,15 +218,13 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    protected function createRehearsalsForOrganization(
-        Organization $organization,
-        int $amount = 1
-    ): Rehearsal|Collection {
+    protected function createRehearsalsForRoom(OrganizationRoom $room, int $amount = 1): Collection
+    {
         $rehearsals = [];
         foreach (range(1, $amount) as $index) {
             $rehearsals[] = Rehearsal::factory()->create(
                 [
-                    'organization_id' => $organization->id,
+                    'organization_room_id' => $room->id,
                     'time' => $this->getTimestampRange(
                         Carbon::now()->addDays($index),
                         Carbon::now()->addDays($index)->addHours(2),
@@ -230,10 +236,9 @@ abstract class TestCase extends BaseTestCase
         return collect($rehearsals);
     }
 
-    protected function createRehearsalForBandInFuture(
-        Band $band = null,
-        ?User $user = null
-    ): EloquentCollection|Model|Rehearsal {
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createRehearsalForBandInFuture(Band $band = null, ?User $user = null): Rehearsal
+    {
         $user ??= $this->createUser();
         $band ??= $this->createBand();
 
@@ -249,17 +254,16 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    protected function createRehearsalForUserInFuture(
-        ?User $user = null,
-        ?Organization $organization = null
-    ): EloquentCollection|Model|Rehearsal {
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createRehearsalForUserInFuture(?User $user = null, ?OrganizationRoom $room = null): Rehearsal
+    {
         $user ??= $this->createUser();
-        $organization ??= $this->createOrganization();
+        $room ??= $this->createOrganizationRoom();
 
         return Rehearsal::factory()->create(
             [
                 'user_id' => $user->id,
-                'organization_id' => $organization->id,
+                'organization_room_id' => $room->id,
                 'time' => $this->getTimestampRange(
                     Carbon::now()->addDay(),
                     Carbon::now()->addDay()->addHours(2),
@@ -268,16 +272,15 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    protected function createRehearsalForUserInPast(
-        User $user,
-        Organization $organization = null
-    ): EloquentCollection|Model|Rehearsal {
-        $organization ??= $this->createOrganization();
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createRehearsalForUserInPast(User $user, OrganizationRoom $room = null): Rehearsal
+    {
+        $room ??= $this->createOrganizationRoom();
 
         return Rehearsal::factory()->create(
             [
                 'user_id' => $user->id,
-                'organization_id' => $organization->id,
+                'organization_room_id' => $room->id,
                 'time' => $this->getTimestampRange(
                     Carbon::now()->subDays(3),
                     Carbon::now()->subDays(3)->addHours(2),
@@ -286,7 +289,8 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    protected function createRehearsalForBandInThePast(Band $band): EloquentCollection|Model|Rehearsal
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createRehearsalForBandInThePast(Band $band): Rehearsal
     {
         return Rehearsal::factory()->create(
             [
@@ -299,7 +303,8 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    protected function createGenre(): EloquentCollection|Model|Genre
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createGenre(): Genre
     {
         return Genre::factory()->create();
     }
@@ -324,15 +329,18 @@ abstract class TestCase extends BaseTestCase
         return $members;
     }
 
-    protected function createCity(): EloquentCollection|Model|City
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createCity(): City
     {
         return City::factory()->create();
     }
 
-    protected function createOrganizationRoom(?Organization $organization): Model|EloquentCollection|OrganizationRoom
+    /** @noinspection PhpIncompatibleReturnTypeInspection */
+    protected function createOrganizationRoom(?Organization $organization = null): OrganizationRoom
     {
+        $organization = $organization ?? $this->createOrganization();
         return OrganizationRoom::factory()->create([
-            'organization_id' => $organization?->id,
+            'organization_id' => $organization->id,
         ]);
     }
 }

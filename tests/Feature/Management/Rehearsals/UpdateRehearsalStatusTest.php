@@ -28,7 +28,7 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
         $rehearsal = $this->createRehearsal(
             1,
             2,
-            $this->organization,
+            $this->organizationRoom,
         );
 
         $this->actingAs($ordinaryClient);
@@ -58,7 +58,7 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
      */
     public function it_responds_with_unprocessable_error_when_user_provided_invalid_data(array $data, string $invalidKey): void
     {
-        $rehearsal = $this->createRehearsal(1, 2, $this->organization);
+        $rehearsal = $this->createRehearsal(1, 2, $this->organizationRoom);
 
         $this->actingAs($this->manager);
         $response = $this->json(
@@ -108,7 +108,7 @@ class UpdateRehearsalStatusTest extends ManagementTestCase
     /** @test */
     public function manager_of_organization_can_update_status_of_rehearsal_at_his_organization(): void
     {
-        $rehearsal = $this->createRehearsal(1, 2, $this->organization);
+        $rehearsal = $this->createRehearsal(1, 2, $this->organizationRoom);
 
         $this->assertFalse($rehearsal->is_paid);
 

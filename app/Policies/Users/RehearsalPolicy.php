@@ -41,7 +41,7 @@ class RehearsalPolicy
             optional($rehearsal->band)->admin_id === $user->id
             ||
             // manager of organization where rehearsal was booked
-            $rehearsal->organization->owner_id === $user->id;
+            $rehearsal->room->organization->owner_id === $user->id;
     }
 
     public function seeFullInfo(User $user, Rehearsal $rehearsal): bool
@@ -53,7 +53,7 @@ class RehearsalPolicy
             //any band member
             optional($rehearsal->band)->hasMember($user->id)
             ||
-            // manager of organization where rehearsal was booked
-            $rehearsal->organization->owner_id === $user->id;
+            // manager of organization of room where rehearsal was booked
+            $rehearsal->room->organization->owner_id === $user->id;
     }
 }

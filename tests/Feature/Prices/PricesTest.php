@@ -17,7 +17,6 @@ class PricesTest extends TestCase
 {
     use ValidatesRehearsalTime;
 
-
     private OrganizationRoom $organizationRoom;
     private $endpoint = 'rooms.price';
 
@@ -182,7 +181,7 @@ class PricesTest extends TestCase
 
         $this->actingAs($user);
 
-        $rehearsal = $this->createRehearsal(10, 12, $organization, null, false, $user);
+        $rehearsal = $this->createRehearsal(10, 12, $room, null, false, $user);
 
         $this->assertEquals(1, Rehearsal::count());
 

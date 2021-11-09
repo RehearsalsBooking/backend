@@ -23,7 +23,7 @@ class ShowRehearsalTest extends TestCase
         $this->rehearsal = $this->createRehearsal(
             1,
             2,
-            $this->createOrganization(),
+            $this->createOrganizationRoom(),
             $this->createBandForUser($this->user),
             true,
             $this->user
@@ -34,7 +34,7 @@ class ShowRehearsalTest extends TestCase
     public function unauthorized_user_cannot_access_endpoint(): void
     {
         $this->json($this->httpVerb, route($this->endpoint, $this->rehearsal->id))
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+            ->assertUnauthorized();
     }
 
     /** @test */
@@ -55,7 +55,7 @@ class ShowRehearsalTest extends TestCase
         foreach ($unauthorizedUsers as $unauthorizedUser) {
             $this->actingAs($unauthorizedUser);
             $this->json($this->httpVerb, route($this->endpoint, $this->rehearsal->id))
-                ->assertStatus(Response::HTTP_FORBIDDEN);
+                ->assertForbidden();
         }
     }
 
@@ -77,7 +77,7 @@ class ShowRehearsalTest extends TestCase
 
         $authorizedUsers = [
             $this->user,
-            $this->rehearsal->organization->owner,
+            $this->rehearsal->room->organization->owner,
             $this->rehearsal->band->admin,
             $anotherBandMember
         ];
@@ -89,7 +89,7 @@ class ShowRehearsalTest extends TestCase
                 $this->httpVerb,
                 route($this->endpoint, $this->rehearsal->id)
             );
-            $response->assertStatus(Response::HTTP_OK);
+            $response->assertOk();
 
             $data = $response->json('data');
 

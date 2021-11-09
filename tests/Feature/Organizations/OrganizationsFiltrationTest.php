@@ -89,18 +89,18 @@ class OrganizationsFiltrationTest extends TestCase
     public function users_can_filter_organizations_by_available_time(): void
     {
         $this->withoutExceptionHandling();
-        $organizationWithRehearsal9to11 = $this->createOrganization();
-        $organizationWithRehearsal14to16 = $this->createOrganization();
+        $roomWithRehearsal9to11 = $this->createOrganizationRoom();
+        $roomWithRehearsal14to16 = $this->createOrganizationRoom();
 
         $this->createRehearsal(
             9,
             11,
-            $organizationWithRehearsal9to11
+            $roomWithRehearsal9to11
         );
         $this->createRehearsal(
             14,
             16,
-            $organizationWithRehearsal14to16
+            $roomWithRehearsal14to16
         );
 
         $response = $this->json('get', route('organizations.list'), [
@@ -115,7 +115,7 @@ class OrganizationsFiltrationTest extends TestCase
         //         13------------
         $this->assertCount(1, $data['data']);
         $this->assertEquals(
-            OrganizationResource::collection(collect([$organizationWithRehearsal9to11]))->response()->getData(true),
+            OrganizationResource::collection(collect([$roomWithRehearsal9to11->organization]))->response()->getData(true),
             $data
         );
 
@@ -142,7 +142,7 @@ class OrganizationsFiltrationTest extends TestCase
         $this->assertCount(2, $data['data']);
         $this->assertEquals(
             OrganizationResource::collection(collect([
-                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16,
+                $roomWithRehearsal9to11->organization, $roomWithRehearsal14to16->organization,
             ]))->response()->getData(true),
             $data
         );
@@ -159,7 +159,7 @@ class OrganizationsFiltrationTest extends TestCase
         $this->assertCount(2, $data['data']);
         $this->assertEquals(
             OrganizationResource::collection(collect([
-                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16,
+                $roomWithRehearsal9to11->organization, $roomWithRehearsal14to16->organization,
             ]))->response()->getData(true),
             $data
         );
@@ -175,7 +175,7 @@ class OrganizationsFiltrationTest extends TestCase
         // --------12
         $this->assertCount(1, $data['data']);
         $this->assertEquals(
-            OrganizationResource::collection(collect([$organizationWithRehearsal14to16]))->response()->getData(true),
+            OrganizationResource::collection(collect([$roomWithRehearsal14to16->organization]))->response()->getData(true),
             $data
         );
 
@@ -202,7 +202,7 @@ class OrganizationsFiltrationTest extends TestCase
         $this->assertCount(2, $data['data']);
         $this->assertEquals(
             OrganizationResource::collection(collect([
-                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16,
+                $roomWithRehearsal9to11->organization, $roomWithRehearsal14to16->organization,
             ]))->response()->getData(true),
             $data
         );
@@ -220,7 +220,7 @@ class OrganizationsFiltrationTest extends TestCase
         $this->assertCount(2, $data['data']);
         $this->assertEquals(
             OrganizationResource::collection(collect([
-                $organizationWithRehearsal9to11, $organizationWithRehearsal14to16,
+                $roomWithRehearsal9to11->organization, $roomWithRehearsal14to16->organization,
             ]))->response()->getData(true),
             $data
         );
@@ -238,7 +238,7 @@ class OrganizationsFiltrationTest extends TestCase
         $this->assertCount(1, $data['data']);
         $this->assertEquals(
             OrganizationResource::collection(collect([
-                $organizationWithRehearsal9to11,
+                $roomWithRehearsal9to11->organization,
             ]))->response()->getData(true),
             $data
         );
