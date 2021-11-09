@@ -2,7 +2,9 @@ name: CI/CD
 
 on:
   push:
-    # Publish `master` as Docker `latest` image.
+    branches:
+      - master
+  pull_request:
     branches:
       - master
 
@@ -55,8 +57,7 @@ jobs:
           curl -Os https://uploader.codecov.io/latest/linux/codecov
           chmod +x codecov
           ./codecov -t ${CODECOV_TOKEN}
-      -
-        # Temp fix
+      - # Temp fix
         # https://github.com/docker/build-push-action/issues/252
         # https://github.com/moby/buildkit/issues/1896
         name: Move cache
@@ -65,7 +66,7 @@ jobs:
           mv /tmp/.buildx-cache-dev-new /tmp/.buildx-cache-dev
 
   push:
-
+    if: ${{ github.event_name != 'pull_request'}}
     needs:
       - check
 
