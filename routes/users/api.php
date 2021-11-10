@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CitiesController;
+use App\Http\Controllers\Management\RoomsController;
 use App\Http\Controllers\Users\BandInvitesController;
 use App\Http\Controllers\Users\BandMembershipsController;
 use App\Http\Controllers\Users\BandsController;
@@ -18,9 +19,12 @@ use Illuminate\Support\Facades\Route;
 Route::name('organizations.')->prefix('organizations')->group(static function () {
     Route::get('/', [OrganizationsController::class, 'index'])->name('list');
 
-    Route::get('/{organization}', [OrganizationsController::class, 'show'])
-        ->where('organization', '[0-9]+')
-        ->name('show');
+    Route::prefix('/{organization}')->where(['organization' => '[0-9]+'])->group(function () {
+        Route::get('/', [OrganizationsController::class, 'show'])
+            ->name('show');
+
+        Route::get('/rooms', [RoomsController::class, 'index'])->name('rooms');
+    });
 });
 
 Route::name('rooms.')->prefix('rooms')->group(static function () {

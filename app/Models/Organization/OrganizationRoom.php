@@ -3,7 +3,6 @@
 namespace App\Models\Organization;
 
 use App\Models\Rehearsal;
-use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Database\Factories\OrganizationRoomFactory;
@@ -20,7 +19,7 @@ use Illuminate\Support\Carbon;
  * App\Models\Organization\OrganizationRoom
  *
  * @property int $id
- * @property string|null $name
+ * @property string $name
  * @property int $organization_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
