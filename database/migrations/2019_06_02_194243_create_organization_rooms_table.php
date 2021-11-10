@@ -16,7 +16,7 @@ class CreateOrganizationRoomsTable extends Migration
     {
         Schema::create('organization_rooms', function (Blueprint $table) {
             $table->id();
-            $table->text('name')->nullable();
+            $table->text('name');
             $table->foreignIdFor(Organization::class, 'organization_id')->constrained();
             $table->timestamps();
         });
