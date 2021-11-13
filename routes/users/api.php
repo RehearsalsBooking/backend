@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\CitiesController;
-use App\Http\Controllers\Management\RoomsController;
+use App\Http\Controllers\Users\RoomsController;
 use App\Http\Controllers\Users\BandInvitesController;
 use App\Http\Controllers\Users\BandMembershipsController;
 use App\Http\Controllers\Users\BandsController;
