@@ -5,6 +5,7 @@ use App\Http\Controllers\Management\RoomPricesController;
 use App\Http\Controllers\Management\OrganizationsController;
 use App\Http\Controllers\Management\OrganizationStatisticsController;
 use App\Http\Controllers\Management\RehearsalsController;
+use App\Http\Controllers\Management\RoomsController;
 use Illuminate\Support\Facades\Route;
 
 // auth middleware is applied at route service provider
@@ -51,6 +52,14 @@ Route::prefix('organizations/')->name('organizations.')->group(static function (
 
             Route::get('/rehearsals', [RehearsalsController::class, 'index'])
                 ->name('rehearsals');
+
+            Route::prefix('rooms')->name('rooms.')->group(static function () {
+                Route::post('', [RoomsController::class, 'create'])->name('create');
+                Route::put('{room}', [RoomsController::class, 'update'])->name('update');
+                Route::delete('{room}', [RoomsController::class, 'delete'])
+                    ->name('delete')
+                    ->where('room', '[0-9]+');
+            });
         });
 });
 
