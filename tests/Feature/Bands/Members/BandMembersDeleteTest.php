@@ -120,7 +120,10 @@ class BandMembersDeleteTest extends TestCase
             $rehearsalInFutureForOtherBand->attendees->sortBy('id')->pluck('id')->toArray()
         );
 
-        $membershipOfUserWhoIsLeavingBand = $this->band->memberships()->inRandomOrder()->first();
+        $membershipOfUserWhoIsLeavingBand = $this->band->memberships()
+            ->where('user_id', '!=', $this->band->admin_id)
+            ->inRandomOrder()
+            ->first();
 
         $this->actingAs($membershipOfUserWhoIsLeavingBand->user);
 
