@@ -49,6 +49,33 @@ class RehearsalsFilterTest extends TestCase
     }
 
     /** @test */
+    public function user_can_fetch_rehearsals_of_room(): void
+    {
+        $redRoom = $this->room;
+        $blueRoom = $this->createOrganizationRoom($this->organization);
+
+        $redRehearsals = $this->createRehearsalsForRoom($redRoom, 2);
+        $blueRehearsals = $this->createRehearsalsForRoom($blueRoom, 2);
+
+        $this->assertEquals(4, Rehearsal::count());
+
+        $response = $this->json(
+            'get',
+            route('rehearsals.list'),
+            ['room_id' => $redRoom->id]
+        );
+        $response->assertOk();
+
+        $data = $response->json();
+
+        $this->assertCount(2, $data['data']);
+        $this->assertEquals(
+            RehearsalResource::collection($redRehearsals->sortBy('id'))->response()->getData(true),
+            $data
+        );
+    }
+
+    /** @test */
     public function it_responds_with_404_when_client_provided_unknown_organization(): void
     {
         $this
