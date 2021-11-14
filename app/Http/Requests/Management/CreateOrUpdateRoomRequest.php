@@ -4,7 +4,7 @@ namespace App\Http\Requests\Management;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateRoomRequest extends FormRequest
+class CreateOrUpdateRoomRequest extends FormRequest
 {
     public function rules(): array
     {

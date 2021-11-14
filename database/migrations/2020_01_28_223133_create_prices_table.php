@@ -21,7 +21,11 @@ class CreatePricesTable extends Migration
             $table->timeRange('time');
             $table->timestamps();
 
-            $table->foreign('organization_room_id')->references('id')->on('organization_rooms');
+            $table->foreign('organization_room_id')
+                ->references('id')
+                ->on('organization_rooms')
+                ->cascadeOnDelete();
+
             $table->excludeRangeOverlapping('time', 'organization_room_id', 'day');
         });
     }
