@@ -55,6 +55,8 @@ class Rehearsal extends Model
     use Filterable;
     use HasFactory;
 
+    public const MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES = 30;
+
     protected $guarded = ['id'];
 
     protected $casts = [
@@ -62,7 +64,7 @@ class Rehearsal extends Model
         'time' => TimestampRangeCast::class,
     ];
 
-    protected static function booted()
+    protected static function booted(): void
     {
         static::created(static function (self $rehearsal) {
             $rehearsal->registerAttendees();
@@ -71,33 +73,18 @@ class Rehearsal extends Model
 
     private function registerAttendees(): void
     {
-        if ($this->band_id !== null) {
-            $this->registerBandMembersAsAttendees();
-
-            return;
-        }
-
-        $this->registerUserAsAttendee();
-    }
-
-    public function registerBandMembersAsAttendees(): void
-    {
-        if ($this->band === null) {
-            return;
-        }
-
-        $bandMembers = $this->band->members;
-        $this->attendees()->sync($bandMembers);
+        $attendees = array_unique(
+            array_merge(
+                [$this->user->id],
+                $this->band?->members->pluck('id')->toArray() ?? []
+            )
+        );
+        $this->attendees()->sync($attendees, true);
     }
 
     public function attendees(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
-    }
-
-    public function registerUserAsAttendee(): void
-    {
-        $this->attendees()->attach($this->user_id);
     }
 
     public function room(): BelongsTo

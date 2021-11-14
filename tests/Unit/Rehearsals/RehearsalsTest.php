@@ -94,13 +94,15 @@ class RehearsalsTest extends TestCase
         $user = $this->createUser();
         $band = $this->createBandForUser($user);
 
-        $bandMembers = $this->createUsers(4)->push($user);
+        $bandMembers = $this->createUsers(4);
 
         $bandMembers->each(function (User $user) use ($band) {
             $band->addMember($user->id);
         });
 
-        $rehearsal = $this->createRehearsalForBandInFuture($band, $user);
+        $bandMembers->push($user);
+
+        $rehearsal = $this->createRehearsalForBandInFuture($band);
 
         $this->assertEquals(5, $rehearsal->attendees()->count());
         $expectedMemberIds = array_values($bandMembers->pluck('id')->sort()->toArray());

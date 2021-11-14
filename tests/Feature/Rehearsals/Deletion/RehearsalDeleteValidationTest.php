@@ -34,11 +34,11 @@ class RehearsalDeleteValidationTest extends TestCase
             'time' => $this->getTimestampRange(Carbon::now()->subHour(), Carbon::now()->addHour()),
         ]);
 
-        $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
+        $this->assertDatabaseHas(Rehearsal::class, $rehearsal->getAttributes());
 
         $this->json('delete', route('rehearsals.delete', $rehearsal->id))->assertStatus(Response::HTTP_FORBIDDEN);
 
-        $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
+        $this->assertDatabaseHas(Rehearsal::class, $rehearsal->getAttributes());
     }
 
     /** @test */
@@ -49,11 +49,11 @@ class RehearsalDeleteValidationTest extends TestCase
             'time' => $this->getTimestampRange(Carbon::now()->subHours(3), Carbon::now()->subHours(2)),
         ]);
 
-        $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
+        $this->assertDatabaseHas(Rehearsal::class, $rehearsal->getAttributes());
 
         $this->json('delete', route('rehearsals.delete', $rehearsal->id))->assertStatus(Response::HTTP_FORBIDDEN);
 
-        $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
+        $this->assertDatabaseHas(Rehearsal::class, $rehearsal->getAttributes());
     }
 
     protected function setUp(): void

@@ -35,11 +35,11 @@ class BandsTest extends TestCase
         $this->createBandMembership($this->createUser(), $band);
         $this->createBandMembership($this->createUser(), $band);
 
-        $this->assertEquals(2, $band->fresh()->members()->count());
+        $this->assertEquals(3, $band->fresh()->members()->count());
         $response = $this->get(route('bands.list'));
         $response->assertOk();
         $this->assertCount(1, $response->json('data'));
-        $this->assertEquals(2, $response->json('data.0.members_count'));
+        $this->assertEquals(3, $response->json('data.0.members_count'));
     }
 
     /** @test */

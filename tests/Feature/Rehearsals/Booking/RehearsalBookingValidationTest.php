@@ -18,7 +18,7 @@ class RehearsalBookingValidationTest extends TestCase
     }
 
     /** @test */
-    public function it_responds_with_422_when_user_provided_unknown_organization_id(): void
+    public function it_responds_with_422_when_user_provided_unknown_organization_room_id(): void
     {
         $this->json('post', route('rehearsals.create'), [
             'organization_room_id' => 10000,
@@ -39,7 +39,7 @@ class RehearsalBookingValidationTest extends TestCase
         $organization = $this->createOrganization();
 
         $this->json('post', route('rehearsals.create'), [
-            'organization_id' => $organization->id,
+            'organization_room_id' => $organization->id,
             'band_id' => 10000,
             'starts_at' => $this->getDateTimeAt(12, 00),
             'ends_at' => $this->getDateTimeAt(13, 00),
@@ -59,11 +59,12 @@ class RehearsalBookingValidationTest extends TestCase
         $keyWithError
     ): void {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
 
         $response = $this->json(
             'post',
             route('rehearsals.create'),
-            array_merge($data, ['organization_id' => $organization->id])
+            array_merge($data, ['organization_room_id' => $room->id])
         );
 
         $response->assertJsonValidationErrors($keyWithError);
@@ -76,11 +77,11 @@ class RehearsalBookingValidationTest extends TestCase
     {
         $organization = $this->createOrganization();
         $room = $this->createOrganizationRoom($organization);
-        $this->performTestWhenOrganizationIsClosed(
+        $this->performTestWhenRoomIsClosed(
             'post',
             route('rehearsals.create'),
             $room,
-            ['organization_id' => $organization->id]
+            ['organization_room_id' => $room->id]
         );
         $this->assertEquals(0, $room->rehearsals()->count());
     }
@@ -97,7 +98,7 @@ class RehearsalBookingValidationTest extends TestCase
             'post',
             route('rehearsals.create'),
             $room,
-            ['organization_id' => $room->id]
+            ['organization_room_id' => $room->id]
         );
         $this->assertEquals(0, $room->rehearsals()->count());
     }
@@ -114,7 +115,7 @@ class RehearsalBookingValidationTest extends TestCase
             'post',
             route('rehearsals.create'),
             $room,
-            ['organization_id' => $room->id]
+            ['organization_room_id' => $room->id]
         );
         $this->assertEquals(0, $room->rehearsals()->count());
     }

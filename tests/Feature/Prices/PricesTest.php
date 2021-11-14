@@ -122,7 +122,7 @@ class PricesTest extends TestCase
     {
         $room = $this->createOrganizationRoom($this->createOrganization());
 
-        $this->performTestWhenOrganizationIsClosed(
+        $this->performTestWhenRoomIsClosed(
             'get',
             route('rooms.price', $room),
             $room,

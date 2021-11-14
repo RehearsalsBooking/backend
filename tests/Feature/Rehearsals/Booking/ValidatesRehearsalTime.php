@@ -14,11 +14,11 @@ use Symfony\Component\HttpFoundation\Response;
  * This mess was created in an attempt to avoid test duplication.
  * I need to validate rehearsal time when rehearsal is creating and when
  * just calculating rehearsal price. And validation logic is absolutely the same
- * for both endpoints
+ * for both cases
  */
 trait ValidatesRehearsalTime
 {
-    public function performTestWhenOrganizationIsClosed(
+    public function performTestWhenRoomIsClosed(
         string $method,
         string $endpoint,
         OrganizationRoom $room,
@@ -90,7 +90,7 @@ trait ValidatesRehearsalTime
             array_merge(
                 [
                     'starts_at' => $this->getDateTimeAt(6, 00),
-                    'ends_at' => $this->getDateTimeAt(6, 15),
+                    'ends_at' => $this->getDateTimeAt(6, Rehearsal::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES - 1),
                 ],
                 $additionalParameters
             ),
@@ -98,14 +98,17 @@ trait ValidatesRehearsalTime
             array_merge(
                 [
                     'starts_at' => $this->getDateTimeAt(7, 30),
-                    'ends_at' => $this->getDateTimeAt(8, 24),
+                    'ends_at' => $this->getDateTimeAt(8, Rehearsal::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES - 1),
                 ],
                 $additionalParameters
             ),
 
             array_merge(
                 [
-                    'starts_at' => $this->getDateTimeAt(21, 8),
+                    'starts_at' => $this->getDateTimeAt(
+                        21,
+                        Rehearsal::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES - 1
+                    ),
                     'ends_at' => $this->getDateTimeAt(23, 00),
                 ],
                 $additionalParameters
@@ -113,8 +116,8 @@ trait ValidatesRehearsalTime
 
             array_merge(
                 [
-                    'starts_at' => $this->getDateTimeAt(7, 13),
-                    'ends_at' => $this->getDateTimeAt(23, 24),
+                    'starts_at' => $this->getDateTimeAt(7, Rehearsal::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES - 1),
+                    'ends_at' => $this->getDateTimeAt(23, Rehearsal::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES - 2),
                 ],
                 $additionalParameters
             ),
@@ -326,6 +329,15 @@ trait ValidatesRehearsalTime
                     [
                         'starts_at' => $date->subHours(2)->toDateTimeString(),
                         'ends_at' => $date->subHour()->toDateTimeString(),
+                    ],
+                    'starts_at',
+                ],
+
+                //incorrect duration time
+                [
+                    [
+                        'starts_at' => $date->addHours(2)->toDateTimeString(),
+                        'ends_at' => $date->addHours(2)->addMinutes(5)->toDateTimeString(),
                     ],
                     'starts_at',
                 ],

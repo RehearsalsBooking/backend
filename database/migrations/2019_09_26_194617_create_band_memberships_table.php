@@ -17,6 +17,7 @@ class CreateBandMembershipsTable extends Migration
             $table->jsonb('roles')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->unique(['band_id', 'user_id']);
         });
     }
 }
