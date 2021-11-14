@@ -96,7 +96,7 @@ class AttendeesRegistrationTest extends TestCase
         $band = $this->createBandForUser($user);
 
         $bandMembersCount = 5;
-        $bandMembers = $this->createUsers($bandMembersCount - 1)->merge([$user]);
+        $bandMembers = $this->createUsers($bandMembersCount - 1);
 
         $inactiveBandMember = $this->createUser();
         $band->addMember($inactiveBandMember->id);
@@ -105,6 +105,7 @@ class AttendeesRegistrationTest extends TestCase
         $bandMembers->each(function (User $user) use ($band) {
             $band->addMember($user->id);
         });
+        $bandMembers->push($user);
         $this->assertEquals($bandMembersCount, $band->fresh()->members()->count());
 
         $this->assertEquals(0, $user->rehearsals()->count());
@@ -160,11 +161,13 @@ class AttendeesRegistrationTest extends TestCase
         $band = $this->createBandForUser($user);
 
         $bandMembersCount = 5;
-        $bandMembers = $this->createUsers($bandMembersCount - 1)->merge([$user]);
+        $bandMembers = $this->createUsers($bandMembersCount - 1);
 
         $bandMembers->each(function (User $user) use ($band) {
             $band->addMember($user->id);
         });
+
+        $bandMembers->push($user);
 
         $this->bookRehearsal($room, $band);
 

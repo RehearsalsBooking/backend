@@ -21,7 +21,6 @@ class RehearsalPrice
 {
     private int $uncalculatedMinutes;
     private const MINUTES_IN_ONE_DAY = 60 * 24;
-    private const MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES = 30;
 
     /**
      * @throws InvalidRehearsalDurationException
@@ -41,7 +40,7 @@ class RehearsalPrice
             throw new InvalidRehearsalDurationException('Длительность репетиции не может превышать 24 часа');
         }
 
-        if ($this->uncalculatedMinutes % self::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES !== 0) {
+        if ($this->uncalculatedMinutes % Rehearsal::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES !== 0) {
             throw new InvalidRehearsalDurationException('Некорректная длительность репетиции');
         }
     }
@@ -77,7 +76,7 @@ class RehearsalPrice
         $matchingPrices = $this->getMatchingPricesForPeriod($day, $start, $end);
 
         return $matchingPrices->reduce(
-            fn (
+            fn(
                 float $result,
                 OrganizationRoomPrice $price
             ) => $result + $this->calculatePriceForPeriod(

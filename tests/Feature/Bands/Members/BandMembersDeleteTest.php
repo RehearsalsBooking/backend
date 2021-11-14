@@ -24,7 +24,7 @@ class BandMembersDeleteTest extends TestCase
     public function band_admin_can_remove_bands_members(): void
     {
         $bandMembersCount = 5;
-        $bandMembers = $this->createUsers($bandMembersCount);
+        $bandMembers = $this->createUsers($bandMembersCount - 1);
         foreach ($bandMembers as $bandMember) {
             $this->band->addMember($bandMember->id);
         }
@@ -33,7 +33,7 @@ class BandMembersDeleteTest extends TestCase
 
         $this->assertEquals($bandMembersCount, $this->band->memberships()->count());
         $this->assertEquals(
-            $bandMembers->pluck('id')->toArray(),
+            $this->band->members->pluck('id')->toArray(),
             $this->band->memberships()->pluck('user_id')->toArray()
         );
 
@@ -54,18 +54,21 @@ class BandMembersDeleteTest extends TestCase
     public function user_can_leave_band(): void
     {
         $bandMembersCount = 5;
-        $bandMembers = $this->createUsers($bandMembersCount);
+        $bandMembers = $this->createUsers($bandMembersCount - 1);
         $bandMembers->each(function (User $user) {
             $this->band->addMember($user->id);
         });
 
         $this->assertEquals($bandMembersCount, $this->band->members()->count());
         $this->assertEquals(
-            $bandMembers->pluck('id')->toArray(),
+            $this->band->members->pluck('id')->toArray(),
             $this->band->memberships()->pluck('user_id')->toArray()
         );
 
-        $membershipOfUserWhoIsLeavingBand = $this->band->memberships()->inRandomOrder()->first();
+        $membershipOfUserWhoIsLeavingBand = $this->band->memberships()
+            ->where('user_id', '!=', $this->bandAdmin->id)
+            ->inRandomOrder()
+            ->first();
 
         $this->actingAs($membershipOfUserWhoIsLeavingBand->user);
 
@@ -87,15 +90,9 @@ class BandMembersDeleteTest extends TestCase
     public function when_user_leaves_band_he_is_no_longer_attendee_of_this_bands_future_rehearsals(): void
     {
         $bandMembersCount = 5;
-        $bandMembers = $this->createUsers($bandMembersCount);
-
         $someOtherBand = $this->createBand();
-        $bandMembers->each(function (User $user) {
-            $this->band->addMember($user->id);
-        });
-        $bandMembers->each(function (User $user) use ($someOtherBand) {
-            $someOtherBand->addMember($user->id);
-        });
+        $this->addBandMembers($this->band, $bandMembersCount - 1);
+        $this->addBandMembers($someOtherBand, $bandMembersCount - 1);
 
         $rehearsalInPast = $this->createRehearsalForBandInThePast($this->band);
         $rehearsalInPastForOtherBand = $this->createRehearsalForBandInThePast($someOtherBand);
@@ -104,19 +101,19 @@ class BandMembersDeleteTest extends TestCase
         $rehearsalInFutureForOtherBand = $this->createRehearsalForBandInFuture($someOtherBand);
 
         $this->assertEquals(
-            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $this->band->members->sortBy('id')->pluck('id')->toArray(),
             $rehearsalInPast->attendees->sortBy('id')->pluck('id')->toArray()
         );
         $this->assertEquals(
-            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $this->band->members->sortBy('id')->pluck('id')->toArray(),
             $rehearsalInFuture->attendees->sortBy('id')->pluck('id')->toArray()
         );
         $this->assertEquals(
-            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $someOtherBand->members->sortBy('id')->pluck('id')->toArray(),
             $rehearsalInFutureForOtherBand->attendees->sortBy('id')->pluck('id')->toArray()
         );
         $this->assertEquals(
-            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $someOtherBand->members->sortBy('id')->pluck('id')->toArray(),
             $rehearsalInFutureForOtherBand->attendees->sortBy('id')->pluck('id')->toArray()
         );
 
@@ -135,7 +132,7 @@ class BandMembersDeleteTest extends TestCase
             $rehearsalInPast->fresh(['attendees'])->attendees()->count()
         );
         $this->assertEquals(
-            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $this->band->members->sortBy('id')->pluck('id')->toArray(),
             $rehearsalInPast->fresh(['attendees'])->attendees->sortBy('id')->pluck('id')->toArray()
         );
         $this->assertEquals(
@@ -143,7 +140,7 @@ class BandMembersDeleteTest extends TestCase
             $rehearsalInPastForOtherBand->fresh(['attendees'])->attendees()->count()
         );
         $this->assertEquals(
-            $bandMembers->sortBy('id')->pluck('id')->toArray(),
+            $someOtherBand->members->sortBy('id')->pluck('id')->toArray(),
             $rehearsalInPastForOtherBand->fresh(['attendees'])
                 ->attendees
                 ->sortBy('id')

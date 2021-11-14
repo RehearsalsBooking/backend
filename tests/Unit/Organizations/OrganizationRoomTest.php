@@ -64,5 +64,9 @@ class OrganizationRoomTest extends TestCase
         $this->assertInstanceOf(Collection::class, $room->prices);
         $this->assertEquals(7, $room->prices()->count());
         $this->assertInstanceOf(OrganizationRoomPrice::class, $room->prices->first());
+
+        $price = $room->prices()->first();
+        $this->assertInstanceOf(OrganizationRoom::class, $price->room);
+        $this->assertEquals($room->id, $price->room->id);
     }
 }

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Bands\Members;
 
 use App\Models\Band;
+use App\Models\BandMembership;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -34,7 +35,7 @@ class BandMembersDeleteAuthorizationTest extends TestCase
     /** @test */
     public function some_other_user_cannot_delete_member_of_a_band(): void
     {
-        $this->createBandMembers($this->band, 2);
+        $this->addBandMembers($this->band, 2);
         $membershipToRemoveFromBand = $this->band->memberships()->inRandomOrder()->first()->id;
 
         $this->actingAs($this->createUser());
@@ -46,7 +47,7 @@ class BandMembersDeleteAuthorizationTest extends TestCase
     /** @test */
     public function deleting_member_should_be_in_given_band(): void
     {
-        $this->createBandMembers($this->band, 2);
+        $this->addBandMembers($this->band, 2);
         $membershipToRemoveFromBand = $this->band->memberships()->inRandomOrder()->first()->id;
 
         $adminOfAnotherBand = $this->createUser();
@@ -76,7 +77,7 @@ class BandMembersDeleteAuthorizationTest extends TestCase
     /** @test */
     public function admin_of_band_cannot_leave_or_be_removed_from_his_band(): void
     {
-        $membership = $this->createBandMembership($this->bandAdmin, $this->band);
+        $membership = BandMembership::where('user_id', $this->bandAdmin->id)->first();
 
         $this->assertEquals(1, $this->band->memberships()->count());
         $this->assertEquals(

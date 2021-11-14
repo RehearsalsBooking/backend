@@ -103,7 +103,7 @@ class BandsTest extends TestCase
         $this->createRehearsalForBandInThePast($band);
         $rehearsalInFuture = $this->createRehearsalForBandInFuture($band);
 
-        $this->assertEquals([$rehearsalInFuture->id], $band->futureRehearsals->pluck('id')->toArray());
+        $this->assertEquals([$rehearsalInFuture->id], $band->futureRehearsals()->pluck('id')->toArray());
         $this->assertEquals(1, $band->futureRehearsals()->count());
     }
 

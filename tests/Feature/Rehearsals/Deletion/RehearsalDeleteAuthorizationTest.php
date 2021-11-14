@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Rehearsals\Deletion;
 
+use App\Models\Rehearsal;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
@@ -23,12 +24,12 @@ class RehearsalDeleteAuthorizationTest extends TestCase
 
         $johnsRehearsal = $this->createRehearsalForUser($john);
 
-        $this->assertDatabaseHas('rehearsals', $johnsRehearsal->toArray());
+        $this->assertDatabaseHas(Rehearsal::class, $johnsRehearsal->getAttributes());
 
         $response = $this->json('delete', route('rehearsals.delete', $johnsRehearsal->id));
 
         $response->assertStatus(Response::HTTP_FORBIDDEN);
 
-        $this->assertDatabaseHas('rehearsals', $johnsRehearsal->toArray());
+        $this->assertDatabaseHas(Rehearsal::class, $johnsRehearsal->getAttributes());
     }
 }

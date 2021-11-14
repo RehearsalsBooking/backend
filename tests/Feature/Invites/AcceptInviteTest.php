@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Invites;
 
+use App\Models\BandMembership;
 use App\Models\Invite;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -26,6 +27,8 @@ class AcceptInviteTest extends TestCase
             'band_id' => $band->id,
         ]);
 
+        $this->assertEquals(1, $band->members()->count());
+
         $john = $this->createUser();
         $this->actingAs($john);
 
@@ -37,7 +40,7 @@ class AcceptInviteTest extends TestCase
         $this->assertDatabaseHas('invites', ['email' => $max->email]);
         $this->assertEquals(0, $max->bands()->count());
         $this->assertEquals(0, $john->bands()->count());
-        $this->assertEquals(0, $band->members()->count());
+        $this->assertEquals(1, $band->members()->count());
     }
 
     /** @test */
@@ -66,7 +69,7 @@ class AcceptInviteTest extends TestCase
         $this->assertEquals(1, Invite::count());
         $this->assertDatabaseHas('invites', ['email' => $user->email]);
         $this->assertEquals(0, $user->bands()->count());
-        $this->assertEquals(0, $band->memberships()->count());
+        $this->assertEquals(1, $band->memberships()->count());
 
         $this->actingAs($user);
 
@@ -76,9 +79,9 @@ class AcceptInviteTest extends TestCase
 
         $this->assertEquals(1, $user->bands()->count());
         $this->assertEquals($band->id, $user->bands->first()->id);
-        $this->assertEquals(1, $band->members()->count());
-        $this->assertEquals($user->id, $band->members()->first()->id);
-        $this->assertEquals($roles, $band->fresh()->memberships->first()->roles);
+        $this->assertEquals(2, $band->members()->count());
+        $this->assertDatabaseHas(BandMembership::class, ['user_id' => $user->id]);
+        $this->assertEquals($roles, $band->fresh()->memberships()->where(['user_id' => $user->id])->first()->roles);
 
         $this->assertEquals(1, Invite::count());
         $this->assertDatabaseHas('invites', ['email' => $user->email, 'status' => Invite::STATUS_ACCEPTED]);
@@ -102,14 +105,14 @@ class AcceptInviteTest extends TestCase
 
         $this->actingAs($user);
 
-        $this->assertEquals(0, $bandsRehearsalInPast->attendees()->count());
-        $this->assertEquals(0, $bandsRehearsalInFuture->attendees()->count());
+        $this->assertEquals(1, $bandsRehearsalInPast->attendees()->count());
+        $this->assertEquals(1, $bandsRehearsalInFuture->attendees()->count());
 
         $response = $this->json('post', route('users.invites.accept', $invite->id));
         $response->assertOk();
 
-        $this->assertEquals(0, $bandsRehearsalInPast->attendees()->count());
-        $this->assertEquals(1, $bandsRehearsalInFuture->attendees()->count());
+        $this->assertEquals(1, $bandsRehearsalInPast->attendees()->count());
+        $this->assertEquals(2, $bandsRehearsalInFuture->attendees()->count());
 
         $response->assertOk();
     }

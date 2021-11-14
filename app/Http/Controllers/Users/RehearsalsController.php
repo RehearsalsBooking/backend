@@ -11,6 +11,8 @@ use App\Http\Requests\Users\RescheduleRehearsalRequest;
 use App\Http\Resources\RehearsalDetailedResource;
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
+use App\Models\RehearsalPrice;
+use Carbon\Carbon;
 use DB;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -54,7 +56,7 @@ class RehearsalsController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function create(CreateRehearsalRequest $request): RehearsalResource | JsonResponse
+    public function create(CreateRehearsalRequest $request): RehearsalResource|JsonResponse
     {
         $this->authorize(
             'create',
@@ -70,7 +72,7 @@ class RehearsalsController extends Controller
             return response()->json('Вы забанены в этой организации', Response::HTTP_FORBIDDEN);
         }
 
-        if (! $room->isTimeAvailable(
+        if (!$room->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
         )) {
@@ -78,8 +80,16 @@ class RehearsalsController extends Controller
         }
 
         try {
+            $rehearsalPrice = new RehearsalPrice(
+                $request->get('organization_room_id'),
+                Carbon::parse($request->get('starts_at'))->setSeconds(0),
+                Carbon::parse($request->get('ends_at'))->setSeconds(0)
+            );
             /** @var Rehearsal $rehearsal */
-            $rehearsal = Rehearsal::create($request->getAttributes());
+            $rehearsal = Rehearsal::create(array_merge(
+                ['price' => $rehearsalPrice()],
+                $request->getAttributes()
+            ));
         } catch (PriceCalculationException | InvalidRehearsalDurationException $exception) {
             return response()->json($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -90,8 +100,8 @@ class RehearsalsController extends Controller
     public function reschedule(
         RescheduleRehearsalRequest $request,
         Rehearsal $rehearsal
-    ): RehearsalResource | JsonResponse {
-        if (! $rehearsal->room->isTimeAvailable(
+    ): RehearsalResource|JsonResponse {
+        if (!$rehearsal->room->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
             $rehearsal

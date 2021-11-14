@@ -28,7 +28,7 @@ class BandMembersIndexTest extends TestCase
         $response = $this->json('get', route('bands.members.index', [$this->band]));
         $response->assertOk();
 
-        $this->assertCount(2, $response->json('data'));
+        $this->assertCount(3, $response->json('data'));
         $this->assertEquals(
             BandMembershipResource::collection($this->band->memberships)->response()->getData(true),
             $response->json()

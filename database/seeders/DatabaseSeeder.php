@@ -8,6 +8,7 @@ use App\Models\Band;
 use App\Models\City;
 use App\Models\Genre;
 use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Organization\OrganizationRoomPrice;
 use App\Models\Rehearsal;
 use App\Models\User;
@@ -23,9 +24,9 @@ class DatabaseSeeder extends Seeder
     public const CITIES_COUNT = 3;
     public const ADMINS_COUNT = 5;
     public const USERS_COUNT = 20;
-    public const INDIVIDUAL_REHEARSALS_COUNT = 50;
+    public const INDIVIDUAL_REHEARSALS_COUNT = 200;
     public const BANDS_COUNT = 10;
-    public const REHEARSALS_PER_BAND_COUNT = 100;
+    public const REHEARSALS_PER_BAND_COUNT = 400;
     public const BAND_MEMBERS_COUNT = 4;
     /**
      * @var User|User[]|Collection|Model|\Illuminate\Support\Collection|mixed
@@ -98,12 +99,20 @@ class DatabaseSeeder extends Seeder
     {
         $createdOrganizations = collect();
         foreach ($this->admins as $admin) {
-            $createdOrganizations->push(Organization::factory()->count(2)->create(
+            $newOrganizations = Organization::factory()->count(2)->create(
                 [
                     'owner_id' => $admin->id,
                     'city_id' => $this->cities->random(1)->first()->id
                 ]
-            ));
+            );
+            foreach ($newOrganizations as $newOrganization) {
+                foreach (range(0, random_int(1, 2)) as $item) {
+                    OrganizationRoom::factory()->create([
+                        'organization_id' => $newOrganization->id
+                    ]);
+                }
+            }
+            $createdOrganizations->push($newOrganizations);
         }
 
         return $createdOrganizations->flatten();
@@ -118,22 +127,24 @@ class DatabaseSeeder extends Seeder
     {
         foreach (range(0, 6) as $dayOfWeek) {
             foreach ($this->organizations as $organization) {
-                OrganizationRoomPrice::factory()->create(
-                    [
-                        'organization_id' => $organization->id,
-                        'day' => $dayOfWeek,
-                        'time' => new TimeRange('08:00', '19:00'),
-                        'price' => 200,
-                    ]
-                );
-                OrganizationRoomPrice::factory()->create(
-                    [
-                        'organization_id' => $organization->id,
-                        'day' => $dayOfWeek,
-                        'time' => new TimeRange('19:00', '23:59'),
-                        'price' => 300,
-                    ]
-                );
+                foreach ($organization->rooms as $room) {
+                    OrganizationRoomPrice::factory()->create(
+                        [
+                            'organization_room_id' => $room->id,
+                            'day' => $dayOfWeek,
+                            'time' => new TimeRange('08:00', '19:00'),
+                            'price' => 200,
+                        ]
+                    );
+                    OrganizationRoomPrice::factory()->create(
+                        [
+                            'organization_room_id' => $room->id,
+                            'day' => $dayOfWeek,
+                            'time' => new TimeRange('19:00', '23:59'),
+                            'price' => 300,
+                        ]
+                    );
+                }
             }
         }
     }
@@ -145,11 +156,10 @@ class DatabaseSeeder extends Seeder
                 $individualRehearsal = Rehearsal::factory()->create(
                     [
                         'user_id' => $this->users->random()->id,
-                        'organization_id' => $this->organizations->random()->id,
+                        'organization_room_id' => $this->organizations->random()->rooms->random()->id,
                         'is_paid' => array_rand([true, false]),
                     ]
                 );
-                $individualRehearsal->registerUserAsAttendee();
             } catch (PDOException | QueryException) {
                 // because rehearsal time is completely random
                 // there is possible overlapping
@@ -205,7 +215,7 @@ class DatabaseSeeder extends Seeder
             foreach (range(1, $count) as $_) {
                 try {
                     Rehearsal::factory()->create([
-                        'organization_id' => $this->organizations->random()->id,
+                        'organization_room_id' => $this->organizations->random()->rooms->random()->id,
                         'user_id' => $band->admin_id,
                         'band_id' => $band->id,
                         'is_paid' => array_rand([true, false]),

@@ -34,6 +34,8 @@ class DeclineInviteTest extends TestCase
             'band_id' => $band->id,
         ]);
 
+        $this->assertEquals(1, $band->members()->count());
+
         $john = $this->createUser();
         $this->actingAs($john);
 
@@ -45,7 +47,7 @@ class DeclineInviteTest extends TestCase
         $this->assertDatabaseHas('invites', ['email' => $max->email]);
         $this->assertEquals(0, $max->bands()->count());
         $this->assertEquals(0, $john->bands()->count());
-        $this->assertEquals(0, $band->members()->count());
+        $this->assertEquals(1, $band->members()->count());
     }
 
     /** @test */
@@ -71,7 +73,7 @@ class DeclineInviteTest extends TestCase
         $this->assertEquals(1, Invite::count());
         $this->assertDatabaseHas('invites', ['email' => $user->email]);
         $this->assertEquals(0, $user->bands()->count());
-        $this->assertEquals(0, $band->members()->count());
+        $this->assertEquals(1, $band->members()->count());
 
         $this->actingAs($user);
 
@@ -83,6 +85,6 @@ class DeclineInviteTest extends TestCase
         $this->assertDatabaseHas('invites', ['email' => $user->email, 'status' => Invite::STATUS_REJECTED]);
 
         $this->assertEquals(0, $user->bands()->count());
-        $this->assertEquals(0, $band->members()->count());
+        $this->assertEquals(1, $band->members()->count());
     }
 }

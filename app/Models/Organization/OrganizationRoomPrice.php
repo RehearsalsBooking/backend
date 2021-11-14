@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -37,7 +36,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|OrganizationRoomPrice whereTime($value)
  * @method static OrganizationPriceFactory factory(...$parameters)
  * @property int $organization_room_id
- * @property-read \App\Models\Organization\OrganizationRoom $room
+ * @property-read OrganizationRoom $room
  * @method static Builder|OrganizationRoomPrice whereOrganizationRoomId($value)
  */
 class OrganizationRoomPrice extends Model
@@ -57,6 +56,6 @@ class OrganizationRoomPrice extends Model
 
     public function room(): BelongsTo
     {
-        return $this->belongsTo(OrganizationRoom::class);
+        return $this->belongsTo(OrganizationRoom::class, 'organization_room_id');
     }
 }

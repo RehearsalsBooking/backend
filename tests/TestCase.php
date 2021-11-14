@@ -237,14 +237,13 @@ abstract class TestCase extends BaseTestCase
     }
 
     /** @noinspection PhpIncompatibleReturnTypeInspection */
-    protected function createRehearsalForBandInFuture(Band $band = null, ?User $user = null): Rehearsal
+    protected function createRehearsalForBandInFuture(Band $band = null): Rehearsal
     {
-        $user ??= $this->createUser();
         $band ??= $this->createBand();
 
         return Rehearsal::factory()->create(
             [
-                'user_id' => $user->id,
+                'user_id' => $band->admin_id,
                 'band_id' => $band->id,
                 'time' => $this->getTimestampRange(
                     Carbon::now()->addDay(),
@@ -294,6 +293,7 @@ abstract class TestCase extends BaseTestCase
     {
         return Rehearsal::factory()->create(
             [
+                'user_id' => $band->admin_id,
                 'band_id' => $band->id,
                 'time' => $this->getTimestampRange(
                     Carbon::now()->subDays(3),
@@ -319,7 +319,7 @@ abstract class TestCase extends BaseTestCase
         ]);
     }
 
-    protected function createBandMembers(Band $band, int $count = 1): Collection
+    protected function addBandMembers(Band $band, int $count = 1): Collection
     {
         $members = $this->createUsers($count);
         $members->each(function (User $user) use ($band) {
