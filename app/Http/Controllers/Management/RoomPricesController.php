@@ -3,39 +3,39 @@
 namespace App\Http\Controllers\Management;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Management\CreateOrganizationPriceRequest;
-use App\Http\Requests\Management\UpdateOrganizationPriceRequest;
-use App\Http\Resources\OrganizationPriceResource;
-use App\Models\Organization\Organization;
-use App\Models\Organization\OrganizationPrice;
+use App\Http\Requests\Management\CreateRoomPriceRequest;
+use App\Http\Requests\Management\UpdateRoomPriceRequest;
+use App\Http\Resources\RoomPriceResource;
+use App\Models\Organization\OrganizationRoom;
+use App\Models\Organization\OrganizationRoomPrice;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
-class OrganizationPricesController extends Controller
+class RoomPricesController extends Controller
 {
     /**
      * @throws AuthorizationException
      */
-    public function index(Organization $organization): AnonymousResourceCollection
+    public function index(OrganizationRoom $room): AnonymousResourceCollection
     {
-        $this->authorize('manage', $organization);
+        $this->authorize('manage', $room);
 
-        return OrganizationPriceResource::collection($organization->prices);
+        return RoomPriceResource::collection($room->prices);
     }
 
     /**
      * @throws AuthorizationException
      */
     public function create(
-        CreateOrganizationPriceRequest $request,
-        Organization $organization
+        CreateRoomPriceRequest $request,
+        OrganizationRoom $room
     ): JsonResponse|AnonymousResourceCollection {
-        $this->authorize('manage', $organization);
+        $this->authorize('manage', $room);
 
-        if ($organization->hasPriceAt(
+        if ($room->hasPriceAt(
             $request->get('day'),
             $request->get('starts_at'),
             $request->get('ends_at')
@@ -51,9 +51,9 @@ class OrganizationPricesController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $organization->prices()->create($request->getAttributes());
+        $room->prices()->create($request->getAttributes());
 
-        return OrganizationPriceResource::collection($organization->prices)
+        return RoomPriceResource::collection($room->prices)
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
     }
@@ -62,24 +62,24 @@ class OrganizationPricesController extends Controller
      * @throws AuthorizationException
      */
     public function update(
-        UpdateOrganizationPriceRequest $request,
-        Organization $organization,
-        OrganizationPrice $price
-    ): OrganizationPriceResource {
-        $this->authorize('manage', $organization);
+        UpdateRoomPriceRequest $request,
+        OrganizationRoom $room,
+        OrganizationRoomPrice $price
+    ): RoomPriceResource {
+        $this->authorize('manage', $room);
 
         $price->update($request->getAttributes());
 
-        return new OrganizationPriceResource($price);
+        return new RoomPriceResource($price);
     }
 
     /**
      * @throws AuthorizationException
      * @throws Exception
      */
-    public function delete(Organization $organization, OrganizationPrice $price): JsonResponse
+    public function delete(OrganizationRoom $room, OrganizationRoomPrice $price): JsonResponse
     {
-        $this->authorize('manage', $organization);
+        $this->authorize('manage', $room);
 
         $price->delete();
 

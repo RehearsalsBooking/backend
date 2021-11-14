@@ -19,9 +19,10 @@ class RehearsalRescheduleAuthorizationTest extends TestCase
     public function only_admin_of_a_band_can_reschedule_rehearsal(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
         $band = $this->createBandForUser($this->createUser());
 
-        $rehearsal = $this->createRehearsal(10, 12, $organization, $band);
+        $rehearsal = $this->createRehearsal(10, 12, $room, $band);
 
         $user = $this->createUser();
         $this->actingAs($user);
@@ -30,23 +31,24 @@ class RehearsalRescheduleAuthorizationTest extends TestCase
             'starts_at' => $this->getDateTimeAt(12, 00),
             'ends_at' => $this->getDateTimeAt(13, 00),
         ])
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
 
         $this->json('put', route('rehearsals.reschedule', $rehearsal->id), [
             'band_id' => $band->id,
             'starts_at' => $this->getDateTimeAt(12, 00),
             'ends_at' => $this->getDateTimeAt(13, 00),
         ])
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
     }
 
     /** @test */
     public function user_can_reschedule_only_his_own_individual_rehearsal(): void
     {
         $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
         $rehearsalsOwner = $this->createUser();
 
-        $rehearsal = $this->createRehearsal(10, 12, $organization, null, false, $rehearsalsOwner);
+        $rehearsal = $this->createRehearsal(10, 12, $room, null, false, $rehearsalsOwner);
 
         $someOtherUser = $this->createUser();
         $this->actingAs($someOtherUser);
@@ -55,6 +57,6 @@ class RehearsalRescheduleAuthorizationTest extends TestCase
             'starts_at' => $this->getDateTimeAt(12, 00),
             'ends_at' => $this->getDateTimeAt(13, 00),
         ])
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
     }
 }

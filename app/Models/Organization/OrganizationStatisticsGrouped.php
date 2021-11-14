@@ -6,9 +6,16 @@ use Belamov\PostgresRange\Ranges\DateRange;
 
 class OrganizationStatisticsGrouped extends OrganizationStatistics
 {
-    public function __construct(Organization $organization, ?DateRange $interval, protected string $groupInterval)
-    {
-        parent::__construct($organization, $interval);
+    private string $groupInterval;
+
+    public function __construct(
+        Organization $organization,
+        ?DateRange $interval,
+        ?int $roomId,
+        string $groupInterval
+    ) {
+        parent::__construct($organization, $interval, $roomId);
+        $this->groupInterval = $groupInterval;
     }
 
     /**
@@ -20,8 +27,9 @@ class OrganizationStatisticsGrouped extends OrganizationStatistics
             ->selectRaw('date_trunc(?, lower(time)) as x', [$this->groupInterval])
             ->selectRaw('count(*) as count')
             ->selectRaw('sum(price) as income')
-            ->when($this->interval !== null, $this->setInterval)
-            ->groupBy('x')
+            ->when($this->interval !== null, $this->filterByInterval)
+            ->when($this->roomId !== null, $this->filterByRoom)
+            ->groupBy('x', 'organization_id')
             ->orderBy('x')
             ->get()
             ->toArray();

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
-use App\Models\Organization\OrganizationPrice;
+use App\Models\Organization\OrganizationRoomPrice;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -20,25 +20,13 @@ use Illuminate\Support\Collection;
 class RehearsalPrice
 {
     private int $uncalculatedMinutes;
-    /**
-     * @var int
-     */
     private const MINUTES_IN_ONE_DAY = 60 * 24;
-    /**
-     * @var int
-     */
-    private const MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES = 30;
 
     /**
-     * RehearsalPrice constructor.
-     *
-     * @param  int  $organizationId
-     * @param  Carbon  $start
-     * @param  Carbon  $end
      * @throws InvalidRehearsalDurationException
      */
     public function __construct(
-        private int $organizationId,
+        private int $organizationRoomId,
         private Carbon $start,
         private Carbon $end
     ) {
@@ -52,7 +40,7 @@ class RehearsalPrice
             throw new InvalidRehearsalDurationException('Длительность репетиции не может превышать 24 часа');
         }
 
-        if ($this->uncalculatedMinutes % self::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES !== 0) {
+        if ($this->uncalculatedMinutes % Rehearsal::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES !== 0) {
             throw new InvalidRehearsalDurationException('Некорректная длительность репетиции');
         }
     }
@@ -88,9 +76,9 @@ class RehearsalPrice
         $matchingPrices = $this->getMatchingPricesForPeriod($day, $start, $end);
 
         return $matchingPrices->reduce(
-            fn (
+            fn(
                 float $result,
-                OrganizationPrice $price
+                OrganizationRoomPrice $price
             ) => $result + $this->calculatePriceForPeriod(
                     $price->time->from() ?? '',
                     $price->time->to() ?? '',
@@ -103,12 +91,12 @@ class RehearsalPrice
      * @param  int  $day
      * @param  Carbon  $timeStart
      * @param  Carbon  $timeEnd
-     * @return OrganizationPrice[]|Collection
+     * @return OrganizationRoomPrice[]|Collection
      * @throws PriceCalculationException
      */
     private function getMatchingPricesForPeriod(int $day, Carbon $timeStart, Carbon $timeEnd): Collection
     {
-        $matchingPrices = OrganizationPrice::where('organization_id', $this->organizationId)
+        $matchingPrices = OrganizationRoomPrice::where('organization_room_id', $this->organizationRoomId)
             ->where('day', $day)
             ->whereRaw('time && ?::timerange', [new TimeRange($timeStart, $timeEnd)])
             ->orderBy('time')

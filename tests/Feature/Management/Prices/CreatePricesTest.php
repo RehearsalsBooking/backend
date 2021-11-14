@@ -2,21 +2,20 @@
 
 namespace Tests\Feature\Management\Prices;
 
-use App\Http\Resources\OrganizationPriceResource;
+use App\Http\Resources\RoomPriceResource;
 use Belamov\PostgresRange\Ranges\TimeRange;
-use Illuminate\Http\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
 class CreatePricesTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.organizations.prices.create';
+    private string $endpoint = 'management.rooms.prices.create';
     private string $httpVerb = 'post';
 
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void
     {
         $this->json($this->httpVerb, route($this->endpoint, 1))
-            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+            ->assertUnauthorized();
     }
 
     /** @test */
@@ -30,7 +29,7 @@ class CreatePricesTest extends ManagementTestCase
         $this->actingAs($ordinaryClient);
         $this->json(
             $this->httpVerb,
-            route($this->endpoint, $this->organization->id),
+            route($this->endpoint, $this->organizationRoom->id),
             [
                 'day' => 6,
                 'price' => 500,
@@ -38,12 +37,12 @@ class CreatePricesTest extends ManagementTestCase
                 'ends_at' => '18:00',
             ]
         )
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
 
         $this->actingAs($managerOfAnotherOrganization);
         $this->json(
             $this->httpVerb,
-            route($this->endpoint, $this->organization->id),
+            route($this->endpoint, $this->organizationRoom->id),
             [
                 'day' => 6,
                 'price' => 500,
@@ -51,7 +50,7 @@ class CreatePricesTest extends ManagementTestCase
                 'ends_at' => '18:00',
             ]
         )
-            ->assertStatus(Response::HTTP_FORBIDDEN);
+            ->assertForbidden();
     }
 
     /** @test */
@@ -59,9 +58,9 @@ class CreatePricesTest extends ManagementTestCase
     {
         $this->actingAs($this->manager);
         $this->json($this->httpVerb, route($this->endpoint, 1000))
-            ->assertStatus(Response::HTTP_NOT_FOUND);
+            ->assertNotFound();
         $this->json($this->httpVerb, route($this->endpoint, 'some text'))
-            ->assertStatus(Response::HTTP_NOT_FOUND);
+            ->assertNotFound();
     }
 
     /**
@@ -72,21 +71,21 @@ class CreatePricesTest extends ManagementTestCase
      */
     public function it_responds_with_422_when_manager_provided_invalid_data(array $data, string|array $invalidKey): void
     {
-        $this->assertEquals(5, $this->organization->prices()->count());
+        $this->assertEquals(5, $this->organizationRoom->prices()->count());
         $this->actingAs($this->manager);
         $response = $this->json(
             $this->httpVerb,
-            route($this->endpoint, $this->organization->id),
+            route($this->endpoint, $this->organizationRoom->id),
             $data
         );
 
         $response
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertUnprocessable()
             ->assertJsonValidationErrors($invalidKey);
 
         $this->assertArrayHasKey('message', $response->json());
 
-        $this->assertEquals(5, $this->organization->prices()->count());
+        $this->assertEquals(5, $this->organizationRoom->prices()->count());
     }
 
     /**
@@ -205,15 +204,15 @@ class CreatePricesTest extends ManagementTestCase
     }
 
     /** @test */
-    public function manager_of_organization_can_add_price_entry_to_his_organization(): void
+    public function manager_of_organization_can_add_price_entry_to_his_room(): void
     {
-        $this->assertEquals(5, $this->organization->prices()->count());
+        $this->assertEquals(5, $this->organizationRoom->prices()->count());
 
         $this->actingAs($this->manager);
 
         $response = $this->json(
             $this->httpVerb,
-            route($this->endpoint, $this->organization->id),
+            route($this->endpoint, $this->organizationRoom->id),
             [
                 'day' => 6,
                 'price' => 500,
@@ -221,18 +220,18 @@ class CreatePricesTest extends ManagementTestCase
                 'ends_at' => '24:00',
             ]
         );
-        $response->assertStatus(Response::HTTP_CREATED);
+        $response->assertCreated();
 
         $this->assertCount(6, $response->json('data'));
-        $this->assertEquals(6, $this->organization->prices()->count());
-        $this->assertDatabaseHas('organization_prices', [
+        $this->assertEquals(6, $this->organizationRoom->prices()->count());
+        $this->assertDatabaseHas('organization_room_prices', [
             'day' => 6,
             'price' => 500,
             'time' => new TimeRange('10:00', '24:00'),
-            'organization_id' => $this->organization->id,
+            'organization_room_id' => $this->organizationRoom->id,
         ]);
         $this->assertEquals(
-            OrganizationPriceResource::collection($this->organization->prices)->response()->getData(true),
+            RoomPriceResource::collection($this->organizationRoom->prices)->response()->getData(true),
             $response->json()
         );
     }

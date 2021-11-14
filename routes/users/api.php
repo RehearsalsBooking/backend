@@ -1,12 +1,13 @@
 <?php
 
 use App\Http\Controllers\CitiesController;
+use App\Http\Controllers\Users\RoomsController;
 use App\Http\Controllers\Users\BandInvitesController;
 use App\Http\Controllers\Users\BandMembershipsController;
 use App\Http\Controllers\Users\BandsController;
 use App\Http\Controllers\Users\FavoriteOrganizationsController;
 use App\Http\Controllers\Users\GenresController;
-use App\Http\Controllers\Users\OrganizationPricesController;
+use App\Http\Controllers\Users\OrganizationRoomPricesController;
 use App\Http\Controllers\Users\OrganizationsController;
 use App\Http\Controllers\Users\RehearsalsController;
 use App\Http\Controllers\Users\UserInvitesController;
@@ -18,12 +19,17 @@ use Illuminate\Support\Facades\Route;
 Route::name('organizations.')->prefix('organizations')->group(static function () {
     Route::get('/', [OrganizationsController::class, 'index'])->name('list');
 
-    Route::get('/{organization}', [OrganizationsController::class, 'show'])
-        ->where('organization', '[0-9]+')
-        ->name('show');
+    Route::prefix('/{organization}')->where(['organization' => '[0-9]+'])->group(function () {
+        Route::get('/', [OrganizationsController::class, 'show'])
+            ->name('show');
 
-    Route::get('/{organization}/price', [OrganizationPricesController::class, 'index'])
-        ->where('organization', '[0-9]+')
+        Route::get('/rooms', [RoomsController::class, 'index'])->name('rooms');
+    });
+});
+
+Route::name('rooms.')->prefix('rooms')->group(static function () {
+    Route::get('/{room}/price', [OrganizationRoomPricesController::class, 'index'])
+        ->where('room', '[0-9]+')
         ->name('price');
 });
 

@@ -4,6 +4,7 @@ namespace Tests\Unit\Rehearsals;
 
 use App\Models\Band;
 use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
 use App\Models\User;
 use DB;
@@ -13,13 +14,14 @@ use Tests\TestCase;
 class RehearsalsTest extends TestCase
 {
     /** @test */
-    public function rehearsal_has_one_organization(): void
+    public function rehearsal_has_one_room(): void
     {
-        $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom();
 
-        $rehearsal = Rehearsal::factory()->create(['organization_id' => $organization->id]);
+        $rehearsal = $this->createRehearsalsForRoom($room)->first();
 
-        $this->assertInstanceOf(Organization::class, $rehearsal->organization);
+        $this->assertInstanceOf(OrganizationRoom::class, $rehearsal->room);
+        $this->assertEquals($room->id, $rehearsal->room->id);
     }
 
     /** @test */
@@ -92,13 +94,15 @@ class RehearsalsTest extends TestCase
         $user = $this->createUser();
         $band = $this->createBandForUser($user);
 
-        $bandMembers = $this->createUsers(4)->push($user);
+        $bandMembers = $this->createUsers(4);
 
         $bandMembers->each(function (User $user) use ($band) {
             $band->addMember($user->id);
         });
 
-        $rehearsal = $this->createRehearsalForBandInFuture($band, $user);
+        $bandMembers->push($user);
+
+        $rehearsal = $this->createRehearsalForBandInFuture($band);
 
         $this->assertEquals(5, $rehearsal->attendees()->count());
         $expectedMemberIds = array_values($bandMembers->pluck('id')->sort()->toArray());

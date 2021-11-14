@@ -102,12 +102,12 @@ class BanUserTest extends ManagementTestCase
     public function when_user_is_banned_all_his_future_rehearsals_at_this_organization_are_deleted(): void
     {
         $bannedUser = $this->createUser();
-        $rehearsalInFuture = $this->createRehearsalForUserInFuture($bannedUser, $this->organization);
-        $rehearsalInPast = $this->createRehearsalForUserInPast($bannedUser, $this->organization);
+        $rehearsalInFuture = $this->createRehearsalForUserInFuture($bannedUser, $this->organizationRoom);
+        $rehearsalInPast = $this->createRehearsalForUserInPast($bannedUser, $this->organizationRoom);
 
         $this->assertEquals(
             2,
-            Rehearsal::where('organization_id', $this->organization->id)
+            Rehearsal::where('organization_room_id', $this->organizationRoom->id)
                 ->where('user_id', $bannedUser->id)
                 ->count()
         );
@@ -128,7 +128,7 @@ class BanUserTest extends ManagementTestCase
 
         $this->assertEquals(
             1,
-            Rehearsal::where('organization_id', $this->organization->id)
+            Rehearsal::where('organization_room_id', $this->organizationRoom->id)
                 ->where('user_id', $bannedUser->id)
                 ->count()
         );

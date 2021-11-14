@@ -15,8 +15,9 @@ class OrganizationStatisticsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'from' => 'sometimes|date',
-            'to' => 'sometimes|date',
+            'from' => 'nullable|date',
+            'to' => 'nullable|date',
+            'room_id' => 'nullable|integer|exists:organization_rooms,id'
         ];
     }
 
@@ -27,6 +28,15 @@ class OrganizationStatisticsRequest extends FormRequest
     {
         if ($this->has('from') || $this->has('to')) {
             return new DateRange($this->get('from'), $this->get('to'));
+        }
+
+        return null;
+    }
+
+    public function roomId(): ?int
+    {
+        if ($this->has('room_id')) {
+            return (int) $this->get('room_id');
         }
 
         return null;

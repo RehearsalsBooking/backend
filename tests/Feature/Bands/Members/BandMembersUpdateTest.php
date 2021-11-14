@@ -29,10 +29,10 @@ class BandMembersUpdateTest extends TestCase
 
         $this->actingAs($this->bandAdmin);
 
-        $this->assertEquals(1, $this->band->memberships()->count());
+        $this->assertEquals(2, $this->band->memberships()->count());
         $this->assertEquals(
             $oldRoles,
-            $this->band->fresh()->memberships->first()->roles
+            $this->band->memberships()->find($membership->id)->roles
         );
 
         $newRoles = ['new role', 'new role 2'];
@@ -44,11 +44,10 @@ class BandMembersUpdateTest extends TestCase
         );
 
         $response->assertStatus(Response::HTTP_OK);
-        $this->assertEquals(1, $this->band->memberships()->count());
-        $this->assertEquals($bandMember->id, $this->band->memberships->first()->user_id);
+        $this->assertEquals(2, $this->band->memberships()->count());
         $this->assertEquals(
             $newRoles,
-            $this->band->fresh()->memberships->first()->roles
+            $this->band->memberships()->find($membership->id)->roles
         );
     }
 

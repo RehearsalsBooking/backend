@@ -20,7 +20,7 @@ class RescheduleRehearsalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        /** @phpstan-ignore-next-line  */
+        /** @phpstan-ignore-next-line */
         $this->rehearsal = $this->route()->parameter('rehearsal');
 
         return $this->user()->can('reschedule', $this->rehearsal);
@@ -52,7 +52,7 @@ class RescheduleRehearsalRequest extends FormRequest
     public function getRehearsalAttributes(): array
     {
         $rehearsalPrice = new RehearsalPrice(
-            $this->rehearsal->organization_id,
+            $this->rehearsal->organization_room_id,
             Carbon::parse($this->get('starts_at')),
             Carbon::parse($this->get('ends_at'))
         );

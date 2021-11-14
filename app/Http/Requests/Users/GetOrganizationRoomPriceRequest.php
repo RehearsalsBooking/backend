@@ -4,13 +4,13 @@ namespace App\Http\Requests\Users;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
-use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
 use App\Models\RehearsalPrice;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetOrganizationPriceRequest extends FormRequest
+class GetOrganizationRoomPriceRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -43,7 +43,7 @@ class GetOrganizationPriceRequest extends FormRequest
     public function getRehearsalPrice(): float
     {
         $rehearsalPrice = new RehearsalPrice(
-            $this->getOrganization()->id,
+            $this->getRoom()->id,
             Carbon::parse($this->get('starts_at'))->setSeconds(0),
             Carbon::parse($this->get('ends_at'))->setSeconds(0)
         );
@@ -52,12 +52,11 @@ class GetOrganizationPriceRequest extends FormRequest
     }
 
     /** @noinspection PhpIncompatibleReturnTypeInspection */
-
     /** @noinspection NullPointerExceptionInspection */
-    public function getOrganization(): Organization
+    public function getRoom(): OrganizationRoom
     {
         /** @phpstan-ignore-next-line */
-        return $this->route()->parameter('organization');
+        return $this->route()->parameter('room');
     }
 
     public function getReschedulingRehearsal(): ?Rehearsal

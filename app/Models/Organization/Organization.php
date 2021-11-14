@@ -9,7 +9,6 @@ use App\Models\GlobalScopes\OnlyActiveScope;
 use App\Models\HasAvatar;
 use App\Models\Rehearsal;
 use App\Models\User;
-use Belamov\PostgresRange\Ranges\TimeRange;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
 use Database\Factories\OrganizationFactory;
@@ -21,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -54,7 +54,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property-read User $owner
  * @property-read Collection|Rehearsal[] $rehearsals
  * @property-read int|null $rehearsals_count
- * @property-read Collection|OrganizationPrice[] $prices
+ * @property-read Collection|OrganizationRoomPrice[] $prices
  * @property-read int|null $prices_count
  * @property-read Collection|User[] $bannedUsers
  * @property-read int|null $banned_users_count
@@ -118,28 +118,14 @@ class Organization extends Model implements HasMedia
         return $this->hasMany(OrganizationRoom::class);
     }
 
-    public function isTimeAvailable(string $startsAt, string $endsAt, Rehearsal $rehearsal = null): bool
+    public function rehearsals(): HasManyThrough
     {
-        $query = $this->rehearsals()
-            ->whereRaw('time && ?::tsrange', [new TimestampRange($startsAt, $endsAt)]);
-
-        // if rehearsal was passed as a parameter, then we want to determine if this rehearsal
-        // is available for reschedule, so we must exclude it from query
-        if ($rehearsal !== null) {
-            $query->where('id', '!=', $rehearsal->id);
-        }
-
-        return $query->doesntExist();
+        return $this->hasManyThrough(Rehearsal::class, OrganizationRoom::class);
     }
 
-    public function rehearsals(): HasMany
+    public function prices(): HasManyThrough
     {
-        return $this->hasMany(Rehearsal::class);
-    }
-
-    public function prices(): HasMany
-    {
-        return $this->hasMany(OrganizationPrice::class);
+        return $this->hasManyThrough(OrganizationRoomPrice::class, OrganizationRoom::class);
     }
 
     public function bannedUsers(): BelongsToMany
@@ -153,14 +139,6 @@ class Organization extends Model implements HasMedia
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
-    }
-
-    public function hasPriceAt(int $day, string $startsAt, string $endsAt): bool
-    {
-        return OrganizationPrice::where('organization_id', $this->id)
-            ->where('day', $day)
-            ->whereRaw('time && ?::timerange', [new TimeRange($startsAt, $endsAt)])
-            ->exists();
     }
 
     public function isUserBanned(int $userId): bool

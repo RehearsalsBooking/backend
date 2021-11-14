@@ -78,6 +78,13 @@ class Band extends Model implements HasMedia
         'id',
     ];
 
+    protected static function booted(): void
+    {
+        static::created(static function (self $band) {
+            $band->addMember($band->admin_id);
+        });
+    }
+
     public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -90,7 +97,7 @@ class Band extends Model implements HasMedia
 
     public function futureRehearsals(): HasMany
     {
-        return $this->hasMany(Rehearsal::class)->whereRaw('time && ?', [
+        return $this->rehearsals()->whereRaw('time && ?', [
             new TimestampRange(Carbon::now(), null),
         ]);
     }

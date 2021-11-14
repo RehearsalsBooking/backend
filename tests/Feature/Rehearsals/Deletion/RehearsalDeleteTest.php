@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Rehearsals\Deletion;
 
+use App\Models\Rehearsal;
 use App\Models\User;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -20,13 +21,13 @@ class RehearsalDeleteTest extends TestCase
     {
         $rehearsal = $this->createRehearsalForUser($this->user);
 
-        $this->assertDatabaseHas('rehearsals', $rehearsal->toArray());
+        $this->assertDatabaseHas(Rehearsal::class, $rehearsal->getAttributes());
 
         $response = $this->json('delete', route('rehearsals.delete', $rehearsal->id));
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
 
-        $this->assertDatabaseMissing('rehearsals', $rehearsal->toArray());
+        $this->assertDatabaseMissing(Rehearsal::class, $rehearsal->getAttributes());
     }
 
     /** @test */
@@ -54,7 +55,6 @@ class RehearsalDeleteTest extends TestCase
         });
 
         $rehearsal = $this->createRehearsalForBandInFuture($band);
-        $rehearsal->registerBandMembersAsAttendees();
 
         $expectedAttendeesIds = $rehearsalAttendees->pluck('id')->toArray();
         $actualAttendeesIds = $rehearsal->attendees->pluck('id')->toArray();

@@ -3,7 +3,7 @@
 namespace Tests\Unit\Organizations;
 
 use App\Models\City;
-use App\Models\Organization\OrganizationPrice;
+use App\Models\Organization\OrganizationRoomPrice;
 use App\Models\Organization\OrganizationRoom;
 use App\Models\Organization\OrganizationUserBan;
 use App\Models\Rehearsal;
@@ -23,34 +23,6 @@ class OrganizationTest extends TestCase
         ]);
 
         $this->assertInstanceOf(User::class, $organization->owner);
-    }
-
-    /** @test */
-    public function organization_has_rehearsals(): void
-    {
-        $rehearsalsCount = 5;
-        $organization = $this->createOrganization();
-        $this->createRehearsalsForOrganization($organization, $rehearsalsCount);
-
-        $this->assertInstanceOf(Collection::class, $organization->rehearsals);
-        $this->assertEquals($rehearsalsCount, $organization->rehearsals()->count());
-        $this->assertInstanceOf(Rehearsal::class, $organization->rehearsals->first());
-    }
-
-    /** @test */
-    public function organization_has_prices(): void
-    {
-        $organization = $this->createOrganization();
-        foreach (range(0, 6) as $dayOfWeek) {
-            OrganizationPrice::factory()->create([
-                'organization_id' => $organization->id,
-                'day' => $dayOfWeek,
-            ]);
-        }
-
-        $this->assertInstanceOf(Collection::class, $organization->prices);
-        $this->assertEquals(7, $organization->prices()->count());
-        $this->assertInstanceOf(OrganizationPrice::class, $organization->prices->first());
     }
 
     /** @test */

@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\Management\OrganizationBansController;
-use App\Http\Controllers\Management\OrganizationPricesController;
+use App\Http\Controllers\Management\RoomPricesController;
 use App\Http\Controllers\Management\OrganizationsController;
 use App\Http\Controllers\Management\OrganizationStatisticsController;
 use App\Http\Controllers\Management\RehearsalsController;
+use App\Http\Controllers\Management\RoomsController;
 use Illuminate\Support\Facades\Route;
 
 // auth middleware is applied at route service provider
@@ -41,22 +42,6 @@ Route::prefix('organizations/')->name('organizations.')->group(static function (
 
             Route::post('avatar', [OrganizationsController::class, 'avatar'])->name('avatar');
 
-            Route::prefix('prices')->name('prices.')->group(static function () {
-                Route::get('/', [OrganizationPricesController::class, 'index'])
-                    ->name('list');
-
-                Route::post('/', [OrganizationPricesController::class, 'create'])
-                    ->name('create');
-
-                Route::delete('{price:id}', [OrganizationPricesController::class, 'delete'])
-                    ->where('price', '[0-9]+')
-                    ->name('delete');
-
-                Route::put('{price:id}', [OrganizationPricesController::class, 'update'])
-                    ->where('price', '[0-9]+')
-                    ->name('update');
-            });
-
             Route::prefix('bans')->name('bans.')->group(static function () {
                 Route::post('', [OrganizationBansController::class, 'create'])->name('create');
                 Route::delete('{ban}', [OrganizationBansController::class, 'delete'])
@@ -67,5 +52,37 @@ Route::prefix('organizations/')->name('organizations.')->group(static function (
 
             Route::get('/rehearsals', [RehearsalsController::class, 'index'])
                 ->name('rehearsals');
+
+            Route::prefix('rooms')->name('rooms.')->group(static function () {
+                Route::post('', [RoomsController::class, 'create'])->name('create');
+                Route::put('{room:id}', [RoomsController::class, 'update'])
+                    ->name('update')
+                    ->where('room', '[0-9]+');
+                Route::delete('{room:id}', [RoomsController::class, 'delete'])
+                    ->name('delete')
+                    ->where('room', '[0-9]+');
+            });
+        });
+});
+
+Route::prefix('rooms')->name('rooms.')->group(static function () {
+    Route::prefix('{room}')
+        ->where(['room' => '[0-9]+'])
+        ->group(static function () {
+            Route::prefix('prices')->name('prices.')->group(static function () {
+                Route::get('/', [RoomPricesController::class, 'index'])
+                    ->name('list');
+
+                Route::post('/', [RoomPricesController::class, 'create'])
+                    ->name('create');
+
+                Route::delete('{price:id}', [RoomPricesController::class, 'delete'])
+                    ->where('price', '[0-9]+')
+                    ->name('delete');
+
+                Route::put('{price:id}', [RoomPricesController::class, 'update'])
+                    ->where('price', '[0-9]+')
+                    ->name('update');
+            });
         });
 });

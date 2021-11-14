@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Http\Requests\Filters\FilterRequest;
-use App\Models\Organization\Organization;
+use App\Models\Organization\OrganizationRoom;
 use Belamov\PostgresRange\Casts\TimestampRangeCast;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Database\Factories\RehearsalFactory;
@@ -20,43 +20,42 @@ use Illuminate\Support\Carbon;
  * App\Models\Rehearsal.
  *
  * @property int $id
- * @property int $organization_id
  * @property int $user_id
+ * @property bool $is_paid
+ * @property float $price
+ * @property int|null $band_id
+ * @property TimestampRange $time
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Organization $organization
+ * @property-read OrganizationRoom $room
  * @property-read User $user
+ * @property-read Band|null $band
+ * @property-read Collection|User[] $attendees
+ * @property-read int|null $attendees_count
  * @method static Builder|Rehearsal newModelQuery()
  * @method static Builder|Rehearsal newQuery()
  * @method static Builder|Rehearsal query()
- * @method static Builder|Rehearsal whereCreatedAt($value)
- * @method static Builder|Rehearsal whereEndsAt($value)
- * @method static Builder|Rehearsal whereId($value)
- * @method static Builder|Rehearsal whereOrganizationId($value)
- * @method static Builder|Rehearsal whereStartsAt($value)
- * @method static Builder|Rehearsal whereUpdatedAt($value)
- * @method static Builder|Rehearsal whereUserId($value)
- * @mixin Eloquent
  * @method static Builder|Rehearsal filter(FilterRequest $filters)
- * @property bool $is_paid
- * @method static Builder|Rehearsal whereIsConfirmed($value)
- * @property int|null $band_id
- * @property-read Band|null $band
- * @method static Builder|Rehearsal whereBandId($value)
- * @property-read Collection|User[] $attendees
- * @property-read int|null $attendees_count
- * @property float $price
- * @method static Builder|Rehearsal wherePrice($value)
- * @property TimestampRange $time
- * @method static Builder|Rehearsal whereTime($value)
  * @method static Builder|Rehearsal completed()
  * @method static RehearsalFactory factory(...$parameters)
+ * @mixin Eloquent
+ * @property int $organization_room_id
+ * @method static Builder|Rehearsal whereBandId($value)
+ * @method static Builder|Rehearsal whereCreatedAt($value)
+ * @method static Builder|Rehearsal whereId($value)
  * @method static Builder|Rehearsal whereIsPaid($value)
+ * @method static Builder|Rehearsal whereOrganizationRoomId($value)
+ * @method static Builder|Rehearsal wherePrice($value)
+ * @method static Builder|Rehearsal whereTime($value)
+ * @method static Builder|Rehearsal whereUpdatedAt($value)
+ * @method static Builder|Rehearsal whereUserId($value)
  */
 class Rehearsal extends Model
 {
     use Filterable;
     use HasFactory;
+
+    public const MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES = 30;
 
     protected $guarded = ['id'];
 
@@ -65,7 +64,7 @@ class Rehearsal extends Model
         'time' => TimestampRangeCast::class,
     ];
 
-    protected static function booted()
+    protected static function booted(): void
     {
         static::created(static function (self $rehearsal) {
             $rehearsal->registerAttendees();
@@ -74,23 +73,13 @@ class Rehearsal extends Model
 
     private function registerAttendees(): void
     {
-        if ($this->band_id !== null) {
-            $this->registerBandMembersAsAttendees();
-
-            return;
-        }
-
-        $this->registerUserAsAttendee();
-    }
-
-    public function registerBandMembersAsAttendees(): void
-    {
-        if ($this->band === null) {
-            return;
-        }
-
-        $bandMembers = $this->band->members;
-        $this->attendees()->sync($bandMembers);
+        $attendees = array_unique(
+            array_merge(
+                [$this->user->id],
+                $this->band?->members->pluck('id')->toArray() ?? []
+            )
+        );
+        $this->attendees()->sync($attendees, true);
     }
 
     public function attendees(): BelongsToMany
@@ -98,14 +87,9 @@ class Rehearsal extends Model
         return $this->belongsToMany(User::class);
     }
 
-    public function registerUserAsAttendee(): void
+    public function room(): BelongsTo
     {
-        $this->attendees()->attach($this->user_id);
-    }
-
-    public function organization(): BelongsTo
-    {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(OrganizationRoom::class, 'organization_room_id');
     }
 
     public function user(): BelongsTo

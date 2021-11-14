@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Management\Prices;
 
-use App\Http\Resources\OrganizationPriceResource;
-use Illuminate\Http\Response;
+use App\Http\Resources\RoomPriceResource;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\Management\ManagementTestCase;
 
 class FetchPricesTest extends ManagementTestCase
 {
-    private string $endpoint = 'management.organizations.prices.list';
+    private string $endpoint = 'management.rooms.prices.list';
     private string $httpVerb = 'get';
 
     /** @test */
@@ -19,24 +19,25 @@ class FetchPricesTest extends ManagementTestCase
     }
 
     /** @test */
-    public function it_responds_with_forbidden_error_when_endpoint_is_accessed_not_by_organization_owner(): void
+    public function it_responds_with_forbidden_error_when_endpoint_is_accessed_not_by_organization_room_owner(): void
     {
         $ordinaryClient = $this->createUser();
 
         $managerOfAnotherOrganization = $this->createUser();
-        $this->createOrganizationForUser($managerOfAnotherOrganization);
+        $anotherOrganization = $this->createOrganizationForUser($managerOfAnotherOrganization);
+        $this->createOrganizationRoom($anotherOrganization);
 
         $this->actingAs($ordinaryClient);
-        $this->json($this->httpVerb, route($this->endpoint, $this->organization->id))
+        $this->json($this->httpVerb, route($this->endpoint, $this->organizationRoom->id))
             ->assertStatus(Response::HTTP_FORBIDDEN);
 
         $this->actingAs($managerOfAnotherOrganization);
-        $this->json($this->httpVerb, route($this->endpoint, $this->organization->id))
+        $this->json($this->httpVerb, route($this->endpoint, $this->organizationRoom->id))
             ->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     /** @test */
-    public function it_responds_with_404_when_unknown_organization_is_given(): void
+    public function it_responds_with_404_when_unknown_organization_room_is_given(): void
     {
         $this->actingAs($this->manager);
         $this->json($this->httpVerb, route($this->endpoint, 1000))
@@ -46,21 +47,21 @@ class FetchPricesTest extends ManagementTestCase
     }
 
     /** @test */
-    public function manager_of_organization_can_get_prices_of_his_organization(): void
+    public function manager_of_organization_can_get_prices_of_his_organization_room(): void
     {
-        $this->assertEquals(5, $this->organization->prices()->count());
+        $this->assertEquals(5, $this->organizationRoom->prices()->count());
 
         $this->actingAs($this->manager);
 
         $response = $this->json(
             $this->httpVerb,
-            route($this->endpoint, $this->organization->id)
+            route($this->endpoint, $this->organizationRoom->id)
         );
         $response->assertStatus(Response::HTTP_OK);
 
         $this->assertCount(5, $response->json('data'));
         $this->assertEquals(
-            OrganizationPriceResource::collection($this->organization->prices)->response()->getData(true),
+            RoomPriceResource::collection($this->organizationRoom->prices)->response()->getData(true),
             $response->json()
         );
     }
