@@ -38,6 +38,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|OrganizationRoom whereName($value)
  * @method static Builder|OrganizationRoom whereOrganizationId($value)
  * @method static Builder|OrganizationRoom whereUpdatedAt($value)
+ * @property-read Collection|Rehearsal[] $futureRehearsals
+ * @property-read int|null $future_rehearsals_count
  */
 class OrganizationRoom extends Model
 {
@@ -63,6 +65,13 @@ class OrganizationRoom extends Model
     public function rehearsals(): HasMany
     {
         return $this->hasMany(Rehearsal::class);
+    }
+
+    public function futureRehearsals(): HasMany
+    {
+        return $this->rehearsals()->whereRaw('time && ?', [
+            new TimestampRange(Carbon::now(), null),
+        ]);
     }
 
     public function isTimeAvailable(string $startsAt, string $endsAt, Rehearsal $rehearsal = null): bool
