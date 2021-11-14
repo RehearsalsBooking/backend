@@ -55,8 +55,10 @@ Route::prefix('organizations/')->name('organizations.')->group(static function (
 
             Route::prefix('rooms')->name('rooms.')->group(static function () {
                 Route::post('', [RoomsController::class, 'create'])->name('create');
-                Route::put('{room}', [RoomsController::class, 'update'])->name('update');
-                Route::delete('{room}', [RoomsController::class, 'delete'])
+                Route::put('{room:id}', [RoomsController::class, 'update'])
+                    ->name('update')
+                    ->where('room', '[0-9]+');
+                Route::delete('{room:id}', [RoomsController::class, 'delete'])
                     ->name('delete')
                     ->where('room', '[0-9]+');
             });
