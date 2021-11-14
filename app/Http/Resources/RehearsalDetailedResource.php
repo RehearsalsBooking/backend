@@ -22,7 +22,8 @@ class RehearsalDetailedResource extends JsonResource
             'is_individual' => $this->isIndividual(),
             'user' => new UserResource($this->user),
             'band' => new BandResource($this->band),
-            'organization' => new OrganizationResource($this->organization),
+            'organization' => new OrganizationResource($this->room->organization),
+            'room' => new RoomResource($this->room),
             'price' => $this->price,
             'is_paid' => $this->is_paid,
         ];

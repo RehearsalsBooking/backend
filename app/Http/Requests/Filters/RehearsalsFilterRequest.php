@@ -10,16 +10,17 @@ class RehearsalsFilterRequest extends FilterRequest
     protected function getRules(): array
     {
         return [
-            'from' => 'sometimes|date',
-            'to' => 'sometimes|date|after:from',
-            'organization_id' => "sometimes|numeric|exists:organizations,id",
-            'user_id' => 'sometimes|numeric|exists:users,id',
-            'band_id' => 'sometimes|numeric|exists:bands,id',
-            'band_ids' => 'sometimes|array',
+            'from' => 'nullable|date',
+            'to' => 'nullable|date|after:from',
+            'organization_id' => "nullable|numeric|exists:organizations,id",
+            'room_id' => "nullable|numeric|exists:organization_rooms,id",
+            'user_id' => 'nullable|numeric|exists:users,id',
+            'band_id' => 'nullable|numeric|exists:bands,id',
+            'band_ids' => 'nullable|array',
             'band_ids.*' => 'numeric|exists:bands,id',
-            'limit' => 'sometimes|numeric',
-            'is_individual' => 'sometimes|boolean',
-            'only_unpaid' => 'sometimes|boolean'
+            'limit' => 'nullable|numeric',
+            'is_individual' => 'nullable|boolean',
+            'only_unpaid' => 'nullable|boolean'
         ];
     }
 
@@ -61,6 +62,14 @@ class RehearsalsFilterRequest extends FilterRequest
         $this->builder->whereHas(
             'room',
             fn(Builder $query) => $query->where('organization_id', $organizationId)
+        );
+    }
+
+    protected function room_id(int $roomId): void
+    {
+        $this->builder->whereHas(
+            'room',
+            fn(Builder $query) => $query->where('organization_room_id', $roomId)
         );
     }
 
