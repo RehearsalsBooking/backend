@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Management\Organizations;
 
+use App\Models\Organization\OrganizationRoom;
 use Carbon\CarbonImmutable;
 use Database\Seeders\RehearsalsForStatisticsSeeder;
 use Illuminate\Http\Response;
@@ -18,21 +19,17 @@ class OrganizationStatisticsTest extends ManagementTestCase
     private string $totalEndpoint = 'management.organizations.statistics.total';
     private string $groupedEndpoint = 'management.organizations.statistics.grouped';
     private string $httpVerb = 'get';
+    private OrganizationRoom $blueRoom;
+    private OrganizationRoom $redRoom;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->blueRoom = $this->organizationRoom;
+        $this->redRoom = $this->createOrganizationRoom($this->organization);
         $this->startingDate = CarbonImmutable::create(2020, 1, 1, 10);
-        (new RehearsalsForStatisticsSeeder())->run(
-            $this->organizationRoom,
-            $this->startingDate,
-            self::YEARS,
-            self::MONTHS,
-            self::DAYS,
-            self::PRICE,
-            self::PER_DAY
-        );
     }
+
     /** @test */
     public function unauthorized_user_cannot_access_endpoint(): void
     {
@@ -79,8 +76,10 @@ class OrganizationStatisticsTest extends ManagementTestCase
      * @dataProvider invalidDataForGroupedStatisticsRequest
      * @param  array  $data
      */
-    public function it_responds_with_unprocessable_error_when_user_provided_invalid_data(array $data): void
-    {
+    public function it_responds_with_unprocessable_error_when_user_provided_invalid_data(
+        array $data,
+        string $incorrectField
+    ): void {
         $this->actingAs($this->manager);
         $response = $this->json(
             $this->httpVerb,
@@ -89,8 +88,8 @@ class OrganizationStatisticsTest extends ManagementTestCase
         );
 
         $response
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('interval');
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors($incorrectField);
     }
 
     /**
@@ -101,44 +100,71 @@ class OrganizationStatisticsTest extends ManagementTestCase
         return [
             [
                 [
-                ],
-            ],
-            [
-                [
                     'interval' => null,
                 ],
+                'interval'
             ],
             [
                 [
                     'interval' => 1,
                 ],
+                'interval'
             ],
             [
                 [
                     'interval' => 'by year',
                 ],
+                'interval'
+            ],
+            [
+                [
+                    'room_id' => 'text',
+                ],
+                'room_id'
+            ],
+            [
+                [
+                    'room_id' => 10000,
+                ],
+                'room_id'
             ],
         ];
     }
 
     /** @test */
-    public function it_returns_correct_total_statistics(): void
+    public function it_returns_correct_statistics(): void
     {
         $this->actingAs($this->manager);
+
+        $this->seedDatabaseWithStatisticsData($this->redRoom);
+        $this->seedDatabaseWithStatisticsData($this->blueRoom);
+
+        $this->testTotalStatistics();
+        $this->testTotalStatisticsGroupedByInterval();
+        $this->testGroupedByDayStatistics();
+        $this->testGroupedByMonthStatistics();
+        $this->testGroupedByYearStatistics();
+        $this->testGroupedByYearStatisticsRestrictedByInterval();
+        $this->testFilteredByRoomStatistics();
+        $this->testUnMatchedRoomStatistics();
+    }
+
+
+    protected function testTotalStatistics(): void
+    {
         $response = $this->json($this->httpVerb, route($this->totalEndpoint, $this->organization->id));
         $response->assertOk();
 
         $data = $response->json()[0];
 
         $expectedCountOfRehearsals = self::YEARS * self::MONTHS * self::DAYS * self::PER_DAY;
+        $expectedCountOfRehearsals *= 2; // for each room
         $this->assertEquals($expectedCountOfRehearsals, $data['count']);
         $this->assertEquals($expectedCountOfRehearsals * self::PRICE, $data['income']);
     }
 
-    /** @test */
-    public function it_returns_correct_total_statistics_restricted_by_interval(): void
+    protected function testTotalStatisticsGroupedByInterval(): void
     {
-        $this->actingAs($this->manager);
         $response = $this->json(
             $this->httpVerb,
             route($this->totalEndpoint, $this->organization->id),
@@ -149,6 +175,8 @@ class OrganizationStatisticsTest extends ManagementTestCase
         $data = $response->json()[0];
 
         $expectedCountOfRehearsals = 2 * self::DAYS * self::PER_DAY;
+        $expectedCountOfRehearsals *= 2; // for each room
+
         $this->assertEquals($expectedCountOfRehearsals, $data['count']);
         $this->assertEquals($expectedCountOfRehearsals * self::PRICE, $data['income']);
 
@@ -161,6 +189,8 @@ class OrganizationStatisticsTest extends ManagementTestCase
         $data = $response->json()[0];
 
         $expectedCountOfRehearsals = (self::YEARS * self::MONTHS * self::DAYS * self::PER_DAY) - 2 * self::DAYS * self::PER_DAY;
+        $expectedCountOfRehearsals *= 2; // for each room
+
         $this->assertEquals($expectedCountOfRehearsals, $data['count']);
         $this->assertEquals($expectedCountOfRehearsals * self::PRICE, $data['income']);
 
@@ -173,15 +203,14 @@ class OrganizationStatisticsTest extends ManagementTestCase
         $data = $response->json()[0];
 
         $expectedCountOfRehearsals = 5 * self::DAYS * self::PER_DAY;
+        $expectedCountOfRehearsals *= 2; // for each room
+
         $this->assertEquals($expectedCountOfRehearsals, $data['count']);
         $this->assertEquals($expectedCountOfRehearsals * self::PRICE, $data['income']);
     }
 
-    /** @test */
-    public function it_returns_correct_grouped_by_day_statistics(): void
+    protected function testGroupedByDayStatistics(): void
     {
-        $this->withoutExceptionHandling();
-        $this->actingAs($this->manager);
         $response = $this->json(
             $this->httpVerb,
             route($this->groupedEndpoint, $this->organization->id),
@@ -190,17 +219,21 @@ class OrganizationStatisticsTest extends ManagementTestCase
         $response->assertOk();
 
         $data = $response->json();
+
+        $expectedCount = self::PER_DAY;
+        $expectedCount *= 2;
+
+        $expectedIncome = self::PER_DAY * self::PRICE;
+        $expectedIncome *= 2;
+
         foreach ($data as $dayStatistics) {
-            $this->assertEquals(self::PER_DAY, $dayStatistics['count']);
-            $this->assertEquals(self::PER_DAY * self::PRICE, $dayStatistics['income']);
+            $this->assertEquals($expectedCount, $dayStatistics['count']);
+            $this->assertEquals($expectedIncome, $dayStatistics['income']);
         }
     }
 
-    /** @test */
-    public function it_returns_correct_grouped_by_month_statistics(): void
+    protected function testGroupedByMonthStatistics(): void
     {
-        $this->withoutExceptionHandling();
-        $this->actingAs($this->manager);
         $response = $this->json(
             $this->httpVerb,
             route($this->groupedEndpoint, $this->organization->id),
@@ -210,17 +243,16 @@ class OrganizationStatisticsTest extends ManagementTestCase
 
         $data = $response->json();
         $expectedCount = self::PER_DAY * self::DAYS;
+        $expectedCount *= 2; // for each room
+
         foreach ($data as $dayStatistics) {
             $this->assertEquals($expectedCount, $dayStatistics['count']);
             $this->assertEquals($expectedCount * self::PRICE, $dayStatistics['income']);
         }
     }
 
-    /** @test */
-    public function it_returns_correct_grouped_by_year_statistics(): void
+    protected function testGroupedByYearStatistics(): void
     {
-        $this->withoutExceptionHandling();
-        $this->actingAs($this->manager);
         $response = $this->json(
             $this->httpVerb,
             route($this->groupedEndpoint, $this->organization->id),
@@ -229,18 +261,18 @@ class OrganizationStatisticsTest extends ManagementTestCase
         $response->assertOk();
 
         $data = $response->json();
+
         $expectedCount = self::PER_DAY * self::DAYS * self::MONTHS;
+        $expectedCount *= 2;
+
         foreach ($data as $dayStatistics) {
             $this->assertEquals($expectedCount, $dayStatistics['count']);
             $this->assertEquals($expectedCount * self::PRICE, $dayStatistics['income']);
         }
     }
 
-    /** @test */
-    public function it_returns_correct_grouped_by_year_statistics_restricted_by_interval(): void
+    protected function testGroupedByYearStatisticsRestrictedByInterval(): void
     {
-        $this->withoutExceptionHandling();
-        $this->actingAs($this->manager);
         $response = $this->json(
             $this->httpVerb,
             route($this->groupedEndpoint, $this->organization->id),
@@ -254,10 +286,99 @@ class OrganizationStatisticsTest extends ManagementTestCase
 
         $data = $response->json();
         $this->assertCount(1, $data);
+
         $expectedCount = self::PER_DAY * self::DAYS * self::MONTHS;
+        $expectedCount *= 2;
+
         foreach ($data as $dayStatistics) {
             $this->assertEquals($expectedCount, $dayStatistics['count']);
             $this->assertEquals($expectedCount * self::PRICE, $dayStatistics['income']);
         }
+    }
+
+    protected function testFilteredByRoomStatistics(): void
+    {
+        //total
+        $response = $this->json(
+            $this->httpVerb,
+            route(
+                $this->totalEndpoint,
+                $this->organization->id
+            ),
+            ['room_id' => $this->redRoom->id]
+        );
+        $response->assertOk();
+
+        $data = $response->json()[0];
+
+        $expectedCountOfRehearsals = self::YEARS * self::MONTHS * self::DAYS * self::PER_DAY;
+
+        $this->assertEquals($expectedCountOfRehearsals, $data['count']);
+        $this->assertEquals($expectedCountOfRehearsals * self::PRICE, $data['income']);
+
+        //grouped
+        $response = $this->json(
+            $this->httpVerb,
+            route($this->groupedEndpoint, $this->organization->id),
+            ['interval' => 'day', 'room_id' => $this->blueRoom->id]
+        );
+        $response->assertOk();
+
+        $data = $response->json();
+
+        $expectedCount = self::PER_DAY;
+
+        $expectedIncome = self::PER_DAY * self::PRICE;
+
+        foreach ($data as $dayStatistics) {
+            $this->assertEquals($expectedCount, $dayStatistics['count']);
+            $this->assertEquals($expectedIncome, $dayStatistics['income']);
+        }
+    }
+
+    protected function seedDatabaseWithStatisticsData(OrganizationRoom $room): void
+    {
+        $seeder = new RehearsalsForStatisticsSeeder();
+        $seeder->run(
+            $room,
+            $this->startingDate,
+            self::YEARS,
+            self::MONTHS,
+            self::DAYS,
+            self::PRICE,
+            self::PER_DAY
+        );
+    }
+
+    private function testUnMatchedRoomStatistics(): void
+    {
+        $otherManager = $this->createUser();
+        $otherOrganization = $this->createOrganizationForUser($otherManager);
+        $otherRoom = $this->createOrganizationRoom($otherOrganization);
+
+        $this->seedDatabaseWithStatisticsData($otherRoom);
+
+        $this->actingAs($otherManager);
+
+        //total
+        $response = $this->json(
+            $this->httpVerb,
+            route(
+                $this->totalEndpoint,
+                $otherOrganization
+            ),
+            ['room_id' => $this->organizationRoom->id]
+        );
+        $response->assertOk();
+        $this->assertEmpty($response->json());
+
+        //grouped
+        $response = $this->json(
+            $this->httpVerb,
+            route($this->groupedEndpoint, $otherOrganization),
+            ['interval' => 'day', 'room_id' => $this->blueRoom->id]
+        );
+        $response->assertOk();
+        $this->assertEmpty($response->json());
     }
 }
