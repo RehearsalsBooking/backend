@@ -37,7 +37,11 @@ class BandMembersDeleteTest extends TestCase
             $this->band->memberships()->pluck('user_id')->toArray()
         );
 
-        $bandMembershipIdToDelete = $this->band->memberships()->inRandomOrder()->first(['id'])->id;
+        $bandMembershipIdToDelete = $this->band->memberships()
+            ->where('user_id', '!=',$this->bandAdmin->id)
+            ->inRandomOrder()
+            ->first(['id'])
+            ->id;
 
         $response = $this->json('delete', route('bands.members.delete', [$this->band->id, $bandMembershipIdToDelete]));
 

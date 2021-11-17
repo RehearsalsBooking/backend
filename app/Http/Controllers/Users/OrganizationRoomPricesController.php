@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\CalculateRehearsalPriceRequest;
 use App\Http\Resources\RoomPriceResource;
 use App\Models\Organization\OrganizationRoom;
+use App\Models\RehearsalPrice;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -32,7 +34,13 @@ class OrganizationRoomPricesController extends Controller
             );
         }
         try {
-            return response()->json($request->getRehearsalPrice());
+            $rehearsalPrice = new RehearsalPrice(
+                $request->getRoom()->id,
+                Carbon::parse($request->get('starts_at'))->setSeconds(0),
+                Carbon::parse($request->get('ends_at'))->setSeconds(0)
+            );
+
+            return response()->json($rehearsalPrice());
         } catch (InvalidRehearsalDurationException | PriceCalculationException $e) {
             return response()->json(
                 $e->getMessage(),

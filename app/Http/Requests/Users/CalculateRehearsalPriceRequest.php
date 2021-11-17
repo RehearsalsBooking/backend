@@ -35,22 +35,6 @@ class CalculateRehearsalPriceRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return float
-     * @throws InvalidRehearsalDurationException
-     * @throws PriceCalculationException
-     */
-    public function getRehearsalPrice(): float
-    {
-        $rehearsalPrice = new RehearsalPrice(
-            $this->getRoom()->id,
-            Carbon::parse($this->get('starts_at'))->setSeconds(0),
-            Carbon::parse($this->get('ends_at'))->setSeconds(0)
-        );
-
-        return $rehearsalPrice();
-    }
-
     /** @noinspection PhpIncompatibleReturnTypeInspection */
     /** @noinspection NullPointerExceptionInspection */
     public function getRoom(): OrganizationRoom
