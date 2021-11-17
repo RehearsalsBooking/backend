@@ -70,8 +70,6 @@ Route::prefix('rooms')->name('rooms.')->group(static function () {
         ->where(['room' => '[0-9]+'])
         ->group(static function () {
             Route::prefix('prices')->name('prices.')->group(static function () {
-                Route::get('/', [RoomPricesController::class, 'index'])
-                    ->name('list');
 
                 Route::post('/', [RoomPricesController::class, 'create'])
                     ->name('create');

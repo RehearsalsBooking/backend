@@ -10,7 +10,7 @@ use App\Models\RehearsalPrice;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
-class GetOrganizationRoomPriceRequest extends FormRequest
+class CalculateRehearsalPriceRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.

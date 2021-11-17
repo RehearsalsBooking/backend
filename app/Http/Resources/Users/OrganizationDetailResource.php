@@ -24,7 +24,6 @@ class OrganizationDetailResource extends JsonResource
             'gear' => $this->gear,
             'avatar' => $this->getAvatarUrls(),
             'owner' => new UserResource($this->owner),
-            'prices' => RoomPriceResource::collection($this->prices),
             'is_favorited' => $this->isUserFavorited((int) auth()->id()),
         ];
     }

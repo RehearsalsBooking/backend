@@ -19,16 +19,6 @@ class RoomPricesController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function index(OrganizationRoom $room): AnonymousResourceCollection
-    {
-        $this->authorize('manage', $room);
-
-        return RoomPriceResource::collection($room->prices);
-    }
-
-    /**
-     * @throws AuthorizationException
-     */
     public function create(
         CreateRoomPriceRequest $request,
         OrganizationRoom $room

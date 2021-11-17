@@ -28,9 +28,12 @@ Route::name('organizations.')->prefix('organizations')->group(static function ()
 });
 
 Route::name('rooms.')->prefix('rooms')->group(static function () {
-    Route::get('/{room}/price', [OrganizationRoomPricesController::class, 'index'])
+    Route::get('/{room}/prices/calculate', [OrganizationRoomPricesController::class, 'calculate'])
         ->where('room', '[0-9]+')
         ->name('price');
+    Route::get('/{room}/prices', [OrganizationRoomPricesController::class, 'index'])
+        ->where('room', '[0-9]+')
+        ->name('prices.list');
 });
 
 Route::name('favorite-organizations.')

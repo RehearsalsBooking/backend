@@ -39,23 +39,6 @@ class OrganizationsDetailInfoTest extends TestCase
     }
 
     /** @test */
-    public function users_can_view_prices_of_organization_in_detailed_information_about_organization(): void
-    {
-        $organization = $this->createOrganization();
-        $this->createPricesForOrganization($organization);
-
-        $response = $this->get(route('organizations.show', $organization->id));
-
-        $response->assertOk();
-
-        $this->assertArrayHasKey('prices', $response->json('data'));
-        $this->assertEquals(
-            (RoomPriceResource::collection($organization->prices))->response()->getData(true)['data'],
-            $response->json('data.prices')
-        );
-    }
-
-    /** @test */
     public function users_can_view_owner_info_in_detailed_view(): void
     {
         $owner = $this->createUser();

@@ -5,20 +5,21 @@ namespace App\Http\Controllers\Users;
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Users\GetOrganizationRoomPriceRequest;
-use App\Models\Organization\Organization;
+use App\Http\Requests\Users\CalculateRehearsalPriceRequest;
+use App\Http\Resources\RoomPriceResource;
 use App\Models\Organization\OrganizationRoom;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 class OrganizationRoomPricesController extends Controller
 {
     /**
-     * @param  GetOrganizationRoomPriceRequest  $request
+     * @param  CalculateRehearsalPriceRequest  $request
      * @param  OrganizationRoom  $room
      * @return JsonResponse
      */
-    public function index(GetOrganizationRoomPriceRequest $request, OrganizationRoom $room): JsonResponse
+    public function calculate(CalculateRehearsalPriceRequest $request, OrganizationRoom $room): JsonResponse
     {
         if (!$room->isTimeAvailable(
             $request->get('starts_at'),
@@ -38,5 +39,10 @@ class OrganizationRoomPricesController extends Controller
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
+    }
+
+    public function index(OrganizationRoom $room): AnonymousResourceCollection
+    {
+        return RoomPriceResource::collection($room->prices);
     }
 }
