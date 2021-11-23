@@ -17,7 +17,8 @@ class OrganizationStatisticsRequest extends FormRequest
         return [
             'from' => 'nullable|date',
             'to' => 'nullable|date',
-            'room_id' => 'nullable|integer|exists:organization_rooms,id'
+            'rooms' => 'nullable|array',
+            'rooms.*' => 'required|integer|exists:organization_rooms,id',
         ];
     }
 
@@ -33,12 +34,8 @@ class OrganizationStatisticsRequest extends FormRequest
         return null;
     }
 
-    public function roomId(): ?int
+    public function rooms(): array
     {
-        if ($this->has('room_id')) {
-            return (int) $this->get('room_id');
-        }
-
-        return null;
+        return $this->get('rooms', []);
     }
 }

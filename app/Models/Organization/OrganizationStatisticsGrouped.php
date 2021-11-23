@@ -11,10 +11,10 @@ class OrganizationStatisticsGrouped extends OrganizationStatistics
     public function __construct(
         Organization $organization,
         ?DateRange $interval,
-        ?int $roomId,
+        array $rooms,
         string $groupInterval
     ) {
-        parent::__construct($organization, $interval, $roomId);
+        parent::__construct($organization, $interval, $rooms);
         $this->groupInterval = $groupInterval;
     }
 
@@ -28,7 +28,7 @@ class OrganizationStatisticsGrouped extends OrganizationStatistics
             ->selectRaw('count(*) as count')
             ->selectRaw('sum(price) as income')
             ->when($this->interval !== null, $this->filterByInterval)
-            ->when($this->roomId !== null, $this->filterByRoom)
+            ->when(count($this->rooms) > 0, $this->filterByRoom)
             ->groupBy('x', 'organization_id')
             ->orderBy('x')
             ->get()

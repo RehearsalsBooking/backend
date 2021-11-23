@@ -22,7 +22,7 @@ class OrganizationStatisticsController extends Controller
     {
         $this->authorize('manage', $organization);
 
-        $statistics = new OrganizationStatistics($organization, $request->interval(), $request->roomId());
+        $statistics = new OrganizationStatistics($organization, $request->interval(), $request->rooms());
 
         return $statistics->get();
     }
@@ -40,7 +40,7 @@ class OrganizationStatisticsController extends Controller
         $statistics = new OrganizationStatisticsGrouped(
             $organization,
             $request->interval(),
-            $request->roomId(),
+            $request->rooms(),
             $request->groupInterval()
         );
 

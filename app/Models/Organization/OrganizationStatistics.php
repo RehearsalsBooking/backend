@@ -10,20 +10,20 @@ class OrganizationStatistics
 {
     protected Organization $organization;
     protected ?DateRange $interval;
-    protected ?int $roomId;
+    protected array $rooms;
     protected Closure $filterByInterval;
     protected Closure $filterByRoom;
 
     public function __construct(
         Organization $organization,
         ?DateRange $interval,
-        int $roomId = null
+        array $rooms = []
     ) {
         $this->organization = $organization;
         $this->interval = $interval;
-        $this->roomId = $roomId;
+        $this->rooms = $rooms;
         $this->filterByInterval = static fn(Builder $query) => $query->whereRaw('time <@ ?', [$interval]);
-        $this->filterByRoom = static fn(Builder $query) => $query->where('organization_room_id', $roomId);
+        $this->filterByRoom = static fn(Builder $query) => $query->whereIn('organization_room_id', $rooms);
     }
 
     /**
@@ -34,7 +34,7 @@ class OrganizationStatistics
         return $this->organization->rehearsals()
             ->selectRaw('sum(price) as income, count(*) as count')
             ->when($this->interval !== null, $this->filterByInterval)
-            ->when($this->roomId !== null, $this->filterByRoom)
+            ->when(count($this->rooms) > 0, $this->filterByRoom)
             ->groupBy('organization_id')
             ->get()
             ->toArray();

@@ -118,15 +118,27 @@ class OrganizationStatisticsTest extends ManagementTestCase
             ],
             [
                 [
-                    'room_id' => 'text',
+                    'rooms' => 'text',
                 ],
-                'room_id'
+                'rooms'
             ],
             [
                 [
-                    'room_id' => 10000,
+                    'rooms' => 1,
                 ],
-                'room_id'
+                'rooms'
+            ],
+            [
+                [
+                    'rooms' => ['text'],
+                ],
+                'rooms.0'
+            ],
+            [
+                [
+                    'rooms' => [100000],
+                ],
+                'rooms.0'
             ],
         ];
     }
@@ -305,7 +317,7 @@ class OrganizationStatisticsTest extends ManagementTestCase
                 $this->totalEndpoint,
                 $this->organization->id
             ),
-            ['room_id' => $this->redRoom->id]
+            ['rooms' => [$this->redRoom->id]]
         );
         $response->assertOk();
 
@@ -316,11 +328,28 @@ class OrganizationStatisticsTest extends ManagementTestCase
         $this->assertEquals($expectedCountOfRehearsals, $data['count']);
         $this->assertEquals($expectedCountOfRehearsals * self::PRICE, $data['income']);
 
+        $response = $this->json(
+            $this->httpVerb,
+            route(
+                $this->totalEndpoint,
+                $this->organization->id
+            ),
+            ['rooms' => [$this->redRoom->id, $this->blueRoom->id]]
+        );
+        $response->assertOk();
+
+        $data = $response->json()[0];
+
+        $expectedCountOfRehearsals = self::YEARS * self::MONTHS * self::DAYS * self::PER_DAY * 2;
+
+        $this->assertEquals($expectedCountOfRehearsals, $data['count']);
+        $this->assertEquals($expectedCountOfRehearsals * self::PRICE, $data['income']);
+
         //grouped
         $response = $this->json(
             $this->httpVerb,
             route($this->groupedEndpoint, $this->organization->id),
-            ['interval' => 'day', 'room_id' => $this->blueRoom->id]
+            ['interval' => 'day', 'rooms' => [$this->blueRoom->id]]
         );
         $response->assertOk();
 
@@ -329,6 +358,24 @@ class OrganizationStatisticsTest extends ManagementTestCase
         $expectedCount = self::PER_DAY;
 
         $expectedIncome = self::PER_DAY * self::PRICE;
+
+        foreach ($data as $dayStatistics) {
+            $this->assertEquals($expectedCount, $dayStatistics['count']);
+            $this->assertEquals($expectedIncome, $dayStatistics['income']);
+        }
+
+        $response = $this->json(
+            $this->httpVerb,
+            route($this->groupedEndpoint, $this->organization->id),
+            ['interval' => 'day', 'rooms' => [$this->blueRoom->id, $this->redRoom->id]]
+        );
+        $response->assertOk();
+
+        $data = $response->json();
+
+        $expectedCount = self::PER_DAY * 2;
+
+        $expectedIncome = self::PER_DAY * self::PRICE * 2;
 
         foreach ($data as $dayStatistics) {
             $this->assertEquals($expectedCount, $dayStatistics['count']);
@@ -367,7 +414,7 @@ class OrganizationStatisticsTest extends ManagementTestCase
                 $this->totalEndpoint,
                 $otherOrganization
             ),
-            ['room_id' => $this->organizationRoom->id]
+            ['rooms' => [$this->organizationRoom->id]]
         );
         $response->assertOk();
         $this->assertEmpty($response->json());
@@ -376,7 +423,7 @@ class OrganizationStatisticsTest extends ManagementTestCase
         $response = $this->json(
             $this->httpVerb,
             route($this->groupedEndpoint, $otherOrganization),
-            ['interval' => 'day', 'room_id' => $this->blueRoom->id]
+            ['interval' => 'day', 'rooms' => [$this->blueRoom->id]]
         );
         $response->assertOk();
         $this->assertEmpty($response->json());
