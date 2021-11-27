@@ -238,8 +238,8 @@ class DatabaseSeeder extends Seeder
                 ->create(['admin_id' => $this->userToLoginWith->id]);
             $this->users
                 ->random(self::BAND_MEMBERS_COUNT)
+                ->where('id', '!=', $this->userToLoginWith->id)
                 ->pluck('id')
-                ->where('id', '!=', $bandForLoggedInUser->admin_id)
                 ->each(
                     function (int $userId) use ($bandForLoggedInUser) {
                         $bandForLoggedInUser->addMember($userId);
