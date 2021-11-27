@@ -45,7 +45,7 @@ check-ci: check-environment composer-validate phpstan composer-require-check com
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run -e XDEBUG_MODE=coverage --rm "$(php_container_name)" /bin/bash -c "php artisan test --parallel --coverage-clover=/shared/coverage.xml"
 
 phpstan: check-environment ## Run phpstan
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" vendor/bin/phpstan analyse --memory-limit 0
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" php -d memory_limit=4G vendor/bin/phpstan analyse
 
 composer-validate: ## Validate composer file
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" composer validate --strict
