@@ -19,7 +19,13 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://rehearsals.local:8080', 'http://localhost', 'https://festic.ru'],
+    'allowed_origins' => [
+        'http://rehearsals.local:8080',
+        'http://localhost',
+        'https://festic.ru',
+        'https://app.festic.ru',
+        'https://demo.festic.ru'
+    ],
 
     'allowed_origins_patterns' => [],
 
