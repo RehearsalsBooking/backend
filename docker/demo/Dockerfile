@@ -4,7 +4,7 @@ RUN docker-php-ext-install opcache
 
 COPY docker/production/php.ini-production "$PHP_INI_DIR/php.ini"
 
-WORKDIR /app
+WORKDIR /app-demo
 
 COPY composer.lock composer.lock
 COPY composer.json composer.json
@@ -13,7 +13,7 @@ COPY .env.example .env
 RUN composer install --no-ansi --no-interaction --no-plugins --no-progress --optimize-autoloader --no-scripts --no-autoloader && \
     rm -rf /root/.composer
 
-COPY . /app
+COPY . /app-demo
 
 RUN composer dump-autoload --optimize
 
