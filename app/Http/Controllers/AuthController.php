@@ -45,6 +45,10 @@ class AuthController extends Controller
 
     public function test(): JsonResponse
     {
+        if (app()->environment('production')) {
+            return response()->json([], 404);
+        }
+
         $user = User::firstOrCreate(['email' => 'test@rehearsals.com'], ['name' => 'test user']);
         return response()->json([
             'user' => new UserResource($user),

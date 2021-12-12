@@ -74,4 +74,14 @@ class AuthTest extends TestCase
         );
         $this->assertEquals($testUser->id, $response->json('data.id'));
     }
+
+    /** @test */
+    public function it_doesnt_login_as_test_user_in_production_environment(): void
+    {
+        app()->detectEnvironment(function () {
+            return 'production';
+        });
+        $this->assertEquals('production', app()->environment());
+        $this->json('post', route('login.test'))->assertNotFound();
+    }
 }
