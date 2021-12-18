@@ -25,16 +25,16 @@ use PDOException;
 class DatabaseSeeder extends Seeder
 {
     public const CITIES_COUNT = 3;
-    public const ADMINS_COUNT = 5;
+    public const MANAGERS_COUNT = 5;
     public const USERS_COUNT = 20;
-    public const INDIVIDUAL_REHEARSALS_COUNT = 200;
+    public const INDIVIDUAL_REHEARSALS_COUNT = 400;
     public const BANDS_COUNT = 10;
-    public const REHEARSALS_PER_BAND_COUNT = 400;
+    public const REHEARSALS_PER_BAND_COUNT = 600;
     public const BAND_MEMBERS_COUNT = 4;
     /**
      * @var User|User[]|Collection|Model|\Illuminate\Support\Collection|mixed
      */
-    private mixed $admins;
+    private mixed $managers;
     /**
      * @var Collection|Model|mixed
      */
@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->command->info('creating admins');
-        $this->admins = $this->createAdmins(self::ADMINS_COUNT);
+        $this->managers = $this->createAdmins(self::MANAGERS_COUNT);
 
         $this->command->info('creating cities');
         $this->cities = $this->createCities();
@@ -101,7 +101,7 @@ class DatabaseSeeder extends Seeder
     protected function createOrganizations(): \Illuminate\Support\Collection
     {
         $createdOrganizations = collect();
-        foreach ($this->admins as $admin) {
+        foreach ($this->managers as $admin) {
             $newOrganizations = Organization::factory()->count(2)->create(
                 [
                     'owner_id' => $admin->id,
@@ -109,7 +109,7 @@ class DatabaseSeeder extends Seeder
                 ]
             );
             foreach ($newOrganizations as $newOrganization) {
-                foreach (range(0, random_int(1, 2)) as $item) {
+                foreach (range(1, random_int(1, 2)) as $item) {
                     OrganizationRoom::factory()->create([
                         'organization_id' => $newOrganization->id
                     ]);

@@ -20,7 +20,7 @@ class RehearsalFactory extends Factory
             'user_id' => User::factory(),
             'is_paid' => true,
             'time' => $this->getRehearsalTime(),
-            'price' => $this->faker->randomNumber(3),
+            'price' => $this->faker->numerify('%00'),
         ];
     }
 
@@ -29,15 +29,7 @@ class RehearsalFactory extends Factory
      */
     private function getRehearsalTime(): TimestampRange
     {
-        $startsAt = Carbon::create(
-            date('Y'),
-            $this->faker->numberBetween(max(date('m') - 1, 1), 12),
-            $this->faker->numberBetween(1, 25),
-            $this->faker->numberBetween(8, 20),
-            0,
-            0
-        );
-
+        $startsAt = Carbon::parse($this->faker->dateTimeBetween('-1 year', '+1 month'))->setSecond(0)->setMinute(0);
         $endsAt = $startsAt->copy()->addHours(2);
 
         return new TimestampRange($startsAt, $endsAt,);
