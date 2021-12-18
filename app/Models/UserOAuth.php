@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
+use Log;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
@@ -55,11 +56,16 @@ class UserOAuth extends Model
             ->first();
 
         if ($oAuthUser) {
+            Log::info('user found');
+            Log::info($oAuthUser->toArray());
             return $oAuthUser->user;
         }
 
         return DB::transaction(function () use ($provider, $socialiteUser) {
+            Log::info('user not found');
+            Log::info('creating user');
             $user = self::getOrCreateUserFromSocialite($socialiteUser);
+            Log::info($user->toArray());
             self::create([
                 'social_id' => $socialiteUser->getId(),
                 'social_type' => $provider,
