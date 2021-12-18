@@ -6,9 +6,9 @@ use App\Http\Requests\SocialiteLoginRequest;
 use App\Http\Resources\Users\UserResource;
 use App\Models\UserOAuth;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Contracts\User;
 use Laravel\Socialite\Facades\Socialite;
-use Log;
 use Throwable;
 
 class SocialiteLoginController extends Controller
