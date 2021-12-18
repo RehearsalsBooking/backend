@@ -57,6 +57,7 @@ class UserOAuth extends Model
 
         if ($oAuthUser) {
             Log::info('user found');
+            /** @phpstan-ignore-next-line */
             Log::info($oAuthUser->toArray());
             return $oAuthUser->user;
         }
@@ -65,6 +66,7 @@ class UserOAuth extends Model
             Log::info('user not found');
             Log::info('creating user');
             $user = self::getOrCreateUserFromSocialite($socialiteUser);
+            /** @phpstan-ignore-next-line */
             Log::info($user->toArray());
             self::create([
                 'social_id' => $socialiteUser->getId(),

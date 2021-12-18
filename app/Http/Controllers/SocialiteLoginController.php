@@ -8,6 +8,7 @@ use App\Models\UserOAuth;
 use Illuminate\Http\JsonResponse;
 use Laravel\Socialite\Contracts\User;
 use Laravel\Socialite\Facades\Socialite;
+use Log;
 use Throwable;
 
 class SocialiteLoginController extends Controller
@@ -21,6 +22,7 @@ class SocialiteLoginController extends Controller
         Log::info('provider');
         Log::info($request->getProvider());
         Log::info('token');
+        /** @phpstan-ignore-next-line */
         Log::info($request->getToken());
         Log::info('fetching user from provider');
 
@@ -37,6 +39,7 @@ class SocialiteLoginController extends Controller
         $user = UserOAuth::fromSocialiteUser($oauthUser, $request->getProvider());
 
         Log::info('user to login');
+        /** @phpstan-ignore-next-line */
         Log::info($user->toArray());
 
         return response()->json([
