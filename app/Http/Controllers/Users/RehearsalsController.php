@@ -12,6 +12,7 @@ use App\Http\Resources\RehearsalDetailedResource;
 use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
 use App\Models\RehearsalPrice;
+use App\Models\RehearsalTimeValidator;
 use Carbon\Carbon;
 use DB;
 use Exception;
@@ -56,8 +57,10 @@ class RehearsalsController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function create(CreateRehearsalRequest $request): RehearsalResource|JsonResponse
-    {
+    public function create(
+        CreateRehearsalRequest $request,
+        RehearsalTimeValidator $rehearsalTimeValidator
+    ): RehearsalResource|JsonResponse {
         $this->authorize(
             'create',
             [Rehearsal::class, $request->get('band_id')]
@@ -71,6 +74,12 @@ class RehearsalsController extends Controller
         if ($room->isUserBanned((int) auth()->id())) {
             return response()->json('Вы забанены в этой организации', Response::HTTP_FORBIDDEN);
         }
+
+        $rehearsalTimeValidator->validateThatSupposedAttendeesAreAvailable($request->get('starts_at'),
+            $request->get('ends_at'),
+            (int) auth()->id(),
+            $request->get('band_id')
+        );
 
         if (!$room->isTimeAvailable(
             $request->get('starts_at'),
@@ -90,7 +99,7 @@ class RehearsalsController extends Controller
                 ['price' => $rehearsalPrice()],
                 $request->getAttributes()
             ));
-        } catch (PriceCalculationException | InvalidRehearsalDurationException $exception) {
+        } catch (PriceCalculationException|InvalidRehearsalDurationException $exception) {
             return response()->json($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -111,7 +120,7 @@ class RehearsalsController extends Controller
 
         try {
             $rehearsal->update($request->getRehearsalAttributes());
-        } catch (PriceCalculationException | InvalidRehearsalDurationException $exception) {
+        } catch (PriceCalculationException|InvalidRehearsalDurationException $exception) {
             return response()->json($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 

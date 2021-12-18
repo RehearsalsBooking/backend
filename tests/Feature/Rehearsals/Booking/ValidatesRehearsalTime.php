@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Rehearsals\Booking;
 
-use App\Models\Organization\Organization;
+use App\Exceptions\User\UserHasAnotherRehearsalAtThatTime;
+use App\Models\Band;
 use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
+use App\Models\User;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -238,6 +240,121 @@ trait ValidatesRehearsalTime
                     $additionalParameters
                 )
             )->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    public function performTestsWhenUserHasAnotherRehearsalAtThatTime(
+        string $method,
+        string $endpoint,
+    ): void {
+        $availableRoom = OrganizationRoom::factory()->create();
+        $this->createPricesForOrganization($availableRoom->organization);
+
+        $user = User::factory()->create();
+
+        Rehearsal::factory()->create([
+            'time' => $this->getTimestampRange(
+                $this->getDateTimeAt(9, 0),
+                $this->getDateTimeAt(11, 0),
+            ),
+            'user_id' => $user->id,
+        ]);
+
+        $unavailableTime = [
+            [
+                'starts_at' => $this->getDateTimeAt(8, 00),
+                'ends_at' => $this->getDateTimeAt(10, 00),
+            ],
+            [
+                'starts_at' => $this->getDateTimeAt(10, 00),
+                'ends_at' => $this->getDateTimeAt(12, 00),
+            ],
+            [
+                'starts_at' => $this->getDateTimeAt(8, 00),
+                'ends_at' => $this->getDateTimeAt(12, 00),
+            ],
+            [
+                'starts_at' => $this->getDateTimeAt(9, 30),
+                'ends_at' => $this->getDateTimeAt(10, 30),
+            ],
+        ];
+
+        $this->actingAs($user);
+
+        foreach ($unavailableTime as $rehearsalTime) {
+            $response = $this->json(
+                $method,
+                $endpoint,
+                [
+                    'starts_at' => $rehearsalTime['starts_at'],
+                    'ends_at' => $rehearsalTime['ends_at'],
+                    'organization_room_id' => $availableRoom->id,
+                ],
+            );
+            $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->assertEquals(
+                (new UserHasAnotherRehearsalAtThatTime())->render()->getData(),
+                $response->baseResponse->getData()
+            );
+        }
+    }
+
+    public function performTestsWhenBandMembersAreUnavailable(
+        string $method,
+        string $endpoint,
+    ): void {
+        $availableRoom = OrganizationRoom::factory()->create();
+        $this->createPricesForOrganization($availableRoom->organization);
+
+        $user = User::factory()->create();
+        $band = Band::factory()->create(['admin_id' => $user->id]);
+        $bandMember = User::factory()->create();
+        $band->addMember($bandMember->id);
+        Rehearsal::factory()->create([
+            'time' => $this->getTimestampRange(
+                $this->getDateTimeAt(9, 0),
+                $this->getDateTimeAt(11, 0),
+            ),
+            'user_id' => $bandMember->id,
+        ]);
+
+        $unavailableTime = [
+            [
+                'starts_at' => $this->getDateTimeAt(8, 00),
+                'ends_at' => $this->getDateTimeAt(10, 00),
+            ],
+            [
+                'starts_at' => $this->getDateTimeAt(10, 00),
+                'ends_at' => $this->getDateTimeAt(12, 00),
+            ],
+            [
+                'starts_at' => $this->getDateTimeAt(8, 00),
+                'ends_at' => $this->getDateTimeAt(12, 00),
+            ],
+            [
+                'starts_at' => $this->getDateTimeAt(9, 30),
+                'ends_at' => $this->getDateTimeAt(10, 30),
+            ],
+        ];
+
+        $this->actingAs($user);
+
+        foreach ($unavailableTime as $rehearsalTime) {
+            $response = $this->json(
+                $method,
+                $endpoint,
+                [
+                    'starts_at' => $rehearsalTime['starts_at'],
+                    'ends_at' => $rehearsalTime['ends_at'],
+                    'organization_room_id' => $availableRoom->id,
+                    'band_id' => $band->id
+                ],
+            );
+            $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $this->assertStringContainsString(
+                $bandMember->name,
+                $response->baseResponse->getData()
+            );
         }
     }
 

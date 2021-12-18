@@ -200,4 +200,32 @@ class PricesTest extends TestCase
 
         $response->assertOk();
     }
+
+    /** @test */
+    public function it_responds_with_validation_error_when_user_booking_rehearsal_has_another_rehearsal_at_that_time(
+    ): void
+    {
+        $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
+        $this->createPricesForOrganization($organization);
+
+        $this->performTestsWhenUserHasAnotherRehearsalAtThatTime(
+            'get',
+            route('rooms.price', $room),
+        );
+    }
+
+    /** @test */
+    public function it_responds_with_validation_error_when_members_of_band_are_not_available(
+    ): void
+    {
+        $organization = $this->createOrganization();
+        $room = $this->createOrganizationRoom($organization);
+        $this->createPricesForOrganization($organization);
+
+        $this->performTestsWhenBandMembersAreUnavailable(
+            'get',
+            route('rooms.price', $room),
+        );
+    }
 }

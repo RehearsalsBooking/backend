@@ -147,4 +147,24 @@ class RehearsalBookingValidationTest extends TestCase
 
         $this->assertEquals(4, Rehearsal::count());
     }
+
+    /** @test */
+    public function it_responds_with_validation_error_when_user_booking_rehearsal_has_another_rehearsal_at_that_time(
+    ): void
+    {
+        $this->performTestsWhenUserHasAnotherRehearsalAtThatTime(
+            'post',
+            route('rehearsals.create'),
+        );
+    }
+
+    /** @test */
+    public function it_responds_with_validation_error_when_members_of_band_are_not_available(
+    ): void
+    {
+        $this->performTestsWhenBandMembersAreUnavailable(
+            'post',
+            route('rehearsals.create'),
+        );
+    }
 }

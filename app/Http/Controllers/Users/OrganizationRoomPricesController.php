@@ -9,6 +9,7 @@ use App\Http\Requests\Users\CalculateRehearsalPriceRequest;
 use App\Http\Resources\RoomPriceResource;
 use App\Models\Organization\OrganizationRoom;
 use App\Models\RehearsalPrice;
+use App\Models\RehearsalTimeValidator;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -21,8 +22,11 @@ class OrganizationRoomPricesController extends Controller
      * @param  OrganizationRoom  $room
      * @return JsonResponse
      */
-    public function calculate(CalculateRehearsalPriceRequest $request, OrganizationRoom $room): JsonResponse
-    {
+    public function calculate(
+        CalculateRehearsalPriceRequest $request,
+        OrganizationRoom $room,
+        RehearsalTimeValidator $rehearsalTimeValidator
+    ): JsonResponse {
         if (!$room->isTimeAvailable(
             $request->get('starts_at'),
             $request->get('ends_at'),
@@ -33,6 +37,15 @@ class OrganizationRoomPricesController extends Controller
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
+
+        $rehearsalTimeValidator->validateThatSupposedAttendeesAreAvailable(
+            $request->get('starts_at'),
+            $request->get('ends_at'),
+            (int) auth()->id(),
+            $request->get('band_id'),
+            $request->get('rehearsal_id')
+        );
+
         try {
             $rehearsalPrice = new RehearsalPrice(
                 $request->getRoom()->id,
@@ -41,7 +54,7 @@ class OrganizationRoomPricesController extends Controller
             );
 
             return response()->json($rehearsalPrice());
-        } catch (InvalidRehearsalDurationException | PriceCalculationException $e) {
+        } catch (InvalidRehearsalDurationException|PriceCalculationException $e) {
             return response()->json(
                 $e->getMessage(),
                 Response::HTTP_UNPROCESSABLE_ENTITY
