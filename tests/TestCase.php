@@ -16,8 +16,7 @@ use App\Models\User;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Database\Eloquent\Model;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -342,5 +341,15 @@ abstract class TestCase extends BaseTestCase
         return OrganizationRoom::factory()->create([
             'organization_id' => $organization->id,
         ]);
+    }
+
+    protected function getDateTimeAtTuesday(int $hour, int $minute): CarbonImmutable
+    {
+        return CarbonImmutable::create(2025, 1, 7, $hour, $minute);
+    }
+
+    protected function getDateTimeAtMonday(int $hour, int $minute): CarbonImmutable
+    {
+        return CarbonImmutable::create(2025, 1, 6, $hour, $minute);
     }
 }

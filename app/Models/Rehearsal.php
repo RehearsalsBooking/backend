@@ -56,6 +56,7 @@ class Rehearsal extends Model
     use HasFactory;
 
     public const MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES = 30;
+    public const MAXIMUM_REHEARSAL_DURATION_IN_MINUTES = 60 * 8; // 8 hours
 
     protected $guarded = ['id'];
 

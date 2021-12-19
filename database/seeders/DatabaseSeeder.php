@@ -4,8 +4,8 @@
 
 namespace Database\Seeders;
 
-use App\Exceptions\User\TimeIsUnavailableForUsers;
-use App\Exceptions\User\UserHasAnotherRehearsalAtThatTime;
+use App\Exceptions\User\TimeIsUnavailableForUsersException;
+use App\Exceptions\User\UserHasAnotherRehearsalAtThatTimeException;
 use App\Models\Band;
 use App\Models\City;
 use App\Models\Genre;
@@ -169,7 +169,7 @@ class DatabaseSeeder extends Seeder
                     $rehearsal->band_id,
                 );
                 $rehearsal->save();
-            } catch (PDOException|QueryException|TimeIsUnavailableForUsers|UserHasAnotherRehearsalAtThatTime) {
+            } catch (PDOException|QueryException|TimeIsUnavailableForUsersException|UserHasAnotherRehearsalAtThatTimeException) {
                 // because rehearsal time is completely random
                 // there is possible overlapping
                 // so we just continue creating, if that occurs
@@ -237,7 +237,7 @@ class DatabaseSeeder extends Seeder
                         $rehearsal->band_id,
                     );
                     $rehearsal->save();
-                } catch (PDOException|QueryException|TimeIsUnavailableForUsers|UserHasAnotherRehearsalAtThatTime) {
+                } catch (PDOException|QueryException|TimeIsUnavailableForUsersException|UserHasAnotherRehearsalAtThatTimeException) {
                     // because rehearsal time is completely random
                     // there is possible overlapping
                     // so we just continue creating, if that occurs

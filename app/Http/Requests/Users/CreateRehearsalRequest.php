@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests\Users;
 
-use App\Models\Organization\OrganizationRoom;
+use App\Models\RehearsalDataProvider;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateRehearsalRequest extends FormRequest
+class CreateRehearsalRequest extends FormRequest implements RehearsalDataProvider
 {
     /**
      * Get the validation rules that apply to the request.
@@ -37,20 +37,39 @@ class CreateRehearsalRequest extends FormRequest
     public function getAttributes(): array
     {
         return [
-            'time' => new TimestampRange(
-                Carbon::parse($this->get('starts_at'))->setSeconds(0)->toDateTimeString(),
-                Carbon::parse($this->get('ends_at'))->setSeconds(0)->toDateTimeString(),
-            ),
-            'user_id' => auth()->id(),
+            'time' => $this->time(),
+            'user_id' => $this->bookedUserId(),
             'is_paid' => false,
-            'band_id' => $this->get('band_id'),
-            'organization_room_id' => $this->get('organization_room_id'),
+            'band_id' => $this->bandId(),
+            'organization_room_id' => $this->roomId(),
         ];
     }
 
-    public function room(): OrganizationRoom
+    public function id(): ?int
     {
-        /** @phpstan-ignore-next-line  */
-        return OrganizationRoom::find($this->get('organization_room_id'));
+        return null;
+    }
+
+    public function time(): TimestampRange
+    {
+        return new TimestampRange(
+            Carbon::parse($this->get('starts_at'))->setSeconds(0)->toDateTimeString(),
+            Carbon::parse($this->get('ends_at'))->setSeconds(0)->toDateTimeString(),
+        );
+    }
+
+    public function bandId(): ?int
+    {
+        return $this->get('band_id');
+    }
+
+    public function bookedUserId(): ?int
+    {
+        return (int) auth()->id();
+    }
+
+    public function roomId(): int
+    {
+        return $this->get('organization_room_id');
     }
 }

@@ -2,15 +2,7 @@
 
 namespace App\Http\Requests\Users;
 
-use App\Exceptions\User\InvalidRehearsalDurationException;
-use App\Exceptions\User\PriceCalculationException;
-use App\Models\Organization\OrganizationRoom;
-use App\Models\Rehearsal;
-use App\Models\RehearsalPrice;
-use Carbon\Carbon;
-use Illuminate\Foundation\Http\FormRequest;
-
-class CalculateRehearsalPriceRequest extends FormRequest
+class CalculateRehearsalPriceRequest extends CreateRehearsalRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -19,35 +11,17 @@ class CalculateRehearsalPriceRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'starts_at' => [
-                'bail',
-                'required',
-                'date',
-                'after:now',
-            ],
-            'ends_at' => [
-                'bail',
-                'required',
-                'date',
-                'after:starts_at',
-            ],
-        ];
+        return array_merge(
+            parent::rules(),
+            [
+                'rehearsal_id' => 'bail|nullable|numeric|exists:rehearsals,id',
+            ]
+        );
     }
 
-    /** @noinspection PhpIncompatibleReturnTypeInspection */
-    /** @noinspection NullPointerExceptionInspection */
-    public function getRoom(): OrganizationRoom
+    public function id(): ?int
     {
-        /** @phpstan-ignore-next-line */
-        return $this->route()->parameter('room');
+        return $this->get('rehearsal_id');
     }
 
-    public function getReschedulingRehearsal(): ?Rehearsal
-    {
-        if (!$this->has('rehearsal_id')) {
-            return null;
-        }
-        return Rehearsal::firstWhere('id', $this->get('rehearsal_id'));
-    }
 }
