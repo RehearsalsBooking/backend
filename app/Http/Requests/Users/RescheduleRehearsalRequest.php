@@ -2,15 +2,13 @@
 
 namespace App\Http\Requests\Users;
 
-use App\Exceptions\User\InvalidRehearsalDurationException;
-use App\Exceptions\User\PriceCalculationException;
 use App\Models\Rehearsal;
-use App\Models\RehearsalPrice;
+use App\Models\RehearsalDataProvider;
 use Belamov\PostgresRange\Ranges\TimestampRange;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RescheduleRehearsalRequest extends FormRequest
+class RescheduleRehearsalRequest extends FormRequest implements RehearsalDataProvider
 {
     private Rehearsal $rehearsal;
 
@@ -44,26 +42,39 @@ class RescheduleRehearsalRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return array
-     * @throws PriceCalculationException
-     * @throws InvalidRehearsalDurationException
-     */
     public function getRehearsalAttributes(): array
     {
-        $rehearsalPrice = new RehearsalPrice(
-            $this->rehearsal->organization_room_id,
-            Carbon::parse($this->get('starts_at')),
-            Carbon::parse($this->get('ends_at'))
-        );
-
         return [
-            'time' => new TimestampRange(
-                Carbon::parse($this->get('starts_at'))->setSeconds(0)->toDateTimeString(),
-                Carbon::parse($this->get('ends_at'))->setSeconds(0)->toDateTimeString()
-            ),
-            'user_id' => auth()->id(),
-            'price' => $rehearsalPrice(),
+            'time' => $this->time(),
+            'user_id' => $this->bookedUserId(),
         ];
+    }
+
+    public function id(): ?int
+    {
+        return $this->rehearsal->id;
+    }
+
+    public function time(): TimestampRange
+    {
+        return new TimestampRange(
+            Carbon::parse($this->get('starts_at'))->setSeconds(0)->toDateTimeString(),
+            Carbon::parse($this->get('ends_at'))->setSeconds(0)->toDateTimeString()
+        );
+    }
+
+    public function bandId(): ?int
+    {
+        return $this->rehearsal->band_id;
+    }
+
+    public function bookedUserId(): ?int
+    {
+        return (int) auth()->id();
+    }
+
+    public function roomId(): int
+    {
+        return $this->rehearsal->organization_room_id;
     }
 }

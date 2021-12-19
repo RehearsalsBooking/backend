@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 
-class TimeIsUnavailableForUsers extends Exception
+class TimeIsUnavailableForUsersException extends Exception
 {
     protected Collection $users;
 

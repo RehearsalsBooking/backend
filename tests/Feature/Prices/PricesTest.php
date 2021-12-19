@@ -2,12 +2,9 @@
 
 namespace Tests\Feature\Prices;
 
-use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
 use Belamov\PostgresRange\Ranges\TimeRange;
-use Carbon\Carbon;
-use Tests\Feature\Rehearsals\Booking\ValidatesRehearsalTime;
 use Tests\TestCase;
 
 /**
@@ -15,14 +12,13 @@ use Tests\TestCase;
  */
 class PricesTest extends TestCase
 {
-    use ValidatesRehearsalTime;
-
     private OrganizationRoom $organizationRoom;
-    private $endpoint = 'rooms.price';
+    private string $endpoint;
 
     protected function setUp(): void
     {
         parent::setUp();
+        $this->endpoint = route('rehearsals.price');
 
         $organization = $this->createOrganization();
         $this->organizationRoom = $this->createOrganizationRoom($organization);
@@ -62,10 +58,11 @@ class PricesTest extends TestCase
         // 20-00 300
         $response = $this->json(
             'get',
-            route($this->endpoint, $this->organizationRoom),
+            $this->endpoint,
             [
                 'starts_at' => $this->getDateTimeAtMonday(10, 00),
                 'ends_at' => $this->getDateTimeAtMonday(11, 30),
+                'organization_room_id' => $this->organizationRoom->id
             ]
         );
         $response->assertOk();
@@ -74,99 +71,29 @@ class PricesTest extends TestCase
         $this->assertEquals(100 * 1.5, $fetchedPrice);
     }
 
-    private function getDateTimeAtMonday(int $hour, int $minute): Carbon
-    {
-        return Carbon::create(2030, 1, 7, $hour, $minute);
-    }
-
     /** @test */
-    public function it_responses_with_404_when_unknown_organization_room_is_given(): void
+    public function it_responses_with_422_when_unknown_organization_room_is_given(): void
     {
-        $this->get(route($this->endpoint, 1000),
+        $this->getJson(
+            $this->endpoint,
             [
                 'starts_at' => $this->getDateTimeAtMonday(10, 00),
                 'ends_at' => $this->getDateTimeAtMonday(11, 30),
-            ])->assertNotFound();
-        $this->get(route('rooms.price', 'unknown'),
+                'organization_room_id' => 1000
+            ]
+        )
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('organization_room_id');
+        $this->getJson(
+            $this->endpoint,
             [
                 'starts_at' => $this->getDateTimeAtMonday(10, 00),
                 'ends_at' => $this->getDateTimeAtMonday(11, 30),
-            ])->assertNotFound();
-    }
-
-    /**
-     * @test
-     * @dataProvider getDataWithInvalidFormat
-     * @param $data
-     * @param $keyWithError
-     */
-    public function it_responds_with_validation_error_when_user_provided_invalid_time_parameters(
-        $data,
-        $keyWithError
-    ): void {
-        $room = $this->createOrganizationRoom($this->createOrganization());
-
-        $response = $this->json(
-            'get',
-            route('rooms.price', $room),
-            $data
-        );
-
-        $response->assertJsonValidationErrors($keyWithError);
-    }
-
-    /**
-     * @test
-     */
-    public function it_responds_with_validation_error_when_user_provided_time_when_organization_room_is_closed(): void
-    {
-        $room = $this->createOrganizationRoom($this->createOrganization());
-
-        $this->performTestWhenRoomIsClosed(
-            'get',
-            route('rooms.price', $room),
-            $room,
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function it_responds_with_validation_error_when_user_provided_incorrect_rehearsal_duration(): void
-    {
-        $room = $this->createOrganizationRoom($this->createOrganization());
-
-        $this->performTestsWhenUserProvidedIncorrectRehearsalDuration(
-            'get',
-            route('rooms.price', $room),
-            $room
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function it_responds_with_validation_error_when_user_tries_to_book_rehearsal_longer_than_24_hours(): void
-    {
-        $room = $this->createOrganizationRoom($this->createOrganization());
-
-        $this->performTestsWhenUserProvidesRehearsalTimeLongerThan24Hours(
-            'get',
-            route('rooms.price', $room),
-            $room,
-        );
-    }
-
-    /** @test */
-    public function it_responds_with_validation_error_when_user_selected_unavailable_time(): void
-    {
-        $room = $this->createOrganizationRoom($this->createOrganization());
-
-        $this->performTestsWhenUserSelectedUnavailableTime(
-            'get',
-            route('rooms.price', $room),
-            $room,
-        );
+                'organization_room_id' => 'unknown'
+            ]
+        )
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('organization_room_id');
     }
 
     /** @test */
@@ -190,42 +117,15 @@ class PricesTest extends TestCase
 
         $response = $this->json(
             'get',
-            route('rooms.price', $room),
+            $this->endpoint,
             [
                 'starts_at' => $newRehearsalStartTime->toDateTimeString(),
                 'ends_at' => $newRehearsalEndTime->toDateTimeString(),
-                'rehearsal_id' => $rehearsal->id
+                'rehearsal_id' => $rehearsal->id,
+                'organization_room_id' => $room->id
             ]
         );
 
         $response->assertOk();
-    }
-
-    /** @test */
-    public function it_responds_with_validation_error_when_user_booking_rehearsal_has_another_rehearsal_at_that_time(
-    ): void
-    {
-        $organization = $this->createOrganization();
-        $room = $this->createOrganizationRoom($organization);
-        $this->createPricesForOrganization($organization);
-
-        $this->performTestsWhenUserHasAnotherRehearsalAtThatTime(
-            'get',
-            route('rooms.price', $room),
-        );
-    }
-
-    /** @test */
-    public function it_responds_with_validation_error_when_members_of_band_are_not_available(
-    ): void
-    {
-        $organization = $this->createOrganization();
-        $room = $this->createOrganizationRoom($organization);
-        $this->createPricesForOrganization($organization);
-
-        $this->performTestsWhenBandMembersAreUnavailable(
-            'get',
-            route('rooms.price', $room),
-        );
     }
 }

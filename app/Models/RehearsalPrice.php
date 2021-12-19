@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
 use App\Models\Organization\OrganizationRoomPrice;
 use Belamov\PostgresRange\Ranges\TimeRange;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
 /**
@@ -20,35 +20,20 @@ use Illuminate\Support\Collection;
 class RehearsalPrice
 {
     private int $uncalculatedMinutes;
-    private const MINUTES_IN_ONE_DAY = 60 * 24;
 
-    /**
-     * @throws InvalidRehearsalDurationException
-     */
     public function __construct(
         private int $organizationRoomId,
-        private Carbon $start,
-        private Carbon $end
+        private CarbonImmutable $start,
+        private CarbonImmutable $end
     ) {
         $this->uncalculatedMinutes = $end->diffInMinutes($start);
 
         if ($this->isEndOfTheDay($end)) {
             $this->uncalculatedMinutes++;
         }
-
-        if ($this->uncalculatedMinutes >= self::MINUTES_IN_ONE_DAY) {
-            throw new InvalidRehearsalDurationException('Длительность репетиции не может превышать 24 часа');
-        }
-
-        if ($this->uncalculatedMinutes % Rehearsal::MEASUREMENT_OF_REHEARSAL_DURATION_IN_MINUTES !== 0) {
-            throw new InvalidRehearsalDurationException('Некорректная длительность репетиции');
-        }
     }
 
     /**
-     * Calculates price of rehearsal.
-     *
-     * @return float
      * @throws PriceCalculationException
      */
     public function __invoke(): float
@@ -65,37 +50,30 @@ class RehearsalPrice
     }
 
     /**
-     * @param  int  $day
-     * @param  Carbon  $start
-     * @param  Carbon  $end
-     * @return float
      * @throws PriceCalculationException
      */
-    private function calculatePriceForSingleDay(int $day, Carbon $start, Carbon $end): float
+    private function calculatePriceForSingleDay(int $day, CarbonImmutable $start, CarbonImmutable $end): float
     {
-        $matchingPrices = $this->getMatchingPricesForPeriod($day, $start, $end);
-
-        return $matchingPrices->reduce(
-            fn(
-                float $result,
-                OrganizationRoomPrice $price
-            ) => $result + $this->calculatePriceForPeriod(
-                    $price->time->from() ?? '',
-                    $price->time->to() ?? '',
-                    $price->price
-                ),
-            0);
+        return $this->getMatchingPricesForPeriod($day, $start, $end)->reduce(
+            function (float $result, OrganizationRoomPrice $price) {
+                return $result + $this->calculatePriceForPeriod(
+                        $price->time->from() ?? '',
+                        $price->time->to() ?? '',
+                        $price->price
+                    );
+            },
+            0
+        );
     }
 
     /**
-     * @param  int  $day
-     * @param  Carbon  $timeStart
-     * @param  Carbon  $timeEnd
-     * @return OrganizationRoomPrice[]|Collection
      * @throws PriceCalculationException
      */
-    private function getMatchingPricesForPeriod(int $day, Carbon $timeStart, Carbon $timeEnd): Collection
-    {
+    private function getMatchingPricesForPeriod(
+        int $day,
+        CarbonImmutable $timeStart,
+        CarbonImmutable $timeEnd
+    ): Collection {
         $matchingPrices = OrganizationRoomPrice::where('organization_room_id', $this->organizationRoomId)
             ->where('day', $day)
             ->whereRaw('time && ?::timerange', [new TimeRange($timeStart, $timeEnd)])
@@ -105,16 +83,10 @@ class RehearsalPrice
         return $this->setPricesBoundaries($matchingPrices, $timeStart, $timeEnd);
     }
 
-    /**
-     * @param  string  $from
-     * @param  string  $to
-     * @param  float  $price  cost of one hour of rehearsal
-     * @return float
-     */
     private function calculatePriceForPeriod(string $from, string $to, float $price): float
     {
-        $periodStart = Carbon::createFromTimeString($from);
-        $periodEnd = Carbon::createFromTimeString($to);
+        $periodStart = CarbonImmutable::createFromTimeString($from);
+        $periodEnd = CarbonImmutable::createFromTimeString($to);
 
         $delta = $periodEnd->diffInMinutes($periodStart);
         $delta = $this->isEndOfTheDay($periodEnd) ? $delta + 1 : $delta;
@@ -124,32 +96,24 @@ class RehearsalPrice
         return $delta * $price / 60;
     }
 
-    /**
-     * @param  Carbon  $time
-     * @return bool
-     */
-    private function isEndOfTheDay(Carbon $time): bool
+    private function isEndOfTheDay(CarbonImmutable $time): bool
     {
         return $time->hour === 23 && $time->minute === 59;
     }
 
-    /**
-     * @return bool
-     */
     private function isRehearsalDuringOneDay(): bool
     {
         return $this->start->dayOfWeek === $this->end->dayOfWeek;
     }
 
     /**
-     * @param  Collection  $matchingPrices
-     * @param  Carbon  $timeStart
-     * @param  Carbon  $timeEnd
-     * @return Collection
      * @throws PriceCalculationException
      */
-    private function setPricesBoundaries(Collection $matchingPrices, Carbon $timeStart, Carbon $timeEnd): Collection
-    {
+    private function setPricesBoundaries(
+        Collection $matchingPrices,
+        CarbonImmutable $timeStart,
+        CarbonImmutable $timeEnd
+    ): Collection {
         if ($matchingPrices->isEmpty()) {
             return $matchingPrices;
         }
@@ -184,13 +148,13 @@ class RehearsalPrice
     }
 
     /**
-     * @param  Carbon  $timeStart
-     * @param  Collection  $matchingPrices
-     * @param  Carbon  $timeEnd
      * @throws PriceCalculationException
      */
-    private function checkBoundaries(Collection $matchingPrices, Carbon $timeStart, Carbon $timeEnd): void
-    {
+    private function checkBoundaries(
+        Collection $matchingPrices,
+        CarbonImmutable $timeStart,
+        CarbonImmutable $timeEnd
+    ): void {
         if ($timeStart->toTimeString() < $matchingPrices->first()->time->from() ||
             $timeEnd->toTimeString() > $matchingPrices->last()->time->to()
         ) {

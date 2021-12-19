@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Users;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
-use App\Exceptions\User\TimeIsUnavailableForUsers;
-use App\Exceptions\User\UserHasAnotherRehearsalAtThatTime;
+use App\Exceptions\User\TimeIsUnavailableForUsersException;
+use App\Exceptions\User\TimeIsUnavailableInRoomException;
+use App\Exceptions\User\TooLongRehearsalException;
+use App\Exceptions\User\UserHasAnotherRehearsalAtThatTimeException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Filters\RehearsalsFilterRequest;
 use App\Http\Requests\Users\CreateRehearsalRequest;
@@ -15,7 +17,6 @@ use App\Http\Resources\Users\RehearsalResource;
 use App\Models\Rehearsal;
 use App\Models\RehearsalPrice;
 use App\Models\RehearsalTimeValidator;
-use Carbon\Carbon;
 use DB;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -58,8 +59,12 @@ class RehearsalsController extends Controller
 
     /**
      * @throws AuthorizationException
-     * @throws TimeIsUnavailableForUsers
-     * @throws UserHasAnotherRehearsalAtThatTime
+     * @throws InvalidRehearsalDurationException
+     * @throws PriceCalculationException
+     * @throws TimeIsUnavailableForUsersException
+     * @throws UserHasAnotherRehearsalAtThatTimeException
+     * @throws TimeIsUnavailableInRoomException
+     * @throws TooLongRehearsalException
      */
     public function create(
         CreateRehearsalRequest $request,
@@ -67,59 +72,49 @@ class RehearsalsController extends Controller
     ): RehearsalResource|JsonResponse {
         $this->authorize(
             'create',
-            [Rehearsal::class, $request->get('organization_room_id'), $request->get('band_id')]
+            [Rehearsal::class, $request->roomId(), $request->bandId()]
         );
 
-        $room = $request->room();
+        $rehearsalTimeValidator->validate($request);
 
-        $rehearsalTimeValidator->validateThatSupposedAttendeesAreAvailable($request->get('starts_at'),
-            $request->get('ends_at'),
-            (int) auth()->id(),
-            $request->get('band_id')
+        $rehearsalPrice = new RehearsalPrice(
+            $request->roomId(),
+            $request->time()->from() ?? throw new PriceCalculationException(),
+            $request->time()->to() ?? throw new PriceCalculationException(),
         );
-
-        if (!$room->isTimeAvailable(
-            $request->get('starts_at'),
-            $request->get('ends_at'),
-        )) {
-            return response()->json('Выбранное время занято', Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        try {
-            $rehearsalPrice = new RehearsalPrice(
-                $request->get('organization_room_id'),
-                Carbon::parse($request->get('starts_at'))->setSeconds(0),
-                Carbon::parse($request->get('ends_at'))->setSeconds(0)
-            );
-            /** @var Rehearsal $rehearsal */
-            $rehearsal = Rehearsal::create(array_merge(
-                ['price' => $rehearsalPrice()],
-                $request->getAttributes()
-            ));
-        } catch (PriceCalculationException|InvalidRehearsalDurationException $exception) {
-            return response()->json($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        /** @var Rehearsal $rehearsal */
+        $rehearsal = Rehearsal::create(array_merge(
+            ['price' => $rehearsalPrice()],
+            $request->getAttributes()
+        ));
 
         return new RehearsalResource($rehearsal);
     }
 
+    /**
+     * @throws TooLongRehearsalException
+     * @throws TimeIsUnavailableForUsersException
+     * @throws UserHasAnotherRehearsalAtThatTimeException
+     * @throws PriceCalculationException
+     * @throws TimeIsUnavailableInRoomException
+     * @throws InvalidRehearsalDurationException
+     */
     public function reschedule(
         RescheduleRehearsalRequest $request,
-        Rehearsal $rehearsal
+        Rehearsal $rehearsal,
+        RehearsalTimeValidator $rehearsalTimeValidator
     ): RehearsalResource|JsonResponse {
-        if (!$rehearsal->room->isTimeAvailable(
-            $request->get('starts_at'),
-            $request->get('ends_at'),
-            $rehearsal
-        )) {
-            return response()->json('Выбранное время занято', Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $rehearsalTimeValidator->validate($request);
 
-        try {
-            $rehearsal->update($request->getRehearsalAttributes());
-        } catch (PriceCalculationException|InvalidRehearsalDurationException $exception) {
-            return response()->json($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $rehearsalPrice = new RehearsalPrice(
+            $rehearsal->organization_room_id,
+            $request->time()->from() ?? throw new PriceCalculationException(),
+            $request->time()->to() ?? throw new PriceCalculationException(),
+        );
+        $rehearsal->update(array_merge(
+            ['price' => $rehearsalPrice()],
+            $request->getRehearsalAttributes()
+        ));
 
         return new RehearsalResource($rehearsal);
     }

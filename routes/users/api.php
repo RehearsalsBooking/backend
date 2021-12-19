@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CitiesController;
+use App\Http\Controllers\Users\RehearsalsPriceController;
 use App\Http\Controllers\Users\RoomsController;
 use App\Http\Controllers\Users\BandInvitesController;
 use App\Http\Controllers\Users\BandMembershipsController;
@@ -28,9 +29,6 @@ Route::name('organizations.')->prefix('organizations')->group(static function ()
 });
 
 Route::name('rooms.')->prefix('rooms')->group(static function () {
-    Route::get('/{room}/prices/calculate', [OrganizationRoomPricesController::class, 'calculate'])
-        ->where('room', '[0-9]+')
-        ->name('price');
     Route::get('/{room}/prices', [OrganizationRoomPricesController::class, 'index'])
         ->where('room', '[0-9]+')
         ->name('prices.list');
@@ -67,6 +65,9 @@ Route::name('rehearsals.')->prefix('rehearsals')->group(static function () {
         ->where('rehearsal', '[0-9]+')
         ->middleware('auth:sanctum')
         ->name('delete');
+
+    Route::get('/price', [RehearsalsPriceController::class, 'calculate'])
+        ->name('price');
 });
 
 Route::name('bands.')->prefix('bands')->middleware('auth:sanctum')->group(static function () {
