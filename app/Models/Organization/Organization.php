@@ -141,11 +141,6 @@ class Organization extends Model implements HasMedia
         return $this->belongsTo(City::class);
     }
 
-    public function isUserBanned(int $userId): bool
-    {
-        return $this->bannedUsers->contains($userId);
-    }
-
     public function deleteRehearsalsForUserInFuture(int $userId): void
     {
         $this->rehearsals()->whereRaw('time && ?', [new TimestampRange(Carbon::now(), null)])

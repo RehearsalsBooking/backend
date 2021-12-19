@@ -5,21 +5,25 @@ namespace App\Policies\Users;
 use App\Models\Band;
 use App\Models\Rehearsal;
 use App\Models\User;
+use DB;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class RehearsalPolicy
 {
     use HandlesAuthorization;
 
-    public function create(User $user, ?int $bandId): bool
+    public function create(User $user, int $roomId, ?int $bandId): Response
     {
-        if ($bandId !== null) {
-            $band = Band::findOrFail($bandId);
-
-            return $band->admin_id === $user->id;
+        if ($this->userIsBannedInOrganization($user, $roomId)) {
+            return Response::deny('Вы забанены в данной организации');
         }
 
-        return true;
+        if (!$this->userCanBookOnBehalfOfBand($user, $bandId)) {
+            return Response::deny('Вы не можете бронировать репетиции для данной группы');
+        }
+
+        return Response::allow();
     }
 
     public function reschedule(User $user, Rehearsal $rehearsal): bool
@@ -55,5 +59,22 @@ class RehearsalPolicy
             ||
             // manager of organization of room where rehearsal was booked
             $rehearsal->room->organization->owner_id === $user->id;
+    }
+
+    protected function userIsBannedInOrganization(User $user, int $roomId): bool
+    {
+        return DB::table('organizations_users_bans as bans')
+            ->join('organization_rooms as rooms', 'rooms.organization_id', '=', 'bans.organization_id')
+            ->where('bans.user_id', $user->id)
+            ->where('rooms.id', $roomId)
+            ->exists();
+    }
+
+    private function userCanBookOnBehalfOfBand(User $user, ?int $bandId): bool
+    {
+        if (!$bandId) {
+            return true;
+        }
+        return Band::findOrFail($bandId, ['admin_id'])->admin_id === $user->id;
     }
 }

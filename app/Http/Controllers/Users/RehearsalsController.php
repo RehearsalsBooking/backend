@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Users;
 
 use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\PriceCalculationException;
+use App\Exceptions\User\TimeIsUnavailableForUsers;
+use App\Exceptions\User\UserHasAnotherRehearsalAtThatTime;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Filters\RehearsalsFilterRequest;
 use App\Http\Requests\Users\CreateRehearsalRequest;
@@ -56,6 +58,8 @@ class RehearsalsController extends Controller
 
     /**
      * @throws AuthorizationException
+     * @throws TimeIsUnavailableForUsers
+     * @throws UserHasAnotherRehearsalAtThatTime
      */
     public function create(
         CreateRehearsalRequest $request,
@@ -63,17 +67,10 @@ class RehearsalsController extends Controller
     ): RehearsalResource|JsonResponse {
         $this->authorize(
             'create',
-            [Rehearsal::class, $request->get('band_id')]
+            [Rehearsal::class, $request->get('organization_room_id'), $request->get('band_id')]
         );
 
         $room = $request->room();
-
-        // keeping this check here instead of rehearsal policy
-        // because we have to provide a reason, why this action is forbidden
-        // if moved to policy, response message will always be the same
-        if ($room->isUserBanned((int) auth()->id())) {
-            return response()->json('Вы забанены в этой организации', Response::HTTP_FORBIDDEN);
-        }
 
         $rehearsalTimeValidator->validateThatSupposedAttendeesAreAvailable($request->get('starts_at'),
             $request->get('ends_at'),

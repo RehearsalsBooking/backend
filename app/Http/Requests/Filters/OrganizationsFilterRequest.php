@@ -34,19 +34,7 @@ class OrganizationsFilterRequest extends FilterRequest
             );
         }
 
-        if (auth()->check()) {
-            $filters = array_merge($filters, ['notBanned' => auth()->id()]);
-        }
-
         return $filters;
-    }
-
-    protected function notBanned(int $userId): void
-    {
-        $this->builder->whereDoesntHave(
-            'bannedUsers',
-            fn(Builder $query) => $query->where('user_id', $userId)
-        );
     }
 
     protected function filteringByAvailableTime(): bool

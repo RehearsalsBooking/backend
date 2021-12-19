@@ -39,8 +39,6 @@ class OrganizationsController extends Controller
      */
     public function show(Organization $organization): OrganizationDetailResource
     {
-        $this->authorize('see', $organization);
-
         return new OrganizationDetailResource($organization);
     }
 }
