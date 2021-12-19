@@ -99,17 +99,16 @@ class OrganizationsTest extends TestCase
     }
 
     /** @test */
-    public function users_cannot_see_organizations_that_banned_them(): void
+    public function users_can_see_organizations_that_banned_them(): void
     {
         $organizationThatBannedUser = $this->createOrganization();
-        $otherOrganization = $this->createOrganization();
+        $this->createOrganization();
 
         $user = $this->createUser();
 
         $organizationThatBannedUser->bannedUsers()->attach($user->id);
 
         $this->assertCount(2, Organization::all());
-        $this->assertTrue($organizationThatBannedUser->isUserBanned($user->id));
 
         $this->actingAs($user);
 
@@ -119,10 +118,6 @@ class OrganizationsTest extends TestCase
 
         $data = $response->json('data');
 
-        $this->assertCount(1, $data);
-        $this->assertEquals(
-            OrganizationResource::collection(collect([$otherOrganization]))->response()->getData(true)['data'],
-            $data
-        );
+        $this->assertCount(2, $data);
     }
 }

@@ -95,9 +95,4 @@ class OrganizationRoom extends Model
             ->whereRaw('time && ?::timerange', [new TimeRange($startsAt, $endsAt)])
             ->exists();
     }
-
-    public function isUserBanned(int $userId): bool
-    {
-        return $this->organization->isUserBanned($userId);
-    }
 }

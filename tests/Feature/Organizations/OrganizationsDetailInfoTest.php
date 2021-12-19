@@ -25,17 +25,19 @@ class OrganizationsDetailInfoTest extends TestCase
     }
 
     /** @test */
-    public function user_cannot_see_detailed_info_of_organization_that_banned_them(): void
+    public function user_can_see_detailed_info_of_organization_that_banned_them(): void
     {
         $organization = $this->createOrganization();
         $user = $this->createUser();
         $organization->bannedUsers()->attach($user->id);
 
-        $this->assertTrue($organization->isUserBanned($user->id));
-
         $this->actingAs($user);
 
-        $this->get(route('organizations.show', $organization->id))->assertForbidden();
+        $response = $this->get(route('organizations.show', $organization->id))->assertOk();
+        $this->assertEquals(
+            (new OrganizationDetailResource($organization))->response()->getData(true),
+            $response->json()
+        );
     }
 
     /** @test */

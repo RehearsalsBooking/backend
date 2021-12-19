@@ -18,6 +18,7 @@ class BandPolicy
 
     public function removeMember(User $user, Band $band, BandMembership $membership): bool
     {
+        //TODO: refactor
         // band admin cannot leave band
         if ($membership->user_id === $band->admin_id) {
             return false;
@@ -27,6 +28,7 @@ class BandPolicy
         if ($membership->band_id !== $band->id) {
             return false;
         }
+
         // user can leave the band
         if ($membership->user_id === $user->id) {
             return true;

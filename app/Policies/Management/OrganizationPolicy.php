@@ -14,13 +14,4 @@ class OrganizationPolicy
     {
         return $organization->owner_id === $user->id;
     }
-
-    public function see(?User $user, Organization $organization): bool
-    {
-        if ($user === null) {
-            return true;
-        }
-
-        return !$organization->isUserBanned($user->id);
-    }
 }
