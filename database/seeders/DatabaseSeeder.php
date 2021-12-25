@@ -4,7 +4,10 @@
 
 namespace Database\Seeders;
 
+use App\Exceptions\User\InvalidRehearsalDurationException;
 use App\Exceptions\User\TimeIsUnavailableForUsersException;
+use App\Exceptions\User\TimeIsUnavailableInRoomException;
+use App\Exceptions\User\TooLongRehearsalException;
 use App\Exceptions\User\UserHasAnotherRehearsalAtThatTimeException;
 use App\Models\Band;
 use App\Models\City;
@@ -21,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Seeder;
 use PDOException;
+use Tests\Feature\Rehearsals\Booking\RehearsalData;
 
 class DatabaseSeeder extends Seeder
 {
@@ -162,14 +166,23 @@ class DatabaseSeeder extends Seeder
                     'organization_room_id' => $this->organizations->random()->rooms->random()->id,
                     'is_paid' => array_rand([true, false]),
                 ]);
-                (new RehearsalTimeValidator())->validateThatSupposedAttendeesAreAvailable(
+                (new RehearsalTimeValidator())->validate(new RehearsalData(
                     $rehearsal->time->from()->toDateTimeString(),
                     $rehearsal->time->to()->toDateTimeString(),
+                    $rehearsal->organization_room_id,
                     $rehearsal->user_id,
                     $rehearsal->band_id,
-                );
+                ));
                 $rehearsal->save();
-            } catch (PDOException|QueryException|TimeIsUnavailableForUsersException|UserHasAnotherRehearsalAtThatTimeException) {
+            } catch (
+            PDOException|
+            QueryException|
+            TimeIsUnavailableForUsersException|
+            UserHasAnotherRehearsalAtThatTimeException|
+            TooLongRehearsalException|
+            TimeIsUnavailableInRoomException|
+            InvalidRehearsalDurationException
+            ) {
                 // because rehearsal time is completely random
                 // there is possible overlapping
                 // so we just continue creating, if that occurs
@@ -230,14 +243,23 @@ class DatabaseSeeder extends Seeder
                         'band_id' => $band->id,
                         'is_paid' => array_rand([true, false]),
                     ]);
-                    (new RehearsalTimeValidator())->validateThatSupposedAttendeesAreAvailable(
+                    (new RehearsalTimeValidator())->validate(new RehearsalData(
                         $rehearsal->time->from()->toDateTimeString(),
                         $rehearsal->time->to()->toDateTimeString(),
+                        $rehearsal->organization_room_id,
                         $rehearsal->user_id,
                         $rehearsal->band_id,
-                    );
+                    ));
                     $rehearsal->save();
-                } catch (PDOException|QueryException|TimeIsUnavailableForUsersException|UserHasAnotherRehearsalAtThatTimeException) {
+                } catch (
+                PDOException|
+                QueryException|
+                TimeIsUnavailableForUsersException|
+                UserHasAnotherRehearsalAtThatTimeException|
+                TooLongRehearsalException|
+                TimeIsUnavailableInRoomException|
+                InvalidRehearsalDurationException
+                ) {
                     // because rehearsal time is completely random
                     // there is possible overlapping
                     // so we just continue creating, if that occurs
