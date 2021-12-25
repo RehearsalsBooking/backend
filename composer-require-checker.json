@@ -3,7 +3,7 @@
     "null", "true", "false",
     "static", "self", "parent",
     "array", "string", "int", "float", "bool", "iterable", "callable", "void", "object", "mixed",
-    "DB", "Mail"
+    "DB", "Mail", "Tests\\Feature\\Rehearsals\\Booking\\RehearsalData"
   ],
   "php-core-extensions" : [
     "Core",
