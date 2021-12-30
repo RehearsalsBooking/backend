@@ -42,40 +42,6 @@ class AuthTest extends TestCase
     }
 
     /** @test */
-    public function user_can_logout(): void
-    {
-        $this->json('post', route('logout'))->assertUnauthorized();
-
-        $token = $this->user->createToken('some token')->plainTextToken;
-
-        $response = $this->json('post', route('logout'), [], ['Authorization' => 'Bearer '.$token]);
-
-        $response->assertNoContent();
-
-        $this->assertEquals(0, $this->user->tokens()->count());
-    }
-
-    /** @test */
-    public function it_logins_test_user(): void
-    {
-        $response = $this->json('post', route('login.test'));
-        $response->assertOk();
-        $token = $response->json('token');
-
-        $response = $this->get(route('me'), ['Authorization' => 'Bearer '.$token]);
-
-        $response->assertOk();
-
-        $testUser = User::where('email', 'test@rehearsals.com')->first();
-
-        $this->assertEquals(
-            (new UserResource($testUser))->toResponse(null)->getData(true)['data'],
-            $response->json('data')
-        );
-        $this->assertEquals($testUser->id, $response->json('data.id'));
-    }
-
-    /** @test */
     public function it_doesnt_login_as_test_user_in_production_environment(): void
     {
         app()->detectEnvironment(function () {

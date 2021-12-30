@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\Users\UserResource;
 use App\Models\User;
+use Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -36,23 +37,23 @@ class AuthController extends Controller
      */
     public function logout(): JsonResponse
     {
-        /** @var User $user */
-        $user = auth()->user();
-        $user->tokens()->delete();
+        /** @phpstan-ignore-next-line  */
+        Auth::guard('sanctum')->logout();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function test(): JsonResponse
+    public function test(): JsonResponse|UserResource
     {
         if (app()->environment('production')) {
             return response()->json([], 404);
         }
 
         $user = User::firstOrCreate(['email' => 'test@rehearsals.com'], ['name' => 'test user']);
-        return response()->json([
-            'user' => new UserResource($user),
-            'token' => $user->createToken('rehearsals-token')->plainTextToken,
-        ]);
+
+        /** @phpstan-ignore-next-line  */
+        Auth::guard('sanctum')->login($user);
+
+        return new UserResource($user);
     }
 }

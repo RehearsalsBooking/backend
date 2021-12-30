@@ -2,49 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SocialiteLoginRequest;
 use App\Http\Resources\Users\UserResource;
 use App\Models\UserOAuth;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
-use Laravel\Socialite\Contracts\User;
+use Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Throwable;
 
 class SocialiteLoginController extends Controller
 {
+    public function redirect(string $provider): string
+    {
+        return Socialite::driver($provider)->stateless()->redirect()->getTargetUrl();
+    }
+
     /**
      * @throws Throwable
      */
-    public function callback(SocialiteLoginRequest $request): JsonResponse
+    public function callback(string $provider): UserResource
     {
-        Log::info('recieved callback');
-        Log::info('provider');
-        Log::info($request->getProvider());
-        Log::info('token');
-        /** @phpstan-ignore-next-line */
-        Log::info($request->getToken());
-        Log::info('fetching user from provider');
+        $socialiteUser = Socialite::driver($provider)->stateless()->user();
 
-        /** @var User $oauthUser */
-        $oauthUser = Socialite::driver($request->getProvider())
-            ->stateless()
-            ->userFromToken($request->getToken());
-        Log::info($oauthUser->getEmail());
-        Log::info($oauthUser->getId());
-        Log::info($oauthUser->getName());
-        Log::info($oauthUser->getNickname());
-        Log::info($oauthUser->getAvatar());
+        $user = UserOAuth::fromSocialiteUser($socialiteUser, $provider);
 
-        $user = UserOAuth::fromSocialiteUser($oauthUser, $request->getProvider());
+        /** @phpstan-ignore-next-line  */
+        Auth::guard('sanctum')->login($user);
 
-        Log::info('user to login');
-        /** @phpstan-ignore-next-line */
-        Log::info($user->toArray());
-
-        return response()->json([
-            'user' => new UserResource($user),
-            'token' => $user->createToken('rehearsals-token')->plainTextToken,
-        ]);
+        return new UserResource($user);
     }
+
 }
