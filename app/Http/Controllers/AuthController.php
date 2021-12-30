@@ -37,7 +37,7 @@ class AuthController extends Controller
      */
     public function logout(): JsonResponse
     {
-        auth('sanctum')->logout();
+        auth('web')->logout();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
@@ -50,7 +50,7 @@ class AuthController extends Controller
 
         $user = User::firstOrCreate(['email' => 'test@rehearsals.com'], ['name' => 'test user']);
 
-        auth('sanctum')->login($user);
+        auth('web')->login($user);
 
         return new UserResource($user);
     }
