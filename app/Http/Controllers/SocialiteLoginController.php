@@ -24,8 +24,7 @@ class SocialiteLoginController extends Controller
 
         $user = UserOAuth::fromSocialiteUser($socialiteUser, $provider);
 
-        /** @phpstan-ignore-next-line  */
-        Auth::guard('sanctum')->login($user);
+        auth('sanctum')->login($user);
 
         return new UserResource($user);
     }

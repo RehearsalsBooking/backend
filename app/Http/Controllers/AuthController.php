@@ -37,8 +37,7 @@ class AuthController extends Controller
      */
     public function logout(): JsonResponse
     {
-        /** @phpstan-ignore-next-line  */
-        Auth::guard('sanctum')->logout();
+        auth('sanctum')->logout();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
@@ -51,8 +50,7 @@ class AuthController extends Controller
 
         $user = User::firstOrCreate(['email' => 'test@rehearsals.com'], ['name' => 'test user']);
 
-        /** @phpstan-ignore-next-line  */
-        Auth::guard('sanctum')->login($user);
+        auth('sanctum')->login($user);
 
         return new UserResource($user);
     }
