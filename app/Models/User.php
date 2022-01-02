@@ -57,14 +57,11 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property-read int|null $favorite_organizations_count
  * @property-read Collection|PersonalAccessToken[] $tokens
  * @property-read int|null $tokens_count
- * @property string|null $public_email
  * @property string|null $phone
  * @property string|null $link
  * @method static Builder|User whereLink($value)
  * @method static Builder|User wherePhone($value)
- * @method static Builder|User wherePublicEmail($value)
  * @property string|null $avatar
- * @method static Builder|User whereAvatar($value)
  * @method static UserFactory factory(...$parameters)
  * @property-read MediaCollection|Media[] $media
  * @property-read int|null $media_count

@@ -2,39 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\Users\UserResource;
+use App\Http\Resources\Users\LoggedUserResource;
 use App\Models\User;
-use Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth:sanctum', ['except' => ['test']]);
     }
 
-    /**
-     * Get the authenticated User.
-     *
-     * @return UserResource
-     */
-    public function me(): UserResource
+    public function me(): LoggedUserResource
     {
-        return new UserResource(auth()->user());
+        return new LoggedUserResource(auth()->user());
     }
 
-    /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return JsonResponse
-     */
     public function logout(): JsonResponse
     {
         auth('web')->logout();
@@ -42,7 +26,7 @@ class AuthController extends Controller
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function test(): JsonResponse|UserResource
+    public function test(): JsonResponse|LoggedUserResource
     {
         if (app()->environment('production')) {
             return response()->json([], 404);
@@ -52,6 +36,6 @@ class AuthController extends Controller
 
         auth('web')->login($user);
 
-        return new UserResource($user);
+        return new LoggedUserResource($user);
     }
 }

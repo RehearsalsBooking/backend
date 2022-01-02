@@ -15,7 +15,6 @@ class UsersUpdateTest extends TestCase
     {
         $newContactInfo = [
             'name' => 'new name',
-            'public_email' => 'new@mail.com',
             'phone' => 'new phone',
             'link' => 'new link',
         ];
@@ -26,6 +25,28 @@ class UsersUpdateTest extends TestCase
         $response->assertOk();
 
         $this->assertDatabaseHas('users', array_merge(['id' => $this->user->id], $newContactInfo));
+    }
+
+    /** @test */
+    public function user_cannot_change_his_email(): void
+    {
+        $newContactInfo = [
+            'name' => 'new name',
+            'phone' => 'new phone',
+            'link' => 'new link',
+        ];
+
+        $currentEmail = $this->user->email;
+
+        $this->actingAs($this->user);
+
+        $response = $this->json('put', route('users.update'), array_merge($newContactInfo, [
+            'email' => 'new@email.com',
+        ]));
+        $response->assertOk();
+
+        $this->assertDatabaseHas('users', array_merge(['id' => $this->user->id], $newContactInfo));
+        $this->assertEquals($currentEmail, $this->user->fresh()->email);
     }
 
     /** @test */
@@ -49,24 +70,13 @@ class UsersUpdateTest extends TestCase
         $response->assertJsonValidationErrors($errorKey);
     }
 
-    /**
-     * @return array|array[]
-     */
     public function invalidUserData(): array
     {
         return [
             [
                 [
-                    'public_email' => 'some@email.com',
                 ],
                 'name',
-            ],
-            [
-                [
-                    'name' => 'new name',
-                    'public_email' => 'incorrect mail',
-                ],
-                'public_email',
             ],
         ];
     }

@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Http\Resources\Users\UserResource;
+use App\Http\Resources\Users\LoggedUserResource;
 use App\Models\User;
 use Tests\TestCase;
 
@@ -36,7 +36,7 @@ class AuthTest extends TestCase
         $response->assertOk();
 
         $this->assertEquals(
-            (new UserResource($this->user))->toResponse(null)->getData(true)['data'],
+            (new LoggedUserResource($this->user))->toResponse(null)->getData(true)['data'],
             $response->json('data')
         );
     }

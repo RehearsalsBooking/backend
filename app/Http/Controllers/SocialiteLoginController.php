@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\Users\UserResource;
+use App\Http\Resources\Users\LoggedUserResource;
 use App\Models\UserOAuth;
-use Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Throwable;
 
@@ -18,7 +17,7 @@ class SocialiteLoginController extends Controller
     /**
      * @throws Throwable
      */
-    public function callback(string $provider): UserResource
+    public function callback(string $provider): LoggedUserResource
     {
         $socialiteUser = Socialite::driver($provider)->stateless()->user();
 
@@ -26,7 +25,7 @@ class SocialiteLoginController extends Controller
 
         auth('web')->login($user);
 
-        return new UserResource($user);
+        return new LoggedUserResource($user);
     }
 
 }
