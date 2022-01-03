@@ -22,6 +22,7 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Collection;
+use Laravel\Socialite\AbstractUser;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -351,5 +352,21 @@ abstract class TestCase extends BaseTestCase
     protected function getDateTimeAtMonday(int $hour, int $minute): CarbonImmutable
     {
         return CarbonImmutable::create(2025, 1, 6, $hour, $minute);
+    }
+
+    protected function mockSocialiteUser(?string $email, ?string $id): AbstractUser
+    {
+        $socialiteUser = $this->createMock(\Laravel\Socialite\Two\User::class);
+        $socialiteUser
+            ->method('getName')
+            ->willReturn('name');
+        $socialiteUser
+            ->method('getEmail')
+            ->willReturn($email);
+        $socialiteUser
+            ->method('getId')
+            ->willReturn($id);
+
+        return $socialiteUser;
     }
 }

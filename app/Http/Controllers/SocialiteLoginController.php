@@ -4,21 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\Users\LoggedUserResource;
 use App\Models\UserOAuth;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Laravel\Socialite\Facades\Socialite;
 use Throwable;
 
 class SocialiteLoginController extends Controller
 {
-    public function redirect(string $provider): string
+    public function redirect(string $provider): JsonResponse
     {
-        return Socialite::driver($provider)->stateless()->redirect()->getTargetUrl();
+        return response()->json(
+            Socialite::driver($provider)->stateless()->redirect()->getTargetUrl()
+        );
     }
 
     /**
      * @throws Throwable
      */
-    public function callback(string $provider, Request $request): LoggedUserResource
+    public function callback(string $provider): JsonResponse
     {
         $socialiteUser = Socialite::driver($provider)->stateless()->user();
 
@@ -26,9 +29,7 @@ class SocialiteLoginController extends Controller
 
         auth('web')->login($user);
 
-        $request->session()->regenerate();
-
-        return new LoggedUserResource($user);
+        return response()->json(new LoggedUserResource($user), Response::HTTP_OK);
     }
 
 }

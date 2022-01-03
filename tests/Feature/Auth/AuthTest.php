@@ -49,5 +49,32 @@ class AuthTest extends TestCase
         });
         $this->assertEquals('production', app()->environment());
         $this->json('post', route('login.test'))->assertNotFound();
+        $this->assertGuest('web');
+    }
+
+    /** @test */
+    public function it_logins_as_test_user(): void
+    {
+        $this->assertGuest();
+
+        $response = $this->json('post', route('login.test'));
+        $response->assertNoContent();
+
+        $this->assertAuthenticated('web');
+
+        $this->assertEquals('demo@festic.ru', auth('web')->user()->email);
+    }
+
+    /** @test */
+    public function it_logs_out_user(): void
+    {
+        $this->actingAs($this->createUser(), 'web');
+
+        $this->assertAuthenticated('web');
+
+        $response = $this->json('post', route('logout'));
+        $response->assertNoContent();
+
+        $this->assertGuest('web');
     }
 }
