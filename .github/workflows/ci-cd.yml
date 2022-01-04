@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - dev
   pull_request:
     branches:
       - master
@@ -65,8 +66,8 @@ jobs:
           rm -rf /tmp/.buildx-cache-dev
           mv /tmp/.buildx-cache-dev-new /tmp/.buildx-cache-dev
 
-  push:
-    if: ${{ github.event_name != 'pull_request'}}
+  release-dev:
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'}}
     needs:
       - check
 
@@ -122,3 +123,141 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache-build
           mv /tmp/.buildx-cache-build-new /tmp/.buildx-cache-build
+
+  release-prod:
+    needs:
+      - check
+
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master'}}
+
+    environment:
+      name: production
+      url: https://festic.ru
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        id: buildx
+        with:
+          install: true
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-prod
+          key: ${{ runner.os }}-buildx-prod-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-prod-
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: PrepareReg Names
+        run: |
+          echo IMAGE_REPOSITORY=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+
+      - name: Build and export
+        uses: docker/build-push-action@v2
+        with:
+          file: docker/production/Dockerfile
+          tags: |
+            ghcr.io/${{ env.IMAGE_REPOSITORY }}/${{ env.IMAGE_NAME }}:production
+          cache-from: type=local,src=/tmp/.buildx-cache-prod
+          cache-to: type=local,dest=/tmp/.buildx-cache-prod-new,mode=max
+          push: true
+          builder: ${{ steps.buildx.outputs.name }}
+
+      - # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache-prod
+          mv /tmp/.buildx-cache-prod-new /tmp/.buildx-cache-prod
+
+  release-demo:
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master'}}
+
+    needs:
+      - check
+
+    environment:
+      name: demo
+      url: https://demo.festic.ru
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        id: buildx
+        with:
+          install: true
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache-demo
+          key: ${{ runner.os }}-buildx-demo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-demo-
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: PrepareReg Names
+        run: |
+          echo IMAGE_REPOSITORY=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+
+      - name: Build and export
+        uses: docker/build-push-action@v2
+        with:
+          file: docker/demo/Dockerfile
+          tags: |
+            ghcr.io/${{ env.IMAGE_REPOSITORY }}/${{ env.IMAGE_NAME }}:demo
+          cache-from: type=local,src=/tmp/.buildx-cache-demo
+          cache-to: type=local,dest=/tmp/.buildx-cache-demo-new,mode=max
+          push: true
+          builder: ${{ steps.buildx.outputs.name }}
+
+      - # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache-demo
+          mv /tmp/.buildx-cache-demo-new /tmp/.buildx-cache-demo
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://festic.ru
+    steps:
+      - name: deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.SSH_HOST}}
+          key: ${{secrets.SSH_SECRET}}
+          username: ${{ secrets.SSH_USER }}
+          debug: true
+          script: |
+            cd ~/infrastructure
+            git reset --hard
+            git pull
+            make deploy-backend
