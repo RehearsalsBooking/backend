@@ -28,6 +28,7 @@ class OrganizationsController extends Controller
                     ])
                 )
                 ->with(['city'])
+                ->inRandomOrder()
                 ->get()
         );
     }
