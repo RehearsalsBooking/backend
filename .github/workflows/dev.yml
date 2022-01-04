@@ -3,7 +3,7 @@ name: CI/CD
 on:
   push:
     branches:
-      - dev
+      - master
 
 env:
   IMAGE_NAME: backend
@@ -51,6 +51,9 @@ jobs:
         run: |
           mkdir shared
           make docker_compose_yml=docker/docker-compose.ci.yml check-ci
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov -t ${CODECOV_TOKEN}
       - # Temp fix
         # https://github.com/docker/build-push-action/issues/252
         # https://github.com/moby/buildkit/issues/1896
