@@ -244,6 +244,7 @@ jobs:
           rm -rf /tmp/.buildx-cache-demo
           mv /tmp/.buildx-cache-demo-new /tmp/.buildx-cache-demo
   deploy:
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master'}}
     runs-on: ubuntu-latest
     environment:
       name: production

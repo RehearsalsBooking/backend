@@ -58,7 +58,7 @@ class AuthTest extends TestCase
         $this->assertGuest();
 
         $response = $this->json('post', route('login.test'));
-        $response->assertNoContent();
+        $response->assertOk();
 
         $this->assertAuthenticated('web');
 
