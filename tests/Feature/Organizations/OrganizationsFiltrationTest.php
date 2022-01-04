@@ -88,7 +88,6 @@ class OrganizationsFiltrationTest extends TestCase
     /** @test */
     public function users_can_filter_organizations_by_available_time(): void
     {
-        $this->withoutExceptionHandling();
         $roomWithRehearsal9to11 = $this->createOrganizationRoom();
         $roomWithRehearsal14to16 = $this->createOrganizationRoom();
 
@@ -139,13 +138,8 @@ class OrganizationsFiltrationTest extends TestCase
         // 9----11
         //             14----16
         //                       17------------
+        $this->assertDatabaseCount(Organization::class, 2);
         $this->assertCount(2, $data['data']);
-        $this->assertEquals(
-            OrganizationResource::collection(collect([
-                $roomWithRehearsal9to11->organization, $roomWithRehearsal14to16->organization,
-            ]))->response()->getData(true),
-            $data
-        );
 
         $response = $this->json('get', route('organizations.list'), [
             'from' => $this->getDateTimeAt(16, 00),
@@ -157,12 +151,8 @@ class OrganizationsFiltrationTest extends TestCase
         //             14----16
         //                   16------------
         $this->assertCount(2, $data['data']);
-        $this->assertEquals(
-            OrganizationResource::collection(collect([
-                $roomWithRehearsal9to11->organization, $roomWithRehearsal14to16->organization,
-            ]))->response()->getData(true),
-            $data
-        );
+        $this->assertDatabaseCount(Organization::class, 2);
+
 
         $response = $this->json('get', route('organizations.list'), [
             'to' => $this->getDateTimeAt(12, 00),
@@ -174,10 +164,7 @@ class OrganizationsFiltrationTest extends TestCase
         //             14----16
         // --------12
         $this->assertCount(1, $data['data']);
-        $this->assertEquals(
-            OrganizationResource::collection(collect([$roomWithRehearsal14to16->organization]))->response()->getData(true),
-            $data
-        );
+        $this->assertEquals($roomWithRehearsal14to16->organization->id, $data['data'][0]['id']);
 
         $response = $this->json('get', route('organizations.list'), [
             'to' => $this->getDateTimeAt(15, 00),
@@ -200,12 +187,7 @@ class OrganizationsFiltrationTest extends TestCase
         //                      14----16
         // ---------9
         $this->assertCount(2, $data['data']);
-        $this->assertEquals(
-            OrganizationResource::collection(collect([
-                $roomWithRehearsal9to11->organization, $roomWithRehearsal14to16->organization,
-            ]))->response()->getData(true),
-            $data
-        );
+        $this->assertDatabaseCount(Organization::class, 2);
 
         $response = $this->json('get', route('organizations.list'), [
             'from' => $this->getDateTimeAt(12, 00),
@@ -218,12 +200,7 @@ class OrganizationsFiltrationTest extends TestCase
         //             14----16
         //         12--14
         $this->assertCount(2, $data['data']);
-        $this->assertEquals(
-            OrganizationResource::collection(collect([
-                $roomWithRehearsal9to11->organization, $roomWithRehearsal14to16->organization,
-            ]))->response()->getData(true),
-            $data
-        );
+        $this->assertDatabaseCount(Organization::class, 2);
 
         $response = $this->json('get', route('organizations.list'), [
             'from' => $this->getDateTimeAt(12, 00),
@@ -236,12 +213,8 @@ class OrganizationsFiltrationTest extends TestCase
         //             14----16
         //         12-----------17
         $this->assertCount(1, $data['data']);
-        $this->assertEquals(
-            OrganizationResource::collection(collect([
-                $roomWithRehearsal9to11->organization,
-            ]))->response()->getData(true),
-            $data
-        );
+        $this->assertEquals($roomWithRehearsal9to11->organization->id, $data['data'][0]['id']);
+
 
         $response = $this->json('get', route('organizations.list'), [
             'from' => $this->getDateTimeAt(10, 00),
