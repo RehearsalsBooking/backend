@@ -245,6 +245,10 @@ jobs:
           mv /tmp/.buildx-cache-demo-new /tmp/.buildx-cache-demo
   deploy:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master'}}
+    needs:
+      - release-prod
+      - release-demo
     environment:
       name: production
       url: https://festic.ru
