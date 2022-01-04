@@ -246,6 +246,10 @@ jobs:
   deploy:
     if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master'}}
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/master'}}
+    needs:
+      - release-prod
+      - release-demo
     environment:
       name: production
       url: https://festic.ru
