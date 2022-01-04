@@ -98,7 +98,8 @@ class DatabaseSeeder extends Seeder
     private function createUserToLoginWith(): Collection|Model|User
     {
         return $this->userToLoginWith = User::factory()->create([
-            'email' => 'test@rehearsals.com',
+            'email' => 'demo@festic.ru',
+            'name' => 'demo user'
         ]);
     }
 
