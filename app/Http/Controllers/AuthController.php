@@ -36,6 +36,6 @@ class AuthController extends Controller
 
         auth('web')->login($user);
 
-        return response()->json(new LoggedUserResource($user), Response::HTTP_NO_CONTENT);
+        return response()->json(new LoggedUserResource($user), Response::HTTP_OK);
     }
 }

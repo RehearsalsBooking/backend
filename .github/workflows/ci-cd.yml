@@ -260,4 +260,4 @@ jobs:
             cd ~/infrastructure
             git reset --hard
             git pull
-            make deploy-backend
+            make deploy
