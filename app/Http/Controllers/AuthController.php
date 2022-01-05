@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegistrationRequest;
 use App\Http\Resources\Users\LoggedUserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -9,11 +10,6 @@ use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum', ['except' => ['test']]);
-    }
-
     public function me(): LoggedUserResource
     {
         return new LoggedUserResource(auth()->user());
@@ -37,5 +33,14 @@ class AuthController extends Controller
         auth('web')->login($user);
 
         return response()->json(new LoggedUserResource($user), Response::HTTP_OK);
+    }
+
+    public function registration(RegistrationRequest $request): JsonResponse
+    {
+        $newUser = User::create($request->getUserAttributes());
+
+        auth('web')->login($newUser);
+
+        return response()->json(new LoggedUserResource($newUser), Response::HTTP_CREATED);
     }
 }
