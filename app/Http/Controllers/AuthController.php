@@ -51,7 +51,10 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        if (auth('web')->attempt($request->getCredentials())) {
+        if (auth('web')->attempt(
+            $request->getCredentials(),
+            $request->doRemember())
+        ) {
             session()->regenerate();
 
             return response()->json(new LoggedUserResource(auth()->user()), Response::HTTP_OK);

@@ -38,6 +38,7 @@ class LoginTest extends TestCase
             $response->json()
         );
         $this->assertAuthenticatedAs($this->user, 'web');
+        $this->assertEmpty($this->user->fresh()->getRememberToken());
     }
 
     /** @test */
@@ -62,6 +63,15 @@ class LoginTest extends TestCase
         $response->assertUnprocessable();
         $response->assertJsonValidationErrors($error);
         $this->assertGuest('web');
+    }
+
+    /** @test */
+    public function it_remembers_user(): void
+    {
+        $response = $this->json('post', route('login'), array_merge($this->credentials, ['remember_me' => true]));
+        $response->assertOk();
+        $this->assertAuthenticatedAs($this->user, 'web');
+        $this->assertNotEmpty($this->user->fresh()->getRememberToken());
     }
 
     public function invalidLoginData()
@@ -95,6 +105,15 @@ class LoginTest extends TestCase
                     'password' => 'incorrect password',
                 ],
                 'login'
+            ],
+
+            [
+                [
+                    'email' => 'some@email.com',
+                    'password' => 'some password',
+                    'remember_me' => 'true'
+                ],
+                'remember_me'
             ],
         ];
     }

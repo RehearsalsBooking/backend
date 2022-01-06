@@ -11,6 +11,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'email'],
             'password' => ['required'],
+            'remember_me' => ['nullable', 'boolean']
         ];
     }
 
@@ -20,5 +21,10 @@ class LoginRequest extends FormRequest
             'email' => $this->get('email'),
             'password' => $this->get('password')
         ];
+    }
+
+    public function doRemember(): bool
+    {
+        return (bool) $this->get('remember_me', false);
     }
 }
