@@ -2,37 +2,21 @@
 
 namespace App\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * This namespace is applied to your controller routes.
-     *
-     * In addition, it is set as the URL generator's root namespace.
-     *
-     * @var string
-     */
     protected $namespace = 'App\Http\Controllers';
 
-    /**
-     * Define the routes for the application.
-     *
-     * @return void
-     */
     public function map(): void
     {
         $this->mapApiRoutes();
+        $this->configureRateLimiting();
     }
 
-    /**
-     * Define the "api" routes for the application.
-     *
-     * These routes are typically stateless.
-     *
-     * @return void
-     */
     protected function mapApiRoutes(): void
     {
         Route::middleware('api')
@@ -50,5 +34,12 @@ class RouteServiceProvider extends ServiceProvider
             ->prefix('users')
             ->name('users.')
             ->group(base_path('routes/users.php'));
+    }
+
+    public function configureRateLimiting(): void
+    {
+        RateLimiter::for('login', static function () {
+            return Limit::perMinute(5);
+        });
     }
 }

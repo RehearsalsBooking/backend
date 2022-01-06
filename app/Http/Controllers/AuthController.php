@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrationRequest;
 use App\Http\Resources\Users\LoggedUserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -42,5 +44,19 @@ class AuthController extends Controller
         auth('web')->login($newUser);
 
         return response()->json(new LoggedUserResource($newUser), Response::HTTP_CREATED);
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public function login(LoginRequest $request): JsonResponse
+    {
+        if (auth('web')->attempt($request->getCredentials())) {
+            session()->regenerate();
+
+            return response()->json(new LoggedUserResource(auth()->user()), Response::HTTP_OK);
+        }
+
+        throw ValidationException::withMessages(['login' => 'Неправильные логин или пароль']);
     }
 }
