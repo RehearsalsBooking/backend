@@ -13,7 +13,7 @@ class NewInvite extends Mailable implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    protected Band $band;
+    public Band $band;
 
     public function __construct(Band $band)
     {

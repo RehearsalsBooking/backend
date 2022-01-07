@@ -6,6 +6,7 @@ use App\Mail\NewInvite;
 use App\Models\Band;
 use App\Models\User;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Queue;
 use Mail;
 use Tests\TestCase;
 
@@ -17,6 +18,8 @@ class BandsInviteTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Mail::fake();
+        Queue::fake();
         $this->bandAdmin = $this->createUser();
         $this->band = $this->createBandForUser($this->bandAdmin);
     }
@@ -24,8 +27,6 @@ class BandsInviteTest extends TestCase
     /** @test */
     public function admin_of_band_can_invite_registered_users_to_his_band(): void
     {
-        Mail::fake();
-
         $this->actingAs($this->bandAdmin);
 
         $invitedUser = $this->createUser();
@@ -55,15 +56,13 @@ class BandsInviteTest extends TestCase
         $this->assertEquals($roles, $this->band->fresh()->invites->first()->roles);
 
         Mail::assertQueued(NewInvite::class, function (NewInvite $mail) use ($invitedUser) {
-            return $mail->hasTo($invitedUser->email);
+            return $mail->hasTo($invitedUser->email) && $mail->band->id === $this->band->id;
         });
     }
 
     /** @test */
     public function admin_of_band_can_invite_unregistered_users_to_his_band(): void
     {
-        Mail::fake();
-
         $this->actingAs($this->bandAdmin);
 
         $invitedUserEmail = 'some@mail.com';
@@ -90,7 +89,7 @@ class BandsInviteTest extends TestCase
         );
         $this->assertEquals($role, $this->band->fresh()->invites->first()->roles);
         Mail::assertQueued(NewInvite::class, function (NewInvite $mail) use ($invitedUserEmail) {
-            return $mail->hasTo($invitedUserEmail);
+            return $mail->hasTo($invitedUserEmail) && $mail->band->id === $this->band->id;
         });
     }
 
