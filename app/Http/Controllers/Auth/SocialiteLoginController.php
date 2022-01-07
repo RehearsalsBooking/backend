@@ -1,13 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\Users\LoggedUserResource;
 use App\Models\UserOAuth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Laravel\Socialite\Facades\Socialite;
 use Throwable;
+
+use function auth;
+use function response;
 
 class SocialiteLoginController extends Controller
 {

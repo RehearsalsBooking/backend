@@ -12,15 +12,11 @@ use App\Policies\Management\OrganizationRoomPolicy;
 use App\Policies\Users\BandPolicy;
 use App\Policies\Users\InvitePolicy;
 use App\Policies\Users\RehearsalPolicy;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
-    /**
-     * The policy mappings for the application.
-     *
-     * @var array
-     */
     protected $policies = [
         Rehearsal::class => RehearsalPolicy::class,
         Band::class => BandPolicy::class,
@@ -29,13 +25,13 @@ class AuthServiceProvider extends ServiceProvider
         OrganizationRoom::class => OrganizationRoomPolicy::class
     ];
 
-    /**
-     * Register any authentication / authorization services.
-     *
-     * @return void
-     */
     public function boot(): void
     {
         $this->registerPolicies();
+
+        ResetPassword::createUrlUsing(static fn(
+            $user,
+            string $token
+        ) => 'https://app.festic.ru/reset-password?token='.$token);
     }
 }
