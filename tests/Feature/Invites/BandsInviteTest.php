@@ -18,8 +18,6 @@ class BandsInviteTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Mail::fake();
-        Queue::fake();
         $this->bandAdmin = $this->createUser();
         $this->band = $this->createBandForUser($this->bandAdmin);
     }
@@ -27,6 +25,8 @@ class BandsInviteTest extends TestCase
     /** @test */
     public function admin_of_band_can_invite_registered_users_to_his_band(): void
     {
+        Mail::fake();
+
         $this->actingAs($this->bandAdmin);
 
         $invitedUser = $this->createUser();
@@ -63,6 +63,8 @@ class BandsInviteTest extends TestCase
     /** @test */
     public function admin_of_band_can_invite_unregistered_users_to_his_band(): void
     {
+        Mail::fake();
+
         $this->actingAs($this->bandAdmin);
 
         $invitedUserEmail = 'some@mail.com';
@@ -92,10 +94,19 @@ class BandsInviteTest extends TestCase
             return $mail->hasTo($invitedUserEmail) && $mail->band->id === $this->band->id;
         });
     }
+    
+    /** @test */
+    public function mail_contains_band(): void
+    {
+        $mail = new NewInvite($this->band);
+        $mail->assertSeeInHtml($this->band->name);
+    }
 
     /** @test */
     public function band_admin_can_cancel_member_invite(): void
     {
+        Mail::fake();
+
         $invitedUser = $this->createUser();
 
         $invite = $this->band->invite($invitedUser->email);

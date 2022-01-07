@@ -7,6 +7,7 @@ use App\Models\EmailVerification;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class EmailVerificationTest extends TestCase
@@ -18,7 +19,6 @@ class EmailVerificationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Mail::fake();
         $this->endpoint = route('email.verification');
         $this->method = 'post';
     }
@@ -26,6 +26,8 @@ class EmailVerificationTest extends TestCase
     /** @test */
     public function it_sends_email_verification_code(): void
     {
+        Mail::fake();
+
         $this->assertDatabaseCount(EmailVerification::class, 0);
 
         $response = $this->json($this->method, $this->endpoint, ['email' => $this->email]);
@@ -41,8 +43,18 @@ class EmailVerificationTest extends TestCase
     }
 
     /** @test */
+    public function mail_contains_code(): void
+    {
+        $code = Str::random(5);
+        $mail = new EmailVerificationCode($code);
+        $mail->assertSeeInHtml($code);
+    }
+
+    /** @test */
     public function it_stores_only_one_code(): void
     {
+        Mail::fake();
+
         $this->assertDatabaseCount(EmailVerification::class, 0);
 
         $response = $this->json($this->method, $this->endpoint, ['email' => $this->email]);
@@ -75,6 +87,8 @@ class EmailVerificationTest extends TestCase
      */
     public function it_validates_email($data): void
     {
+        Mail::fake();
+
         $this->json($this->method, $this->endpoint, $data)
             ->assertUnprocessable()
             ->assertJsonValidationErrors('email');
@@ -83,6 +97,8 @@ class EmailVerificationTest extends TestCase
     /** @test */
     public function it_throttles_requests(): void
     {
+        Mail::fake();
+
         $this->withMiddleware(ThrottleRequests::class);
         $loginAttemptsAllowed = 3;
 
