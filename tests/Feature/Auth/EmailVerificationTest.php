@@ -18,6 +18,7 @@ class EmailVerificationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Mail::fake();
         $this->endpoint = route('email.verification');
         $this->method = 'post';
     }
@@ -25,7 +26,6 @@ class EmailVerificationTest extends TestCase
     /** @test */
     public function it_sends_email_verification_code(): void
     {
-        Mail::fake();
         $this->assertDatabaseCount(EmailVerification::class, 0);
 
         $response = $this->json($this->method, $this->endpoint, ['email' => $this->email]);
@@ -43,7 +43,6 @@ class EmailVerificationTest extends TestCase
     /** @test */
     public function it_stores_only_one_code(): void
     {
-        Mail::fake();
         $this->assertDatabaseCount(EmailVerification::class, 0);
 
         $response = $this->json($this->method, $this->endpoint, ['email' => $this->email]);
