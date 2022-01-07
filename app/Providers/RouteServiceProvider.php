@@ -41,5 +41,11 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('login', static function () {
             return Limit::perMinute(5);
         });
+        RateLimiter::for('email.verification', static function () {
+            return Limit::perHour(3);
+        });
+        RateLimiter::for('registration', static function () {
+            return Limit::perHour(3);
+        });
     }
 }

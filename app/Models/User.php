@@ -65,6 +65,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static UserFactory factory(...$parameters)
  * @property-read MediaCollection|Media[] $media
  * @property-read int|null $media_count
+ * @property string|null $password
+ * @property string|null $remember_token
+ * @method static Builder|User wherePassword($value)
+ * @method static Builder|User whereRememberToken($value)
  */
 class User extends Authenticatable implements HasMedia
 {

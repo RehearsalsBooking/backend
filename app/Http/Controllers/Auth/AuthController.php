@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EmailVerificationRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrationRequest;
 use App\Http\Resources\Users\LoggedUserResource;
+use App\Mail\EmailVerificationCode;
+use App\Models\EmailVerification;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 use function app;
@@ -43,13 +47,27 @@ class AuthController extends Controller
         return response()->json(new LoggedUserResource($user), Response::HTTP_OK);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function registration(RegistrationRequest $request): JsonResponse
     {
+        EmailVerification::validate($request->getEmailConfirmationCode());
+
         $newUser = User::create($request->getUserAttributes());
 
         auth('web')->login($newUser);
 
         return response()->json(new LoggedUserResource($newUser), Response::HTTP_CREATED);
+    }
+
+    public function emailVerification(EmailVerificationRequest $request): JsonResponse
+    {
+        $code = EmailVerification::createCodeForEmail($request->getEmail());
+
+        Mail::to($request->getEmail())->send(new EmailVerificationCode($code));
+
+        return response()->json(null, Response::HTTP_CREATED);
     }
 
     /**

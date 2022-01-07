@@ -3,8 +3,11 @@
 namespace Tests\Feature\Auth;
 
 use App\Http\Resources\Users\LoggedUserResource;
+use App\Models\EmailVerification;
 use App\Models\User;
 use Hash;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -15,6 +18,12 @@ class RegistrationTest extends TestCase
         'password' => 'some password',
         'password_confirmation' => 'some password'
     ];
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->credentials['code'] = EmailVerification::createCodeForEmail($this->credentials['email']);
+    }
 
     /** @test */
     public function it_registers_user(): void
@@ -35,6 +44,33 @@ class RegistrationTest extends TestCase
         $this->assertEquals($this->credentials['name'], $registeredUser->name);
         $this->assertTrue(Hash::check($this->credentials['password'], $registeredUser->password));
         $this->assertAuthenticatedAs($registeredUser);
+    }
+
+    /** @test */
+    public function it_validates_user_email(): void
+    {
+        $this->assertDatabaseCount(User::class, 0);
+        $this->assertGuest();
+        $data = $this->credentials;
+        $data['code'] = 'some incorrect code';
+        $this->assertNotEquals($data['code'], $this->credentials['code']);
+        $this->json('post', route('registration'), $data)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('code');
+
+        $this->assertDatabaseCount(User::class, 0);
+    }
+
+    /** @test */
+    public function it_throttles_registration_requests(): void
+    {
+        $this->withMiddleware(ThrottleRequests::class);
+        $loginAttemptsAllowed = 3;
+
+        foreach (range(1, $loginAttemptsAllowed) as $_) {
+            $this->json('post', route('registration'), [])->assertUnprocessable();
+        }
+        $this->json('post', route('registration'), [])->assertStatus(Response::HTTP_TOO_MANY_REQUESTS);
     }
 
     /** @test */
@@ -64,7 +100,8 @@ class RegistrationTest extends TestCase
                 [
                     'email' => 'some@email.com',
                     'password' => 'some password',
-                    'password_confirmation' => 'some password'
+                    'password_confirmation' => 'some password',
+                    'code' => 'some code'
                 ],
                 'name'
             ],
@@ -73,7 +110,8 @@ class RegistrationTest extends TestCase
                 [
                     'name' => 'new user',
                     'password' => 'some password',
-                    'password_confirmation' => 'some password'
+                    'password_confirmation' => 'some password',
+                    'code' => 'some code'
                 ],
                 'email'
             ],
@@ -82,7 +120,8 @@ class RegistrationTest extends TestCase
                 [
                     'name' => 'new user',
                     'email' => 'some@email.com',
-                    'password_confirmation' => 'some password'
+                    'password_confirmation' => 'some password',
+                    'code' => 'some code'
                 ],
                 'password'
             ],
@@ -92,6 +131,7 @@ class RegistrationTest extends TestCase
                     'name' => 'new user',
                     'email' => 'some@email.com',
                     'password' => 'some password',
+                    'code' => 'some code'
                 ],
                 'password'
             ],
@@ -102,6 +142,7 @@ class RegistrationTest extends TestCase
                     'email' => 'some@email.com',
                     'password' => 'some password',
                     'password_confirmation' => 'incorrect confirmation',
+                    'code' => 'some code'
                 ],
                 'password'
             ],
@@ -112,8 +153,19 @@ class RegistrationTest extends TestCase
                     'email' => 'some@email.com',
                     'password' => 'short',
                     'password_confirmation' => 'short',
+                    'code' => 'some code'
                 ],
                 'password'
+            ],
+
+            [
+                [
+                    'name' => 'new user',
+                    'email' => 'some@email.com',
+                    'password' => 'some password',
+                    'password_confirmation' => 'some password',
+                ],
+                'code'
             ],
         ];
     }

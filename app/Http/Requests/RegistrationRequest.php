@@ -21,6 +21,7 @@ class RegistrationRequest extends FormRequest
                 Rule::unique(User::class),
             ],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'code' => 'required'
         ];
     }
 
@@ -30,6 +31,14 @@ class RegistrationRequest extends FormRequest
             'name' => $this->get('name'),
             'email' => $this->get('email'),
             'password' => Hash::make($this->get('password')),
+        ];
+    }
+
+    public function getEmailConfirmationCode(): array
+    {
+        return [
+            'email' => $this->get('email'),
+            'code' => $this->get('code')
         ];
     }
 }
