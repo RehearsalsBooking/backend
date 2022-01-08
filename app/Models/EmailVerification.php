@@ -73,9 +73,6 @@ class EmailVerification extends Model
 
     private function isExpired(): bool
     {
-        if (!$this->created_at) {
-            return true;
-        }
-        return $this->created_at->addMinutes(self::EXPIRATION_MINUTES)->isPast();
+        return optional($this->created_at)->addMinutes(self::EXPIRATION_MINUTES)->isPast();
     }
 }
