@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use PDOException;
 use Tests\Feature\Rehearsals\Booking\RehearsalData;
 
@@ -99,7 +100,8 @@ class DatabaseSeeder extends Seeder
     {
         return $this->userToLoginWith = User::factory()->create([
             'email' => 'demo@festic.ru',
-            'name' => 'demo user'
+            'name' => 'demo user',
+            'password' => Hash::make('password')
         ]);
     }
 
