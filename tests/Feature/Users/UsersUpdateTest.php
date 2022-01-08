@@ -15,7 +15,6 @@ class UsersUpdateTest extends TestCase
     {
         $newContactInfo = [
             'name' => 'new name',
-            'phone' => 'new phone',
             'link' => 'new link',
         ];
 
@@ -32,7 +31,6 @@ class UsersUpdateTest extends TestCase
     {
         $newContactInfo = [
             'name' => 'new name',
-            'phone' => 'new phone',
             'link' => 'new link',
         ];
 

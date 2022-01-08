@@ -15,7 +15,6 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'public_email' => 'sometimes|email',
         ];
     }
 
@@ -23,8 +22,6 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => $this->get('name'),
-            'public_email' => $this->get('public_email'),
-            'phone' => $this->get('phone'),
             'link' => $this->get('link'),
         ];
     }

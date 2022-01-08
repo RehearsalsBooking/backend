@@ -7,12 +7,11 @@ use App\Http\Requests\EmailVerificationRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrationRequest;
 use App\Http\Resources\Users\LoggedUserResource;
-use App\Mail\EmailVerificationCode;
 use App\Models\EmailVerification;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 use function app;
@@ -54,7 +53,10 @@ class AuthController extends Controller
     {
         EmailVerification::validate($request->getEmailConfirmationCode());
 
-        $newUser = User::create($request->getUserAttributes());
+        $newUser = DB::transaction(function () use ($request) {
+            EmailVerification::validated($request->getEmailConfirmationCode());
+            return User::create($request->getUserAttributes());
+        });
 
         auth('web')->login($newUser);
 
@@ -63,9 +65,7 @@ class AuthController extends Controller
 
     public function emailVerification(EmailVerificationRequest $request): JsonResponse
     {
-        $code = EmailVerification::createCodeForEmail($request->getEmail());
-
-        Mail::to($request->getEmail())->send(new EmailVerificationCode($code));
+        EmailVerification::createCodeForEmail($request->getEmail());
 
         return response()->json(null, Response::HTTP_CREATED);
     }

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Mail\EmailVerificationCode;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -29,20 +31,27 @@ use Illuminate\Validation\ValidationException;
  */
 class EmailVerification extends Model
 {
+    public const EXPIRATION_MINUTES = 30;
+
     protected $guarded = [];
 
     public static function createCodeForEmail(mixed $email): string
     {
+        /** @var EmailVerification|null $existingVerification */
+        $existingVerification = self::where('email', $email)->first();
+
+        if ($existingVerification && !$existingVerification->isExpired()) {
+            return $existingVerification->code;
+        }
+
         $code = Str::random(5);
 
         self::updateOrCreate(
-            [
-                'email' => $email,
-            ],
-            [
-                'code' => $code
-            ]
+            ['email' => $email],
+            ['code' => $code]
         );
+
+        Mail::to($email)->send(new EmailVerificationCode($code));
 
         return $code;
     }
@@ -55,5 +64,18 @@ class EmailVerification extends Model
         if (self::where($emailVerificationCodeData)->doesntExist()) {
             throw ValidationException::withMessages(['code' => 'Неправильный код из письма']);
         }
+    }
+
+    public static function validated(array $emailVerificationCodeData): void
+    {
+        self::where($emailVerificationCodeData)->delete();
+    }
+
+    private function isExpired(): bool
+    {
+        if (!$this->created_at) {
+            return true;
+        }
+        return $this->created_at->addMinutes(self::EXPIRATION_MINUTES)->isPast();
     }
 }

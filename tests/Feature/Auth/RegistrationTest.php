@@ -29,6 +29,7 @@ class RegistrationTest extends TestCase
     public function it_registers_user(): void
     {
         $this->assertDatabaseCount(User::class, 0);
+        $this->assertDatabaseCount(EmailVerification::class, 1);
         $this->assertGuest();
         $response = $this->json('post', route('registration'), $this->credentials);
         $response->assertCreated();
@@ -43,6 +44,7 @@ class RegistrationTest extends TestCase
         $this->assertEquals($this->credentials['email'], $registeredUser->email);
         $this->assertEquals($this->credentials['name'], $registeredUser->name);
         $this->assertTrue(Hash::check($this->credentials['password'], $registeredUser->password));
+        $this->assertDatabaseCount(EmailVerification::class, 0);
         $this->assertAuthenticatedAs($registeredUser);
     }
 

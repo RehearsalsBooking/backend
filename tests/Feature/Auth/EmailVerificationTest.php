@@ -68,6 +68,8 @@ class EmailVerificationTest extends TestCase
             return $mail->hasTo($this->email) && $mail->code === $code;
         });
 
+        $this->travel(EmailVerification::EXPIRATION_MINUTES + 10)->minutes();
+
         $response = $this->json($this->method, $this->endpoint, ['email' => $this->email]);
         $response->assertCreated();
 
@@ -79,6 +81,22 @@ class EmailVerificationTest extends TestCase
         Mail::assertSent(EmailVerificationCode::class, function (EmailVerificationCode $mail) use ($newCode) {
             return $mail->hasTo($this->email) && $mail->code === $newCode;
         });
+    }
+
+    /** @test */
+    public function it_doesnt_send_another_code_if_previous_is_not_expired(): void
+    {
+        Mail::fake();
+
+        EmailVerification::create(['email' => $this->email, 'code' => 'some code']);
+
+        $code = EmailVerification::first()->code;
+        $response = $this->json($this->method, $this->endpoint, ['email' => $this->email]);
+        $response->assertCreated();
+
+        $newCode = EmailVerification::first()->code;
+        $this->assertEquals($code, $newCode);
+        Mail::assertNothingSent();
     }
 
     /**
