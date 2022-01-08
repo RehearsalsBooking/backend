@@ -11,10 +11,14 @@ class RouteServiceProvider extends ServiceProvider
 {
     protected $namespace = 'App\Http\Controllers';
 
+    public function boot(): void
+    {
+        $this->configureRateLimiting();
+    }
+
     public function map(): void
     {
         $this->mapApiRoutes();
-        $this->configureRateLimiting();
     }
 
     protected function mapApiRoutes(): void
@@ -38,6 +42,9 @@ class RouteServiceProvider extends ServiceProvider
 
     public function configureRateLimiting(): void
     {
+        RateLimiter::for('api', static function () {
+            return Limit::perMinute(120);
+        });
         RateLimiter::for('login', static function () {
             return Limit::perMinute(5);
         });
