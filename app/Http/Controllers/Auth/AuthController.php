@@ -14,6 +14,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+use Throwable;
+
 use function app;
 use function auth;
 use function response;
@@ -48,6 +50,7 @@ class AuthController extends Controller
 
     /**
      * @throws ValidationException
+     * @throws Throwable
      */
     public function registration(RegistrationRequest $request): JsonResponse
     {

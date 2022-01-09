@@ -110,6 +110,21 @@ class EmailVerificationTest extends TestCase
         $this->json($this->method, $this->endpoint, $data)
             ->assertUnprocessable()
             ->assertJsonValidationErrors('email');
+
+        Mail::assertNothingSent();
+    }
+
+    /** @test */
+    public function it_doesnt_send_code_if_user_with_given_email_already_registered(): void
+    {
+        Mail::fake();
+
+        $user = $this->createUser();
+        $this->json($this->method, $this->endpoint, ['email' => $user->email])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('email');
+
+        Mail::assertNothingSent();
     }
 
     /** @test */
