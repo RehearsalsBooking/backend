@@ -54,7 +54,7 @@ composer-require-check: ## Check soft dependencies
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" composer-require-checker check --config-file=composer-require-checker.json
 
 composer-unused: ## Check soft dependencies
-	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" composer-unused
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -e XDEBUG_MODE=off "$(php_container_name)" vendor/bin/composer-unused --excludePackage=sentry/sentry-laravel
 
 check: check-environment composer-validate test phpstan composer-require-check composer-unused ## Run tests and code analysis
 
