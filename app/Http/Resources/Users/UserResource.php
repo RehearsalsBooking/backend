@@ -17,8 +17,6 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'avatar' => $this->getAvatarUrls(),
             'contacts' => [
-                'public_email' => $this->public_email,
-                'phone' => $this->phone,
                 'link' => $this->link,
             ],
         ];

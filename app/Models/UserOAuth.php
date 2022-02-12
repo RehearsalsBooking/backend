@@ -84,7 +84,7 @@ class UserOAuth extends Model
         ]);
 
         try {
-            $user->updateAvatarFromUrl($socialiteUser->getAvatar() ?? '');
+            $user->updateAvatarFromUrl($socialiteUser->getAvatar());
         } catch (FileDoesNotExist | FileIsTooBig | FileCannotBeAdded | InvalidUrl $e) {
             // do nothing, user can manually update his avatar later
         }
@@ -92,6 +92,9 @@ class UserOAuth extends Model
         return $user;
     }
 
+    /**
+     * @return BelongsTo<User, self>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

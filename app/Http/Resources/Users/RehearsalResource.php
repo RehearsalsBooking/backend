@@ -16,6 +16,7 @@ class RehearsalResource extends JsonResource
             'id' => $this->id,
             'starts_at' => optional($this->time->from())->toDateTimeString(),
             'ends_at' => optional($this->time->to())->toDateTimeString(),
+            /** @phpstan-ignore-next-line  */
             'is_participant' => $this->is_participant ?? false,
         ];
     }

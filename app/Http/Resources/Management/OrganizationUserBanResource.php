@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class OrganizationUserBanResource.
  * @mixin User
  */
 class OrganizationUserBanResource extends JsonResource
@@ -23,7 +22,9 @@ class OrganizationUserBanResource extends JsonResource
     {
         return [
             'user' => new UserResource($this),
+            /** @phpstan-ignore-next-line  */
             'comment' => $this->pivot->comment,
+            /** @phpstan-ignore-next-line  */
             'created_at' => $this->pivot->created_at,
         ];
     }

@@ -55,7 +55,10 @@ class RehearsalTimeValidator
             ->join('users', 'rehearsal_user.user_id', '=', 'users.id')
             ->whereIn('rehearsal_user.user_id', $supposedAttendees)
             ->where('time', '&&', $rehearsal->time())
-            ->when($rehearsal->id(), fn(QueryBuilder $query) => $query->where('rehearsals.id', '!=', $rehearsal->id()))
+            ->when(
+                $rehearsal->id() !== null,
+                fn(QueryBuilder $query) => $query->where('rehearsals.id', '!=', $rehearsal->id())
+            )
             ->select(['users.name as user_name', 'users.id as user_id'])
             ->get();
 

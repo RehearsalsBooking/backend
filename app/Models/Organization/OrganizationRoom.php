@@ -52,21 +52,33 @@ class OrganizationRoom extends Model
         return OrganizationRoomFactory::new();
     }
 
+    /**
+     * @return BelongsTo<Organization, self>
+     */
     public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class, 'organization_id');
     }
 
+    /**
+     * @return HasMany<OrganizationRoomPrice>
+     */
     public function prices(): HasMany
     {
         return $this->hasMany(OrganizationRoomPrice::class);
     }
 
+    /**
+     * @return HasMany<Rehearsal>
+     */
     public function rehearsals(): HasMany
     {
         return $this->hasMany(Rehearsal::class);
     }
 
+    /**
+     * @return HasMany<Rehearsal>
+     */
     public function futureRehearsals(): HasMany
     {
         return $this->rehearsals()->whereRaw('time && ?', [

@@ -98,6 +98,9 @@ class Organization extends Model implements HasMedia
         return $this->favoritedUsers()->where('user_id', $userId)->exists();
     }
 
+    /**
+     * @return BelongsToMany<User>
+     */
     public function favoritedUsers(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -108,26 +111,41 @@ class Organization extends Model implements HasMedia
         );
     }
 
+    /**
+     * @return BelongsTo<User, self>
+     */
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
+    /**
+     * @return HasMany<OrganizationRoom>
+     */
     public function rooms(): HasMany
     {
         return $this->hasMany(OrganizationRoom::class);
     }
 
+    /**
+     * @return HasManyThrough<Rehearsal>
+     */
     public function rehearsals(): HasManyThrough
     {
         return $this->hasManyThrough(Rehearsal::class, OrganizationRoom::class);
     }
 
+    /**
+     * @return HasManyThrough<OrganizationRoomPrice>
+     */
     public function prices(): HasManyThrough
     {
         return $this->hasManyThrough(OrganizationRoomPrice::class, OrganizationRoom::class);
     }
 
+    /**
+     * @return BelongsToMany<User>
+     */
     public function bannedUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'organizations_users_bans')
@@ -136,6 +154,9 @@ class Organization extends Model implements HasMedia
             ->withTimestamps();
     }
 
+    /**
+     * @return BelongsTo<City, self>
+     */
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);

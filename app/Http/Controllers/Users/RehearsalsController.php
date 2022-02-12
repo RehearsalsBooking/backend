@@ -31,9 +31,10 @@ class RehearsalsController extends Controller
     {
         $rehearsalsQuery = Rehearsal::filter($filter)->orderBy('id');
 
+        /** @phpstan-ignore-next-line  */
         $rehearsalsQuery->when(auth()->check(), static function (Builder $query) {
             $userId = auth()->id();
-
+            /** @phpstan-ignore-next-line  */
             return $query->addSelect(
                 [
                     'is_participant' => DB::table('rehearsal_user')

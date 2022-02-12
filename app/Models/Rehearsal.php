@@ -83,21 +83,33 @@ class Rehearsal extends Model
         $this->attendees()->sync($attendees, true);
     }
 
+    /**
+     * @return BelongsToMany<User>
+     */
     public function attendees(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }
 
+    /**
+     * @return BelongsTo<OrganizationRoom, self>
+     */
     public function room(): BelongsTo
     {
         return $this->belongsTo(OrganizationRoom::class, 'organization_room_id');
     }
 
+    /**
+     * @return BelongsTo<User, self>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Band, self>
+     */
     public function band(): BelongsTo
     {
         return $this->belongsTo(Band::class);
@@ -113,6 +125,10 @@ class Rehearsal extends Model
         return $this->time->from() < Carbon::now();
     }
 
+    /**
+     * @param  Builder<self>  $builder
+     * @return Builder<self>
+     */
     public function scopeCompleted(Builder $builder): Builder
     {
         $tillNow = new TimestampRange(null, now(), '(', ')');

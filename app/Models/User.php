@@ -82,11 +82,17 @@ class User extends Authenticatable implements HasMedia
         'password', 'remember_token',
     ];
 
+    /**
+     * @return HasMany<Organization>
+     */
     public function organizations(): HasMany
     {
         return $this->hasMany(Organization::class, 'owner_id');
     }
 
+    /**
+     * @return BelongsToMany<Organization>
+     */
     public function favoriteOrganizations(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -97,11 +103,17 @@ class User extends Authenticatable implements HasMedia
         );
     }
 
+    /**
+     * @return HasMany<Band>
+     */
     public function createdBands(): HasMany
     {
         return $this->hasMany(Band::class, 'admin_id');
     }
 
+    /**
+     * @return HasManyThrough<Band>
+     */
     public function bands(): HasManyThrough
     {
         return $this->hasManyThrough(
@@ -114,11 +126,17 @@ class User extends Authenticatable implements HasMedia
         );
     }
 
+    /**
+     * @return BelongsToMany<Rehearsal>
+     */
     public function rehearsals(): BelongsToMany
     {
         return $this->belongsToMany(Rehearsal::class);
     }
 
+    /**
+     * @return HasMany<Invite>
+     */
     public function invites(): HasMany
     {
         return $this->hasMany(Invite::class, 'email', 'email');

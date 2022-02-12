@@ -62,11 +62,15 @@ class RehearsalPrice
                         $price->price
                     );
             },
-            0
+            0.0
         );
     }
 
     /**
+     * @param  int  $day
+     * @param  CarbonImmutable  $timeStart
+     * @param  CarbonImmutable  $timeEnd
+     * @return Collection<int, OrganizationRoomPrice>
      * @throws PriceCalculationException
      */
     private function getMatchingPricesForPeriod(
@@ -107,6 +111,10 @@ class RehearsalPrice
     }
 
     /**
+     * @param  Collection<int, OrganizationRoomPrice>  $matchingPrices
+     * @param  CarbonImmutable  $timeStart
+     * @param  CarbonImmutable  $timeEnd
+     * @return Collection<int, OrganizationRoomPrice>
      * @throws PriceCalculationException
      */
     private function setPricesBoundaries(
@@ -120,7 +128,9 @@ class RehearsalPrice
 
         $this->checkBoundaries($matchingPrices, $timeStart, $timeEnd);
 
+        /** @phpstan-ignore-next-line */
         $matchingPrices->first()->time = new TimeRange($timeStart, $matchingPrices->first()->time->to());
+        /** @phpstan-ignore-next-line */
         $matchingPrices->last()->time = new TimeRange($matchingPrices->last()->time->from(), $timeEnd);
 
         return $matchingPrices;
@@ -148,6 +158,9 @@ class RehearsalPrice
     }
 
     /**
+     * @param  Collection<int, OrganizationRoomPrice>  $matchingPrices
+     * @param  CarbonImmutable  $timeStart
+     * @param  CarbonImmutable  $timeEnd
      * @throws PriceCalculationException
      */
     private function checkBoundaries(
@@ -155,8 +168,8 @@ class RehearsalPrice
         CarbonImmutable $timeStart,
         CarbonImmutable $timeEnd
     ): void {
-        if ($timeStart->toTimeString() < $matchingPrices->first()->time->from() ||
-            $timeEnd->toTimeString() > $matchingPrices->last()->time->to()
+        if ($timeStart->toTimeString() < $matchingPrices->first()?->time->from() ||
+            $timeEnd->toTimeString() > $matchingPrices->last()?->time->to()
         ) {
             throw new PriceCalculationException();
         }

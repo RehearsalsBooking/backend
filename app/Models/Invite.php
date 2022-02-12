@@ -54,6 +54,9 @@ class Invite extends Model
         'roles' => 'array'
     ];
 
+    /**
+     * @return BelongsTo<Band, self>
+     */
     public function band(): BelongsTo
     {
         return $this->belongsTo(Band::class);

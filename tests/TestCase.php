@@ -354,7 +354,7 @@ abstract class TestCase extends BaseTestCase
         return CarbonImmutable::create(2025, 1, 6, $hour, $minute);
     }
 
-    protected function mockSocialiteUser(?string $email, ?string $id): AbstractUser
+    protected function mockSocialiteUser(string $email, ?string $id): AbstractUser
     {
         $socialiteUser = $this->createMock(\Laravel\Socialite\Two\User::class);
         $socialiteUser
@@ -366,6 +366,9 @@ abstract class TestCase extends BaseTestCase
         $socialiteUser
             ->method('getId')
             ->willReturn($id);
+        $socialiteUser
+            ->method('getAvatar')
+            ->willReturn('');
 
         return $socialiteUser;
     }

@@ -85,16 +85,25 @@ class Band extends Model implements HasMedia
         });
     }
 
+    /**
+     * @return BelongsTo<User, self>
+     */
     public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return HasMany<Rehearsal>
+     */
     public function rehearsals(): HasMany
     {
         return $this->hasMany(Rehearsal::class);
     }
 
+    /**
+     * @return HasMany<Rehearsal>
+     */
     public function futureRehearsals(): HasMany
     {
         return $this->rehearsals()->whereRaw('time && ?', [
@@ -102,6 +111,9 @@ class Band extends Model implements HasMedia
         ]);
     }
 
+    /**
+     * @return BelongsToMany<Genre>
+     */
     public function genres(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -132,6 +144,9 @@ class Band extends Model implements HasMedia
         });
     }
 
+    /**
+     * @return HasManyThrough<User>
+     */
     public function members(): HasManyThrough
     {
         return $this->hasManyThrough(
@@ -144,6 +159,9 @@ class Band extends Model implements HasMedia
         );
     }
 
+    /**
+     * @return HasMany<BandMembership>
+     */
     public function memberships(): HasMany
     {
         return $this->hasMany(BandMembership::class);
@@ -187,6 +205,9 @@ class Band extends Model implements HasMedia
         $this->invites()->delete();
     }
 
+    /**
+     * @return HasMany<Invite>
+     */
     public function invites(): HasMany
     {
         return $this->hasMany(Invite::class);
@@ -194,6 +215,6 @@ class Band extends Model implements HasMedia
 
     public function hasMember(int $memberId): bool
     {
-        return $this->members->contains($memberId);
+        return $this->members->contains((string) $memberId);
     }
 }

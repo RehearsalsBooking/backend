@@ -59,7 +59,7 @@ class OAuthUserTest extends TestCase
         $clientId = 'client_id';
         $provider = 'google';
 
-        $socialiteUser = $this->mockSocialiteUser(null, $clientId);
+        $socialiteUser = $this->mockSocialiteUser('', $clientId);
 
         $this->assertDatabaseCount(UserOAuth::class, 0);
         $this->assertDatabaseCount(User::class, 0);
@@ -69,7 +69,7 @@ class OAuthUserTest extends TestCase
         $this->assertDatabaseCount(UserOAuth::class, 1);
         $this->assertDatabaseCount(User::class, 1);
 
-        $this->assertNull($userFromSocialite->email);
+        $this->assertEmpty($userFromSocialite->email);
         $this->assertDatabaseHas(UserOAuth::class, [
             'social_type' => $provider,
             'social_id' => $clientId,

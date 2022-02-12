@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 /**
@@ -17,6 +18,9 @@ use Illuminate\Http\Request;
 abstract class FilterRequest
 {
     public Request $request;
+    /**
+     * @var Builder<Model>
+     */
     protected Builder $builder;
 
     public function __construct(Request $request)
@@ -27,6 +31,10 @@ abstract class FilterRequest
 
     abstract protected function getRules(): array;
 
+    /**
+     * @param  Builder<Model>  $builder
+     * @return Builder<Model>
+     */
     public function apply(Builder $builder): Builder
     {
         $this->builder = $builder;

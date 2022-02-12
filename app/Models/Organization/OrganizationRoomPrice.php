@@ -54,6 +54,9 @@ class OrganizationRoomPrice extends Model
         'time' => TimeRangeCast::class,
     ];
 
+    /**
+     * @return BelongsTo<OrganizationRoom, self>
+     */
     public function room(): BelongsTo
     {
         return $this->belongsTo(OrganizationRoom::class, 'organization_room_id');
