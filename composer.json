@@ -54,11 +54,7 @@
   "extra": {
     "laravel": {
       "dont-discover": []
-    },
-    "unused": [
-      "socialiteproviders/vkontakte",
-      "sentry/sentry-laravel"
-    ]
+    }
   },
   "autoload": {
     "psr-4": {
