@@ -54,7 +54,10 @@
   "extra": {
     "laravel": {
       "dont-discover": []
-    }
+    },
+    "unused": [
+      "sentry/sentry-laravel"
+    ]
   },
   "autoload": {
     "psr-4": {
