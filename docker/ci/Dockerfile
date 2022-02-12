@@ -25,4 +25,5 @@ RUN composer install --no-ansi --no-interaction --no-plugins --no-progress --opt
 COPY ./ /app
 
 RUN composer dump-autoload --optimize
+RUN php artisan ide-helper:generate && php artisan ide-helper:meta
 
