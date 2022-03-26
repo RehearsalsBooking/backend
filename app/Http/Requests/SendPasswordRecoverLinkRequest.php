@@ -8,11 +8,13 @@ class SendPasswordRecoverLinkRequest extends FormRequest
 {
     public function rules(): array
     {
-        return [];
+        return [
+            'email' => 'required|email'
+        ];
     }
 
     public function getEmail(): string
     {
-        return $this->get('email');
+        return $this->input('email');
     }
 }
