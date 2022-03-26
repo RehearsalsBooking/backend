@@ -3,8 +3,8 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
-use DB;
 use Illuminate\Auth\Passwords\DatabaseTokenRepository;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -35,7 +35,6 @@ class RecoverPasswordTest extends TestCase
     {
         $invalidCredentials = ['email' => 'some-invalid@email.com'];
         $this->assertDatabaseMissing(User::class, $invalidCredentials);
-        $this->createTokenForEmail('some-invalid@email.com');
         $this->json('post', $this->route, array_merge(
             $invalidCredentials,
             [
@@ -51,7 +50,7 @@ class RecoverPasswordTest extends TestCase
     public function it_validates_that_token_is_valid(): void
     {
         $user = $this->createUser();
-        $this->createTokenForEmail($user->email);
+        $this->createResetTokenForUser($user);
         $this->json('post', $this->route, array_merge(
             [
                 'email' => $user->email,
@@ -67,7 +66,7 @@ class RecoverPasswordTest extends TestCase
     public function it_resets_password(): void
     {
         $user = $this->createUser();
-        $token = $this->createTokenForEmail($user->email);
+        $token = $this->createResetTokenForUser($user);
         $newPassword = 'some new password';
         $this->assertFalse(Hash::check($newPassword, $user->getAuthPassword()));
         $this->json('post', $this->route, array_merge(
@@ -79,6 +78,7 @@ class RecoverPasswordTest extends TestCase
             ]
         ))
             ->assertOk();
+        $this->assertTrue(Hash::check($newPassword, $user->fresh()->getAuthPassword()));
     }
 
     public function invalidRecoverPasswordData(): array
@@ -133,19 +133,17 @@ class RecoverPasswordTest extends TestCase
         ];
     }
 
-    private function createTokenForEmail(string $email): string
+    private function createResetTokenForUser(CanResetPassword $user): string
     {
+        $key = config('app.key');
+
+        if (str_starts_with($key, 'base64:')) {
+            $key = base64_decode(substr($key, 7));
+        }
+
         $repository = app()->make(DatabaseTokenRepository::class,
-            ['table' => 'password_resets', 'hashKey' => null]);
+            ['table' => 'password_resets', 'hashKey' => $key]);
 
-        $newToken = $repository->createNewToken();
-
-        DB::table('password_resets')->insert([
-            'email' => $email,
-            'token' => Hash::make($newToken),
-            'created_at' => now()
-        ]);
-
-        return $newToken;
+        return $repository->create($user);
     }
 }

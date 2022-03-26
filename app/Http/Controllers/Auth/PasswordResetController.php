@@ -51,9 +51,7 @@ class PasswordResetController extends Controller
         PasswordBroker $passwordBroker,
     ): JsonResponse {
         $status = $passwordBroker->reset(
-            array_merge(
-                $request->getCredentials(),
-            ),
+            $request->getCredentials(),
             function ($user, $password) {
                 $user->forceFill([
                     'password' => Hash::make($password)

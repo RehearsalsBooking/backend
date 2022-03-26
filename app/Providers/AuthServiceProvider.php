@@ -7,6 +7,7 @@ use App\Models\Invite;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationRoom;
 use App\Models\Rehearsal;
+use App\Models\User;
 use App\Policies\Management\OrganizationPolicy;
 use App\Policies\Management\OrganizationRoomPolicy;
 use App\Policies\Users\BandPolicy;
@@ -30,8 +31,8 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         ResetPassword::createUrlUsing(static fn(
-            $user,
+            User $user,
             string $token
-        ) => 'https://app.festic.ru/reset-password?token='.$token);
+        ) => sprintf("https://app.festic.ru/reset-password?email=%s&token=%s", $user->email, $token));
     }
 }
