@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Exceptions\User\InvalidValidationCodeForEmail;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmailVerificationRequest;
 use App\Http\Requests\LoginRequest;
@@ -13,7 +14,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-
 use Throwable;
 
 use function app;
@@ -50,6 +50,7 @@ class AuthController extends Controller
 
     /**
      * @throws ValidationException
+     * @throws InvalidValidationCodeForEmail
      * @throws Throwable
      */
     public function registration(RegistrationRequest $request): JsonResponse

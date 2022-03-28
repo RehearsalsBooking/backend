@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Exceptions\User\InvalidValidationCodeForEmail;
 use App\Http\Resources\Users\LoggedUserResource;
 use App\Models\EmailVerification;
 use App\Models\User;
@@ -51,14 +52,15 @@ class RegistrationTest extends TestCase
     /** @test */
     public function it_validates_user_email(): void
     {
+        $this->withoutExceptionHandling();
+        $this->expectException(InvalidValidationCodeForEmail::class);
         $this->assertDatabaseCount(User::class, 0);
         $this->assertGuest();
         $data = $this->credentials;
         $data['code'] = 'some incorrect code';
         $this->assertNotEquals($data['code'], $this->credentials['code']);
         $this->json('post', route('registration'), $data)
-            ->assertUnprocessable()
-            ->assertJsonValidationErrors('code');
+            ->assertUnprocessable();
 
         $this->assertDatabaseCount(User::class, 0);
     }

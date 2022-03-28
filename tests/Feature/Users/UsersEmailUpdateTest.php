@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Users;
 
+use App\Exceptions\User\InvalidValidationCodeForEmail;
 use App\Models\EmailVerification;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -57,6 +58,22 @@ class UsersEmailUpdateTest extends TestCase
             ->assertJsonValidationErrors($errorKey);
     }
 
+    /** @test
+     */
+    public function it_responses_with_422_when_user_provided_invalid_code_from_email(): void
+    {
+        $this->withoutExceptionHandling();
+        $this->expectException(InvalidValidationCodeForEmail::class);
+
+        $this->actingAs($this->user);
+
+        $this->json('put', $this->endpoint, [
+            'email' => 'new@mail.com',
+            'code' => 'incorrect code'
+        ])
+            ->assertUnprocessable();
+    }
+
     public function invalidUserData(): array
     {
         return [
@@ -78,13 +95,6 @@ class UsersEmailUpdateTest extends TestCase
                     'code' => 'some code'
                 ],
                 'email',
-            ],
-            [
-                [
-                    'email' => 'new@mail.com',
-                    'code' => 'incorrect code'
-                ],
-                'code',
             ],
         ];
     }

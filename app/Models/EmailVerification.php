@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\User\InvalidValidationCodeForEmail;
 use App\Mail\EmailVerificationCode;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 
 /**
  * App\Models\EmailVerification
@@ -57,12 +57,12 @@ class EmailVerification extends Model
     }
 
     /**
-     * @throws ValidationException
+     * @throws InvalidValidationCodeForEmail
      */
     public static function validate(array $emailVerificationCodeData): void
     {
         if (self::where($emailVerificationCodeData)->doesntExist()) {
-            throw ValidationException::withMessages(['code' => 'Неправильный код из письма']);
+            throw new InvalidValidationCodeForEmail();
         }
     }
 

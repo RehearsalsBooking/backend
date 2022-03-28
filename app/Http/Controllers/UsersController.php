@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\User\InvalidValidationCodeForEmail;
 use App\Http\Requests\Management\UpdateAvatarRequest;
 use App\Http\Requests\UpdateUserEmailRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -10,7 +11,6 @@ use App\Models\EmailVerification;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 use Throwable;
@@ -27,8 +27,8 @@ class UsersController extends Controller
     }
 
     /**
-     * @throws ValidationException
      * @throws Throwable
+     * @throws InvalidValidationCodeForEmail
      */
     public function updateEmail(UpdateUserEmailRequest $request): JsonResponse
     {
