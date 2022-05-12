@@ -3,6 +3,7 @@ name: release
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 env:
   IMAGE_NAME: backend
@@ -190,7 +191,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{secrets.SSH_HOST}}
-          key: ${{secrets.SSH_SECRET}}
+          password: ${{ secrets.SSH_PASSWORD }}
           username: ${{ secrets.SSH_USER }}
           debug: true
           script: |
