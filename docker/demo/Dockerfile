@@ -17,4 +17,6 @@ COPY . /app-demo
 
 RUN composer dump-autoload --optimize
 
+RUN usermod -u 1000 www-data
+
 EXPOSE 9000
