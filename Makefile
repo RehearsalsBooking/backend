@@ -61,6 +61,9 @@ check: check-environment composer-validate test phpstan composer-require-check c
 shell: check-environment ## Run shell environment in container
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash
 
+shell-root: check-environment ## Run shell environment in container
+	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm "$(php_container_name)" /bin/bash
+
 docs: check-environment ## Generate docs for models
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash -c "php artisan migrate:fresh"
 	$(docker_compose_bin) --file "$(docker_compose_yml)" run --rm -u $(user_id) "$(php_container_name)" /bin/bash -c "php /app/artisan ide-helper:models -W"

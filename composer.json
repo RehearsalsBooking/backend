@@ -36,13 +36,14 @@
     "fakerphp/faker": "^1",
     "filp/whoops": "^2",
     "friendsofphp/php-cs-fixer": "^3",
+    "icanhazstring/composer-unused": "^0.7.0",
+    "infection/infection": "^0.25.3",
+    "laravel-lang/lang": "^10.9",
     "mockery/mockery": "^1",
     "nunomaduro/collision": "^6",
     "nunomaduro/larastan": "^2",
     "phpunit/phpunit": "^9",
-    "roave/security-advisories": "dev-latest",
-    "infection/infection": "^0.25.3",
-    "icanhazstring/composer-unused": "^0.7.0"
+    "roave/security-advisories": "dev-latest"
   },
   "config": {
     "optimize-autoloader": true,
